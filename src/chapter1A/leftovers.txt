@@ -1,0 +1,51 @@
+In modern computers, many operations that can be performed within a small and constant space are highly optimised by computer architectures. Although computers can handle arbitrarily large numbers, most computational operations use modulo arithmetic. This approach uses a very large modulo, intended to approximate computations as if performed on numbers of unlimited size.
+Most computer systems handle numbers using a fixed number of bits; typically 64 bits. These sizes correspond to modulo operations at 
+2<sup>64</sup>.
+With 64-bit numbers, we can represent values up to 
+( 2<sup>64</sup> ) - 1,
+a tremendously large number that fits compactly into 64 bits due to the exponential nature of binary encoding.
+
+How large is 2<sup>64</sup>?<BR/>
+It is more than eighteen quintillions.<BR/>
+It is more than 18 billion billions.<BR/>
+It is more tan 18 followed by 18 zeros.
+
+This ability to encapsulate a vast range of numbers into a small bit space is a potent feature of binary systems. Modern architectures can execute operations on two 64-bit numbers in just a single computational cycle, enhancing efficiency and speed. This efficiency is vital for operations that occur billions of times per second.
+
+Of course the Fearless standard library takes advantage of this feature.
+Using a modulo that is a power of two not only simplifies the mathematics due to binary compatibility but also enables hardware optimizations to significantly speed up these operations.
+
+However, it's important to note that while modulo arithmetic approximates calculations on seemingly unlimited sizes, it can lead to issues. In computer science, we often reference **Murphy's Law**: if something can go wrong, it will.
+
+Accordingly, modulo arithmetic can be a source of many bugs, where an operation unexpectedly overflows the modulo, producing an unforeseen result.
+
+
+
+
+The Fearless compiler produces an optimised representation
+of the source code that can then be executed by the Fearless runtime.
+
+Comments are another tool to make our code more readable or clear.
+Comments are ignored by the fearless compiler
+in the same way extra spacing is ignored.
+
+A line starting with `//` is a single line comment.
+The whole line is ignored by the Fearless compiler.
+Any text enclosed by the delimiters `/*...*~/` 
+is called a multi-line comment and it is also ignored by the
+Fearless compiler.
+Additional spaces and newlines can be added mostly anywhere in the
+code and are also ignored; that is, comments and extra spaces do
+not play any role in the optimised representation produced by
+the Fearless compiler, and thus will have no impact on the execution.
+
+That is, comments have no impact on the execution;
+but can be precious to insert human-readable explanations in the code; facilitating the understanding (and re understanding) of code.
+
+
+It only works for these four, specific directions.
+What would happen if we wanted to add more directions 
+(`NorthEast`, `NorthWest`, etc.).
+We would have to manually calculate the resulting direction.
+This is a programming anti-pattern and should be avoided.
+

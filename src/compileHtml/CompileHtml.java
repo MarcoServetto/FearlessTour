@@ -1,0 +1,17 @@
+package compileHtml;
+
+import java.nio.file.Path;
+import java.io.IOException;
+import markDownTests.DocumentProcessor;
+import markDownTests.HtmlCreator;
+public class CompileHtml {
+  public static void main(String[] args) throws IOException{
+    Path root=Path.of("C:\\")
+      .resolve("Users","Lardo","OneDrive","Documents","GitHub","FearlessTour","src","chapter1A"); 
+    var dest=     Path.of("htmlOut");
+    var creator=  new HtmlCreator(dest);
+    var chapters= new DocumentProcessor().processFiles(root);
+    creator.generateHtmlPages(chapters);
+    System.out.println("Done");
+    }
+}
