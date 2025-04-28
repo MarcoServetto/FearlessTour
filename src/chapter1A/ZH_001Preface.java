@@ -11,15 +11,38 @@ class ZH_001Preface {
 # Fearless: Zero to Hero
 
 ### Preface: What is Fearless?
-Fearless is a minimalist, nominally-typed, object-oriented programming language.
-Fearless gives the programmer fine control of side effects using Reference and Object Capabilities instead of an Effect System.
 
-If you are new to programming, the sentence above was probably a little difficult to understand.
-We will unpack these ideas piece by piece, and build an understanding through examples.
+Fearless is a minimalist, nominally-typed, object-oriented programming language. Fearless gives the programmer fine control of side effects using Reference and Object Capabilities instead of an Effect System.
 
-In this guide we are going to take a step by step approach to Fearless programming.
-Instead of focusing on writing short working programs,
-we are going to focus on the basics of programming as a way to organize concepts and thought.
+If you are new to programming, the sentence above was probably a little difficult to understand. Don't worry – we will unpack these ideas piece by piece and build understanding through examples. More importantly, understanding that definition isn't the first step. The first step is understanding why we're approaching learning the way we are.
+
+### More Than Just Code: Our Philosophy
+
+Often, programming is taught simply as a tool to reach a practical goal, like building a website or automating a task. It can feel like a necessary hurdle to "get over with" so you can achieve something else.
+
+This guide sees things differently. While you will learn the Fearless programming language, our deeper aim is to use this journey as an opportunity to practice and strengthen valuable learning habits. We believe that learning how to learn effectively is as important as learning any single skill.
+
+Why use programming for this? Because programming, especially the structured, concepts-first approach we will take with Fearless:
+
+- Requires Core Learning Traits: It inherently demands abstract thinking, logical reasoning, patience when facing errors, focused concentration, and persistence in problem-solving. These are muscles that grow stronger with practice.
+
+- Provides Objective Feedback: Unlike many subjects, code often gives clear, objective feedback. The compiler finds errors, or the program runs correctly (or incorrectly) based on the logic you implemented. This provides a concrete way to assess your understanding and track genuine progress.
+
+Our goal, therefore, is not just to teach you Fearless, but to help cultivate comfort with abstraction, resilience in the face of challenges, patience for deep focus, and perhaps even finding intrinsic satisfaction in the process of careful, logical construction itself.
+
+We aim to move beyond treating programming as an obstacle, and instead use it as a rewarding training ground for becoming a more effective learner overall.
+
+### Our Approach: Foundations First
+
+This philosophy shapes our teaching method. You might notice this guide takes a different path than many programming introductions:
+
+- Foundations Over Quick Wins: Instead of focusing on writing short working programs, we are going to focus on the basics of programming as a way to organize concepts and thought.
+
+- Building from Scratch: We'll build everything, even familiar ideas like numbers or decisions, from fundamental programming concepts.
+
+- Conceptual Clarity: The emphasis is on understanding why things work the way they do and how concepts connect.
+
+This "foundations-first" approach might feel slower or more demanding initially. However, we believe it leads to a deeper, more robust understanding of programming as a way to organize thought, and simultaneously provides the focused practice needed to build those positive learning traits.
 
 ### Fearless: code, compilation, and execution
 

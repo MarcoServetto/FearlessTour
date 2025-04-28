@@ -77,13 +77,26 @@ Finally, `.not` inverts the value: `True.not` reduces to `False` and `False.not`
 Booleans are present in the Fearless standard library, and the implementation follows the same ideas presented here.
 `Str`, `Nat`, `Int` and many other types of the standard library offer a method `==`, that returns the `True` `Bool` if and only if the two strings or numbers are conceptually the same, and a method `!=`, returning a `True` `Bool` if and only if the two strings or numbers are conceptually different.
 
-Booleans are thus a better form of `Fork`.
+#### Examples of reductions
+
+All of those lines reduce in a single step:
+- `True.not`        --> False` we execute `True.not`
+- `False.not`       --> True` we execute `True.not`
+- `True.and(False)  --> False` because `True.and` returns `other`
+- `False.or(True)   --> True` because `False.or` returns `other`
+- `True.or(False)   --> True` because `True.or` returns `this`
+- `False.and(True)  --> False` because `False.and` returns `this`
+
+The code above shows that we can combine boolean to get more booleans. This is similar to what we have seen with `Nat` and `Rotation`. But the real power comes when we use them to make decisions: to execute different pieces of code depending on whether something is `True` or `False`. Crucially, Booleans are a better form of `Fork`.
 - There are two kinds of `Bool` in the same way there are two kinds of `Fork`,
 - We can compose `Bool`s with `.and`, `.or` and `.not`.
 - We can obtain `Bool`s from many other data types using `==` and `!=`.
 
 Can we add a concept of choice on our booleans, as we did for `Fork`?
-Sure!
+
+This is where the Generics we saw earlier becomes essential. We need a way to represent the two possible code paths (what to do if `True`, what to do if `False`) and the result they produce. Remember the `Fork` example where `.choose[Val]` worked with any type `Val`? We need something similar here. Let's define a method `Bool.if`, that can produce a result of any type, let's call that type `R`.
+To provide the two code paths we need a container object. We can define a generic type called `ThenElse[R]`. The `[R]` is a type parameter, just like `[Val]` was in `Fork`. It stands for the Result type that both code paths must ultimately produce.
+
 -------------------------*/@Test void bool2 () { run("""
 //|OMIT_START
 package test
@@ -104,13 +117,13 @@ True: Bool{
   .and(other) -> other,
   .or(other) -> this,
   .not -> False,
-  .if(m) -> m.then,
+  .if(m) -> m.then, //If True, execute the .then branch
   }
 False:Bool{
   .and(other) -> this,
   .or(other) -> other,
   .not -> True,
-  .if(m) -> m.else,
+  .if(m) -> m.else, //If False, execute the .else branch
   }
 //OMIT_START
 A:{#:Bool ->
@@ -131,6 +144,145 @@ True .and False .if{
 As you can see, now we can encode binary choices as expressions inside of method bodies.
 Here we use the generic type variable `R` to represent the type returned by the methods of the `ThenElse[R]` literal. That is, the code `True.if[Str]{..}` returns a string.
 This is a crucial abstraction step. We can now write a lot of example code.
+
+
+As an example, we will define a simple `Bot` type that can respond to a few specific messages. It will have one method, `.message`, which takes an input `Str` and returns a response `Str`.
+
+-------------------------*/@Test void example1 () { run("""
+Bot: {
+  .message(s: Str): Str ->
+    // Outer Check: Is the message `hello`?
+    (s == `hello`).if { //here R = Str
+      .then -> `Hi, I'm Bot; how can I help you?`, 
+      .else -> // Logic for when s is NOT "hello"
+        // Inner Check: Is the message "bye"?
+        (s == `bye`).if { //writing .if[Str] would be the same
+          .then -> `goodbye!`, //Response if inner condition is True
+          .else -> `I don't understand` // Response if inner condition is False
+
+        } //End of inner ThenElse
+    } //End of outer ThenElse
+}
+"""); }/*--------------------------------------------
+
+The `.message` method uses an `.if` checking whether the input `s` is equal to `hello`.
+The call is conceptually
+``(s ==(`hello`)).if[Str]({..})``
+but we can just write ``(s == `hello`).if {..}``
+by removing parenthesis for single argument methods and relying on of generic type inference.
+The [Str] indicates that both the `.then` and `.else` branches must produce a `Str` result.
+The first `.then` branch is simple: it just returns the greeting string.
+The first `.else` branch contains another `.if` call, nested inside. This inner check sees if `s` is equal to `bye`.
+This nesting allows us to create more complex decision trees.
+
+#### Visualizing reductions
+---
+1. ````
+   Bot.message(`hello`)
+   ````
+
+2. ````
+   (`hello` == `hello`).if {
+     .then -> `hi...`,
+     .else -> ...
+     }
+   ````
+
+3. ````
+   True.if {
+    .then -> `hi...`,
+    .else -> ...
+    }
+   ````
+
+4. ````
+   `hi, I'm Bot; how can I help you?`
+   ````
+---
+
+1. ````
+   Bot.message(`bye`)
+   ````
+
+2. ````
+   (`bye` == `hello`).if{
+     .then -> `hi...`,
+     .else -> (`bye` == `bye`).if{
+       .then -> `goodbye!`,
+       .else -> `I don't understand`
+       }
+     }
+   ````
+
+3. ````
+   False.if{
+     .then -> `hi...`,
+     .else -> (`bye` == `bye`).if{
+       .then -> `goodbye!`,
+       .else -> `I don't understand`
+       }
+     }
+   ````
+4. ````
+   (`bye` == `bye`).if{
+     .then -> `goodbye!`,
+     .else -> `I don't understand`
+     }
+   ````
+5. ````
+   True.if{
+     .then -> `goodbye!`,
+     .else -> `I don't understand`
+     }
+   ````
+6. ````
+   `goodbye!`
+   ````
+---
+1. ````
+   Bot.message(`test`)
+   ````
+
+2. ````
+   (`test` == `hello`).if{
+     .then -> `hi...`,
+     .else -> (`test` == `bye`).if{
+       .then -> `goodbye!`,
+       .else -> `I don't understand`
+	   }
+     }
+   ````
+
+3. ````
+   False.if{
+     .then -> `hi...`,
+     .else -> (`test` == `bye`).if{
+       .then -> `goodbye!`,
+       .else -> `I don't understand`
+       }
+     }
+   ````
+
+4. ````
+   (`test` == `bye`).if{
+     .then -> `goodbye!`,
+     .else -> `I don't understand`
+     }
+   ````
+   
+5. ````
+   False.if{
+     .then -> `goodbye!`,
+     .else -> `I don't understand`
+     }
+   ````
+6. ````
+   `I don't understand`
+   ````
+---
+As you can see from the example, the `.if` method directs the flow of execution.
+Generics ensure that the outcomes of different branches are type-compatible.
+Note how the generics are explicitly needed when defining the `.if` method but they are all inferred when using the `.if` method.
 
 This is where our journey of learning Fearless programming starts to intersecting with concepts common to most other programming languages.
 I still vividly remember the moment it struck me: every possible computation can be represented as just an enormous pile of ifs invoking each other. Mind blowing!
