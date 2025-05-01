@@ -68,7 +68,7 @@ This is also used for code reuse.
   `mut .foo(a: A): B -> a.toB,` (concrete method full form),<BR/>
   `mut .foo(a: A): B -> a.toB,` (concrete method inferred types),<BR/>
   `a->a.foo` or `a.foo` inside `{a->a.foo}` and `{a.foo}` 
-	(concrete method inferred name and types),
+  (concrete method inferred name and types),
 
 - Expression:
   There are three kinds of expression: literals, method calls, and parameters.

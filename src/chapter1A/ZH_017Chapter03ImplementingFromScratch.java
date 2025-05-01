@@ -119,20 +119,20 @@ Animals: {
 Now that we have mutation, we can have aliasing.
 Aliasing is both the best feature of mutation, and the very reason mutation needs to be kept under control.
 Aliasing is like a nuclear power plant:
-- very powerful 
-- very dangerous if misused
-- some people are very vocal against it
-- what happens inside feels like (dark) magic
-- working with it requires a great level of competence
+- Very powerful 
+- Very dangerous if misused
+- Some people are very vocal against it
+- What happens inside feels like (dark) magic
+- Working with it requires a great level of competence
 
 Using aliasing in the appropriate way can make our code much more efficient, and in some conditions even easier to read and understand.
-However, when aliasing and mutation are misused or run outside of our control, the code will behave in ways that most humans find to be very unpredictable.
+However, when aliasing and mutation are misused or run outside of our control, the code will behave in ways that most humans find very hard to predict.
 
 Consider the code below, showing a simple example of Aliasing.
 -------------------------*/@Test void aliasing1 () { run("""
 AliasingExample: {#: Num -> Block#
   .let bunny= { Animals#(Points#(10,20)) }
-  .let mammal= {bunny}
+  .let mammal= { bunny }
   .do { bunny.run(15) }
   .return { mammal.location.x }
   }

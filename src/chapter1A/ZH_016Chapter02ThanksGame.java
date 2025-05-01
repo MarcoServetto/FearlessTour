@@ -198,7 +198,7 @@ NextState: F[Stack[Tank],Stack[Tank]]{
   .moveIfFree(t: Tank, occupied: Stack[Point]): Tank -> 
     this.countHits(t,occupied) == 1
       .match { .true-> t.move, .false-> t, }, //arguably more readable than if/then/else?
-	  
+
   .countHits(t: Tank, occupied: Stack[Point]): Tank -> occupied.fold(0, {acc, p ->
     t.move.position == p .if{ .then 1, .else 0,} + acc 
     }),

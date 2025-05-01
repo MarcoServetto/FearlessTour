@@ -249,7 +249,7 @@ This nesting allows us to create more complex decision trees.
      .else -> (`test` == `bye`).if{
        .then -> `goodbye!`,
        .else -> `I don't understand`
-	   }
+       }
      }
    ````
 
