@@ -76,7 +76,7 @@ Method `HasInfo.info` represents an object in a structured data format (similar 
 Type `OrderHash[T]` provides hashing and comparisions methods to a type `T` extending it. Objects extending `OrderHash[T]` can easly be organized in efficient data structures.
 Method `HasImm[T].imm` converts an object of any reference capabilities into an immutable version of the same object. For objects that can only ever be immutable, this method simply returns the object itself.
 
-Note how many of those types have a generic variant, like `ToStr` and `ToStr[T]`. This is because for generic containers we need a way to convert the contained objects to be able to conver the container itself.
+Note how many of those types have a generic variant, like `ToStr` and `ToStr[T]`. As we will see later, this is because for generic containers we need a way to convert the contained objects to be able to convert the container itself.
 
 ### Full code for Bool
 Here we can show the full code for `Bool`.
@@ -129,7 +129,7 @@ BoolMatch[R:**]:{
 ````
 
 As you can see, `Bool` is quite similar to what we have seen already.
-There are a few new methods, in particular `<=>` is needed to implement `Order[T]`.
+There are a few new methods and changes that we will now explain.
 
 The most crucial change is the `ThenElse` matcher type:
 Note how the two methods `.then` and `.else` take a `mut` receiver.
@@ -141,6 +141,8 @@ We also add a more standard `BoolMatch` allowing to see `True` and `False` as th
 
 Overall, as you can see, we are chosing to support many different ways to do the same conceptual thing: see methods `.or` and `|`, `.if`, `?` and `.match`.
 We do this to support different programming styles instead to impose our preferences.
+
+For now, do not worry about the method `<=>`; it is needed to implement `Order[T]` as we will explain later.
 
 ### Full code for `Opt[T]`
 
@@ -177,6 +179,7 @@ Opt[T:*]: _Opt[T], Sealed, ToStr[T], ToInfo[T], OrderHash[Opt[T],T]{
   !           -> this.match{.some(x) -> x, .empty -> Error.msg "Opt was empty"},
   
   .or(default)-> this.match{.some(x) -> x, .empty -> default},
+  |(default)-> this.or(default),
   ||(default) -> this.match{.some(x) -> x, .empty -> default#},
   
   .flow       -> this.match{.empty -> Flow#, .some(x) -> Flow#x},
@@ -201,9 +204,11 @@ Via `T:*`, `Opt` works for `imm,read,mut` references.
 `_Opt[T]` is used to separate the type signatures from the method implementations. It is a common pattern in Fearless code; it helps to focus on the behaviours and the types separatly,
 and, as we will show while discussing `_Opt[T]`, it avoids a lot of repeated code.
 
-In addition to `.match`, the full `Opt[T]` supports other useful methods
-`.isEmpty` and `.isSome` simply returns a boolean stating if the optional was empty or not.
-`!` is a convenience method that returns the optional content or produces and error.
+In addition to `.match`, the full `Opt[T]` supports other useful methods.
+
+Methods `.isEmpty` and `.isSome` simply return a boolean stating if the optional was empty or not.
+
+Method `!` is a convenience method that returns the optional content or produces and error.
 Calling this method is equivalent to claim
 
 > I, the programmer, know that in this case the optional will definitivelly have a value inside.
@@ -215,6 +220,8 @@ The two methods `Opt[T].or` and `Opt[T]||` are similar to `Bool.or` and `Bool||`
 or the parameter value as a default result if the optional is empty.
 - `Opt[T]||` returns the value stored in the optional,
 or it executes the lazy parameter value to get a default result if the optional is empty.
+
+Exactly as for `Bool`, method `|` is just an alias for `.or`.
 
 Method `.flow` returns a `Flow[T]`. Flows are a very important data type in the fearless standard libraries and we will discuss them later.
       
@@ -233,7 +240,7 @@ Indeed, resolving sugar and inference we get the following code:
 myOptPerson.str(F[Person,ToStr]{#(p: Person): ToStr -> p})
 ```
 As you can see, the `{::}` sugar is very useful in those cases.
-But, what if we have an `data: Opt[Opt[Person]]`?
+But, what if we have a `data: Opt[Opt[Person]]`?
 No problem, we can just do `data.str{::str{::}}` and get our string.
 This pattern of using nested `{::}` is quite common as we will see more and more.
 
@@ -257,13 +264,17 @@ _Opt[T:*]:{
   read .flatMap[R:*](f: mut OptFlatMap[read/imm T, R]): mut Opt[R],
   imm  .flatMap[R:*](f: mut OptFlatMap[imm T, R]): mut Opt[R],
 
-  mut  ||(default: mut MF[T]): T,
-  read ||(default: mut MF[read/imm T]): read/imm T,
-  imm  ||(default: mut MF[imm T]): imm T,
+  mut  .or(default: T): T,
+  read .or(default: read/imm T): read/imm T,
+  imm  .or(default: imm T): imm T,
 
   mut  |(default: T): T,
   read |(default: read/imm T): read/imm T,
   imm  |(default: imm T): imm T,
+
+  mut  ||(default: mut MF[T]): T,
+  read ||(default: mut MF[read/imm T]): read/imm T,
+  imm  ||(default: mut MF[imm T]): imm T,
 
   mut  !: T,
   read !: read/imm T,
@@ -286,7 +297,7 @@ _Opt[T:*]:{
 
 As you can see, this is where the major difference lies with respect to the optional seen in Chapter 2: Here most methods come in three variants, one for `T`, one for `read/imm T` and one for `imm T`.
 
-Opt is an example of a generic continer type: a type whose main goal is to contain any kind of `T`, where `T` can be `read,imm,mut`.
+`Opt[T]` is an example of a generic continer type: a type whose main goal is to contain any kind of `T`, where `T` can be `read,imm,mut`.
 As you can see, designing generic container types supporting a range of reference capabilities is not a beginner friendly task. However, this pattern is quite consistent, and many generic containers follow this same structure, with many methods offering exactly those three type variants.
 
 
