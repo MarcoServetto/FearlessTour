@@ -28,8 +28,10 @@ West: {}
 
 We used four names of real world directions to name **types** in Fearless.
 Those four lines are **type declarations**, and the four names are **type names**.
-However, those types are not very useful because they are unconnected.
-We can create connections between those types by adding methods
+The `:` token means "declaration".
+
+Those types are not very useful because they are unconnected.
+We can create connections between those types by adding **methods**
 to our directions:
 
 `````
@@ -46,19 +48,20 @@ Within this declaration
 - `.turn` is a **method name**. It is a single token including the `.`
 - `.turn -> East,` is a **method declaration** and in this case
   the method body is just `East`.
-- The token `->` gives a body to a method.
+- The token `->` gives a body to a method. In the case of `.turn` the body
+ is the new direction after turning 90&deg; clockwise.
 
 We will see that method bodies can get much more involved than that.
 We introduced `East` as a type name; but when `East` is used inside
-the method body it is seen as an **expression**,
-specifically, an object literal expression. Objects represent conceptual units.
+the method body it is an **expression**,
+specifically, an object literal expression.
 
 Coding is all about defining kinds of objects and the relations between them.
-Other terms for 'object' could be 'value', 'entity', 'concept' or 'element'.
+Other terms for 'object' could be 'value', 'entity', 'instance' or 'element'.
 We will use the term 'object' consistently to talk about those.
 
-To understand this better, consider the English sentence "Stop".
-This sentence consists of a single word; and yet, it is still a sentence.
+To understand this better, consider the English sentence "Stop."
+This sentence contains a single word; and yet, it is still a sentence.
 An English sentence is a collection of words and punctuation with at least one word. In the same way, some expressions in Fearless are simply
 a single type name. However, just as sophisticated sentences in English are fundamental to effective communication, more elaborate expressions are crucial in programming.
 
@@ -72,10 +75,10 @@ Using the code above, a simple example of a method call is `North.turn`.
 - `North.turn` is an expression built on top of `North`.
 - `North.turn.turn` is also a valid expression, built on top of `North.turn`.
 
-We can write `North` to refer to the object North,
-that we are interpreting as representing the cardinal direction north.
-We can also write `North.turn` to refer to the object `East`, that we are interpreting as representing the cardinal direction east.
-In other words, there are exactly two ways to refer to a literal:
+We can write `North` to refer to the object `North`,
+which we are interpreting as representing the cardinal direction north.
+We can also write `North.turn` to refer to the object `East`, which we are interpreting as representing the cardinal direction east.
+In other words, there are exactly two ways to refer to an object:
 1. by directly mentioning it, or
 2. by mentioning some expression that returns it.
 
@@ -83,8 +86,8 @@ We say that the `.turn` method of `North` returns the object `East`.
 In other words, `North.turn` is an expression which is equivalent to the object `East`.
 In the same way, `South.turn.turn` is an expression which is equivalent to the object `North`. This process of discovering the meaning of an expression is called evaluation.
 
-The example we are discussing, 
-would cause an error if we try to run it.
+The example we are discussing is still incomplete, and it
+would cause an error if we try to compile it.
 `````
 North: {.turn-> East, } 
 East : {.turn-> South,}
@@ -97,7 +100,8 @@ While the exact error message may vary between different versions
 of Fearless, the core of this error is that the method `.turn`
 does not know what type it returns.
 
-Errors are good things: errors help us be precise and to avoid more mistakes later.
+>**Errors are good things:**
+>errors help us be precise and to avoid more mistakes later.
 
 Types help reasoning and they are used to ensure that
 our program is safe to use. 
@@ -105,10 +109,10 @@ Many programmers rely on types to understand code.
 
 So, what does the `North.turn` method return? `East`. So we can write:
 `````
-North: {.turn: East -> East, }
-East : {.turn: South-> South,}
-South: {.turn: West -> West, }
-West : {.turn: North-> North,}
+North: {.turn: East  -> East,  }
+East : {.turn: South -> South, }
+South: {.turn: West  -> West,  }
+West : {.turn: North -> North, }
 `````
 This is correct, and would make our code compile. However,
 this is stating that the four methods `.turn` are different
@@ -123,10 +127,10 @@ We can capture this intention with the following code:
 
 -------------------------*/@Test void dir1() { run("""
 Direction: { .turn: Direction, }
-North: Direction { .turn-> East, }
-East : Direction { .turn-> South,}
-South: Direction { .turn-> West, }
-West : Direction { .turn-> North,}
+North: Direction { .turn -> East,  }
+East : Direction { .turn -> South, }
+South: Direction { .turn -> West,  }
+West : Direction { .turn -> North, }
 """); }/*--------------------------------------------
 
 
@@ -148,15 +152,17 @@ Fearless can infer or predict that type since `North` implements `Direction`
 and `Direction.turn` returns a `Direction`.
 This process is called type inference and is an important concept in Fearless.
 
+### Reverse
+
 We can now imagine a method `.reverse` that turns 180 degrees.
 A naive approach would hard code the method result in all the cases, as shown below.
 
 `````
-Direction: {.turn:Direction, .reverse:Direction,}
-North: Direction {.turn->East, .reverse->South,}
-East : Direction {.turn->South, .reverse->West,}
-South: Direction {.turn->West, .reverse->North,}
-West : Direction {.turn->North, .reverse->East,}
+Direction: { .turn: Direction, .reverse: Direction,  }
+North: Direction { .turn -> East,  .reverse -> South, }
+East : Direction { .turn -> South, .reverse -> West,  }
+South: Direction { .turn -> West,  .reverse -> North, }
+West : Direction { .turn -> North, .reverse -> East,  }
 `````
 
 This solution works but is quite verbose.
@@ -167,10 +173,10 @@ rotating 180 degrees clockwise is the same as rotating 90 degrees clockwise, twi
 However, if we simply follow this intuition and we add `.turn.turn` in all the directions, we get even more verbose code.
 `````
 Direction: { .turn: Direction, .reverse: Direction, }
-North: Direction { .turn->East,  .reverse->North.turn.turn,}
-East : Direction { .turn->South, .reverse->East.turn.turn, }
-South: Direction { .turn->West,  .reverse->South.turn.turn,}
-West : Direction { .turn->North, .reverse->West.turn.turn, }
+North: Direction { .turn -> East,  .reverse -> North.turn.turn, }
+East : Direction { .turn -> South, .reverse -> East.turn.turn,  }
+South: Direction { .turn -> West,  .reverse -> South.turn.turn, }
+West : Direction { .turn -> North, .reverse -> West.turn.turn,  }
 `````
 However, the code is now more regular, the four bodies of `.reverse` are all almost identical.
 They are all of the form `.reverse->???.turn.turn,` where `???` is the current direction.
@@ -180,12 +186,12 @@ We are able to reuse the  `.reverse->???.turn.turn,` part by putting it into our
 `````
 Direction: {
   .turn: Direction,
-  .reverse: Direction ->???.turn.turn,
+  .reverse: Direction -> ???.turn.turn,
   }
-North: Direction { .turn->East, }
-East : Direction { .turn->South,}
-South: Direction { .turn->West, }
-West : Direction { .turn->North,}
+North: Direction { .turn -> East, }
+East : Direction { .turn -> South,}
+South: Direction { .turn -> West, }
+West : Direction { .turn -> North,}
 `````
 
 Now the code of `.reverse` appears only one time in our program.
@@ -193,28 +199,36 @@ Note how we are using some new lines and spaces to show visually the
 content of `Direction`. This is called indentation. 
 
 Of course, `???` is not valid Fearless code.
-Originally, we wrote the name of the current direction, eg.
-`North.turn.turn`, `East.turn.turn`. 
-A method body allows us to reuse some code over and over again, but here instead of repeating the same exact behaviour over and over again, we want our behaviour to be contextual over the current direction.
+Originally, we wrote the name of the current direction:
+`North.turn.turn`, `East.turn.turn`, ...
+Methods allows us to reuse some code, but here instead of repeating the same exact behaviour over and over again, we want our behaviour to be contextual over the current direction.
 That is, `???` should be `North` inside of `North.reverse` and `South` inside of `South.reverse`.
 
-This is a crucial learning moment. We need a way to refer to the current direction within the `.reverse` method. If we're calculating `North.reverse`, we need `North.turn.turn`. If we're calculating `East.reverse`, we need `East.turn.turn`.
+We need a way to refer to the current direction within the `.reverse` method. If we're calculating `North.reverse`, we need `North.turn.turn`. If we're calculating `East.reverse`, we need `East.turn.turn`.
 
 We can indeed access the current direction by using `this`, as shown below.
 -------------------------*/@Test void directionReverse() { run("""
 Direction: {
   .turn: Direction,
-  .reverse: Direction ->this.turn.turn,
+  .reverse: Direction -> this.turn.turn,
   }
-North: Direction {.turn->East, }
-East : Direction {.turn->South,}
-South: Direction {.turn->West, }
-West : Direction {.turn->North,}
+North: Direction {.turn -> East, }
+East : Direction {.turn -> South,}
+South: Direction {.turn -> West, }
+West : Direction {.turn -> North,}
 """); }/*--------------------------------------------
-That is, when `.reverse` is inherited by other directions,
-the **parameter** `this` will refer to the current literal.
-For example, even though the method `North.reverse` is `this.turn.turn`, in that context `this` is the `North` literal, so when the method is called we would replace `this` with `North` and get  `North.turn.turn`.
-Here is an example showing this execution / replacement process.
+That is, when the `.reverse` method is called,
+the **parameter** `this` will refer to the current object.
+For example, even though the method `North.reverse` is `this.turn.turn`, in that context `this` is `North`, so when the method is called we would replace `this` with `North` and get  `North.turn.turn`.
+
+Here is an example showing this execution / replacement process where
+the first step correctly jumps from `North.reverse` into `North.turn.turn`:
+
+- Method `North.reverse` comes from `Direction.reverse`.
+- The body of method `Direction.reverse` is `this.turn.turn`.
+- The parameter `this` is replaced with `North`, since we are calling `North.reverse`.
+- Thus we get `North.turn.turn`.
+
 
  | ------------------ | ----------------------- |
  | Original form      |  `North.reverse`        |
@@ -225,13 +239,13 @@ Here is an example showing this execution / replacement process.
 `this` is an example of the third and last kind of expression: parameters.
 
 ### The three kinds of Fearless expressions
-In summary, the three kinds of Fearless expressions are:
-1. parameters: `this` as an example.
+
+1. parameters: `this`.
   Later, we will see how to declare and use other parameters.
 2. method calls: `North.turn` and `North.reverse`.
   Later we will see more kinds of method calls.
-3. objects: `North`, `East`, `South` and `West`. 
-  The literals we have seen are simply the names of existing types.
+3. object literals: `North`, `East`, `South` and `West`. 
+  The object literals we have seen are simply the names of existing types.
   Later on in this tutorial we will see more kinds of objects,
   capable of summoning into existence novel or unique values;
   in addition to the ones already existing.
@@ -239,7 +253,9 @@ In summary, the three kinds of Fearless expressions are:
 Note: `North`, `East`, `South`, and `West` can be used directly as
 objects because they have no abstract methods. 
 Since `Direction` has at least one abstract method (`.turn`),
-it  can not be used as a valid object.
+it  can not be used directly as a valid object literal.
+We will call types with abstract methods **abstract types**.
+
 
 END*/
 }
