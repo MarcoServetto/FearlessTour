@@ -31,7 +31,7 @@ Number:{ .pred:Number, .succ:Number,}
 10: Number{.pred->  9, .succ-> 11, }
 11: Number{.pred-> 10, .succ->  0, } //before 11 is 10, after 11  wraps to 0
 ```
-The code above is clear and very similar to the code of `Direction`.
+The code above is very similar to the code of `Direction`.
 Method `.succ` works like the method `.turn` and method `.pred` is just turning in the other way. Thus, the predecessor of `0` is `11` and the successor of `11` is `0`.
 That is, `10.succ` is `11` and `10.succ.succ.succ` is `1`.
 Note how we are using numbers as type names.
@@ -50,12 +50,16 @@ Number:{
    +(other)-> other,
    }
  1: Number{
-   .pred-> 11, .succ->  1,
+   .pred-> 0, .succ->  2,
    +(other)-> other.succ,
    }
  2: Number{
-   .pred-> 11, .succ->  1,
+   .pred-> 1, .succ->  3,
    +(other)-> other.succ.succ,
+   }
+ 3: Number{
+   .pred-> 2, .succ->  4,
+   +(other)-> other.succ.succ.succ,
    }
  ...//all other numbers as before
 ```
@@ -66,22 +70,23 @@ Imagine writing a chain of `.succ` thousands or millions of calls long! It would
 
 
 
-#### Inductive definitions: Building from simplicity
+#### Inductive definitions
 
 
 Instead of defining `+` for every single number, we can define it using just two rules that build upon each other. This powerful technique is called an inductive definition.
 
-**Base Case:** The simplest case is adding zero. Adding zero to any number a doesn't change it: `0 + a => a`.
+**Base Case:** The simplest case is adding zero. Adding zero to any number a doesn't change it: `0 + a -> a`.
 
-**Inductive Step:** How do we add a non-zero number (let's call it `this`) to another number `a`?
-- We can think of this as being "one more than its predecessor": `this` = `this.pred + 1`.
+**Inductive Step:** How do we add a non-zero number (let's call it `this`) to another number `other`?
+- We can think of `this` as being "one more than its predecessor": `this` = `this.pred + 1`.
 - Thus we can use this mathematical property 
-`(x + 1) + y = x + (y + 1)` to simplify the problem!
-- In order to calculate `this + a`, we can calculate 
-`(this.pred) + (a.succ)`. 
-- We have made the left side smaller: `this.pred` is a smaller number than `this`
-- In this way, we get closer and closer to the base case zero.
-- We repeat this step until the left side becomes zero, and then we use the base case rule.
+`(this.pred + 1) + other = this.pred + (other + 1)` to simplify the problem!
+- In order to calculate `this + other`, we can calculate 
+`(this.pred) + (other.succ)`. 
+
+Note how we have made the left side smaller: `this.pred` is a smaller number than `this`.
+In this way, we get closer and closer to the base case zero.
+We repeat this step until the left side becomes zero, and then we use the base case rule.
 
 
 
@@ -109,15 +114,14 @@ That is, types `1` through `11` inherit the `+` method from `Number`.
 
 The Method `+` above directly encodes the intended inductive logic
 ```
-0 + a = a            //base case
-(a+1) + b = a + (b+1)//inductive case
+0 + other = other                      //base case
+this + other = this.pred + (other + 1) //inductive case
 ```
-with `a` and `b` being any two numbers.
 - The base case works on zero: adding any number to zero just returns that number.
 That is, if the left number is zero, we know the result of addition without the need of computing it.
 - The inductive case is used if the left number is not zero. If the number is not zero we can see the left number as if it is composed of a number `a` plus `1`.
 In our code this is represented by calling `this.pred`; that is, the number `this` is equivalent to `this.pred + 1`.
-We then move this `+1` to the right of the `+` operator by using succ.
+We then move this `+1` to the right of the `+` operator by using `.succ`.
 That is, `other.succ` is equivalent to `other+1`
 Putting those ideas together we get the code of `Number+`:
 ```
@@ -127,7 +131,7 @@ This reasoning is based on the idea that it is very easy to sum a number with ze
 
 
 We now show the reduction for `3 + 2`.
-Note how in the first step `this` is `3` (not `0`) and 'other' is 2. Thus we apply method`Number+`.
+Note how in the first step `this` is `3` (not `0`) and `other` is `2`. Thus we apply method `Number+`.
 
 01. `3 + 2`  
 02. `3.pred + 2.succ`
@@ -141,48 +145,45 @@ Note how in the first step `this` is `3` (not `0`) and 'other' is 2. Thus we app
 10. `0 + 4.succ`
 11. `0 + 5`
 12. `5`
+
 In step 11, `this` is `0`, and thus we apply method `0+`.
 
 This inductive approach, defining a base case and a rule to reduce other cases towards the base case, is fundamental in programming and especially elegant in object-oriented languages like Fearless.
 
-> **Inductive thinking:** When we define methods like Number.+  partly in terms of themselves, it might look like circular reasoning. It's not! This technique is simply about defining behavior based on the structure we've already established.
+> **Inductive thinking:** When we define methods like `Number+`  partly in terms of themselves, it might look like circular reasoning. It's not! This technique is simply about defining behaviour based on the structure we've already established.
 >For numbers, we define addition based on the previous number. We're breaking the problem down into a simpler version of itself plus one step. This way of thinking is crucial for any kind of programming, but it may take a while to get used to it.
->With enough exercise, most humans become very proficent with inductive thinking. It is not hard, it is alien.
-
-> **Inductive thinking:** When we define methods like `Number.+` partly in terms of themselves, it might look like circular reasoning. It's not! This technique is simply about defining behavior based on the structure we've already established. For numbers, we define addition based on the previous number.
-We are breaking the problem down into a simpler version of itself plus one step.
->This way of thinking is crucial for any kind of programming, but it may take a while to get used to it. It requires a shift in perspective. With practice, however, this inductive approach becomes a powerful and logical tool, not because it's inherently hard, but because it's initially unfamiliar.
->Experience shows that with dedicated practice, people become eventually become proficient in inductive thinking.
+>Experience shows that with dedicated practice, people eventually become proficient in inductive thinking.
 It's a common hurdle, but definitely a conquerable one.
+>It is not hard, it is unfamiliar.
 
 #### Implementing multiplication inductively in Fearless:
 
 Building on those ideas, we can encode the other operations of numbers.
 We now show with multiplication:
 ```
-Number:{ 
-  .pred:Number, .succ:Number,
+Number: { 
+  .pred: Number, .succ: Number,
   +(other: Number): Number -> this.pred + (other.succ)
   *(other: Number): Number -> (this.pred * other) + other
   }
-0: Number{
+0: Number {
   .pred-> 11, .succ->  1,
   +(other)-> other,
   *(other)-> 0,
   }
-1: Number{.pred->  0, .succ->  2, }
+1: Number { .pred->  0, .succ->  2, }
 ...
-10: Number{.pred->  9, .succ-> 11, }
-11: Number{.pred-> 10, .succ->  0, }
+10: Number { .pred->  9, .succ-> 11, }
+11: Number { .pred-> 10, .succ->  0, }
 ```
 Here the inductive logic is as follows:
 ```
-0 * a = 0                //base case
-(a+1) * b = (a*b) + b //inductive case
+0 * other = 0                          //base case
+this * b = (this.pred * other) + other //inductive case
 ```
 
 Logically, how do we multiply a non-zero number `this` by another number `other`? Again, think of `this` as `this.pred + 1`. We can apply the mathematical property 
-`(x + 1) * y = (x * y) + y`.
+`(this.pred + 1) * other = (this.pred * other) + other`.
 Multiplying `this` by `other` is the same as first multiplying `this.pred` by `other`, and then adding `other` to that result. This reduces the multiplication problem `this * other` to a smaller multiplication `this.pred * other` plus an addition (`+ other`), eventually reaching the base case where the left side is `0`.
 
 #### Reduction examples and operator precedence
@@ -256,35 +257,35 @@ This is needed. without those parenthesis, the code would be interpreted as `(th
 
 #### The challenge of subtraction
 
-Subtraction `-` presents a slight twist. The easy base case is `a - 0 = a`, where zero is on the right. However, our inductive approach works by simplifying the left operand `this`. How can we handle subtraction?
+Subtraction `-` presents a slight twist. The easy base case is `this - 0 = this`, where zero is on the right. However, our inductive approach works by simplifying the left operand `this`. How can we handle subtraction?
 
-We can use a helper method. The main - method can delegate to an auxiliary method (let's call it `._rightSub`) that effectively swaps the operands so the induction can work correctly based on the original right-hand operand.
+We can use a helper method. The main `-` method can delegate to an auxiliary method (let's call it `._rightSub`) that effectively swaps the operands so the induction can work correctly based on the original right-hand operand.
 
 ```
-Number:{ 
-  .pred:Number, .succ:Number,
+Number: {
+  .pred: Number, .succ: Number,
   +(other: Number): Number -> this.pred + (other.succ),
   *(other: Number): Number -> (this.pred * other) + other,
   -(other: Number): Number -> other._rightSub(this),
-  ._rightSub(other: Number): Number-> this.pred._rightSub(other.pred),
+  ._rightSub(other: Number): Number -> this.pred._rightSub(other.pred),
   }
-0: Number{
-  .pred-> 11, .succ->  1,
-  +(other)-> other,
-  *(other)-> 0,
-  ._rightSub(other: Number): Number-> other,
+0: Number {
+  .pred -> 11, .succ ->  1,
+  +(other) -> other,
+  *(other) -> 0,
+  ._rightSub(other: Number): Number -> other,
   }
-1: Number{.pred->  0, .succ->  2, }
+1: Number { .pred ->  0, .succ ->  2, }
 ...
-10: Number{.pred->  9, .succ-> 11, }
-11: Number{.pred-> 10, .succ->  0, }
+10: Number{ .pred ->  9, .succ -> 11, }
+11: Number{ .pred -> 10, .succ ->  0, }
 ```
 
 Here the inductive logic is as follows:
 
 ```
-a - 0 = a                //base case
-(a+1) - (b+1) = a - b    //inductive case
+this - 0 = this                      //base case
+this - (other+1) = this.pred - other //inductive case
 ```
 
 We had to introduce a method `._rightSub` since we can only reason inductively on the receiver. We used `_` at the beginning of the method to express that we do not expect to use that method directly, and that it is just a tool to implement `-`.
@@ -316,13 +317,14 @@ They have familiar methods like `+`, `-`, `*`, `.succ`, `.pred`, similar to our 
 `Int` (Integers): These represent positive and negative whole numbers (..., `-2`, `-1`, `+0`, `+1`, `+2`, ...). To distinguish them, you must include the sign before the number. Note that `+0` is the only way to write zero as an `Int`.
 Some `Int`s: `+10`, `-25`, `+0`, `+12345`, `-987`.
 
-Crucially, `+10` or `-25` are treated as single tokens (building blocks) by the Fearless compiler. `Int` also provides methods like `+`, `-`, `*`, etc. For example: `+10 + -3` results in `+7`.
+Crucially, `+10` or `-25` are treated as single tokens by the Fearless compiler. `Int` also provides methods like `+`, `-`, `*`, etc. For example: `+10 + -3` results in `+7`.
 
 #### How they work? Like our clock, just... BIGGER!
 
-Crucially, `Nat` and `Int` work exactly like our `Number` example, using **modulo arithmetic**. The key difference is the size of the "clock face". Instead of wrapping around after `11`, they wrap around after reaching an enormously large value, that we will discuss later.
+Crucially, `Nat` and `Int` work exactly like our `Number` example, using **modulo arithmetic**. The key difference is the size of the "clock face". Instead of wrapping around after `11`, they wrap around after reaching an enormously large value.
+`Nat` behaves like a massive clock counting from `0` up to this  huge maximum. Adding `1` to this maximum `Nat` wraps around back to `0`. Subtracting `1` from `0` wraps around to the maximum `Nat`.
 
-`Nat` behaves like a massive clock counting from `0` up to this  huge maximum. Adding `1` to this maximum `Nat` wraps around back to `0`. Subtracting `1` from `0` wraps around to the maximum `Nat`. That is, in the standard library there are many, many types defined following roughly the schema below:
+That is, in the standard library there are many, many types defined following roughly the schema below:
 
 
 ```
@@ -339,22 +341,20 @@ Nat:{
 ...
 18446744073709551615: Nat{.pred-> 18446744073709551614, .succ->  0, }
 ```
-
-Here’s the key: Nat operate using the exact same modulo arithmetic logic as our `0-11` `Number`. They have a maximum value, and `.succ` wraps around to the minimum; `.pred` on the minimum wraps around to the maximum.
 The schemas look just like our clock's.
 The only difference? The scale is mind-boggling. The max value isn't `11`; 
 It is ( 2<sup>64</sup> ) - 1, that is 18,446,744,073,709,551,615.
+More than 18 followed by 18 zeros!
 
 >Eighteen quintillion, four hundred forty-six quadrillion,
 >seven hundred forty-four trillion, seventy-three billion,
 >seven hundred nine million, five hundred fifty-one thousand,
 >six hundred fifteen.
->More than 18 followed by 18 zeros!
 
 Wow, what a number!
 We will discuss shortly why this oddly specific number.
 
-How does the standard library provide all eighteen quintillion Nat types? Did someone actually type them all out?
+How does the standard library provide all eighteen quintillion `Nat` types? Did someone actually type them all out?
 Of course, there isn't really a file containing billions of billions of lines like this:
 ```
 ...
@@ -363,18 +363,17 @@ Of course, there isn't really a file containing billions of billions of lines li
 18446744070000000006: Nat{.pred-> 18446744070000000005, .succ->  18446744070000000007, }
 ...
 ```
-But let's imagine, just for fun. Picture "The Infinite Typist," a mythical programmer fueled by pure determination and questionable amounts of coffee, who decided one day to manually define numbers, one after another. Day after day, century after century, they typed...
-If we printed their monumental work, using tiny font and three columns per page, just the definitions for Nat would fill a stack of books so high... it would stretch roughly from the Earth to Pluto. Seriously. We did the math (it involves quintillions of lines and very large bookshelves).
+But let's imagine, just for fun. Picture "The Infinite Typist", a mythical programmer fuelled by pure determination and questionable amounts of coffee, who decided one day to manually define numbers, one after another. Day after day, century after century, they typed...
+If we printed their monumental work, using tiny font and three columns per page, just the definitions for `Nat` would fill a stack of books so high... it would stretch roughly from the Earth to Pluto. Seriously. We did the maths (it involves quintillions of lines and very large bookshelves).
 
 
 
-#### The Reality: Clever Optimization
-Okay, back to reality. The standard library doesn't rely on mythical typists or planet-sized bookshelves. It uses highly optimized internal techniques, leveraging how computer hardware works, to represent these numbers efficiently in a small, fixed amount of memory. This allows mathematical operations on `Nat` to be incredibly fast.
+#### The Reality: optimised internal representation
+Okay, back to reality. The standard library doesn't rely on mythical typists or planet-sized bookshelves. It uses highly optimised internal techniques, leveraging how computer hardware works, to represent these numbers efficiently in a small, fixed amount of memory. This allows mathematical operations on `Nat` to be incredibly fast.
 The Fearless standard library is internally optimised in ways that a library written by a regular programmer could not. In particular, the standard library can define an amount of types that is out of the reach of what can realistically be coded by hand, or even stored on your hard drive.
 However, those types do exist and we can code in Fearless using them.
 This also means that the type names `0`, `1`, `2` and so on are already taken, and thus we can not actually define our numbers called `0`-`11` as we did before.
-
-Crucially, even though the implementation is optimized, the behavior perfectly matches the conceptual model of that massive, wrap-around clock face. It's not magic, just very clever engineering built upon the same principles we saw with our `0`-`11` `Number` type.
+Crucially, even though the implementation is optimised, the behaviour perfectly matches the conceptual model of that massive, wrap-around clock face.
 
 In addition to `Nat` we have `Int`.
 `Int` implements another kind of modulo arithmetic, where we can have negative values, and instead of rolling back to zero when we overflow, we roll back to the smallest possible negative value.
@@ -406,8 +405,8 @@ Because `Nat` and `Int` use this fixed-size, wrap-around (modulo) arithmetic, th
 
 There is no warning bell, no error message. It just happens.
 
-And Murphy's Law ("Anything that can go wrong, will go wrong") practically guarantees that if your program runs long enough or handles large enough inputs, someone, somewhere, will eventually trigger an unexpected overflow if you're solely relying on `Nat` or `Int` without careful checks.
-This isn't a Fearless-specific issue; it's a fundamental trade-off for the speed gained by optimized integers in most programming languages. Ignoring it is building on shaky ground. Accepting this reality is step one to writing robust code.
+Murphy's Law ("Anything that can go wrong, will go wrong") practically guarantees that if your program runs long enough or handles large enough inputs, something, somewhere, will eventually trigger an unexpected overflow if you're solely relying on `Nat` or `Int` without careful checks.
+This isn't a Fearless-specific issue; it's a fundamental trade-off for the speed gained by optimised integers in most programming languages. Ignoring it is building on shaky ground. Accepting this reality is step one to writing robust code.
 
 //OMIT_START
 -------------------------*/@Test void fullNumber() { run("""

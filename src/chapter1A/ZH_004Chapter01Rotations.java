@@ -114,10 +114,10 @@ The parametric `Tank.turnTurret` method is great progress! Instead of needing mu
 
 
 This code example shows the core ideas of programming: 
- 1. We define names to denote concepts. Those names can be type names, method names and parameter names/bindings.
+ 1. We define names to denote concepts. Those names can be type names, method names and parameter names.
  2. Using those names we model a world where our code will be able to run.
  3. We encode behaviour by passing values around from method to method.
- 4. Bindings are used to hold those values while we wire them from one place to another.
+ 4. Parameters are used to hold those values while we wire them from one place to another.
 
 Under this lens, we can describe programming as **Naming Parametric Abstractions**.
 We have now seen two kinds of abstractions: 
@@ -133,7 +133,7 @@ In the common mathematical notation, a function can be directly applied to the a
 A natural feature to add to Rotations is to make them composable. Can we add two rotations together to get a rotation that rotates as much as the sum of the two individual rotations?
 Consider the code below:
 ```
-RotateTwice:{#(r1: Rotation, r2: Rotation, d: Direction): Direction->
+RotateTwice: { #(r1: Rotation, r2: Rotation, d: Direction): Direction->
   r1#(r2#(d))
 }
 ```
@@ -143,8 +143,13 @@ In the method body, we see `r1 # ( r2 # ( d ) )`, where we added some spaces for
 This code can be read from the inside out: we first call `r2#` on the input direction `d`. This is going to produce some other direction, that is passed in input to method `r1#`.
 The resulting effect is that we rotate the input by the sum of the rotations `r1` and `r2`.
 
-Function `RotateTwice` takes three parameters. While taking three parameters is perfectly fine, this gives us the opportunity to explain the concept of partial application:
-Can we make it so that `RotateTwice` takes the first two parameters and gives us a function that will rotate the direction? This could be convenient if we needed to rotate many directions by the same two rotations.
+Function `RotateTwice` takes three parameters.
+While taking three parameters is perfectly fine, this gives us the opportunity to explain the concept of partial application:
+
+>Can we make it so that `RotateTwice` takes the first two parameters and gives us a function that will rotate the direction?
+
+This could be convenient if we needed to rotate many directions by the same two rotations.
+
 The crucial consideration is that we already have a name for the concept of a function that takes a direction and rotates it: `Rotation`.
 Can we define an "addition" operation taking two `Rotation`s and producing a new `Rotation`?
 
@@ -185,8 +190,9 @@ Note how `this#( r#(d) )` uses `this` and `r` similarly to how `RotateTwice` use
 Thus `this` and `r` will be some concrete instances of `Rotation`:
 they will have some implementation for method `Rotation#`.
 This implementation may simply come from `Turn0`, `Turn90`, `Turn180` or `Turn270`.
-But, there are more possibilities:
-The `Rotation` object returned by `Rotation+` has another version of `Rotation#`.
+
+But, there is another possibility: the `Rotation` object returned by `Rotation+` has yet another version of `Rotation#`.
+This last implementation is flexible: its behaviour depends from the captured rotations!
 
 The method `Rotation+` is considered very elegant code.
 Inside it, `this` refers to the first `Rotation` (`Turn90` in `Turn90 +(Turn180)`).
@@ -199,8 +205,14 @@ The expression `{ d-> this#(r#(d) }` is equivalent to
 Before we discussed how `North` is a literal.
 `North` is just sugar for `SomeName147:North{}`. Exactly in the same way and via the same process `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }` can be shortened by the sugar to `{ d-> this#(r#(d) }`.
 
-At first look, you may think that the body `this#(r#(d))` would go in an infinite reduction since we call method `Rotation#`  on `this` during the execution of `Rotation#`. However, that `this` is the outer rotation object (the receiver of the call `Rotation+`) that must be some `Rotation` object defined before `Rotation+` was called, thus method `this#` returns a well defined `Direction`, determined before `Rotation+` was called and the return value of `Rotation+` created.
-We are sure that the method `Rotation#` of `this` is implemented because all literals have no abstract methods, and bindings (like `this`) are replaced with literals when methods are called.
+At first look, you may think that the body `this#(r#(d))`
+would go in an infinite reduction since we call method `Rotation#`  on `this`
+during the execution of `Rotation#`.
+However, that `this` is the outer rotation object (the receiver of the call `Rotation+`)
+that must be some `Rotation` object defined before `Rotation+`
+was called, thus the behaviour of method `this#` was fully determined before `Rotation+` was called
+and the return value of `Rotation+` created.
+We are sure that the method `Rotation#` of `this` is implemented because all literals have no abstract methods, and parameters (like `this`) are replaced with literals when methods are called.
 
 A common source of confusion when looking to code like 
 ```
@@ -209,7 +221,7 @@ Rotation: {
   +(r: Rotation): Rotation-> { d -> this#( r#(d) ) } 
 }
 ```
-is to assume that the method `Rotation#` will have the behaviour that we can see in class Rotation.
+is to assume that the method `Rotation#` will have the behaviour that we can see in `Rotation`.
 Here `Rotation#` is abstract. Thus, there is no way that the calls  `this#` or `r#` would ever resolve into the non-existent code of `Rotation#`; they will always resolve to some concrete implementation of it.
 
 While this is self evident in `Rotation#`, since there is no body, this holds also when a body is present; since methods can be overridden in other literals.
