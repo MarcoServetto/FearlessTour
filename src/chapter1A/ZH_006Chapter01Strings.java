@@ -8,10 +8,14 @@ class ZH_006Chapter01Strings {
 --CHAPTER-- Chapter 1
 --SECTION-- Strings
 
-### A conceptual dive: from Number bases to Text
+### From numbers to text
 
-This short section takes a conceptual detour into number bases and very large numbers, exploring how text is encoded into Fearless from the ground up. This perspective might help some learners connect text back to earlier concepts, but it might also feel confusing, and that's okay. **If you find it dense, feel free to relax** understanding the details of alternative number representations is absolutely not required to use text or to understand the rest of this guide. Focus instead on the practical examples that follow.
-For all practical coding purposes, what matters is that we have a way to represent text. **You do not need to calculate or remember anything about number bases** to use text in Fearless.
+This short section takes a detour into number bases and very large numbers, exploring how text is encoded into Fearless from the ground up. This perspective might help some learners connect text back to earlier concepts, but it might also feel confusing, and that's okay.
+
+**If you find it dense, relax.**
+
+Understanding the details of alternative number representations is absolutely not required to use text or to understand the rest of this guide. Focus instead on the practical examples that follow.
+For all practical coding purposes, what matters is that we have a way to represent text. **You do not need to calculate or remember anything about number bases to use text in Fearless.** The following is about how text can be derived from first principles.
 
 ### Numbers with base bigger than 10
 
@@ -42,14 +46,17 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 +-*|/=<>,.;:()[]{}`'"!?@#$%^&_|~\
 space and new line
 ```
-It is now 96 symbols. Those are all the symbols we can easley type on most keyboards.
+It is now 96 symbols. Those are all the symbols we can easily type on most keyboards.
 With this, we could express any text!
 We call numbers expressed in this form (simple) strings.
 It is very compact to represent very large numbers in this notation. For example number 5,000 would be just `` `Q8` ``
 1,000,030 in base-96 has a representation of `` `1cM ` ``. Note the space after the character `` `M` ``.
 If we did not use the backtick character (`` ` ``) it would be very hard to spot trailing spaces in our base-96 numbers.
 The number of humans currently alive is 8 Billions, or `` `inRW` ``.
-A more precise estimate is 8,122,862,820; corresponding to `` `<newLine>Zb2A` ``
+A more precise estimate is 8,122,862,820; corresponding to 
+... hmm... 
+`` `<newLine>Zb2A` ``? maybe?
+
 As you can see, when the new line character ends up in the number representation it becomes unobvious how to write it down when embedded in other text.
 The same problem would emerge if the backtick character (`` ` ``) was present; since we used backticks to delimit the border of our 
 base 96 number. And we really need to select some characters to be used to show the start and end of our base-96 numbers to avoid confusion.
@@ -61,7 +68,7 @@ That is, the three strings composed by a single character that is just single qu
 ``` `\`` ```, `` `\n` ``, `` `\\` ``.
 This can be surprising for beginners since it means that strings of length 1 (containing just one character) will be composed of two characters;  or four if we count also the delimiters.
 
-Thus `` `Hi, `John`, are you really John?` `` is containing `John` in single quotes.
+Thus `` `Hi, \`John\`, are you really John?` `` is containing `John` in backticks.
 It is also a number, a massively large number. So large that it would not make sense for us to show it. Well, here it is:
 1,218,548,022,657,255,659,383,869,870,726,090,934,496,236,095,273,804,605,882,264,818
 
