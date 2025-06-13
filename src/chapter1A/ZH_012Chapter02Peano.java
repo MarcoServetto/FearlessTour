@@ -13,7 +13,7 @@ class ZH_012Chapter02Peano {
 We have seen how in the standard library we have many finite, but gigantic, number types:
 There are  2<sup>64</sup> - 1 instances of `Nat` and there are 96<sup>2,147,483,647</sup> − 1 instances of `Str`.
 Each `Nat` can be stored in exactly 4 bytes, were a byte is eight bit.
-Strings use an incremental space consumption; this means that storing small strings would use only a little amount of memory (with 34 bytes being the minimum size; much more than the 4 bytes needed for a `Nat`.
+Strings use an incremental space consumption; this means that storing small strings would use only a little amount of memory (with 34 bytes being the minimum size; still much more than the 4 bytes needed for a `Nat`.
 
 On the other extreme, storing a single element of a string near to the maximum representable size would take about 2 GB (two giga bytes).
 2 GB is a large amount of memory, but nowadays we have computers with thousands of times more memory than that.
@@ -23,7 +23,7 @@ Big, but still not infinite. I mean, actually quite small,... we have many build
 Can we represent an actual infinite set of numbers?
 Of course we would not be able to actually store in memory numbers of any size; but we can represent numbers as big as our memory allows.
 Below, you can see an implementation for Peano numbers.
-Peano is a number representation where numbers are represented as a Zero or a Successor of another number.
+Peano is a number representation where numbers are represented as a **Zero** or a **Successor** of another number.
 We can encode Peano numbers in Fearless as follows:
 
 -------------------------*/@Test void peano1 () { run("""

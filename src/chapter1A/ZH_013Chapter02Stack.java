@@ -75,7 +75,7 @@ Zero: Number{
  }
 """); }/*--------------------------------------------
 We can use the stack in many different ways. Some usage examples below:
-- `Stack[Nat] + 1 + 2 + 3` is a stack of Nat. It contains `3`,`2`,`1`. Yes, in this order. `3` is the last element we inserted in the stack so it is the first element.
+- `Stack[Nat] + 1 + 2 + 3` is a stack of `Nat`. It contains `3`,`2`,`1`. Yes, in this order. `3` is the last element we inserted in the stack so it is the first element.
 - `Stack[Opt[Nat]] + {} + {} + ( Opt#(3) )` is a stack of `Opt[Nat]`. It contains the optional containing `3`, and then two empty optionals.
 - `Stack[Stack[Nat]] + {} + {} + ( Stack[Nat] + 3 )` is a stack of `Stack[Nat]`. It contains a stack with just the element `3`, and then two empty stacks.
 Note how we can use `{}` both for the empty stack and the empty optional. The inference recognizes that the method `Stack[T]+` takes an optional in one case and a stack in another. Thus it infers that `{}` is an empty optional or an empty stack depending on the surrounding code.
@@ -115,7 +115,7 @@ So, let start reducing it.
 3. `Stack[Nat]{.match(m) -> m.elem(2,Stack[Nat]{.match(m) -> m.elem(1,Stack[Nat]})} + 3`
 4. `Stack[Nat]{.match(m) -> m.elem(3,Stack[Nat]{.match(m) -> m.elem(2,Stack[Nat]{.match(m) -> m.elem(1,Stack[Nat]})})}`
 
-As you can see, this is quite hard to read.
+As you can see, this is **quite hard to read**.
 Arguably, `Stack[Nat] + 1 + 2 + 3` was much more clear.
 Visualizing reductions is great because if helps us to understand the semantic of the code. Geting stuck in the mud of redundant verbose value syntax would make visualizing reductions less useful.
 To better visualize this method execution we will use a symbolic representation for stacks.
@@ -203,10 +203,12 @@ With our compact stack representation, we can see the following reduction with b
 8. `[1,2,3,4,5,6]`
 
 This body represents someone strong enough to lift the whole first stack of chairs and to land it on the second one.
+
 You may wonder why
 `[2,3] ++ [4,5,6] + 1` reduces to
 `[3] ++ [4,5,6] + 2 + 1` and not to 
 `[3] ++ [4,5,6] + 1 + 2`.
+
 This is because the part that reduces is just `[2,3] ++ [4,5,6]`;
 the ending ` + 1` will stay at the end.
 That is, we replace `[2,3] ++ [4,5,6]` with `[3] ++ [4,5,6] + 2`
@@ -230,7 +232,8 @@ This represents more closely what a person could do if they had to merge two sta
 Note how this version produces a different ordering in the result.
 
 This is known in computer science as a `tail recursive algorithm`.
-Some older languages require tail recursive algorithms for optimization reasons. This is usually not a concern in Fearless. It is now quite early to discuss why and how this is not a problem in Fearless. This is just a way to clarify that we can avoid worrying about those ideas in a modern language like Fearless.
+Some older languages require tail recursive algorithms for optimization reasons. This is usually not a concern in Fearless. It is still early to discuss **why and how** this is not a problem. Now we just clarify that we can avoid worrying about those ideas in a modern language like Fearless.
+
 Note how if we explicitly pass the empty stack as the second argument, we can use it as an empty initial accumulator, and we get a reverse:
 `[1,2,3] ++ []` reduces to `[3,2,1]`
 
@@ -262,7 +265,7 @@ Consider this other alternative body: `other ++ (this + e)`
 Oh no! This version loops back to the original form. This means that this algorithm would go on reducing forever.
 Intuitively, this is the case because we are now forcing immediate recomposition of the stack we just decomposed:
 by doing `this + e` early, we go back to our original value, instead of slowly navigating toward the end stack.
-For the same reason, also this following other body variation would not terminate:  `this +e ++ other`
+For the same reason, also this following other body variation would not terminate:  `this + e ++ other`
 
 We have one last variation to consider:
 `other + e ++ this`

@@ -138,6 +138,7 @@ AliasingExample: {#: Num -> Block#
   }
 
 """); }/*--------------------------------------------
+
 Here we use a `Block` to declare two local paramters for animals.
 One is a `bunny` and the other one is the same animal (aliased) but called `mammal`.
 The crucial point here is that those two local parameter are the same `mut Animal`.

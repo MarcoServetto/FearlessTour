@@ -18,17 +18,17 @@ When we declare a method we abstract over values; consider when we declared meth
 ```
   -(other: Number): Number -> other._rightSub(this),
 ```
-We did this because writing `a - b` is much clearer than writing `b._rightSub(a)`.
-The method call `4._rightSub(10)` works on those two **concrete** values. The method body `other._rightSub(this)` works on all kinds of values of the right type. The exact values are abstracted away.
+We did this because writing `10 - 4` is much clearer than writing `4._rightSub(10)`.
+The method call `4._rightSub(10)` works on those two **concrete** values. The method body of `-` is `other._rightSub(this)` and works on all kinds of values of the right type. The exact values are abstracted away.
 
 We can read the method using the **forall** word as follows:
-Forall `this` and `other` subtraction returns `other._rightSub(this)`.
+Forall `this` and `other`, subtraction returns `other._rightSub(this)`.
 
 In real programming methods may end up quite long, and thus we can abstract quite a lot of code behind a small method call.
 We want to do this kind of abstraction to avoid having to repeat the method body over and over again in our program.
 
 We will now see **Generics**. While methods abstract over values,
-generic types abstract over types, and are specified in square parenthesis `[..]`.
+generics abstract over types, and are specified in square parenthesis `[..]`.
 
 Generics allows to encode decisions on arbitrary data. For example, consider the concept of `Fork`s in the road,where the road can choose to go either `Left` or `Right`.
 We could have a method `.choose` that took two parameters and returned either the one on the left or the one on the right.
@@ -41,7 +41,8 @@ Right: Fork{ l,r -> r }
 
 Here we see the generic type `[Val]`.
 We can read the above code as follows:
-`Fork` has a generic method `.choose` that forall types `Val` takes two arguments of type `Val` and returns a `Val`. Method `Fork.choose` is abstract.
+
+>`Fork` has a generic method `.choose` that forall types `Val` takes two arguments of type `Val` and returns a `Val`. Method `Fork.choose` is abstract.
 `Left` is a kind of `Fork` where the `.choose` method returns the first parameter.
 `Right` is a kind of `Fork` where the `.choose` method returns the second parameter.
 
@@ -53,9 +54,9 @@ Crucially, ``someFork.choose(`Hello`,`Hi`)``, where `someFork` is a parameter of
 The idea is that a method can return a decision by returning a `Fork`, and then the user of that method can use the decision to select a value between two.
 Of course, once we have forks we can nest them to select a value between three, for example: 
 ```
-getFirst.choose(`Option1`,  getSecond.choose(`Option2`, `Option3`)  )
+firstChoice.choose(`Option1`,  secondChoice.choose(`Option2`, `Option3`)  )
 ```
-where `getFirst` and `getSecond` are `Fork`s that we obtained somewhere.
+where `firstChoice` and `secondChoice` are `Fork`s that we obtained somewhere.
 Note how we need the generic type `Var` so that our `Fork` can work on any type:
 We can write ``someFork.choose(`Hello`,`Hi`)`` but also ``someFork.choose(1,5)``.
 However, ``someFork.choose(`Hello`,5)`` would be ill typed: there needs to be a type that can be used to instantiate `Var`.
@@ -123,7 +124,7 @@ Fork : {
   .chose[Type](leftVal: Type, rightVal: Type): Type,
   }
 ```
-And... that is exactly the syntax, and semantic, of generic methods: it is a way to declare an infinite amount of methods, all following a simple pattern, where the only thing that changes is the name of some types.
+And... that is exactly the syntax, and semantic, of generic methods: it is a way to declare an infinite amount of methods, all following a simple pattern, where the only thing that changes is  some types.
 
 
 #### Generic methods and generic types
@@ -161,7 +162,7 @@ The main difference is that instead of taking a `leftVal` and a `rightVal` param
 
 Type `LeftRight[Val]` is a generic type.
 
-In the same way, `LeftRight[LR]` is a generic type declaration.
+In the same way, `LeftRight[LR]:{ .left: LR, .right: LR }` is a generic type declaration.
 
 Before we have seen generic methods, as methods taking both type parameters and actual parameters. Alternatively, we can see generic methods as a way to define an infinite amount of concrete methods; one for each possible type instantiation.
 
@@ -174,7 +175,7 @@ As you can see, a single generic type declaration actually declares an infinite 
 
 While generic parameters are inferred for generic methods, they are always explicit for generic types.
 When at the start we declared `Direction:{.turn:Direction,}`
-thanks to the sugar we were actually declaring `Direction[]:{.turn[]():Direction,}`.
+thanks to the sugar we were actually declaring `Direction[]:{.turn[]():Direction[],}`.
 Again, empty parentheses can be omitted.
 
 We can now understand what is the meaning of 

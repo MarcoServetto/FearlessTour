@@ -32,7 +32,7 @@ This method uses the pythagorean theorem, but it is not ideal:
   - we duplicate code for `p1.x - (p2.x)` and `p1.y - (p2.y)`
   - all the code is in a single hard to read line.
 
-What if we want to have more bindings?
+What if we want to introduce more names?
 We can define a method on the fly and call it, as shown below:
 -------------------------*/@Test void distance2 () { run("""
 //OMIT_START
@@ -52,7 +52,7 @@ Theoretically, this new code achieves our goals, but most humans find this new v
 We think this is mostly because 
 1. The values for `diffX` and `diffY` are very far in the code from the declaration point of `diffX` and `diffX`.
 2. This new version is just much longer: we have to add the types for `diffX`, `diffY`, the method name `#` and the return type of such method.
-3. This version is only working for two new bindings defined at the same time. What if we wanted to give a name to the result before `.sqrt`?
+3. This version is only working for two new parameters defined at the same time. What if we wanted to give a name to the result before `.sqrt`?
 
 We first show how to solve those 3 issues in the core language, then we show a new form of syntactic sugar making this approach more readable.
 We can define a standard `Let` type allowing to define local parameters by generalising the idea of the code above:
@@ -183,7 +183,7 @@ In the code above, we call `diffX`, `diffY` and `res` local parameters, or **loc
 Local parameters are a staple of most programming language, but in Fearless they are represented 
 via syntactic sugar instead of being a core language feature.
 In other languages they are often known by one (or more) of the following names:
-local bindings, bindings, let-bindings, lets, local variables, variables.
+local bindings, bindings, let-bindings, lets, constants, local variables, (final) variables.
 
 END*/
 }

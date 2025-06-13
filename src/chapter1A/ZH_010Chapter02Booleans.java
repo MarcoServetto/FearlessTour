@@ -13,7 +13,7 @@ class ZH_010Chapter02Booleans {
 If you have done some logic in your school, you will be familiar with the concepts of `True`, `False`, `and`, `or` and `not`.
 
 Anyway, we are going to recall them now:
-In the same way we have only the four cardinal `Direction`, we only have two fundamental truth values: `True` and `False`. They are called the `Bool` or the booleans, in memory of George Boole, who laid the groundwork for what is now known as Boolean algebra.
+In the same way we have only the four cardinal `Direction`s, we only have two fundamental truth values: `True` and `False`. They are called the `Bool`s or the booleans, in memory of George Boole, who laid the groundwork for what is now known as Boolean algebra.
 We can easily encode booleans in Fearless as follows:
 -------------------------*/@Test void bool1 () { run("""
 //|OMIT_START
@@ -80,21 +80,21 @@ Booleans are present in the Fearless standard library, and the implementation fo
 #### Examples of reductions
 
 All of those lines reduce in a single step:
-- `True.not`        --> False` we execute `True.not`
-- `False.not`       --> True` we execute `True.not`
+- `True.not`        --> False` because `True.not` returns `False`
+- `False.not`       --> True`  because `True.not` returns `True`
 - `True.and(False)  --> False` because `True.and` returns `other`
 - `False.or(True)   --> True` because `False.or` returns `other`
 - `True.or(False)   --> True` because `True.or` returns `this`
 - `False.and(True)  --> False` because `False.and` returns `this`
 
-The code above shows that we can combine boolean to get more booleans. This is similar to what we have seen with `Nat` and `Rotation`. But the real power comes when we use them to make decisions: to execute different pieces of code depending on whether something is `True` or `False`. Crucially, Booleans are a better form of `Fork`.
+The code above shows that we can combine booleans to get more booleans. This is similar to what we have seen with `Nat` and `Rotation`. But the real power comes when we use them to make decisions: to execute different pieces of code depending on whether something is `True` or `False`. Crucially, Booleans are a better form of `Fork`.
 - There are two kinds of `Bool` in the same way there are two kinds of `Fork`,
 - We can compose `Bool`s with `.and`, `.or` and `.not`.
 - We can obtain `Bool`s from many other data types using `==` and `!=`.
 
 Can we add a concept of choice on our booleans, as we did for `Fork`?
 
-This is where the Generics we saw earlier becomes essential. We need a way to represent the two possible code paths (what to do if `True`, what to do if `False`) and the result they produce. Remember the `Fork` example where `.choose[Val]` worked with any type `Val`? We need something similar here. Let's define a method `Bool.if`, that can produce a result of any type, let's call that type `R`.
+This is where the Generics we saw earlier becomes essential. We need a way to represent the two possible code paths (what to do if `True`, what to do if `False`) and the result they produce. Remember the `Fork` example where `.choose[Val]` worked with any type `Val`? We need something similar here. Let's define a method `Bool.if`, that can produce a result of any type, let's call that type `R`, for Result.
 To provide the two code paths we need a container object. We can define a generic type called `ThenElse[R]`. The `[R]` is a type parameter, just like `[Val]` was in `Fork`. It stands for the Result type that both code paths must ultimately produce.
 
 -------------------------*/@Test void bool2 () { run("""
@@ -196,6 +196,13 @@ This nesting allows us to create more complex decision trees.
    ````
 
 4. ````
+  {
+    .then -> `hi...`,
+    .else -> ...
+    }.then
+   ````
+
+5. ````
    `hi, I'm Bot; how can I help you?`
    ````
 ---
@@ -223,19 +230,40 @@ This nesting allows us to create more complex decision trees.
        }
      }
    ````
+
 4. ````
+   {
+     .then -> `hi...`,
+     .else -> (`bye` == `bye`).if{
+       .then -> `goodbye!`,
+       .else -> `I don't understand`
+       }
+     }.else
+   ````
+
+5. ````
    (`bye` == `bye`).if{
      .then -> `goodbye!`,
      .else -> `I don't understand`
      }
    ````
-5. ````
+
+6. ````
    True.if{
      .then -> `goodbye!`,
      .else -> `I don't understand`
      }
    ````
-6. ````
+
+7. ````
+   {
+     .then -> `goodbye!`,
+     .else -> `I don't understand`
+     }.then
+   ````
+
+
+8. ````
    `goodbye!`
    ````
 ---
@@ -280,14 +308,18 @@ This nesting allows us to create more complex decision trees.
    `I don't understand`
    ````
 ---
+> You may have notice that in the last reduction we omitted the execution step with the body of the `.if`: the explicit call to `.then` or `.else`.
+We will do this more and more, skipping steps to make reductions more compact.
+Indeed, when showing the method `Str==`, used over and over in the examples before, we just reduced it to `True` or `False` in a single step, but the actual execution of `Str==` does involve many, many steps.
+
 As you can see from the example, the `.if` method directs the flow of execution.
 Generics ensure that the outcomes of different branches are type-compatible.
-Note how the generics are explicitly needed when defining the `.if` method but they are all inferred when using the `.if` method.
+Note how the generics are explicitly needed when **defining** the `.if` method but they are all inferred when **using** the `.if` method.
 
 This is where our journey of learning Fearless programming starts to intersecting with concepts common to most other programming languages.
 I still vividly remember the moment it struck me: every possible computation can be represented as just an enormous pile of ifs invoking each other. Mind blowing!
 
-But just because something can be done, doesn't mean it's the best approach. Solving problems by throwing a massive heap of binary decisions at them—like firing wildly with a machine gun—rarely leads to elegant, maintainable code. A program built this way quickly becomes brittle and hard to evolve. Soon, we'll explore specialized decision-making constructs, each tailored to different scenarios, and we'll learn to select the right tool for each job. 
+But just because something can be done, doesn't mean it's the best approach. Solving problems by throwing a massive heap of binary decisions at them (like firing wildly with a machine gun) rarely leads to elegant, maintainable code. A program built this way quickly becomes brittle and hard to evolve. Soon, we'll explore specialized decision-making constructs, each tailored to different scenarios, and we'll learn to select the right tool for each job. 
 
 But for now, let's pause to appreciate what we've accomplished. Understanding the `.if` is a big achievement.
 
@@ -297,7 +329,7 @@ But for now, let's pause to appreciate what we've accomplished. Understanding th
 Generics are very common in Fearless.
 
 Possibly the most important generic types in the Fearless standard library are the function types, that looks similar to the following:
-(there are some crucial differences that we will discuss later)
+(there are some minor differences that we will discuss later)
 -------------------------*/@Test void fun1 () { run("""
 //|OMIT_START
 package test
@@ -333,7 +365,7 @@ could be rewritten as
 Direction:{}
 //OMIT_END
 Tank: { .heading: Direction, .aiming: Direction }
-Tanks: F[Direction,Direction,Tank] { h,a-> { .heading->h, .aiming->a } }
+Tanks: F[Direction,Direction,Tank] { h,a -> { .heading -> h, .aiming -> a } }
 """); }/*--------------------------------------------
 This code is not just slightly shorter, but now `Tanks` is a valid element that can be passed to any method taking a generic `F[A,B,R]`.
 
@@ -352,8 +384,8 @@ As an example:
 We have seen how the `.and` and `.or` methods compute the overall result from two boolean expressions and then produce a cumulative result.
 However, in the case of `False .and ...` we do not need to compute the second expression. The result will be False anyway.
 Same for `True .or ...`. The result will be True anyway.
-If the computation for the second part of the .and / .or was very intricate; this could save a lot of time.
-We can define **short-circuited** versions for .and and .or, called && and || as shown below:
+If the computation for the second part of the `.and` / `.or` was very intricate this could save a lot of time.
+We can define **short-circuited** versions for `.and` and `.or`, called `&&` and `||` as shown below:
 
 
 -------------------------*/@Test void bool3 () { run("""
@@ -460,7 +492,7 @@ both versions would always run all the three computations.
 Note how `{Slow.code}` is an object Literal of type `F[Bool]`.
 The full version would be  :
 ```
-Anon[]:F[Bool]{ #[](): Bool[] -> Anon2[]:Slow[]{}.code[](), }
+Anon1[]:F[Bool] { #[](): Bool[] -> Anon2[]:Slow[]{}.code[](), }
 ```
 That is, since the method `F[Bool]#` has exactly zero arguments, we can omit both the method name # and the arrow -> when implementing it.
 
@@ -470,7 +502,7 @@ Tanks: F[Direction,Direction,Tank]{ h,a -> { .heading -> h, .aiming -> a } }
 ```
 to implement the method `F[Direction,Direction,Tank]#`.
 Note the presence of `->` after `h,a ->`.
-Since method `F[Bool]#` takes zero arguments, we can implement it with just `{Slow.code}` instead of having to awkwardly write `{-> Slow.code}`
+Since method `F[Bool]#` takes zero arguments, we implement it with just `{Slow.code}` instead of having to awkwardly write `{-> Slow.code}`
 
 Finally, consider again
 ```
@@ -488,7 +520,7 @@ Slow:{.code: Bool -> this.code, }
 The method call `Slow.code` reduces in one step to `Slow.code`, that reduces in itself again, and again, and again. This reduction never stops!
 Executing `Slow.code` would either never terminate or produce some kind of error.
 In that case, if `Much.code` reduces to `False`, the first line simply reduces to `False`, while the second line would either never terminate or produce an error.
-That is, while `Slow.code` never terminates, `{Slow.code}` is a value of type `F[Bool`. Non termination only happens when and if method `#` is called on that value.
+That is, while `Slow.code` never terminates, `{Slow.code}` is a value of type `F[Bool]`. Non termination only happens when and if method `#` is called on that value.
 
 In the rest of the guide we will see other situations where lazy and eager operations can have radically different behaviours. Overall, thinking that they are equivalent can be useful in first approximation, but can hurt us down the line.
 

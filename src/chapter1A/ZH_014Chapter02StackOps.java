@@ -179,9 +179,7 @@ Stack[T]: {
   }
 """); }/*--------------------------------------------
 
-Should you pause here, absorb every detail, and even commit this little snippet to memory?
-
-Absolutely yes.
+You should pause here, absorb every detail, and even commit this little snippet to memory.
 
 This compact piece of code is not just another programming example. Within it lies the distilled essence of the core ideas we've been exploring.
 
