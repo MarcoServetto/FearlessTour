@@ -22,7 +22,7 @@ This means that with the type `F` as we defined it before:
 ```
   F[R]:{ #: R }
   F[A,R]:{ #(a: A): R }
-  F[A,B,R]:{ #(a: A,b:B): R }
+  F[A,B,R]:{ #(a: A,b:B): R } //and a few more overloads
 ```
 Method `F#` can not capture `mut` and `read` parameters.
 
@@ -71,10 +71,10 @@ OrderHash[T,E]:{ .order(f: F[E,OrderHash[E]]): OrderHash[T] }
 Hasher:{ .. /*explained later*|/}
 ToImm[T]:{ read .imm: T }
 ````
-Method `HasStr.str` represents an object as a string.
-Method `HasInfo.info` represents an object in a structured data format (similar to JSON) useful for communication across programs.
-Type `OrderHash[T]` provides hashing and comparisions methods to a type `T` extending it. Objects extending `OrderHash[T]` can easly be organized in efficient data structures.
-Method `HasImm[T].imm` converts an object of any reference capabilities into an immutable version of the same object. For objects that can only ever be immutable, this method simply returns the object itself.
+Method `ToStr.str` represents an object as a string.
+Method `ToInfo.info` represents an object in a structured data format (similar to JSON) useful for communication across programs.
+Type `OrderHash[T]` provides hashing and comparisons methods to a type `T` extending it. Objects extending `OrderHash[T]` can easily be organised in efficient data structures.
+Method `ToImm[T].imm` converts an object of any reference capabilities into an immutable version of the same object. For objects that can only ever be immutable, this method simply returns the object itself.
 
 Note how many of those types have a generic variant, like `ToStr` and `ToStr[T]`. As we will see later, this is because for generic containers we need a way to convert the contained objects to be able to convert the container itself.
 
@@ -162,7 +162,7 @@ OptMatch[T:*, R:**]: {
 This is what gives the most flexibility to the user.
 If the user needs an `imm Opt[T]`, promotion can be transparently used.
 
-Also Opt Match is pretty much what we would expect.
+Also `OptMatch` is pretty much what we would expect.
 Note how the two methods `.some` and `.empty` takes a `mut` receiver.
 We are not requiring the optional to be `mut`. This is about the `OptMatch` object that is usually
 created in order to call the `.match` method.
@@ -201,8 +201,8 @@ Opt[T:*]: _Opt[T], Sealed, ToStr[T], ToInfo[T], OrderHash[Opt[T],T]{
   }
 ````
 Via `T:*`, `Opt` works for `imm,read,mut` references.
-`_Opt[T]` is used to separate the type signatures from the method implementations. It is a common pattern in Fearless code; it helps to focus on the behaviours and the types separatly,
-and, as we will show while discussing `_Opt[T]`, it avoids a lot of repeated code.
+`_Opt[T]` is used to separate the type signatures from the method implementations. It is a common pattern in Fearless code; it helps to focus on the behaviours and the types separately.
+As we will show while discussing `_Opt[T]`, it also avoids a lot of repeated code.
 
 In addition to `.match`, the full `Opt[T]` supports other useful methods.
 
@@ -230,7 +230,7 @@ The method `.as` is used to change the type of the optional, taking a function t
 Finally, methods  `.ifSome` and `.ifEmpty` execute some `Void` returning computation in case the optional has a value or not.
 
 To make optionals integrate with other standard library conventions, we have a
-.str method, allowing to easly turn optional of anything implementing `ToStr` into a string.
+`.str` method, allowing to easily turn optional of anything implementing `ToStr` into a string.
 For example
 `myOptPerson.str{::}` will convert the optional person into a string,
 assuming the person implements `ToStr`.

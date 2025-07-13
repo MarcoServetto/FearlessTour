@@ -23,9 +23,9 @@ Moreover, certain operations simply can not be done in the language directly.
 All that we discussed lives in the world of the language itself. If we want our code to have any impact at all on the world outside of the program itself, we need something more. 
 
 For example, no matter how many generics, types and methods we write from scratch, we will not be able to draw an image on the screen, or to save a file, or to read information from the internet.
-Those are examples of external side effects.
+Those are examples of **external side effects**.
 
-Similarly, there are a few cases where we want to modify the behaviour of our code itself. This is possible using internal side effects.
+Similarly, there are a few cases where we want to modify the behaviour of our code itself. This is possible using **internal side effects**.
 
 We call **Magic methods** the methods from the standard library giving direct access to operations that would not be possible in plain Fearless.
 
@@ -39,8 +39,8 @@ alias base.Magic as Magic
 //OMIT_END
 Void:{}
 Var[E: imm,mut,read]:{
-  mut .set(v: E): Void -> Magic!,
-  mut .get: E,
+  mut  .set(v: E): Void -> Magic!,
+  mut  .get: E,
   read .get: read/imm E,
   }
 Vars: {
@@ -119,11 +119,11 @@ Animals: {
 Now that we have mutation, we can have aliasing.
 Aliasing is both the best feature of mutation, and the very reason mutation needs to be kept under control.
 Aliasing is like a nuclear power plant:
-- Very powerful 
-- Very dangerous if misused
-- Some people are very vocal against it
-- What happens inside feels like (dark) magic
-- Working with it requires a great level of competence
+- Very powerful.
+- Very dangerous if misused.
+- Some people are very vocal against it.
+- What happens inside feels like (dark) magic.
+- Working with it requires a great level of competence.
 
 Using aliasing in the appropriate way can make our code much more efficient, and in some conditions even easier to read and understand.
 However, when aliasing and mutation are misused or run outside of our control, the code will behave in ways that most humans find very hard to predict.

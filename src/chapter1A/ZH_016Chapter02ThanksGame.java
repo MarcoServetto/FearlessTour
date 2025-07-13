@@ -142,8 +142,14 @@ Method `.moveIfFree` uses a `.notIn` and `.if`:
 if the moved tank would not be in an occupied position, we return the moved tank; otherwise we return the original tank.
 
 In the code above, there is a subtle logical bug. Can you find it?
-- Hint 1: This bug makes so that no tank will ever move
+- Hint 1: This bug makes so that no tank will ever move.
 - Hint 2: We collect the occupied positions for all Tanks.
+
+**Solution coming soon**
+
+**Solution coming soon**
+
+**Solution coming soon**
 
 **Solution coming soon**
 
@@ -197,7 +203,7 @@ NextState: F[Stack[Tank],Stack[Tank]]{
 //OMIT_END
   .moveIfFree(t: Tank, occupied: Stack[Point]): Tank -> 
     this.countHits(t,occupied) == 1
-      .match { .true-> t.move, .false-> t, }, //arguably more readable than if/then/else?
+      .match { .true-> t.move, .false-> t, }, //alternative to if/then/else
 
   .countHits(t: Tank, occupied: Stack[Point]): Tank -> occupied.fold(0, {acc, p ->
     t.move.position == p .if{ .then 1, .else 0,} + acc 
@@ -238,6 +244,7 @@ Alternatively, we can look at those two ways to implement `.moveIfFree` and real
 - it is useful independently
 - it allows us to simplify the method `.moveIfFree` quite a lot.
 - probably, there are a lot of other methods like `.moveIfFree`, that are easier to define if we have `.size`.
+
 Those are iconic features of good abstractions!
 
 #### Reflecting on our progress
