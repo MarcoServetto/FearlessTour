@@ -61,9 +61,9 @@ Do not worry, we are going to discuss all those types in details later!
 
 ````
 ToStr:{ read .str: Str }
-ToStr[T]:{ read .str(f: F[T,Str]): Str }
+ToStr[A]:{ read .str(f: F[A,ToStr]): Str }
 ToInfo:{ read .info: Info }
-ToInfo[T]:{ read .info(f: F[T,Info]): Info }
+ToInfo[A]:{ read .info(f: F[A,ToInfo]): Info }
 Info:{ /*explained later; exposes information for communicating across programs*|/ }
 Order[T]:{ .. /*explained later; provides methods ==, !=, <=, >= etc*|/ }
 OrderHash[T]:Order[T]{ .hash(h:Hasher): Nat }

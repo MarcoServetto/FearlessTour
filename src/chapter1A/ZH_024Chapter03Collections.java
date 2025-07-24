@@ -85,12 +85,12 @@ But, what makes something the best? We can use the `.fold` method and accumulate
 Person:{ .name:Str, .cats: List[Cat], }
 Cat:{ .name: Str, }
 ...
-Nicer :{ #(bob: Person, ps: List[Person]): Person->ps.flow
-  .fold(bob, {acc, p -> 
-    p.cats.size >= (bob.cats.size) .if {.then->p, .else->bob,  } 
+Nicer :{ #(owner: Person, ps: List[Person]): Person->ps.flow
+  .fold(owner, {acc, p -> 
+    p.cats.size >= (acc.cats.size) .if {.then->p, .else->acc,  } 
   }}
 ```
-The .fold works pretty much in the same way of the .fold method we have seen on the stack.
+The `.fold` works pretty much in the same way of the `.fold` method we have seen on the stack.
 The method takes two parameters: an initial value and a lambda accumulating elements on that value.
 
 ## Methods `.any`, `.all`, `.none`
@@ -105,7 +105,7 @@ Sad :{ #(ps: List[Person]): Bool -> ps.flow.any{::cats.isEmpty  } }
 The `.any` checks if any of the elements satisfy the predicate `{::cats.isEmpty}`.
 That is, the predicate is just a function returning a boolean.
 Here we are searching if there is a person that sadly lacks cats.
-This operation does not mindlessly search all the persons, as soon as the first catless person is found, we have our answer and we can return a result without any more searching.
+This operation does not mindlessly search all the persons: as soon as the first catless person is found, we have our answer and we can return a result without any more searching.
 Similarly, `.none` is true only if none of the elements respect the predicate.
 Method `.all` instead checks that all of the elements respect the predicate, and it stops when it finds an element that does not.
 
@@ -124,25 +124,26 @@ A Fearless method can indicate failure by throwing an error.
 Errors are not part of the basic semantic of Fearless, and they can be thrown using magic methods or convenience methods using magic methods internally.
 For example, the method `Error.msg(Str)` will throw an error using that string as an error message, plus some more debugging information.
 When a method throws an error the computation stops and the error is reported outside of the program. That is, the whole Fearless application stops and burns.
-This is often undesirable, thus this behaviour can be overridden using 
+This is often the desired behaviour, especially when debugging.
+However, this behaviour can be overridden using 
 `Try#{ ../*code that can fail*|/.. }`. We will discuss the details of Try later, and for now we will assume all errors to simply obliterate the running code.
 
 # Core List methods for Random Access: .size, .isEmpty and .get
 
-With our home made Stack, the only way to compute the amount of elements in the stack is to explore the whole stack and manually count the elements one by one.
+With our home made `Stack[E]`, the only way to compute the amount of elements in the stack is to explore the whole stack and manually count the elements one by one.
 Lists offers a method `List[E].size` that can return the number of elements in the list without the need of counting them. The size information is simply stored directly. For convenience, there is also a method `isEmpty` equivalent to calling `myList.size==0`.
 
 The method `List.get(i: Nat)` either returns the element in index `i` or uses `Error.msg(..)` to report the lookup failure.
 This is particularly convenient for many applications if you can tolerate the continuous risk of failure.
 Flow operations are especially effective when the exact positions of the elements in the list are not crucial.
-However, when elements are arranged in a specific sequence, accessing them via index becomes essential. In a list, indexing starts from zero and ends at size -1. Thus, in a list of 5 elements, the indices are as follows:
-- The first element is at index 0,
-- The second at index 1,
-- The third at index 2,
-- The fourth at index 3,
-- The fifth and last at index 4.
+However, when elements are arranged in a specific sequence, accessing them via index becomes essential. In a list, indexing starts from `0` and ends at `size - 1`. Thus, in a list of `5` elements, the indices are as follows:
+- The first element is at index `0`,
+- The second at index `1`,
+- The third at index `2`,
+- The fourth at index `3`,
+- The fifth and last at index `4`.
 
-This zero-based indexing system has beneficial mathematical properties. For example, it allows a single list to efficiently emulate a grid structure. Consider a 3x5 grid as depicted below, where `x` ranges from 0 to 4 (columns) and `y` from 0 to 2 (rows). Each cell `(x, y)` corresponds to the **single index** `index = y * 5 + x` in a flat list of length 15:
+This zero-based indexing system has beneficial mathematical properties. For example, it allows a single list to efficiently emulate a grid structure. Consider a 3x5 grid as depicted below, where `x` ranges from `0` to `4` (columns) and `y` from `0` to `2` (rows). Each cell `x, y` corresponds to the **single index** `y * 5 + x` in a flat list of length `15`:
 
 
 ```
@@ -151,7 +152,7 @@ This zero-based indexing system has beneficial mathematical properties. For exam
  0,1 | 1,1 | 2,1 | 3,1 | 4,1  -->   5 |  6 |  7 |  8 |  9
  0,2 | 1,2 | 2,2 | 3,2 | 4,2  -->  10 | 11 | 12 | 13 | 14 
 ```
-This grid shows how a two-dimensional coordinate system (x, y) can be flattened into a single list index. For example, (3, 1) maps to index 8, since it’s the 4th element in the 2nd row of a 5-column grid.
+This grid shows how a two-dimensional coordinate system `x, y` can be flattened into a single list index. For example, `3, 1` maps to index `8`, since it’s the 4th element in the 2nd row of a 5-column grid.
 
 That is, we can encode this grid in a single list.
 The element in position `x, y` can be accessed using the formula
@@ -189,12 +190,12 @@ That is, the following three expressions are equivalent:
 
 While method `List[E].as` mostly behaves as `.flow.map.list`, the compiler can optimise it to run faster in a few crucial cases.
 
-# Lists and mutability.
+# Lists and mutability
 Stacks as shown before are always immutable, while lists support both mutable and immutable elements.
 Note how there are now two reference capabilities in play:
 the capability of the list and the capability of the elements. This gives us a range of possible list types.
 
-Clear and useful options:
+**Clear and useful options:**
 
 
 - `List[Num]` is an immutable list of immutable numbers. It can also be written as `imm List[imm Num]` since `imm` is the default.
@@ -207,7 +208,8 @@ Using `.get` we can obtain `mut` references to the contained animals and mutate 
 If we have a binding `animals` containing `[bunny,bunny]`; that is, the same bunny twice, we can call `animals.get(0).run` and the bunny will mutate; it will now be in a new position. Since the same bunny is contained in the list twice, `animals.get(1).location` will also result in the same updated location.
 You can think of it as a hard container of soft elements, for example a table with soft and malleable clay sculptures on top.
 
-Unclear and confusing options:
+**Unclear and confusing options:**
+
 In addition to the two options above, there are a few other permutations. Those should not be used in actual programs, since better more clear types are available.
 
 - `mut List[Num]` is a list of immutable numbers. Here the fact that the list is mutable does not have any effect, since the contained numbers are immutable anyway. Types like this may emerge when using generics:
@@ -243,8 +245,6 @@ We need to instead wrap the `1` in a singleton list, as shown above.
 
 Finally, we can use `.subList(start,end)` to get a sub part of a list. Method `.subList` does not clone the list, but creates a minimal wrapper object referring to the transformed indexes; thus using `.subList` on a very, very long list is still a cheap operation.
 
-Note that methods `+`, `++` and `.subList` are all designed to work with immutable lists only.
-
 # List and withers: `.with`, `.without`, `.withAlso`
 Suppose we have a list of 10 tanks, and we want to insert a new tank in the middle.
 We could do `tanks.sublist(0,5)+ newTank++tanks.sublist(5,10)`, but it is verbose and counter intuitive.
@@ -268,17 +268,55 @@ Sometimes `UList[E]` is used as a builder/accumulator to eventually create a Lis
 > In this way Maps/sets that are just `.flow` around, will be as fast as lists. 
 > Issue: how to remove duplicates without making the hash table
 
-The standard library makes it easy to add comparison operations like `==`, `!=`, `<=` and so on using the types `Order` and `Comparator`, as shown below.
+
+The standard library provides a simple way to define and combine ordering operations (`<`, `<=`, `==`, `!=`, `>=`, `>`) through the types `Order` and `Comparator`.
+
+#### Understanding Order
+
+The type Order represents the outcome of a comparison between two elements:
+
 ```
 Order:Sealed{
   .match[R:**](m: OrderMatch[R]): R,
-  &&(o: read F[Order]): Order -> this,//very confusing
+  &&(o: read F[Order]): Order -> this,
   }
 OrderMatch[R:**]: { .lt: R, .eq: R, .gt: R }
 OrderLt:Order{::lt }
 OrderEq:Order{.match(m) -> m.eq, &&(o)-> o# }
 OrderGt:Order{::gt }
+```
 
+An instance of `Order` can be one of:
+
+- `OrderLt`: indicating the first value is smaller than the second.
+- `OrderEq`: indicating both values are equal.
+- `OrderGt`: indicating the first value is greater than the second.
+
+##### Combining Multiple Criteria
+
+Often, we want to compare entities based on multiple criteria. For example, imagine we prefer faster cars, and if two cars are equally fast, we prefer the red one.
+
+The method `Order&&` lets us combine these two criteria easily:
+
+```
+// Speed#(carA, carB) returns:
+//   - OrderLt if carA is slower than carB
+//   - OrderGt if carA is faster than carB
+//   - OrderEq if both cars have equal speed
+// ColorPreference#(carA, carB) returns:
+//   - OrderGt if carA is red and carB is not
+//   - OrderLt if carB is red and carA is not
+//   - OrderEq if both are red or neither is red
+
+Speed#(carA, carB) && { ColorPreference#(carA, carB) }
+```
+In this example:
+If the two cars differ in speed, the faster car is preferred.
+Only if both cars have the same speed, the color preference is considered to determine which one is better.
+It is common to compare entities using multiple criteria as shown above. The method `Order&&` combines two ordering results lexicographically, similar to sorting by multiple columns.
+
+#### Understanding `Order[T]` and `Comparator[T]`
+```
 Order[T]: {
   <=>(other: T): Order //only abstract method for this < other, this == other, this > other
    ==(other: T): Bool -> this <=> other .match{ .lt->False, .eq->True, .gt->False},
@@ -299,26 +337,23 @@ A type `T` can implement `Order[T]` to make itself ordered. Alternatively, we ca
 The `Comparator[T]` type extends function `F[T,T,Order]`, but also function `F[T,Order[T]]`.
 The idea is that an `Order[T]` is just a comparator that knows the first element to compare.
 In this way when we require to compare elements of type `T`, we can just require a `F[T,Order[T]]`, and if `T` is ordered, we can just pass the identity function `{::}`; otherwise we can write a comparator by hand doing `Comparator[T]{a,b->...}`.
+
 To make this more clear: methods needing to compare elements will often require a `F[T,Order[T]]`.
 If our actual `T` implements order, we can simply pass `{::}`; inference will expand it to `Anon:F[T,Order[T]]{x->x}`.
 In the code examples below we will see a lot of `{::}` and they all expand in this way.
 
-`Order` and `Comparator[T]` support method `&&` to facilitate ordering on multiple criteria.
-For example, if we prefer fast cars, and we like them red if they are equally fast, we can first compare cars using their speed, and then if the speed ordering gets `OrderingEq`, we may want to run an ordering on the colour.
-
 As you can see, by implementing `Order[T]` we get a lot of utility methods to check for equality and ordering.
-
-Below we show how to make a Comparator comparing two persons by age and then by age and name size.
+Method `Comparator[T]&&` works like `Order&&`, to facilitate ordering on multiple criteria, but it is more common to use `Order&&` as shown below, where we make a comparator comparing two persons by age and then by age and name size.
 ```
 Persons:{#(name:Str, age:Nat):Person -> Person{.name: Str -> name,  .age: Nat -> age }}
 Older:Comparator[Person]{ p1,p2 -> p1.age <=> (p2.age) }
-OlderLonger:Comparator[Person]{ p1,p2 -> p1.age <=> (p2.age) && {p.name.size <=> (p2.name.size)} }
+OlderLonger:Comparator[Person]{ p1,p2 -> p1.age <=> (p2.age) && {p1.name.size <=> (p2.name.size)} }
 ```
 
 It is often the case that to compare elements we can reuse and compose existing comparators.
 Below we can see the Comparators factory, supporting just that.
 ```
-Comparators:{//Is this really useful? -is this used somewhere?
+Comparators:{
   #[T](o: F[T, Order[T]]): Comparator[T] ->
     {t1,t2->o#(t1)<=>(t2)},
 
@@ -341,7 +376,7 @@ Comparators#({::name},{::},  {::age},{::})
 Comparator[Person]{p1,p2 -> p1.name <=> (p2.name)} && {p1,p2 -> p1.age && (p2.age)}
 ```
 
-Below we show how to implement Order[T] for Person.
+Below we show how to implement `Order[T]` for Person.
 ```
 Persons:{#(name:Str, age:Num):Person -> Person:Order[Person]{
   .name: Str -> name,
@@ -349,20 +384,23 @@ Persons:{#(name:Str, age:Num):Person -> Person:Order[Person]{
   <=>(other)->this.age <=> (other.age) && {this.name <=> (other.name)},
   }}
 ```
-As you can see, we use && to combine orderings.
-We could instead use Comparators 
+As you can see, we use `Order&&` to combine orderings.
+We could instead use `Comparators`
 ```
-<=>(other)->Comparators#({::age},{::},  {::name},{::})#(this,other),//using comparator
+<=>(other)->Comparators#({::age},{::},  {::name},{::})#(this,other),
 ```
-As you can see, in this case it is not much more compact.
-We can pass {::} as the even parameters because both Num and Str implement Order.
+We can pass `{::}` because both `Num` and `Str` implement `Order[T]`.
+
+As you can see, in this case it is not much more compact, but there are situations where having the comparator object itself is crucial.
 
 ### Comparators and Flows: `.max`, `.min`, `.sort` and `.distinct`
 
 `Flow[E]` offers methods `.max`, and `.min` to find the biggest and smallest element `E`.
-Finding the max from some elements is not as obvious as it looks: there are two main corner cases:
-The flow may be empty. In this case, there is no such thing as a biggest/smallest element.
-The flow can contain multiple elements that are equally the biggest/smallest.
+Finding the max from some elements is not as obvious as it looks; there are two main corner cases:
+
+- The flow may be empty. In this case, there is no such thing as a biggest/smallest element.
+- The flow can contain multiple elements that are equally the biggest/smallest.
+
 Given this, the best design for `.max` and `.min` is to work as filters, and just remove all the elements that are not the max or the min.
 In this way, the empty flow would stay empty, and all the biggest/smallest elements would be preserved.
 There are many overloads of the methods `.max` and `.min`, mimicking the parameters and behaviour of `Comparators`.
@@ -402,55 +440,55 @@ Flows also offer method `.distinct` to remove duplicates. Again it takes the sam
 
 Hash maps (or hash tables) are one of the most popular data structures in programming.
 They are a data structure that stores key-element pairs, allowing for fast retrieval of elements based on keys. It uses a hash function to compute an index (or "hash") from each key, which determines where the element is stored in a large private list. This allows for nearly constant-time complexity for lookups.
-Fearless `Map[K,E]` is a hashmap. We have already seen that stacks and lists contain elements. Maps also contain elements, but connected to keys. Maps are a way to link keys to values, similar to how a dictionary associates words with definitions. For example, a map could link a person's name (the key) to their phone number (the element).
+Fearless `Map[K,E]` is a hashmap. We have already seen that stacks and lists contain elements. Maps also contain elements, but connected to keys. Maps are a way to link keys to elements, similar to how a dictionary associates words with definitions. For example, a map could link a person's name (the key) to their phone number (the element).
 
 It’s no coincidence that we have both a `Map[K,E]` type and a `Flow[E].map` method.
 They both represent the idea of connecting one kind of value with another kind.
-The .map method transforms a value representing the input of one stage of a computation into a value representing the output of such computation.
+The `.map` method transforms a value representing the input of one stage of a computation into a value representing the output of such computation.
 In a similar way, the `Map[K,E]` type holds a mapping between keys and elements, connecting distinct pieces of data.
 
-As mentioned, `Map[K,E]` needs a hash function for the key `K`. The `OrderHash[T].hash` method plays this role by computing a numeric "summary" of an object. Although it's impossible for a hash function to uniquely identify each distinct object due to the infinite number of possible objects and the finite number of Nat values, a well-designed hash function approximates this by minimising situations where distinct objects have the same hash value. Objects are considered distinct if the `==` operation returns false.
+As mentioned, `Map[K,E]` needs a hash function for the key `K`. The `OrderHash[T].hash` method plays this role by computing a numeric summary of an object. Although it's impossible for a hash function to uniquely identify each distinct object due to the infinite number of possible objects and the finite number of `Nat` values, a well-designed hash function approximates this by minimising situations where distinct objects have the same hash value. Objects are considered distinct if the `==` operation returns `False`.
 Two objects that are equal via `==` must have the same hash value. This consistency is required for the map to work correctly.
 Implementing the `.hash` method by returning zero is inefficient but technically correct: since all objects will have the same hash code, all equal objects will also trivially have the same hash code.
 The map attempts to use the hash code as a fast screening test to quickly differentiate objects, and uses the slower `==` only when needed.
 The default zero `.hash` method de facto disables this crucial optimisation. Instead, a good hash function spreads out objects evenly across the Nat numbers  to maximise the efficiency of the map operations.
 Having the `.hash` method within the `OrderHash[T]` type helps maintain alignment between the behaviours of hashing and equality. By encapsulating both within the same type, it simplifies the enforcement of the principle that equal objects must have identical hash codes, thereby supporting more predictable and reliable map behaviour.
 
-Below we show how we can use the `Hasher` type to define a good `.hash` method for Person.
+Below we show how we can use the `Hasher` type to define a good `.hash` method for `Person`.
 > Nick: still does not like this java-style hash but lets move on for now (something something mut Summeriser[T])
 ```
-OrderHash[T]:Order[T]{ .hash(h:Hasher): Nat }
-Hasher:{
+OrderHash[T]: Order[T]{ .hash(h: Hasher): Nat }
+Hasher: {
   #[A,B](a: OrderHash[A], b: OrderHash[B]): Nat -> a.hash(this) * 31 + (b.hash(this)),
   #[A,B,C](a: OrderHash[A], b: OrderHash[B], c: OrderHash[C]): Nat -> ...,
   ...//more overloads to compose more values
-  .nat(v:Nat):Nat->..,
-  .int(v:Int):Nat->..,
-  .sStr(v:Str):Nat->..,
+  .nat(v: Nat): Nat->..,
+  .int(v: Int): Nat->..,
+  .sStr(v: Str): Nat->..,
   ...//more methods for directly hashable types
-  .list[E](l:List[E],F[E,OrderHash[E]])->..,
-  .opt[E](o:Opt[E],F[E,OrderHash[E]])->..,
+  .list[E](l: List[E], f: F[E,OrderHash[E]])->..,
+  .opt[E](o: Opt[E], f: F[E,OrderHash[E]])->..,
   ..//more methods for collections
   }
 //usage
-Persons:{#(name:Str, age:Num):Person -> Person:OrderHash[Person]{
+Persons: { #(name: Str, age: Num):Person -> Person: OrderHash[Person]{
   .name: Str -> name,
-  .age: Nat -> age,
-  <=>(other)->this.age<=>(other.age) && {this.name<=>(other.name)},
-  .hash(h)->h#(this.age,this.name),//just list the relevant components
+  .age: Nat  -> age,
+  <=>(other) -> this.age <=> (other.age) && { this.name <=> (other.name) },
+  .hash(h)   -> h#(this.age, this.name),//just list the relevant components
   }
 }
 ```
-With such a person type, we can define a Map from persons to address:
+With such a `Person` type, we can define a map from persons to address:
 
 ```
-Maps#({::},   // this is expanded as F[Person,OrderHash[Person]]{x->x}
+Maps#({::},   // this {::} is expanded as F[Person,OrderHash[Person]]{x->x}
   Persons#(`Bob`,25),`Toronto 34b Warden St.`,
   Persons#(`Alice`,34),`Wellington 134 Kelburn parade`,
   ...
   )
 ```
-As you can see, maps take functions to get the order and the hash.
+As you can see, maps take functions to get the `OrderHash[K]`.
 `Map[K,E]` has many operations, similarly to `List[E]`.
 We have `.size`, `.isEmpty` and `.get`.
 However, `.get` does not take an index of type `Nat` but a key of type `K`.
@@ -477,12 +515,12 @@ will return ```List#('BobToronto 34b Warden St.','AliceWellington 134 Kelburn pa
 
 Note how the order of the flow is the same as the insertion order.
 
-We can also create a map from a flow, using method .keyElem as shown below:
+We can also create a map from a flow, using method `.mapping` as shown below:
 ```
 myPersons.flow
-  .map{..}  //.fmap
+  .map{..}
   .filter{..}
-  .keyElem({::},{//.mapping ? .hash?  .dict? intoMap? just .map/2 vs .map/1
+  .mapping({::},{
     .key(e)->e.name,
     .elem(e)->e,
     })
@@ -510,16 +548,24 @@ In the same way there is an `UList[E]` type that is an updatable variant of `Lis
 
 ### List, Opt and ordering.
 
-Finally, `List[E]` and `Opt[E]` do not implement Order or OrderHash.
+Finally, `List[E]` and `Opt[E]` do not implement `Order[E]` or `OrderHash[E]`.
 They do not need to and they may not contain ordered elements.
-However, Order is quite useful.
 If I want to sort a list of ordered elements I can do
 myList.flow
   .sort{::}
   .list
 
-How to sort a list of lists?
-We can use the method `List[E].order`, that takes a function from `E` to `Order[E]`. That is, if myList is a `List[List[E]]` and `E` implements `Order[E]` or `OrderHash[E]`, we can simply write:
+However, how to sort a list of lists?
+#### Introducing `OrderHash[T,E]`.
+To order a collection we need to reason on two generic types:
+- The type of the current collection `T`.
+- The type of the collection elements `E`.
+```
+OrderHash[T,E]:{ .order(f: F[E,OrderHash[E]]): OrderHash[T] }
+```
+The type `OrderHash[T,E]` does not order the collection directly, but can create an order for that collection if we provide a function ordering the collection elements.
+`List[E]`, `Map[K,E]` and `Opt[E]` implement `OrderHash[List[E],E]`, `OrderHash[Map[K,E],E]`, and `OrderHash[Opt[E],E]`.
+Thus, we can use the method `List[E].order`, taking a function from `E` to `Order[E]`. That is, if myList is a `List[List[E]]` and `E` implements `Order[E]` or `OrderHash[E]`, we can simply write:
 ```
 myList.flow
   .sort{::order{::}}
@@ -527,14 +573,23 @@ myList.flow
 ```
 The same exact code would work for a `List[Opt[E]]`.
 
-`Set[E]` knows how to order its keys, so `Set[E]` implements `OrderHash[E]`.
-A map knows how to order the keys, but not the elements, so also map offers method `.order`.
+`Set[E]` knows how to order its keys, so `Set[E]` implements `OrderHash[E]` directly.
+On the other side, a map knows how to order the keys, but not the elements; thus falling in the same group of `List[E]` and `Opt[E]`.
 
 This is similar to how all of those types can be converted into strings:
+```
+ToStr:{ read .str: Str }
+ToStr[A]:{ read .str(f: F[A,Str]): Str }
+ToStr[A,B]:{ read .str(fa: F[A,ToStr], fb: F[B,ToStr]): Str }
+ToStr[A,B,C]:{ read .str(fa: F[A,ToStr], fb: F[B,ToStr], fc: F[C,ToStr]): Str }
+...
+```
+Non generic types can implement `ToStr`, while generic types may implement `ToStr[A]`, `ToStr[A,B]` etc.
 You just need to provide a function from `E` to `ToStr`.
+
 `myList.str{::}` will work if myList is of type `List[E]` and `E` implements `ToStr`. If myList is of type `List[List[E]]` we would need to write
-`myList.sStr{::str{::}}`.
-Overall, this is similar to how `.as` works for nested lists.
+`myList.str{::str{::}}`.
+Overall, this is also similar to how `.as` works for nested lists.
 
 > Note UList should start with a Num current size AND should allow for 'holes', so .get
 > can give exception in the middle of present items.
