@@ -9,7 +9,7 @@ Constantly connect new concepts back to the goal of organizing thoughts and mode
 
 Chapter 2: Generic Types (Major Concept - Needs Care)
 
-Motivation: Start with the problem. "Imagine we want a way to choose between two anythings – maybe two Strs, or two Ints, or two Tanks. We could write .chooseInt, .chooseStr, .chooseTank, but that's repetitive (remember avoiding repetition?). We need a way to write .choose once so it works for any type."
+Motivation: Start with the problem. "Imagine we want a way to choose between two anythings - maybe two Strs, or two Ints, or two Tanks. We could write .chooseInt, .chooseStr, .chooseTank, but that's repetitive (remember avoiding repetition?). We need a way to write .choose once so it works for any type."
 
 Introduce [Val]: Explain it clearly: "[Val] here is a type parameter. It's like a placeholder where you can plug in any specific type (Str, Int, Tank) when you use the method. Val itself isn't a concrete type; it stands for 'whatever type the user provides'."
 
@@ -47,13 +47,13 @@ Rewriting Tanks: Show the original and F[...] versions side-by-side. Explain the
 
 Delayed Computation (&&, ||): This is a crucial application.
 
-Explain the "short-circuiting" problem with .and/.or first: "What if calculating the second boolean is very slow, or even impossible? With .and, we always calculate both. But logically, if the first part of an 'and' is False, the whole thing must be False – we don't need the second part."
+Explain the "short-circuiting" problem with .and/.or first: "What if calculating the second boolean is very slow, or even impossible? With .and, we always calculate both. But logically, if the first part of an 'and' is False, the whole thing must be False - we don't need the second part."
 
 Introduce &&/|| taking F[Bool]. Explain why F[Bool] is used: "It takes an object that knows how to compute the boolean ({ Slow.code }), but doesn't compute it until its # method is called."
 
 The example code is good.
 
-The non-termination example is excellent for showing the semantic difference between eager (.and) and lazy (&&). Emphasize this difference clearly. Acknowledge the multi-level abstraction point – it's insightful.
+The non-termination example is excellent for showing the semantic difference between eager (.and) and lazy (&&). Emphasize this difference clearly. Acknowledge the multi-level abstraction point - it's insightful.
 
 Optional (Good)
 
@@ -101,7 +101,7 @@ fold: Introduce it as the general pattern. Explain start and f. Show how .sum an
 
 map: Introduce the motivation (apply an operation to each element). Show the match-based version first (add5), then introduce .map as the abstraction.
 
-Fluent Programming: The ExampleFluent example is perfect. Explain the term "fluent" – chaining method calls where each call returns an object ready for the next call. Emphasize how .map returning Stack enables this.
+Fluent Programming: The ExampleFluent example is perfect. Explain the term "fluent"  - chaining method calls where each call returns an object ready for the next call. Emphasize how .map returning Stack enables this.
 
 Filter Exercise: This is perfectly placed. Walk through the type signature derivation and the logic for the if/then/else implementation.
 
@@ -109,7 +109,7 @@ The "Internalize This Snippet" section: This is where the tone risks becoming ar
 
 Instead of: "Should you pause here... commit this... distilled essence... fundamental reshaping..."
 
-Try: "This Stack implementation, especially with map, fold, and filter, demonstrates some powerful, recurring patterns in object-oriented design. Understanding how we built this – starting with a base case (empty) and an inductive step (+), then abstracting common operations – provides a strong foundation. As you see more Fearless code, you'll likely recognize variations of these ideas. Take a moment to review how these pieces fit together." Focus on the patterns demonstrated rather than prescribing the student's cognitive state.
+Try: "This Stack implementation, especially with map, fold, and filter, demonstrates some powerful, recurring patterns in object-oriented design. Understanding how we built this  - starting with a base case (empty) and an inductive step (+), then abstracting common operations  - provides a strong foundation. As you see more Fearless code, you'll likely recognize variations of these ideas. Take a moment to review how these pieces fit together." Focus on the patterns demonstrated rather than prescribing the student's cognitive state.
 
 Local Parameters (Locals / Let)
 

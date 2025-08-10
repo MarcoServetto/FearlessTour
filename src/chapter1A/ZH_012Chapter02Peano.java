@@ -11,7 +11,7 @@ class ZH_012Chapter02Peano {
 ### Peano and the infinite range of natural numbers
 
 We have seen how in the standard library we have many finite, but gigantic, number types:
-There are  2<sup>64</sup> - 1 instances of `Nat` and there are 96<sup>2,147,483,647</sup> − 1 instances of `Str`.
+There are  2<sup>64</sup> - 1 instances of `Nat` and there are 96<sup>2,147,483,647</sup>  - 1 instances of `Str`.
 Each `Nat` can be stored in exactly 4 bytes, were a byte is eight bit.
 Strings use an incremental space consumption; this means that storing small strings would use only a little amount of memory (with 34 bytes being the minimum size; still much more than the 4 bytes needed for a `Nat`.
 

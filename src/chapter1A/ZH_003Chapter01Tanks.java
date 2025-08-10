@@ -138,7 +138,7 @@ This declares parameters for the `.of` method. Parameters are how we pass inform
 `heading: Direction` declares a parameter named `heading`. The 
 `: Direction` part specifies that whoever calls `.of` must provide a `Direction` for this parameter.
 `aiming: Direction` similarly declares an `aiming` parameter, which also must be a `Direction`.
-You've already seen the implicit `this` parameter. Parameters listed in parentheses like this are explicit parameters – we give them names and types directly.
+You've already seen the implicit `this` parameter. Parameters listed in parentheses like this are explicit parameters - we give them names and types directly.
 
 The `.of` method expects two inputs: a `Direction` for the `heading` and a `Direction` for the `aiming`.
 Directly after the parenthesis and before the arrow `->` we can see `: Tank`.

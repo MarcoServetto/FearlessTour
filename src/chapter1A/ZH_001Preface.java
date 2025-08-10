@@ -17,7 +17,7 @@ Let's start with a cryptic definition:
 >Fearless is a minimalist, nominally-typed, object-oriented programming language.
 >Fearless gives the programmer fine control of side effects using Reference and Object Capabilities instead of an Effect System.
 
-If you are new to programming, the sentence above was probably incomprehensible. Don't worry – we will unpack these ideas piece by piece and build understanding through examples.
+If you are new to programming, the sentence above was probably incomprehensible. Don't worry - we will unpack these ideas piece by piece and build understanding through examples.
 
 Often programming is taught as a tool to reach a practical goal, like building a website, a video-game, or automating a task.
 That is, programming is often dressed as a necessary hurdle to "get over with" so you can achieve something else.

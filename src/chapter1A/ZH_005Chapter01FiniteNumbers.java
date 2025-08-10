@@ -297,7 +297,7 @@ This section introduced modulo arithmetic and showed how fundamental operations 
 
 ### Numbers as a Common Resource
 
-We've meticulously built our own `Number` type, representing the numbers `0` through `11`, complete with `.succ`, `.pred`, and arithmetic operations. We saw how operations like `11.succ` wrapped around back to `0`, and `0.pred` wrapped to `11` – this is modulo arithmetic, just like a clock face.
+We've meticulously built our own `Number` type, representing the numbers `0` through `11`, complete with `.succ`, `.pred`, and arithmetic operations. We saw how operations like `11.succ` wrapped around back to `0`, and `0.pred` wrapped to `11` - this is modulo arithmetic, just like a clock face.
 
 While building `Number` was insightful, doing this for very large range of numbers would be impractical.
 
