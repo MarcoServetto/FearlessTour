@@ -169,7 +169,7 @@ But, the program does not know anything about this background knowledge.
 The program does not give any external meaning to names. We could have written the code using abstract names and nothing would change for the program. That is, the code below is equivalent to the code above:
 -------------------------*/@Test void pointB () { run("""
 A: { .b: Int, .c: Int }
-D: {#(e: Int, f: Int): A -> { .e -> x, .f -> y } }
+D: {#(e: Int, f: Int): A -> { .b -> e, .c -> f } }
 G: { .h: G}
 I: G {L}
 L: G {M}
