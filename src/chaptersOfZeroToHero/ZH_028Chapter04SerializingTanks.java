@@ -112,7 +112,7 @@ We are now going to move forward, toward other interesting examples.
 
 
 OMIT_START
--------------------------*/@Test void anotherPackage() { run("""
+-------------------------*/@Test void anotherPackage() { run("fooBar","Test","""
 package fooBar
 alias base.Block as B,
 alias base.Void as Void,

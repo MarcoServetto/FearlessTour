@@ -151,7 +151,7 @@ That is, the code will stop running and the program will report that it failed i
 Next we will see how to handle those errors.
 
 OMIT_START
--------------------------*/@Test void anotherPackage() { run("""
+-------------------------*/@Test void anotherPackage() { run("fooBar","Test","""
 package fooBar
 alias base.Block as B,
 alias base.Void as Void,

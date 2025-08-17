@@ -35,11 +35,11 @@ The following code introduces updatable local variables, and uses a few new feat
 -------------------------*/@Test void var1 () { run("""
 //|OMIT_START
 package test
-alias base.Magic as Magic
+alias base.Magic as Magic,
 //OMIT_END
 Void:{}
 Var[E: imm,mut,read]:{
-  mut  .set(v: E): Void -> Magic!,
+  mut  .set(v: E): Void -> Magic![Void],
   mut  .get: E,
   read .get: read/imm E,
   }
@@ -77,7 +77,7 @@ Points:{ #(x: Nat, y: Nat): Point -> Point:{.x: Nat -> x, .y: Nat -> y} }
 
 Animals: {
   #(start: Point): mut Animal -> Block#
-   .var loc= {start}
+   .var[Point] loc= {start}
    .return{ mut Animal: {
       read .location: Point -> loc.get,  
       mut .run(x:Nat): Void ->
@@ -106,7 +106,7 @@ Points:{ imm #(x: imm Nat, y: imm Nat): imm Point ->
 
 Animals: {
   imm #(start: imm Point): mut Animal -> imm Block#
-   .var loc= {start}
+   .var[imm Point] loc= {start}
    .return{ mut Animal: {
       read .location: imm Point -> loc.get,  
       mut .run(x: imm Nat): imm Void ->
@@ -130,7 +130,20 @@ However, when aliasing and mutation are misused or run outside of our control, t
 
 Consider the code below, showing a simple example of Aliasing.
 -------------------------*/@Test void aliasing1 () { run("""
-AliasingExample: {#: Num -> Block#
+//OMIT_START
+Points:{ imm #(x: imm Nat, y: imm Nat): imm Point ->
+  imm Point:{.x: imm Nat -> x, .y: imm Nat -> y} }
+
+Animals: {
+  imm #(start: imm Point): mut Animal -> imm Block#
+   .var[imm Point] loc= {start}
+   .return{ mut Animal: {
+      read .location: imm Point -> loc.get,  
+      mut .run(x: imm Nat): imm Void ->
+        loc.set(imm Points#(loc.get.x + x, loc.get.y)),
+    }}}
+//OMIT_END
+AliasingExample: {#: Nat -> Block#
   .let bunny= { Animals#(Points#(10,20)) }
   .let mammal= { bunny }
   .do { bunny.run(15) }

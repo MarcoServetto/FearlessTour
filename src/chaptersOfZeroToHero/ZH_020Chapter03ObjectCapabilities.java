@@ -41,7 +41,7 @@ That is, Object capabilities and Reference capabilities are two different concep
 
 
 OMIT_START
--------------------------*/@Test void anotherPackage() { run("""
+-------------------------*/@Test void anotherPackage() { run("fooBar","Test","""
 package fooBar
 alias base.Block as B,
 alias base.Void as Void,

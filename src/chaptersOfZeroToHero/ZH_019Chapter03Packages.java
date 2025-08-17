@@ -83,7 +83,7 @@ For example, if a package `foo` declares a type `_Foo`:
 This allows for a form of package private types, where we can declare types whose name starts with `_` to indicate that the users of our code should not refer to those types, they are only intended as a way to internally encode the behaviour of the library.
 Of course all the fresh type names that the inference adds to our code start with `_`, and thus are package private.
 OMIT_START
--------------------------*/@Test void anotherPackage() { run("""
+-------------------------*/@Test void anotherPackage() { run("fooBar","Test","""
 package fooBar
 alias base.Block as B,
 alias base.Void as Void,

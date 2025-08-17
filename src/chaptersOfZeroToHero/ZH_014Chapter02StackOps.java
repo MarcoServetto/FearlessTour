@@ -39,7 +39,7 @@ Stack[T]: {
     },
   }
 ExampleSum: { #(ns: Stack[Nat]): Nat -> ns.fold(0, { n1,n2 -> n1 + n2 })  }
-ExampleTimes: { #(ns: Stack[Nat]): Nat -> ns.fold(1, { n1,n2 -> n1 * n2 })  }
+ExampleTimes: { #(ns: Stack[Nat]): Nat -> ns.fold(1, { n1,n2 -> n1 * n2 })  }//would work with .fold[Nat]
 """); }/*--------------------------------------------
 
 Another icon operation over sequences is to map all the values to the result of an operation, for example adding 5 to all the numbers.

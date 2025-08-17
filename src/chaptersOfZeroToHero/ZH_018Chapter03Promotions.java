@@ -46,7 +46,7 @@ Points:{ #(x: Nat, y: Nat): Point -> Point:{.x: Nat -> x, .y: Nat -> y} }
 
 Animals: {
   #(start: Point): mut Animal -> Block#
-   .var loc= {start}
+   .var[Point] loc= {start}
    .return{ mut Animal: {
       read .location: Point -> loc.get,  
       mut .run(x:Nat): Void ->

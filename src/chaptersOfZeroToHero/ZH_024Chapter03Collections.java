@@ -600,7 +600,7 @@ Overall, this is also similar to how `.as` works for nested lists.
 
 
 OMIT_START
--------------------------*/@Test void anotherPackage() { run("""
+-------------------------*/@Test void anotherPackage() { run("fooBar","Test","""
 package fooBar
 alias base.Block as B,
 alias base.Void as Void,

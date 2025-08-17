@@ -89,7 +89,7 @@ Bool: Sealed, ToStr, ToInfo, ToImm[Bool], OrderHash[Bool]{
   .not: Bool,
   .if[R:**](f: mut ThenElse[R]): R,
   ?[R:**](f: mut ThenElse[R]): R -> this.if(f),
-  .match[R](m:BoolMatch):R -> this?{.then->m.true, .else->m.false},
+  .match[R](m: mut BoolMatch[R]): R -> this?{.then->m.true, .else->m.false},
   .info-> Infos.msg(this.str),
   &(b: Bool): Bool -> this.and(b),
   |(b: Bool): Bool -> this.or(b),
@@ -303,7 +303,7 @@ As you can see, designing generic container types supporting a range of referenc
 
 
 OMIT_START
--------------------------*/@Test void anotherPackage() { run("""
+-------------------------*/@Test void anotherPackage() { run("fooBar","Test","""
 package fooBar
 alias base.Block as B,
 alias base.Void as Void,

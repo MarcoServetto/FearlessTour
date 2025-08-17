@@ -140,7 +140,7 @@ We now focus on this line:
 The next section will discuss `List`s and `Flow`s in the detail.
 
 OMIT_START
--------------------------*/@Test void anotherPackage() { run("""
+-------------------------*/@Test void anotherPackage() { run("fooBar","Test","""
 package fooBar
 alias base.Block as B,
 alias base.Void as Void,

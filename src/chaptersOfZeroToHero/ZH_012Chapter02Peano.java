@@ -85,8 +85,10 @@ package test
 alias base.Void as Void,
 alias base.Num as Num,
 alias base.Main as Main,
+alias base.Block as Block,
 +23/4:{}
-Test:Main{s->base.Debug#(+23/4)}
+Test:Main{s->base.Debug#(Block#(+23/4,Void))}
+//prints base.Void/0
 """); }/*--------------------------------------------
 //OMIT_END
 
