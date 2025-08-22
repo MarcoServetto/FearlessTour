@@ -6,7 +6,7 @@ import static tour.TourHelper.run;
 class ZH_026Chapter04Enumerations {
 /*START
 --CHAPTER-- Chapter 4
---SECTION-- Errors are good!
+--SECTION-- Enumerations
 
 #### `Direction`: an Enumeration
 

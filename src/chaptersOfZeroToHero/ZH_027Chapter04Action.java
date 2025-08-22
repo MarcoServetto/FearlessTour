@@ -6,7 +6,7 @@ import static tour.TourHelper.run;
 class ZH_027Chapter04Action {
 /*START
 --CHAPTER-- Chapter 4
---SECTION-- Errors are good!
+--SECTION-- Action
 
 ### Fearless errors and actions.
 
