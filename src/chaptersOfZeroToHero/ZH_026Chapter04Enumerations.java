@@ -51,7 +51,7 @@ The code of `Enum[E]` and `Enums[E]` is actually quite simple and educational:
 
 ```
 //Code from the Fearless standard library
-FromInfo[T]{ .fromInfo(i: Info): T }
+FromInfo[T]: { .fromInfo(i: Info): T }
 
 Enums[E]: FromInfo[E]{
   .list: List[E],
@@ -88,7 +88,7 @@ Directions: Enums[Direction], AutoMatch{ List#(
   West:  Direction{},
 ) }
 //for n names, 7+n Direction, 2*n names, n mut:R
-FromInfo[T]{ .fromInfo(i: Info): T }
+FromInfo[T]: { .fromInfo(i: Info): T }
 
 Enums[E]: FromInfo[E]{
   .list: List[E],

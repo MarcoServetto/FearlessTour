@@ -327,7 +327,8 @@ Order[T]: {
    !=(other: T): Bool -> this <=> other .match{ .lt->True,  .eq->False,.gt->True },
   }
 Comparator[T]:F[T,T,Order],F[T,Order[T]]{
-  #(t1)->{t2->this#(t1,t2)},
+  #(t1)->{t2->this#(t1,t2)},//TODO: no! this does not compile, this is read since # is a read method.
+  //No way to force an implementable type to assume this is imm.
   && (other: Comparator[T]): Comparator[T] -> {a,b -> this#(a,b) && {other#(a,b)}}
   }
 ```
@@ -345,7 +346,7 @@ In the code examples below we will see a lot of `{::}` and they all expand in th
 As you can see, by implementing `Order[T]` we get a lot of utility methods to check for equality and ordering.
 Method `Comparator[T]&&` works like `Order&&`, to facilitate ordering on multiple criteria, but it is more common to use `Order&&` as shown below, where we make a comparator comparing two persons by age and then by age and name size.
 ```
-Persons:{#(name:Str, age:Nat):Person -> Person{.name: Str -> name,  .age: Nat -> age }}
+Persons:{#(name:Str, age:Nat):Person -> Person:{.name: Str -> name,  .age: Nat -> age }}
 Older:Comparator[Person]{ p1,p2 -> p1.age <=> (p2.age) }
 OlderLonger:Comparator[Person]{ p1,p2 -> p1.age <=> (p2.age) && {p1.name.size <=> (p2.name.size)} }
 ```
