@@ -2,7 +2,7 @@ package chaptersOfZeroToHero;
 
 
 import org.junit.jupiter.api.Test;
-import static tour.TourHelper.run;
+import static testHelpers.TourHelper.run;
 class ZH_009Chapter02GenericTypes {
 /*START
 --CHAPTER-- Chapter 2

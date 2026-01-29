@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import tools.Fs;
+
 public class LoadFile{
   public List<String> loadLines(Path name){
     return loadText(name).lines().toList();
@@ -19,9 +21,8 @@ public class LoadFile{
     //Path p= startPath().resolve(Path.of(name));
     assert Files.exists(name):"Name "+name+" not found. Visible files are \n"
       +DirectoryStructure.of(name.getParent());
-    try{ return Files.readString(name); }
-    catch(IOException e) { throw new UncheckedIOException(e); }
-  }
+    return Fs.readUtf8(name);
+    }
 }
 class DirectoryStructure {
   public static String of(Path startPath){

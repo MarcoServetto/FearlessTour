@@ -2,7 +2,7 @@ package chaptersOfZeroToHero;
 
 
 import org.junit.jupiter.api.Test;
-import static tour.TourHelper.run;
+import static testHelpers.TourHelper.run;
 class ZH_005Chapter01FiniteNumbers {
 /*START
 --CHAPTER-- Chapter 1
@@ -411,29 +411,29 @@ This isn't a Fearless-specific issue; it's a fundamental trade-off for the speed
 //OMIT_START
 -------------------------*/@Test void fullNumber() { run("""
 Number:{
-  .pred:Number, .succ:Number,
-  +(other: Number): Number -> this.pred + (other.succ),
-  *(other: Number): Number -> (this.pred * other) + other,
-  -(other: Number): Number -> other._rightSub(this),
-  ._rightSub(other: Number): Number-> this.pred._rightSub(other.pred),
+  .pred:Number; .succ:Number;
+  +(other: Number): Number -> this.pred + (other.succ);
+  *(other: Number): Number -> (this.pred * other) + other;
+  -(other: Number): Number -> other._rightSub(this);
+  ._rightSub(other: Number): Number-> this.pred._rightSub(other.pred);
   }
 N0: Number{
-  .pred-> N11, .succ->  N1,
-  +(other)-> other,
-  *(other)-> N0,
-  ._rightSub(other: Number): Number-> other
+  .pred-> N11; .succ->  N1;
+  +(other)-> other;
+  *(other)-> N0;
+  ._rightSub(other: Number): Number-> other;
   }
-N1: Number{.pred->  N0, .succ->  N2, }
-N2: Number{.pred->  N1, .succ->  N3, }
-N3: Number{.pred->  N2, .succ->  N4, }
-N4: Number{.pred->  N3, .succ->  N5, }
-N5: Number{.pred->  N4, .succ->  N6, }
-N6: Number{.pred->  N5, .succ->  N7, }
-N7: Number{.pred->  N6, .succ->  N8, }
-N8: Number{.pred->  N7, .succ->  N9, }
-N9: Number{.pred->  N8, .succ->  N10, }
-N10: Number{.pred->  N9, .succ-> N11, }
-N11: Number{.pred-> N10, .succ->  N0, }
+N1: Number{.pred->  N0; .succ->  N2; }
+N2: Number{.pred->  N1; .succ->  N3; }
+N3: Number{.pred->  N2; .succ->  N4; }
+N4: Number{.pred->  N3; .succ->  N5; }
+N5: Number{.pred->  N4; .succ->  N6; }
+N6: Number{.pred->  N5; .succ->  N7; }
+N7: Number{.pred->  N6; .succ->  N8; }
+N8: Number{.pred->  N7; .succ->  N9; }
+N9: Number{.pred->  N8; .succ->  N10; }
+N10: Number{.pred->  N9; .succ-> N11; }
+N11: Number{.pred-> N10; .succ->  N0; }
 """); }/*--------------------------------------------
 //OMIT_END
 END*/

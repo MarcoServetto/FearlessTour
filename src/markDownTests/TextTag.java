@@ -9,6 +9,8 @@ public enum TextTag {
   Start("/*START"),
   End("END*/"),
   OmitStart("OMIT_START"),
+  PrintReq("//PRINT|"),
+  ErrorReq("//ERROR|"),
   OmitEnd("OMIT_END"),
   CodeStart("-----*/"),
   CodeEnd("/*-----");

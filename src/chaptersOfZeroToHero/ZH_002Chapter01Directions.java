@@ -1,7 +1,7 @@
 package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
-import static tour.TourHelper.run;
+import static testHelpers.TourHelper.run;
 class ZH_002Chapter01Directions {
 /*START
 --CHAPTER-- Chapter 1
@@ -25,28 +25,42 @@ South:{}
 West: {}
 """); }/*--------------------------------------------
 
-
-We used four names of real world directions to name **types** in Fearless.
 Those four lines are **type declarations**, and the four names are **type names**.
 The `:` token means "declaration".
+What is on the left of `:` is a name and what is on the right of `:` is the shape, structure or kind of that name.
 
 Those types are not very useful because they are unconnected.
 We can create connections between those types by adding **methods**
 to our directions:
 
-`````
-North: {.turn-> East, } 
-East : {.turn-> South,}
-South: {.turn-> West, }
-West : {.turn-> North,}
-`````
+-------------------------*/@Test void error1() { run("""
+North: {.turn-> East; } 
+East : {.turn-> South;}
+South: {.turn-> West; }
+West : {.turn-> North;}
+//OMIT_START
+//ERROR|In file: [###]/_test/_rank_app111.fear
+//ERROR|
+//ERROR|001| North: {.turn-> East; }
+//ERROR|   | --------^^^^^^^^^^^^---
+//ERROR|
+//ERROR|While inspecting type declaration "North"
+//ERROR|Missing return type for method ".turn".
+//ERROR|Add an explicit return type before '->'.
+//ERROR|Alternatively (less common), if you intended to override and omit the signature,
+//ERROR|the signature must be inherited from a supertype.
+//ERROR|Cannot infer signature of method ".turn".
+//ERROR|No supertype has a method named ".turn" with 0 parameters.
+//ERROR|Error 9 WellFormedness
+//OMIT_END
+"""); }/*--------------------------------------------
 
 In the example above,
-- `North: { .turn -> East, }` is a type declaration.
+- `North: { .turn -> East; }` is a type declaration.
 Within this declaration
-- `North` is the typeName
-- `.turn` is a **method name**. It is a single token including the `.`
-- `.turn -> East,` is a **method declaration** and in this case
+- `North` is the typeName.
+- `.turn` is a **method name**. The text `.turn` is a single token and includes the `.`
+- `.turn -> East;` is a **method declaration** and in this case
   the method body is just `East`.
 - The token `->` gives a body to a method. In the case of `.turn` the body
  is the new direction after turning 90&deg; clockwise.
@@ -56,7 +70,7 @@ We introduced `East` as a type name; but when `East` is used inside
 the method body it is an **expression**,
 specifically, an object literal expression.
 
-Coding is all about defining kinds of objects and the relations between them.
+Programming is all about defining kinds of objects and the relations between them.
 Other terms for 'object' could be 'value', 'entity', 'instance' or 'element'.
 We will use the term 'object' consistently to talk about those.
 
@@ -88,17 +102,35 @@ In the same way, `South.turn.turn` is an expression which is equivalent to the o
 
 The example we are discussing is still incomplete, and it
 would cause an error if we try to compile it.
-`````
-North: {.turn-> East, } 
-East : {.turn-> South,}
-South: {.turn-> West, }
-West : {.turn-> North,}
+-------------------------*/@Test void error2() { run("""
+North: {.turn-> East; } 
+East : {.turn-> South;}
+South: {.turn-> West; }
+West : {.turn-> North;}
+//OMIT_START
+//ERROR|In file: [###]/_test/_rank_app111.fear
+//ERROR|
+//OMIT_END
+//ERROR|001| North: {.turn-> East; }
+//ERROR|   | --------^^^^^^^^^^^^---
+//ERROR|
+//ERROR|While inspecting type declaration "North"
+//ERROR|Missing return type for method ".turn".
+//ERROR|Add an explicit return type before '->'.
+//ERROR|Alternatively (less common), if you intended to override and omit the signature,
+//ERROR|the signature must be inherited from a supertype.
+//ERROR|Cannot infer signature of method ".turn".
+//ERROR|No supertype has a method named ".turn" with 0 parameters.
+//ERROR|Error 9 WellFormedness
+"""); }/*--------------------------------------------
 
-Error: missing type for method .turn in North
-`````
 While the exact error message may vary between different versions
-of Fearless, the core of this error is that the method `.turn`
-does not know what type it returns.
+of Fearless, the core of this error is:
+```
+Missing return type for method ".turn".
+```
+
+The method `.turn` does not know what type it returns.
 
 >**Errors are good things:**
 >errors help us be precise and to avoid more mistakes later.
@@ -108,12 +140,12 @@ our program is safe to use.
 Many programmers rely on types to understand code.
 
 So, what does the `North.turn` method return? `East`. So we can write:
-`````
-North: {.turn: East  -> East,  }
-East : {.turn: South -> South, }
-South: {.turn: West  -> West,  }
-West : {.turn: North -> North, }
-`````
+-------------------------*/@Test void noError() { run("""
+North: {.turn: East  -> East; } 
+East : {.turn: South -> South;}
+South: {.turn: West  -> West; }
+West : {.turn: North -> North;}
+"""); }/*--------------------------------------------
 This is correct, and would make our code compile. However,
 this is stating that the four methods `.turn` are different
 kinds of methods, since they return different types.
@@ -126,11 +158,11 @@ clockwise direction.
 We can capture this intention with the following code:
 
 -------------------------*/@Test void dir1() { run("""
-Direction: { .turn: Direction, }
-North: Direction { .turn -> East,  }
-East : Direction { .turn -> South, }
-South: Direction { .turn -> West,  }
-West : Direction { .turn -> North, }
+Direction: { .turn: Direction; }
+North: Direction { .turn -> East;  }
+East : Direction { .turn -> South; }
+South: Direction { .turn -> West;  }
+West : Direction { .turn -> North; }
 """); }/*--------------------------------------------
 
 
@@ -157,13 +189,14 @@ This process is called type inference and is an important concept in Fearless.
 We can now imagine a method `.reverse` that turns 180 degrees.
 A naive approach would hard code the method result in all the cases, as shown below.
 
-`````
-Direction: { .turn: Direction, .reverse: Direction,  }
-North: Direction { .turn -> East,  .reverse -> South, }
-East : Direction { .turn -> South, .reverse -> West,  }
-South: Direction { .turn -> West,  .reverse -> North, }
-West : Direction { .turn -> North, .reverse -> East,  }
-`````
+-------------------------*/@Test void reverse1() { run("""
+Direction: { .turn: Direction; .reverse: Direction;  }
+North: Direction { .turn -> East;  .reverse -> South; }
+East : Direction { .turn -> South; .reverse -> West;  }
+South: Direction { .turn -> West;  .reverse -> North; }
+West : Direction { .turn -> North; .reverse -> East;  }
+"""); }/*--------------------------------------------
+
 
 This solution works but is quite verbose.
 A better solution for any given direction would be to call `.turn`
@@ -171,27 +204,29 @@ twice and get the desired result:
 rotating 180 degrees clockwise is the same as rotating 90 degrees clockwise, twice.
 
 However, if we simply follow this intuition and we add `.turn.turn` in all the directions, we get even more verbose code.
-`````
-Direction: { .turn: Direction, .reverse: Direction, }
-North: Direction { .turn -> East,  .reverse -> North.turn.turn, }
-East : Direction { .turn -> South, .reverse -> East.turn.turn,  }
-South: Direction { .turn -> West,  .reverse -> South.turn.turn, }
-West : Direction { .turn -> North, .reverse -> West.turn.turn,  }
-`````
-However, the code is now more regular, the four bodies of `.reverse` are all almost identical.
-They are all of the form `.reverse->???.turn.turn,` where `???` is the current direction.
+-------------------------*/@Test void reverse2() { run("""
+Direction: { .turn: Direction; .reverse: Direction; }
+North: Direction { .turn -> East;  .reverse -> North.turn.turn; }
+East : Direction { .turn -> South; .reverse -> East.turn.turn;  }
+South: Direction { .turn -> West;  .reverse -> South.turn.turn; }
+West : Direction { .turn -> North; .reverse -> West.turn.turn;  }
+"""); }/*--------------------------------------------
 
-We are able to reuse the  `.reverse->???.turn.turn,` part by putting it into our definition of `Direction`.
+
+However, the code is now more regular, the four bodies of `.reverse` are all almost identical.
+They are all of the form `.reverse->???.turn.turn;` where `???` is the current direction.
+
+We are able to reuse the  `.reverse->???.turn.turn;` part by putting it into our definition of `Direction`.
 
 `````
 Direction: {
-  .turn: Direction,
-  .reverse: Direction -> ???.turn.turn,
+  .turn: Direction;
+  .reverse: Direction -> ???.turn.turn;
   }
-North: Direction { .turn -> East, }
-East : Direction { .turn -> South,}
-South: Direction { .turn -> West, }
-West : Direction { .turn -> North,}
+North: Direction { .turn -> East; }
+East : Direction { .turn -> South;}
+South: Direction { .turn -> West; }
+West : Direction { .turn -> North;}
 `````
 
 Now the code of `.reverse` appears only one time in our program.
@@ -209,13 +244,13 @@ We need a way to refer to the current direction within the `.reverse` method. If
 We can indeed access the current direction by using `this`, as shown below.
 -------------------------*/@Test void directionReverse() { run("""
 Direction: {
-  .turn: Direction,
-  .reverse: Direction -> this.turn.turn,
+  .turn: Direction;
+  .reverse: Direction -> this.turn.turn;
   }
-North: Direction {.turn -> East, }
-East : Direction {.turn -> South,}
-South: Direction {.turn -> West, }
-West : Direction {.turn -> North,}
+North: Direction {.turn -> East; }
+East : Direction {.turn -> South;}
+South: Direction {.turn -> West; }
+West : Direction {.turn -> North;}
 """); }/*--------------------------------------------
 That is, when the `.reverse` method is called,
 the **parameter** `this` will refer to the current object.

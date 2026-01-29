@@ -2,7 +2,7 @@ package chaptersOfZeroToHero;
 
 
 import org.junit.jupiter.api.Test;
-import static tour.TourHelper.run;
+import static testHelpers.TourHelper.run;
 class ZH_021Chapter03NewOptBool {
 /*START
 --CHAPTER-- Chapter 3

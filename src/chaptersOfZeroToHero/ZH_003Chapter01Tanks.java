@@ -2,7 +2,7 @@ package chaptersOfZeroToHero;
 
 
 import org.junit.jupiter.api.Test;
-import static tour.TourHelper.run;
+import static testHelpers.TourHelper.run;
 class ZH_003Chapter01Tanks {
 /*START
 --CHAPTER-- Chapter 1
@@ -47,13 +47,16 @@ code for `Direction` even more compact.
 The only abstract method in `Direction` is `.turn`,
 so when implementing direction it is obvious that we want to implement `.turn`.
 In this way, the syntactic sugar allows us to write the following, shorter version of the code we have seen before.
-We can omit `.turn->` when implementing a single method
-to satisfy `Direction`, as shown below.
+That is, to implement `Direction` we must implement `.turn`.
+Fearless knows this, thus in this case we can omit `.turn->`.
+Of course this is a more general concept, and there
+are many other situations where we can omit the method name (and sometimes also the arrow)
+when we implement a method.
 
 -------------------------*/@Test void dirCompact() { run("""
 Direction: {
-  .turn: Direction,
-  .reverse: Direction -> this.turn.turn,
+  .turn: Direction;
+  .reverse: Direction -> this.turn.turn;
   }
 North: Direction { East  }
 East : Direction { South }
@@ -64,11 +67,11 @@ West : Direction { North }
 
 ### Understanding the code above
 
- 1. `North: Direction { .turn -> East, }` is a type declaration.
+ 1. `North: Direction { .turn -> East; }` is a type declaration.
  2. `North: Direction { East }` is a more compact form of the
 same type declaration.
  3. `.turn: Direction` is a method declaration.
- 4. `.turn -> East,` is a method implementation.
+ 4. `.turn -> East;` is a method implementation.
  5. `East` is an example of an object literal expression.
  6. `North.turn` is an example of a method call expression.
  7. `this` is an example of a parameter.
@@ -90,42 +93,56 @@ Since `SomeName147` implements `North`, any object of type `SomeName147` is also
 
 In this way, the object literal `North` evaluates into a standard object of type `North`, with all its defined methods.
 
-
 ### Example: Tank with turret
 Now that we have the abstract type `Direction` we can make a simple
 `Tank` object. This tank will have two Directions;
 - `.heading`: the direction the tank is moving, and
 - `.aiming`: the direction the tank gun is aiming.
 
-`````
-Tank: {
-  .heading: Direction,
-  .aiming: Direction,
+
+-------------------------*/@Test void tankBase() { run("""
+//OMIT_START
+Direction: {
+  .turn: Direction;
+  .reverse: Direction -> this.turn.turn;
   }
-TankNN: Tank{ .heading-> North, .aiming-> North,}
-TankNE: Tank{ .heading-> North, .aiming-> East, }
-TankNS: Tank{ .heading-> North, .aiming-> South,}
-TankNW: Tank{ .heading-> North, .aiming-> West, }
-TankEN: Tank{ .heading-> East,  .aiming-> North,}
-...//16 cases in total!
-TankWW: Tank{ .heading-> West,  .aiming-> West, }
-`````
-As you can see, while it is possible to manually list all sixteen cases as valid Fearless code, the development process is boring, repetitive and error prone: it's incredibly easy to make a typo. What if we accidentally include `.aiming-> North` five times instead of four?
+North: Direction { East  }
+East : Direction { South }
+South: Direction { West  }
+West : Direction { North }
+//OMIT_END
+Tank: {
+  .heading: Direction;
+  .aiming: Direction;
+  }
+TankNN: Tank{ .heading-> North; .aiming-> North;}
+TankNE: Tank{ .heading-> North; .aiming-> East; }
+TankNS: Tank{ .heading-> North; .aiming-> South;}
+TankNW: Tank{ .heading-> North; .aiming-> West; }
+TankEN: Tank{ .heading-> East;  .aiming-> North;}
+/* ... 16 cases in total! */
+TankWW: Tank{ .heading-> West;  .aiming-> West; }
+"""); }/*--------------------------------------------
+
+
+As you can see, while it is possible to manually list all sixteen cases as valid Fearless code,
+the development process is boring, repetitive and error prone:
+it's incredibly easy to make a typo. What if we accidentally include `.aiming-> North`
+five times instead of four?
 
 Would not it be better if we could just ask for a Tank with a specific heading and aiming direction when we need one?
 We can create a `Tank` maker by defining a type `Tanks` whose job is to create `Tank` objects for us.
 We give it the details (heading and aiming), and it gives us back the specific `Tank` object we need.
 
-> Side note: This pattern of having one type create instances of another is common.
-> Naming the maker type by pluralising the product type (`Tanks` for `Tank`) is a Fearless convention.
-> It's concise and hints at its role.
+> This pattern of having one type create instances of another is common.
+> Naming the maker type by pluralising the product type (`Tanks` for `Tank`) is a concise Fearless convention.
 
 -------------------------*/@Test void tanks1() { run("""
 //OMIT_START
 Direction:{ /*..as before..*/ .turn: Direction}
 //OMIT_END
 Tanks: { .of(heading: Direction, aiming: Direction): Tank ->
-  Tank: { .heading: Direction -> heading, .aiming: Direction -> aiming, }
+  Tank: { .heading: Direction -> heading; .aiming: Direction -> aiming; }
   }
 """); }/*--------------------------------------------
 
@@ -148,13 +165,15 @@ This is the **return type** and it tells us the result must be a `Tank` object.
 
 Now look at the part after the arrow `->`:
 ```
-Tank: { .heading: Direction -> heading, .aiming: Direction -> aiming, }
+Tank: { .heading: Direction -> heading; .aiming: Direction -> aiming; }
 ```
 
 **This is the method body:** the code that executes when `Tanks.of` is called. It defines what the method does.
-What does `Tank: { ... }` mean here, inside a method body? It looks like our earlier `Tank` type definition, but it is now also an object literal. In addition of defining the `Tank` type, it also serves as a template for `Tank` objects.
+What does `Tank: { ... }` mean here, inside a method body? It looks like our earlier `Tank` type definition,
+but it is now also an object literal.
+In addition of defining the `Tank` type, it also serves as a template for `Tank` objects.
 The execution of `Tanks.of` will evaluate this object literal and thus return
-a `Tank` object customised with `heading` and `aiming`.
+a `Tank` object customized with `heading` and `aiming`.
 
 **Using the parameters:** Notice how `heading` and `aiming` (the parameter names) appear inside this object definition:
 - `.heading: Direction -> heading` means:
@@ -165,10 +184,17 @@ that was passed in as the `heading` parameter.
 This new `Tank`'s `.aiming` method will return the value
 that was passed in as the `aiming` parameter.
 
-**Capturing values:** The Tank object returned by `.of` **captures** (or remembers) the specific `heading` and `aiming` values that were provided when `.of` was called. If we call `Tanks.of(North, East)`, the object created will be a `Tank` heading `North` and aiming `East`. If we call `Tanks.of(South, West)`, it will be a `Tank` heading `South` and aiming `West`.
-This allows us to create `Tank` objects with custom, specific states based on the inputs we give to the `.of` method. We have moved from having only a few fixed `Direction` objects to being able to create many different `Tank` objects, each remembering its own specific heading and aiming.
+**Capturing values:** The Tank object returned by `.of` **captures** (or remembers) the specific `heading` and `aiming` values
+*that were provided when `.of` was called.
+*If we call `Tanks.of(North, East)`, the object created will be a `Tank` heading `North` and aiming
+*`East`. If we call `Tanks.of(South, West)`, it will be a `Tank` heading `South` and aiming `West`.
+This allows us to create `Tank` objects with custom, specific states based on the inputs we give
+to the `.of` method. We have moved from having only a few fixed `Direction` objects to being able to create many
+different `Tank` objects, each remembering its own specific heading and aiming.
 
-To summarise, `Tank: { ... -> heading, ... }` is a form of object literal expression; it's a way to define the structure of a type and forge an object of that type in one step, often using captured parameter values to customise it.
+To summarize, `Tank: { ... -> heading, ... }` is a form of object literal expression;
+it's a way to define the structure of a type and forge an object of that type in one step,
+often using captured parameter values to customize it.
 
 #### Method Declaration Syntax 
 Methods can have as many parameters as we want.
@@ -218,7 +244,7 @@ implemented in Fearless code.
 - **Fearless version**
 `````
   Tanks: { .of(heading: Direction, aiming: Direction): Tank ->
-    Tank: { .heading: Direction -> heading, .aiming: Direction -> aiming, }
+    Tank: { .heading: Direction -> heading; .aiming: Direction -> aiming }
     }
 `````
 `Tanks.of` takes two directions (`heading` and `aiming`) and returns a
@@ -249,11 +275,11 @@ In this way, the only way to create `Tank` objects is to call `Tanks.of`.
 Alternatively, we can keep the `Tank` declaration outside and use
 inheritance as shown below:
 ```
-Tank: { .heading: Direction, .aiming: Direction,}
+Tank: { .heading: Direction; .aiming: Direction;}
 Tanks: { .of(heading: Direction, aiming: Direction): Tank->
-  MadeTank: Tank { .heading -> heading, .aiming -> aiming,}
+  MadeTank: Tank { .heading -> heading; .aiming -> aiming;}
   }
-TankNN: Tank {.heading -> North, .aiming -> North,}
+TankNN: Tank {.heading -> North; .aiming -> North;}
 ```
 In this way we have more freedom to create `Tank`s:
 via the `Tanks.of` method or via a top level declaration, like `TankNN`.
@@ -271,18 +297,28 @@ That is, the code below is an equivalent but shorter version of the code above.
 Direction:{ /*..as before..*/ .turn: Direction}
 North:Direction{North}
 //OMIT_END
-Tank: { .heading: Direction, .aiming: Direction,}
+Tank: { .heading: Direction; .aiming: Direction;}
 Tanks: { .of(heading: Direction, aiming: Direction): Tank->
-  {.heading -> heading, .aiming -> aiming,}
+  {.heading -> heading; .aiming -> aiming}
   }
-TankNN: Tank {.heading -> North, .aiming -> North,}
+TankNN: Tank {.heading -> North; .aiming -> North;}
 """); }/*--------------------------------------------
 
 In practice, while coding in Fearless, most literals will rely on
 inference and will be
 written just as `{..}`.
 
-
+That is, there are three different kinds of object literals:
+- **Typed object literal**
+  `North` is an example of a typed object literal. The type `North` is used to (directly) build the literal.
+- **Bare object literal**
+  `{.heading -> heading; .aiming -> aiming}` as we just seen is a bare object literal.
+  It is bare because it requires the inference to infer its type from the context.
+- **Named object literal** 
+  `Tank: { .heading: Direction -> heading; .aiming: Direction -> aiming }`, as we have seen before
+  is a named object literal: we do explicitly chose the name for this new type we are declaring.
+  It is the most complete form of literal; it is basically a top level declaration that doubles as an object creation. 
+ 
 #### The three kinds of expressions, revisited.
 
 We have now seen more examples for the three kinds of expressions:
@@ -311,7 +347,6 @@ That is, we are implicitly using the type `East` as a part of an anonymous type 
 
 As you can see, the two contexts are interleaved inside each other.
 
-
 #### Method names
 At this point you must have noticed that all the method names we have show
 start with `.`; and you may be wondering why the odd choice.
@@ -326,24 +361,26 @@ letter and any number of letters and numbers, and
 
 The full list of operator symbols is:
 ```
-  ! ~ # & ^ + - * / < > = :
+  ! ~ # & ^ + - * / < > =
 ```
-However, since the `:` is already used to mean "declaration", an operator symbol can not be just `:`.
 
 That is, the following is a list of valid and invalid method names:
+
 ```
-.foo  #  :=  ++  <=  .bar23  <#--  <+:  //valid
+.foo  #  =  ++  <=  .bar23  <#--  <+  //valid
 .foo+  +bar  a=b  zoo  <hello>  .+>  :  //invalid
 ```
+
 In turn, this means that the code below is syntactically valid
 ```
-Bar#(Add:-)
+Bar#(Add|-)
 ```
 Adding spaces around all tokens this would look as follows:
 ```
-Bar # ( Add :- )
+Bar # ( Add |- )
 ```
-This is the a call of the method called `#` on the receiver `Bar`, and the single parameter is a call of the method called `:-` on the receiver `Add`. Method `:-` takes zero parameters.
+This is the a call of the method called `#` on the receiver `Bar`, and the single parameter is a call of the method called `:-` on the receiver `Add`.
+Method `|-` takes zero parameters.
 
 On the other side, parameter names start with a lower-case letter, and
 type names mostly start with an upper-case letter.
@@ -363,17 +400,17 @@ Rewriting our last code example using `#` we get the following:
 
 -------------------------*/@Test void tanksHash() { run("""
 Direction: {
-  .turn: Direction,
-  .reverse: Direction -> this.turn.turn,
+  .turn: Direction;
+  .reverse: Direction -> this.turn.turn;
   }
 North: Direction { East  }
 East : Direction { South }
 South: Direction { West  }
 West : Direction { North }
 
-Tank: {.heading: Direction, .aiming: Direction, }
+Tank: {.heading: Direction; .aiming: Direction; }
 Tanks: { #(heading: Direction, aiming: Direction): Tank ->
-  { .heading -> heading, .aiming -> aiming, }
+  { .heading -> heading; .aiming -> aiming; }
   }
 """); }/*--------------------------------------------
 

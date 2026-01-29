@@ -1,7 +1,7 @@
 package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
-import static tour.TourHelper.run;
+import static testHelpers.TourHelper.run;
 
 class ZH_001Preface {
 /*START
@@ -20,51 +20,33 @@ Let's start with a cryptic definition:
 If you are new to programming, the sentence above was probably incomprehensible. Don't worry - we will unpack these ideas piece by piece and build understanding through examples.
 
 Often programming is taught as a tool to reach a practical goal, like building a website, a video-game, or automating a task.
-That is, programming is often dressed as a necessary hurdle to "get over with" so you can achieve something else.
+That is, programming is often dressed as a necessary hurdle to "get over with" so you can achieve something else. We aim to move beyond treating programming as an obstacle.
 
-We aim to move beyond treating programming as an obstacle, and instead use it as a rewarding training ground for becoming a more effective learner and thinker:
-
-- Programming demands abstract thinking, logical reasoning, focused concentration, and persistence in problem-solving. These are muscles that grow stronger with practice.
-
-- Programming often gives clear, objective feedback. Either the compiler finds errors, or the program runs correctly (or incorrectly) based on the logic you implemented.
-
-In this guide, Instead of focusing on writing short working programs, we are going to focus on the basics of programming as a way to organise concepts and thought.
-We will cultivate comfort with abstraction, resilience in the face of challenges, patience for deep focus, and to find intrinsic satisfaction in the process of careful, logical construction itself.
+We see programming an artistic expression demanding abstract thinking, focused concentration, and persistence in problem-solving. These are muscles that grow stronger with practice. Programmers find intrinsic satisfaction in the process of careful logical construction itself.
 
 
 ### Expect confusion: everything is circularly dependent concepts
 
-Most of what we know circularly depend on other things we know:
+If you ever learned a foreign language, you will have started by trying to connect each word in the foreign language to a definition in your native language. We do not have this luck when it comes to programming. Programming is a universe on its own.
 
-**A picture is something you draw / drawing is making a picture**
+Learning programming is a little like learning to speak again from scratch: a child learning to speak has to create a network of concepts in their head; and those concepts circularly depend on each other.
 
-- What’s a picture? What you draw.
-- What’s drawing? Making a picture.
+```
+Car <--> Wheels
+```
 
-**Talking is when you say words" / words are what you say when you talk**
+- Cars have wheels, wheels are the thing cars have.
 
-- What are words? Things you say.
-- What is saying something? Using words.
-
-Grammatical categories like verbs, nouns, and adjectives are not grounded in external definitions.
-They are typically learned and understood by their roles in relation to each other.
-This creates a network of mutually defining concepts:
-
-- (Verb) Running is something you do.
-
-- (Noun) A dog can run; dog is the noun because it does the running.
-
-- (Adjective) A fast dog runs; fast is describing the dog.
-
-- (Adverb) The dog runs quickly; quickly is describing how it runs.
+- Note how we used language in a structured way when we made up the symbol `<-->`.
+What does that symbol mean? It mean anything we want it to mean, we just made it up. By using it over and over we may solidify its meaning.
 
 Both natural language and programming languages are web of relationships.
 The meaning of the terms emerges from how the terms connect with each other.
 
-### Fearless: code, compilation, and execution
+### Fearless programs and Fearless code
 
 A Fearless program consists of a specific form of text, called (source) code.
-Fearless code is text designed to be read by both humans and a program called the Fearless compiler.
+Fearless code is text designed to be read by both humans and a program called Fearless.
 
 When you read text, your brain separates words from punctuation. Reading this sentence below
 
@@ -75,8 +57,8 @@ Pizza, again?
 you see two words: `Pizza` and `again`,
 and two punctuation marks: `,` and `?`.
 
-Code works similarly, but everything is just a "token". The compiler would just see four tokens: `Pizza`, `,`, `again` and `?`.
-From the point of view of the fearless compiler newlines and spaces are irrelevant; any amount of spacing is equally effective at separating pieces of code, and sometimes no spacing is needed, as for the comma after `Pizza`.
+Code works similarly, but everything is just a "token". Fearless would just see four tokens: `Pizza`, `,`, `again` and `?`.
+From the point of view of Fearless newlines and spaces are irrelevant; any amount of spacing is equally effective at separating pieces of code, and sometimes no spacing is needed, as for the comma after `Pizza`.
 This means that we can freely use more or less spacing to make the code more understandable for humans.
 
 Additionally, parenthesis are kinds of tokens that work in pairs: we use parenthesis `(..)`, `[..]` and `{..}` to group concepts together.
@@ -85,20 +67,45 @@ Additionally, parenthesis are kinds of tokens that work in pairs: we use parenth
 
 Comments are another tool to make our code more readable or clear.
 A `//` starts a single-line comment. 
-The compiler ignores everything from `//` to the end of the line.
+Fearless ignores everything from `//` to the end of the line.
 Any text enclosed by the delimiters `/*...*|/` is called a multi-line comment.
-The compiler ignores everything between these two delimiters, even if it spans multiple lines.
+Fearless ignores everything between these two delimiters, even if it spans multiple lines.
 Comments spaces and newlines have no impact on the execution; but can be precious to insert human-readable explanations in the code; facilitating the understanding of code.
+
+Comments are the first crucial abstraction step we are seeing. Comments are not unique to Fearless and you can use them in any kind of text.
+Consider the following text, where someone may be planning to apply for their dream Job:
+```
+Dear Hiring Manager //actual name?
+
+I am writing to apply for the mattress tester position at Sleep well Inc.
+//What about: I am excited to apply for ..
+
+I am a professional /*rester?*|/ with 25 years of experience in effective sleeping.
+//TODO: connect more with their top requirement
+In my current role, I've been able to test
+ many different sleeping surfaces.
+I can describe a mattress the way sommeliers describe wine: texture, support, finish.
+With my extensive experience I'm confident I can provide effective suggestions
+to improve the comfort of any kind of sleeping
+set up while sticking to a very, very tight budget.
+//is sticking the right word?
+
+I have attached my CV and would welcome the chance to discuss how I could contribute to /*...*|/
+Thank you for your time and consideration.
+Kind regards, // or Sincerely?
+Bob Snoozeman
+```
+
+As you can see, even comments can have their little language inside: `TODO:` is a short 5 letter annotation meaning that there is an open task.
 
 In the next page we will see our first example of code.
 
 
 OMIT_START
 -------------------------*/@Test void helloWorldPreface() { run("""
-      package test
-      alias base.Main as Main,
-      Test:Main {sys -> base.Debug.println("Hello, World!")}//OK
-      //prints Hello, World!
+      use base.Main as Main;
+      Test:Main {sys -> base.Debug#(`Hello, World!`)}//OK
+      //PRINT|Hello, World!
       """); }/*--------------------------------------------
 OMIT_END
 

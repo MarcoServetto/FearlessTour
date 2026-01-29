@@ -4,5 +4,6 @@ module my.fearlessTour {
     requires org.junit.jupiter.api;
     requires flexmark.ext.tables;
     requires java.base;
-    requires FearlessCompiler;
+    requires Coordinator;
+    requires Commons;
   }
