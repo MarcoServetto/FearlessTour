@@ -13,18 +13,18 @@ In the example before, the turret could only rotate one step at a time.
 How to rotate the turret a variable amount of times?
 Conceptually there are a few more options: we can turn zero, one, two or three times.
 A simple way to encode this idea would be to simply add those methods:
-```
+-------------------------*/@Test void badDirection() { run("""
   Direction: {
-    .turn0: Direction-> this,
-    .turn1: Direction,                   //called .turn before
-    .turn2: Direction -> this.turn1.turn1,//called .reverse before
-    .turn3: Direction -> this.turn2.turn1,//turn twice, then turn again
+    .turn0: Direction-> this;
+    .turn1: Direction;                   //called .turn before
+    .turn2: Direction -> this.turn1.turn1;//called .reverse before
+    .turn3: Direction -> this.turn2.turn1;//turn twice, then turn again
     }
   North: Direction {East}
-  East : Direction {South}
+  East:  Direction {South}
   South: Direction {West}
-  West : Direction {North}
-```
+  West:  Direction {North}
+"""); }/*--------------------------------------------
 This code allows us to rotate any direction any number of times.
 Note how `.turn1` is the only abstract method in `Direction`.
 The syntactic sugar can help us make this code more compact: since it is clear that we want to implement the method `.turn1`, because it is the only abstract method. Thus as discussed before we can write just `East` in `North` instead of the more verbose (but equivalent) `.turn1->East`.
@@ -37,16 +37,16 @@ We can define Rotation as a type that represents **something that knows how to r
 
 We can define the concept of rotations as follows:
 
-```
+-------------------------*/@Test void badDirection2() { run("""
   Direction: { .turn: Direction }
   North: Direction {East}
   East : Direction {South}
   South: Direction {West}
   West : Direction {North}
 
-  Rotation: { #(d: Direction): Direction, }
-  ...//various kinds of rotation will be shown later
-```
+  Rotation: { #(d: Direction): Direction; }
+  /* ... various kinds of rotation will be shown later*/
+"""); }/*--------------------------------------------
 Now `Direction` is back to the minimal form, with only a single `.turn` method,
 and we have a new concept, called `Rotation`, with an `#` method.
 A `Rotation` is an object with a method `#` that can take a `Direction` called `d` and rotate it in a certain way.
@@ -59,14 +59,18 @@ We show 4 ways to declare `Turn90`, from the most verbose to the most compact:
   Turn90: Rotation{#(dir: Direction): Direction -> dir.turn }
   Turn90: Rotation{#(dir)-> dir.turn }
   Turn90: Rotation{dir-> dir.turn }
-  Turn90: Rotation{::turn }
+  Turn90: Rotation{::.turn }
 ```
 - The first way repeats the type declaration of `#`. As we discussed, this is not needed.
 Note how the code is naming the parameter `dir` instead of `d`.
 This is ok, when implementing a method the name of the parameters is irrelevant and can be chosen anew every time the method is implemented.
 - The second explicitly implements `#`.
 - The third relies on the fact that the `#` method is the only abstract method of `Rotation`, thus we can avoid mentioning the method name. We still need to mention the parameter name and the `->` symbol.
-- The last uses a new form of syntactic sugar, designed to simplify writing literals overriding a single method with a single parameter just to immediately call methods on that parameter. At your stage of learning, you may be surprised that syntactic sugar supports this specific case in particular, but with more experience you will see that this apparently oddly specific case is actually very common in Fearless code.
+- The last uses a new form of syntactic sugar, designed to simplify writing literals
+  overriding a method with a single parameter just to immediately use such parameter.
+  At your stage of learning, you may be surprised that syntactic sugar
+  supports this specific case in particular, but with more experience you will see that
+  this apparently oddly specific case is actually very common in Fearless code.
 Using this compact syntax, here it is how we would define all the Rotations:
 -------------------------*/@Test void colonColon1() { run("""
   //OMIT_START
@@ -74,9 +78,9 @@ Using this compact syntax, here it is how we would define all the Rotations:
   //OMIT_END
   Rotation: { #(d: Direction): Direction }
   Turn0: Rotation{::}
-  Turn90: Rotation{::turn }
-  Turn180: Rotation{::turn.turn }
-  Turn270: Rotation{::turn.turn.turn }
+  Turn90: Rotation{::.turn }
+  Turn180: Rotation{::.turn.turn }
+  Turn270: Rotation{::.turn.turn.turn }
 """); }/*--------------------------------------------
 As you can see, we just call `.turn` the appropriate number of times.
 The case of `Turn0` looks quite mysterious at first: that compact syntax is desugared into
@@ -99,13 +103,11 @@ Now that we have both `Direction` and `Rotation` we can rewrite `Tank` to rotate
 //OMIT_START
 Direction:{ /*..as before..*/ .turn: Direction}
 Rotation: { #(d: Direction): Direction }
-Tanks: { #(heading: Direction, aiming: Direction): Tank->
-  {.heading ->heading, .aiming ->aiming,}
-}
+Tanks: { #(heading: Direction, aiming: Direction): Tank-> {.heading ->heading; .aiming ->aiming;}}
 //OMIT_END
 Tank: {
-  .heading: Direction,
-  .aiming: Direction,
+  .heading: Direction;
+  .aiming: Direction;
   .turnTurret(r: Rotation): Tank-> Tanks#(this.heading, r#(this.aiming))
 }
 """); }/*--------------------------------------------
@@ -116,7 +118,7 @@ The parametric `Tank.turnTurret` method is great progress! Instead of needing mu
 This code example shows the core ideas of programming: 
  1. We define names to denote concepts. Those names can be type names, method names and parameter names.
  2. Using those names we model a world where our code will be able to run.
- 3. We encode behaviour by passing values around from method to method.
+ 3. We encode behavior by passing values around from method to method.
  4. Parameters are used to hold those values while we wire them from one place to another.
 
 Under this lens, we can describe programming as **Naming Parametric Abstractions**.
@@ -157,7 +159,7 @@ We could do this by adding a method to `Rotation`, that takes another `Rotation`
 Something like the following:
 ```
 Rotation: {
-  #(d: Direction):Direction,
+  #(d: Direction):Direction;
   +(r: Rotation): Rotation-> ...
 }
 ```
@@ -175,13 +177,13 @@ Here is the full code:
 Direction:{ /*..as before..*/ .turn: Direction}
 //OMIT_END
 Rotation: {
-  #(d: Direction):Direction,
+  #(d: Direction):Direction;
   +(r: Rotation): Rotation-> { d -> this#( r#(d) ) } 
 }
 Turn0: Rotation{::}
-Turn90: Rotation{::turn}
-Turn180: Rotation{::turn.turn}
-Turn270: Rotation{::turn.turn.turn}
+Turn90: Rotation{::.turn}
+Turn180: Rotation{::.turn.turn}
+Turn270: Rotation{::.turn.turn.turn}
 """); }/*--------------------------------------------
 
 
@@ -200,7 +202,7 @@ Inside it, `this` refers to the first `Rotation` (`Turn90` in `Turn90 +(Turn180)
 The object literal `{ d -> this#( r#(d) ) }` creates a new `Rotation` object. When this new object's `#` method is called later, it will use the `this` and `r` that were captured when it was created.
 
 Thanks to our syntactic sugar and inference, the body  of method `Rotation+` is very compact.
-The expression `{ d-> this#(r#(d) }` is equivalent to 
+The expression `{ d-> this#(r#(d)) }` is equivalent to 
 `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }`.
 Before we discussed how `North` is a literal.
 `North` is just sugar for `SomeName147:North{}`. Exactly in the same way and via the same process `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }` can be shortened by the sugar to `{ d-> this#(r#(d) }`.
@@ -215,13 +217,23 @@ and the return value of `Rotation+` created.
 We are sure that the method `Rotation#` of `this` is implemented because all literals have no abstract methods, and parameters (like `this`) are replaced with literals when methods are called.
 
 A common source of confusion when looking to code like 
-```
+-------------------------*/@Test void rotationPlus2() { run("""
+//OMIT_START
+Direction:{ /*..as before..*/ .turn: Direction}
+//OMIT_END
 Rotation: {
-  #(d: Direction):Direction,
+  #(d: Direction):Direction;
   +(r: Rotation): Rotation-> { d -> this#( r#(d) ) } 
 }
-```
-is to assume that the method `Rotation#` will have the behaviour that we can see in `Rotation`.
+//OMIT_START
+Turn0: Rotation{::}
+Turn90: Rotation{::.turn}
+Turn180: Rotation{::.turn.turn}
+Turn270: Rotation{::.turn.turn.turn}
+//OMIT_END
+"""); }/*--------------------------------------------
+
+is to assume that the method `Rotation#` will have the behavior that we can see in `Rotation`.
 Here `Rotation#` is abstract. Thus, there is no way that the calls  `this#` or `r#` would ever resolve into the non-existent code of `Rotation#`; they will always resolve to some concrete implementation of it.
 
 While this is self evident in `Rotation#`, since there is no body, this holds also when a body is present; since methods can be overridden in other literals.
@@ -229,7 +241,7 @@ While this is self evident in `Rotation#`, since there is no body, this holds al
 The code of `Rotation+` is similar to the code of `Tanks#`: it is creating a new kind of object by capturing the method parameters inside of the returned literal.
 With the `+` method we are able to create all kinds of `Rotation`s by using only `Turn90`:
 For example, `Turn90+(Turn90)` behaves exactly like `Turn180` but is conceptually a different object.
-To obtain `Turn0` we could just write `Turn90+(Turn90+(Turn90+(Turn90)))`
+To obtain `Turn0` we could just write `Turn90+(Turn90)+(Turn90)+(Turn90)`
 While writing parenthesis after the `#` method feels natural, we are all used to writing mathematical operations without parentheses. This is possible also in Fearless: every method with zero or one argument can be called without parentheses.
 Thus, we can write `Turn90 + Turn90 + Turn90 + Turn90` to obtain the same result as before.
 We will discuss Fearless operator precedence, or the Fearless lack thereof, when we introduce numbers in the next section.

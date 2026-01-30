@@ -274,13 +274,18 @@ In the code above we defined `Tank` directly in the `Tanks.of` method.
 In this way, the only way to create `Tank` objects is to call `Tanks.of`.
 Alternatively, we can keep the `Tank` declaration outside and use
 inheritance as shown below:
-```
+-------------------------*/@Test void tanks2() { run("""
+//OMIT_START
+Direction:{ /*..as before..*/ .turn: Direction}
+North:Direction{North}
+//OMIT_END
+
 Tank: { .heading: Direction; .aiming: Direction;}
 Tanks: { .of(heading: Direction, aiming: Direction): Tank->
   MadeTank: Tank { .heading -> heading; .aiming -> aiming;}
   }
 TankNN: Tank {.heading -> North; .aiming -> North;}
-```
+"""); }/*--------------------------------------------
 In this way we have more freedom to create `Tank`s:
 via the `Tanks.of` method or via a top level declaration, like `TankNN`.
 
@@ -292,7 +297,7 @@ so we can rely on the sugar and type inference to chose a name for us and to inf
 In this case, the name for our literal is going to be some fresh name
 that never appears anywhere in the code.
 That is, the code below is an equivalent but shorter version of the code above.
--------------------------*/@Test void tanks2() { run("""
+-------------------------*/@Test void tanks3() { run("""
 //OMIT_START
 Direction:{ /*..as before..*/ .turn: Direction}
 North:Direction{North}
@@ -314,10 +319,11 @@ That is, there are three different kinds of object literals:
 - **Bare object literal**
   `{.heading -> heading; .aiming -> aiming}` as we just seen is a bare object literal.
   It is bare because it requires the inference to infer its type from the context.
-- **Named object literal** 
-  `Tank: { .heading: Direction -> heading; .aiming: Direction -> aiming }`, as we have seen before
-  is a named object literal: we do explicitly chose the name for this new type we are declaring.
-  It is the most complete form of literal; it is basically a top level declaration that doubles as an object creation. 
+- **Named object literal**
+  `MadeTank: Tank { .heading -> heading; .aiming -> aiming;}`<br/> 
+  and `Tank: { .heading: Direction -> heading; .aiming: Direction -> aiming }`, as we have seen before
+  are named object literals: we do explicitly chose the name for this new type we are declaring.
+  It is the most complete form of literal; it is a top level declaration that doubles as an object creation. 
  
 #### The three kinds of expressions, revisited.
 
@@ -367,9 +373,10 @@ The full list of operator symbols is:
 That is, the following is a list of valid and invalid method names:
 
 ```
-.foo  #  =  ++  <=  .bar23  <#--  <+  //valid
-.foo+  +bar  a=b  zoo  <hello>  .+>  :  //invalid
+.foo  #  ==  ++  <=  .bar23  <#--  <+  //valid
+.foo+  +bar  a=b  zoo  <hello>  .+>  : = //invalid
 ```
+> Yes, symbol `=` is a little special and it is invalid as an operator on it's own.
 
 In turn, this means that the code below is syntactically valid
 ```
@@ -379,7 +386,7 @@ Adding spaces around all tokens this would look as follows:
 ```
 Bar # ( Add |- )
 ```
-This is the a call of the method called `#` on the receiver `Bar`, and the single parameter is a call of the method called `:-` on the receiver `Add`.
+This is a call of the method called `#` on the receiver `Bar`, and the single parameter is a call of the method called `:-` on the receiver `Add`.
 Method `|-` takes zero parameters.
 
 On the other side, parameter names start with a lower-case letter, and
@@ -425,13 +432,21 @@ When coding it is important to distinguish the intended/ideal state of the code 
 We can now consider adding some methods to `Tank`:
 for example the capacity of turning the turret!
 To do so, we only need to update the code of the type declaration for `Tank`:
-```
+-------------------------*/@Test void tanksHashUse() { run("""
+//OMIT_START
+Direction: {
+  .turn: Direction;
+  .reverse: Direction -> this.turn.turn;
+  }
+Tanks: { #(heading: Direction, aiming: Direction): Tank -> { .heading -> heading; .aiming -> aiming; } }
+
+//OMIT_END
 Tank: {
-  .heading: Direction,
-  .aiming: Direction,
-  .turnTurret: Tank-> Tanks#(this.heading, this.aiming.turn)
+  .heading: Direction;
+  .aiming: Direction;
+  .turnTurret: Tank-> Tanks#(this.heading, this.aiming.turn);
 }
-```
+"""); }/*--------------------------------------------
 As you can see we declare a new method `.turnTurret`
 that returns a `Tank` with the turned turret.
 We do this by calling `Tanks#` with the current heading
@@ -451,7 +466,7 @@ This will reduce as follows:
   </tr>
   <tr>
     <td>
-      <pre><code>Tank{.heading ->North, .aiming ->East,}.turnTurret</code></pre>
+      <pre><code>Tank{.heading ->North; .aiming ->East }.turnTurret</code></pre>
     </td>
     <td>Call <code>Tank.turnTurret</code></td>
   </tr>
@@ -459,8 +474,8 @@ This will reduce as follows:
     <td>
       <pre><code>
 Tanks#(
-  Tank{.heading ->North, .aiming ->East,}.heading,
-  Tank{.heading ->North, .aiming ->East,}.aiming.turn
+  Tank{.heading ->North; .aiming ->East }.heading,
+  Tank{.heading ->North; .aiming ->East }.aiming.turn
   )
       </code></pre>
     </td>
@@ -471,7 +486,7 @@ Tanks#(
       <pre><code>
 Tanks#(
   North,
-  Tank{.heading ->North, .aiming ->East,}.aiming.turn
+  Tank{.heading ->North; .aiming ->East }.aiming.turn
   )
       </code></pre>
     </td>
@@ -496,20 +511,21 @@ Tanks#(
   </tr>
   <tr>
     <td>
-      <pre><code>Tank{.heading ->North, .aiming ->South,}</code></pre>
+      <pre><code>Tank{.heading ->North; .aiming ->South }</code></pre>
     </td>
     <td>Final result</td>
   </tr>
 </table>
 
 It is important to learn to visualise how the code reduces in your mind, so that you can predict code behaviour.
-Note how we wrote `Tank{.heading -> North, .aiming -> South,}`.
-- Should we just write `{.heading ->North, .aiming ->South,}` and rely more on the inference?
-- Should we write `Anon27: Tank{.heading -> North, .aiming -> South,}` and put all the object literal explicitly?
+Note how we wrote `Tank{.heading -> North; .aiming -> South }`.
+- Should we just write `{.heading ->North; .aiming ->South }` and rely more on the inference?
+- Should we write `Anon27: Tank{.heading -> North; .aiming -> South }` and put all the object literal explicitly?
 
 Inference works on source code: the code we write.
 Code under reduction is not source code, but just a tool for us to understand the code behaviour. Since it is just a tool,
 we can afford to relax and to rely on inference as much, or as little, as we want.
+We can even make up our own notation to represent code in a more compact way.
 
 END*/
 }
