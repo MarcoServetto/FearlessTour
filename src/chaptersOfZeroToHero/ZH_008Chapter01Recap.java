@@ -43,8 +43,8 @@ This is also used for code reuse.
   - Examples: `.foo`, `._bar`, `._12`, `.baz`, `+`, `++`, `+>`, `<=`, `*|/-`
   
 - Parameter name:
-  - Relevance: parameter names describe the role the parameter value will exercise inside the method execution. A parameter that is intended to be unused can be called '_'.
-  - Syntax: lowercase identifier, can have `'` at the end
+  - Relevance: parameter names describe the role the parameter value will exercise inside the method execution. A parameter that is intended to be unused can be called `_`.
+  - Syntax: lowercase identifier; can also have `'` at the end
   - Examples: `foo` in `.baz(foo:Bar)`, `.baz(foo)` or `{foo->..}`
   
 - Argument:
@@ -56,9 +56,9 @@ This is also used for code reuse.
   - Relevance: methods contain expressions (instructions/behaviour) and allow us to run/execute/start those instructions.
   They can be abstract or concrete.
   - Examples:<BR/>
-  `mut .foo(a: A): B,` (abstract method),<BR/>
-  `mut .foo(a: A): B -> a.toB,` (concrete method full form),<BR/>
-  `mut .foo(a: A): B -> a.toB,` (concrete method inferred types),<BR/>
+  `mut .foo(a: A): B;` (abstract method),<BR/>
+  `mut .foo(a: A): B -> a.toB;` (concrete method full form),<BR/>
+  `mut .foo(a: A): B -> a.toB;` (concrete method inferred types),<BR/>
   `a->a.foo` or `a.foo` inside `{a->a.foo}` and `{a.foo}` 
   (concrete method inferred name and types),
 
@@ -74,20 +74,20 @@ This is also used for code reuse.
 - Object literal: We use many different names for object literals, to focus the attention of some aspects. But they are all just aliases for the same concept. Common aliases: Object, Value, Constant, Lambda, Instance.
 
 - Object: used to focus on the idea that the literal has behaviour and captures state
-  - Example:  `Point{ .x: Int-> x, .y: Int-> y, }`, `{ .foo->myFoo, }`
+  - Example:  `Point{ .x: Int-> x; .y: Int-> y; }`, `{ .foo->myFoo; }`
 
 - Value: used to focus on the idea that the literal is produced by a computation
   - Example: `Points#(4,5)` returns a value.
 
 - Constant: used when type names are used directly to make instances. Constants can not capture state, so all the instances of `North` are conceptually identical; they are conceptually all the same `North`.
-  - Examples: `North`, `12`, `45`, `+34`, `-13`, `` `Foo` ``, `` `foo\ndd` ``, `{}`
+  - Examples: `North`, `12`, `45`, `+34`, `-13`, `` `Foo` ``, `` `foo dd` ``, `{}`
 (the last one will have the type name inferred by the type system)
 
-- Lambda: used when exactly one method is implemented. Syntactic sugar is present to make this case easier.
+- Lambda: this is the common name given to an object literal with exactly one method is implemented. Syntactic sugar is present to make this case easier.
   - Examples: `{a,b->a+b}`,  `{ a -> a.foo }`, `{ 1 + 2 }`, `{::foo}`, `{::foo.bar }`, `{::+3 }`
 
 - Instance: used to focus on types and subtypes relationships
-  - Example1: `Tank: { .heading-> North, .aiming-> North,}`
+  - Example1: `Tank: { .heading-> North; .aiming-> North;}`
    is an instance of `Tank`.
   - Example2: `North`
    is an instance of `North` and also an instance of `Direction`, via subtyping.
@@ -106,10 +106,10 @@ OMIT_START
 -------------------------*/@Test void emptySquareOk () { run("""
 Direction:{.point: Point->Points#(+0,+1)}
 Points:{#(x: Int, y: Int): Point -> Point[]:{'self
-  .x: Int -> x,
-  .y: Int -> y,
-  +(other: Point): Point -> Points[]#(other.x + x, other.y + y),
-  .move(d: Direction): Point -> self + ( d.point[] ),
+  .x: Int -> x;
+  .y: Int -> y;
+  +(other: Point): Point -> Points[]#(other.x + x, other.y + y);
+  .move(d: Direction): Point -> self + ( d.point[] );
   }}
 """); }/*--------------------------------------------
 //OMIT_END

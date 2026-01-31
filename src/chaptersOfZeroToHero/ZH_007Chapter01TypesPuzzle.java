@@ -55,33 +55,39 @@ Here, "users" refers not to humans, but to pieces of code. Metaphorically the pr
 
 In the same way, the programmer that coded the type declaration for `Tanks` is now identified with the code of `Tanks`.
 
-This perspective might seem unconventional, but it underscores the fluid roles and responsibilities in coding. It also enables discussion about programming, regardless of who writes the code, acknowledging that many programs are developed by large teams of programmers.
+This perspective might seem unconventional, but it underscores the fluid roles and responsibilities in programming. It also enables discussion about programming, regardless of who writes the code, acknowledging that many programs are developed by large teams of programmers.
 
 We now explore a new example and the related type system choices.
 We want to encode a `Rectangle`, defined by the coordinates of the top-left and bottom-right points.
 We could just write
 -------------------------*/@Test void rect1 () { run("""
-Rectangle: { .x1: Int, .y1: Int, .x2: Int, .y2: Int }
+//OMIT_START
+use base.Int as Int;
+//OMIT_END
+Rectangle: { .x1: Int; .y1: Int; .x2: Int; .y2: Int }
 
 Rectangles: {#(x1: Int, y1: Int, x2: Int, y2: Int): Rectangle -> 
-  { .x1 -> x1, .y1 -> y1,.x2 -> x2, .y2 -> y2 }
+  { .x1 -> x1; .y1 -> y1; .x2 -> x2; .y2 -> y2 }
   }
 """); }/*--------------------------------------------
 
 But this is quite error prone: what if we accidentally wrote
-`.y2 -> y1,` instead?
+`.y2 -> y1;` instead?
 This is also error prone for the user: they would have to write something like `Rectangles#(+1,+3,+10,+25)`
 Can they remember the role of each of the four numbers?
 What if they accidentally swap two numbers? The type system will not be able to help: this version of `Rectangle` is simply made of four `Int`s.
 
 Consider the following alternative solution:
 -------------------------*/@Test void rect2 () { run("""
-Point: { .x: Int, .y: Int }
-Points: {#(x: Int, y: Int):Point -> { .x -> x, .y -> y } }
+//OMIT_START
+use base.Int as Int;
+//OMIT_END
+Point: { .x: Int; .y: Int }
+Points: {#(x: Int, y: Int):Point -> { .x -> x; .y -> y } }
 
-Rectangle: {.topLeft: Point, .bottomRight: Point }
+Rectangle: {.topLeft: Point; .bottomRight: Point }
 Rectangles: {#(topLeft: Point, bottomRight: Point): Rectangle ->
-  { .topLeft -> topLeft, .bottomRight -> bottomRight }
+  { .topLeft -> topLeft; .bottomRight -> bottomRight }
   }
 """); }/*--------------------------------------------
 
@@ -96,10 +102,13 @@ We now address the first issue.
 We can declare types `X` and `Y`, so that the type system can guide us.
 
 -------------------------*/@Test void rect3 () { run("""
+//OMIT_START
+use base.Int as Int;
+//OMIT_END
 Xs:{#(val: Int): X -> X:{.val: Int -> val} }
 Ys:{#(val: Int): Y -> Y:{.val: Int -> val} }
-Point: { .x: X, .y: Y }
-Points: {#(x: X, y: Y): Point -> { .x -> x, .y -> y } }
+Point: { .x: X; .y: Y }
+Points: {#(x: X, y: Y): Point -> { .x -> x; .y -> y } }
 """); }/*--------------------------------------------
 Now to create a point the use has to either do
 `Points#(Xs#+2,Ys#+5)` or otherwise use values of types `X` and `Y`.
@@ -112,32 +121,38 @@ However, this is a delicate balance. Consider what happens if we want to have an
 With the first style, the code would be the following:
 
 -------------------------*/@Test void rect4 () { run("""
+//OMIT_START
+use base.Int as Int;
+//OMIT_END
 Rectangles:{#(x1: Int, y1: Int, x2: Int, y2: Int): Rectangle -> Rectangle:{
-  .x1: Int -> x1,
-  .y1: Int -> y1,
-  .x2: Int -> x2,
-  .y2: Int -> y2,
-  .area: Int -> (x2 - x1) * (y2 - y1),
+  .x1: Int -> x1;
+  .y1: Int -> y1;
+  .x2: Int -> x2;
+  .y2: Int -> y2;
+  .area: Int -> (x2 - x1) * (y2 - y1);
   }}
 """); }/*--------------------------------------------
 
 But with the new style with more types the code becomes
 
 -------------------------*/@Test void rect5 () { run("""
+//OMIT_START
+use base.Int as Int;
+//OMIT_END
 Xs:{#(val: Int): X -> X:{.val: Int -> val}}
 Ys:{#(val: Int): Y -> Y:{.val: Int -> val}}
 Areas:{#(val: Int): Area -> Area:{.val: Int-> val}}
 Points:{#(x: X, y: Y): Point ->Point:{
-  .x: X-> x,
-  .y: Y-> y,
+  .x: X-> x;
+  .y: Y-> y;
   }}
 Rectangles:{#(topLeft: Point, bottomRight: Point): Rectangle -> Rectangle:{
-  .topLeft: Point -> topLeft,
-  .bottomRight: Point -> bottomRight,
+  .topLeft: Point -> topLeft;
+  .bottomRight: Point -> bottomRight;
   .area: Area -> Areas#(
     bottomRight.x.val - (topLeft.x.val)
     * (bottomRight.y.val - (topLeft.y.val))
-    ),
+    );
   }}
 """); }/*--------------------------------------------
 
@@ -153,8 +168,11 @@ Fearless offers good ways to handle this other case, but we will see them later 
 Consider again the code for `Point` and the code for `Direction`:
 
 -------------------------*/@Test void pointA () { run("""
-Point: { .x: Int, .y: Int }
-Points: {#(x: Int, y: Int): Point -> { .x -> x, .y -> y } }
+//OMIT_START
+use base.Int as Int;
+//OMIT_END
+Point: { .x: Int; .y: Int }
+Points: {#(x: Int, y: Int): Point -> { .x -> x; .y -> y } }
 Direction: { .turn: Direction }
 North: Direction {East  }
 East : Direction {South }
@@ -168,8 +186,11 @@ Same for `Point`: we know what a `Point` is and we understand what `x` and `y` m
 But, the program does not know anything about this background knowledge.
 The program does not give any external meaning to names. We could have written the code using abstract names and nothing would change for the program. That is, the code below is equivalent to the code above:
 -------------------------*/@Test void pointB () { run("""
-A: { .b: Int, .c: Int }
-D: {#(e: Int, f: Int): A -> { .b -> e, .c -> f } }
+//OMIT_START
+use base.Int as Int;
+//OMIT_END
+A: { .b: Int; .c: Int }
+D: {#(e: Int, f: Int): A -> { .b -> e; .c -> f } }
 G: { .h: G}
 I: G {L}
 L: G {M}
@@ -188,50 +209,54 @@ However, by adding more and  more connections between our units of code, the mea
 
 For example, we can make it so that points can be moved according to directions:
 -------------------------*/@Test void pointC () { run("""
+//OMIT_START
+use base.Int as Int;
+//OMIT_END
 Point: {
-  .x: Int, .y: Int,
+  .x: Int; .y: Int;
   +(other: Point): Point -> 
-    Points#(other.x + (this.x), other.y + (this.y)),
-  .move(d: Direction): Point -> this + ( d.point ),
+    Points#(other.x + (this.x), other.y + (this.y));
+  .move(d: Direction): Point -> this + ( d.point );
   }
-Points: {#(x: Int, y: Int): Point -> { .x -> x, .y -> y } }
+Points: {#(x: Int, y: Int): Point -> { .x -> x; .y -> y } }
 
-Direction: { .turn: Direction, .point: Point, }
-North: Direction {.turn -> East,  .point -> Points#(-1, +0), }
-East : Direction {.turn -> South, .point -> Points#(+0, +1), }
-South: Direction {.turn -> West,  .point -> Points#(+1, +0), }
-West : Direction {.turn -> North, .point -> Points#(+0, -1), }
+Direction: { .turn: Direction; .point: Point; }
+North: Direction {.turn -> East;  .point -> Points#(-1, +0); }
+East : Direction {.turn -> South; .point -> Points#(+0, +1); }
+South: Direction {.turn -> West;  .point -> Points#(+1, +0); }
+West : Direction {.turn -> North; .point -> Points#(+0, -1); }
 """); }/*--------------------------------------------
 
 By adding a connection between points and directions, both types become more meaningful.
 This is how meaning emerges. Meaning is obtained by the network of connections between our data types.
 
-We can now add a position to our `Tank`s, and make them move in the direction indicated by their '.heading'.
+We can now add a position to our `Tank`s, and make them move in the direction indicated by their `.heading`.
 
 -------------------------*/@Test void pointD () { run("""
 //OMIT_START
+use base.Int as Int;
 Point: {
-  .x: Int, .y: Int,
+  .x: Int; .y: Int;
   +(other: Point): Point -> 
-    Points#(other.x + (this.x), other.y + (this.y)),
-  .move(d: Direction): Point -> this + ( d.point ),
+    Points#(other.x + (this.x), other.y + (this.y));
+  .move(d: Direction): Point -> this + ( d.point );
   }
-Points: {#(x: Int, y: Int): Point -> { .x -> x, .y -> y } }
+Points: {#(x: Int, y: Int): Point -> { .x -> x; .y -> y } }
 
-Direction: { .turn: Direction, .point: Point, }
-North: Direction {.turn -> East,  .point -> Points#(-1, +0), }
-East : Direction {.turn -> South, .point -> Points#(+0, +1), }
-South: Direction {.turn -> West,  .point -> Points#(+1, +0), }
-West : Direction {.turn -> North, .point -> Points#(+0, -1), }
+Direction: { .turn: Direction; .point: Point; }
+North: Direction {.turn -> East;  .point -> Points#(-1, +0); }
+East : Direction {.turn -> South; .point -> Points#(+0, +1); }
+South: Direction {.turn -> West;  .point -> Points#(+1, +0); }
+West : Direction {.turn -> North; .point -> Points#(+0, -1); }
 //OMIT_END
 Tank: {
-  .heading: Direction,
-  .aiming: Direction,
-  .position:Point,
-  .move:Tank -> Tanks#(this.heading,this.aiming,this.position.move(this.heading))
+  .heading: Direction;
+  .aiming: Direction;
+  .position:Point;
+  .move:Tank -> Tanks#(this.heading, this.aiming, this.position.move(this.heading));
   }
 Tanks: { #(h: Direction, a: Direction, p: Point): Tank->
-  { .heading -> h, .aiming -> a, .position -> p }
+  { .heading -> h; .aiming -> a; .position -> p }
   }
 """); }/*--------------------------------------------
 
@@ -242,6 +267,38 @@ The program is capturing a part of the full semantic of the names.
 A Bug is a situation where the intrinsic meaning expresses behaviour outside of the extrinsic behaviour.
 
 For example, if `North.turn` was returning `North`, this would be a situation where the intrinsic semantic is different from the expected behaviour.
+
+By the way, using the syntactic sugar to the maximum, this is the most compact version of the code we just discussed:
+
+-------------------------*/@Test void pointCompact () { run("""
+//OMIT_START
+use base.Int as Int;
+//OMIT_END
+Point: {
+  .x: Int; .y: Int;
+  +(other: Point): Point -> 
+    Points#(other.x + (this.x), other.y + (this.y));
+  .move(d: Direction): Point -> this + ( d.point );
+  }
+Points: {#(x: Int, y: Int): Point -> { x; .y -> y } }
+
+Direction: { .turn: Direction; .point: Point; }
+North: Direction { East;  .point -> Points#(-1, +0); }
+East : Direction { South; .point -> Points#(+0, +1); }
+South: Direction { West;  .point -> Points#(+1, +0); }
+West : Direction { North; .point -> Points#(+0, -1); }
+Tank: {
+  .heading: Direction;
+  .aiming: Direction;
+  .position:Point;
+  .move:Tank -> Tanks#(this.heading, this.aiming, this.position.move(this.heading));
+  }
+Tanks: { #(h: Direction, a: Direction, p: Point): Tank->{ h; .aiming->a; .position->p} }
+"""); }/*--------------------------------------------
+
+Depending on the reader, this code could be more or less readable then the one before.
+The difference is that we have consistently avoided the method name for one of the methods we are defining.
+This is unambiguous since that would be the only remaining abstract method that we need to implement; thus the conventional sugar applies.
 
 END*/
 }
