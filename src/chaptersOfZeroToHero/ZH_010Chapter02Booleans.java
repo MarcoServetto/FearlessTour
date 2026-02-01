@@ -17,31 +17,30 @@ In the same way we have only the four cardinal `Direction`s, we only have two fu
 We can easily encode booleans in Fearless as follows:
 -------------------------*/@Test void bool1 () { run("""
 //|OMIT_START
-package test
-alias base.Str as Str,
-alias base.Int as Int,
-alias base.Nat as Nat,
-alias base.Void as Void,
+use base.Str as Str;
+use base.Int as Int;
+use base.Nat as Nat;
+use base.Void as Void;
 //OMIT_END
 Bool: {
-  .and(other: Bool): Bool,
-  .or(other: Bool): Bool,
-  .not: Bool,
+  .and(other: Bool): Bool;
+  .or(other: Bool): Bool;
+  .not: Bool;
   }
 True: Bool{
-  .and(other) -> other,
-  .or(other) -> this,
-  .not -> False,
+  .and(other) -> other;
+  .or(other) -> this;
+  .not -> False;
   }
 False:Bool{
-  .and(other) -> this,
-  .or(other) -> other,
-  .not -> True,
+  .and(other) -> this;
+  .or(other) -> other;
+  .not -> True;
   }
 """); }/*--------------------------------------------
 
-That is, `Bool` has three methods, and they all return another `Bool`.
-Method `.and` and `.or` taking an `other: Bool` parameter.
+In this example `Bool` has three methods, and they all return another `Bool`.
+Methods `.and` and `.or` take an `other: Bool` parameter.
 Method `.not` takes zero parameters.
 In this sense, `Bool` is very similar to numbers, where the operations on numbers (`+`,`-`,`*`, etc) takes numbers and returns numbers. In the same way, `Bool` operations take `Bool`s and return `Bool`s.
 
@@ -80,12 +79,12 @@ Booleans are present in the Fearless standard library, and the implementation fo
 #### Examples of reductions
 
 All of those lines reduce in a single step:
-- `True.not`        --> False` because `True.not` returns `False`
-- `False.not`       --> True`  because `True.not` returns `True`
-- `True.and(False)  --> False` because `True.and` returns `other`
-- `False.or(True)   --> True` because `False.or` returns `other`
-- `True.or(False)   --> True` because `True.or` returns `this`
-- `False.and(True)  --> False` because `False.and` returns `this`
+- <code class="ws">True  .not       --&gt; False</code>  because `True.not` returns `False`
+- <code class="ws">False .not       --&gt; True </code> because `True.not` returns `True`
+- <code class="ws">True  .and False --&gt; False</code>  because `True.and` returns `other`
+- <code class="ws">False .or  True  --&gt; True </code>  because `False.or` returns `other`
+- <code class="ws">True  .or  False --&gt; True </code>  because `True.or` returns `this`
+- <code class="ws">False .and True  --&gt; False</code> because `False.and` returns `this`
 
 The code above shows that we can combine booleans to get more booleans. This is similar to what we have seen with `Nat` and `Rotation`. But the real power comes when we use them to make decisions: to execute different pieces of code depending on whether something is `True` or `False`. Crucially, Booleans are a better form of `Fork`.
 - There are two kinds of `Bool` in the same way there are two kinds of `Fork`,
@@ -99,37 +98,36 @@ To provide the two code paths we need a container object. We can define a generi
 
 -------------------------*/@Test void bool2 () { run("""
 //|OMIT_START
-package test
-alias base.Str as Str,
-alias base.Int as Int,
-alias base.Nat as Nat,
-alias base.Void as Void,
+use base.Str as Str;
+use base.Int as Int;
+use base.Nat as Nat;
+use base.Void as Void;
 //OMIT_END
 Bool: {
-  .and(other: Bool): Bool,
-  .or(other: Bool): Bool,
-  .not: Bool,
-  .if[R](m: ThenElse[R]): R,
+  .and(other: Bool): Bool;
+  .or(other: Bool): Bool;
+  .not: Bool;
+  .if[R](m: ThenElse[R]): R;
   }
-ThenElse[R]:{ .then: R, .else: R, }
+ThenElse[R]:{ .then: R; .else: R; }
 
 True: Bool{
-  .and(other) -> other,
-  .or(other) -> this,
-  .not -> False,
-  .if(m) -> m.then, //If True, execute the .then branch
+  .and(other) -> other;
+  .or(other) -> this;
+  .not -> False;
+  .if(m) -> m.then; //If True, execute the .then branch
   }
 False:Bool{
-  .and(other) -> this,
-  .or(other) -> other,
-  .not -> True,
-  .if(m) -> m.else, //If False, execute the .else branch
+  .and(other) -> this;
+  .or(other) -> other;
+  .not -> True;
+  .if(m) -> m.else; //If False, execute the .else branch
   }
 //OMIT_START
 A:{#:Bool ->
-True .and False .if{
-  .then -> True,
-  .else -> False,
+True .and False .if[Bool] ThenElse[Bool]{//[Bool] needed since this Bool does not implement WidenTo
+  .then:Bool -> True;//TODO: all those annotations are needed,
+  .else:Bool -> False;//this is because inference can temporarly override user define annotations
   }
 }
 //OMIT_END
@@ -137,8 +135,8 @@ True .and False .if{
 ```
 //usage example
 True .and False .if{
-  .then -> /*code for the then case*|/,
-  .else -> /*code for the else case*|/,
+  .then -> /*code for the then case*|/;
+  .else -> /*code for the else case*|/;
   }
 ```
 As you can see, now we can encode binary choices as expressions inside of method bodies.
@@ -149,16 +147,22 @@ This is a crucial abstraction step. We can now write a lot of example code.
 As an example, we will define a simple `Bot` type that can respond to a few specific messages. It will have one method, `.message`, which takes an input `Str` and returns a response `Str`.
 
 -------------------------*/@Test void example1 () { run("""
+//OMIT_START
+use base.Str as Str;
+use base.Int as Int;
+use base.Nat as Nat;
+use base.Void as Void;
+//OMIT_END
 Bot: {
   .message(s: Str): Str ->
     // Outer Check: Is the message `hello`?
-    (s == `hello`).if { //here R = Str
-      .then -> `Hi, I'm Bot; how can I help you?`, 
+    s == `hello` .if { //here R = Str
+      .then -> `Hi, I'm Bot; how can I help you?`; 
       .else -> // Logic for when s is NOT "hello"
         // Inner Check: Is the message "bye"?
-        (s == `bye`).if { //writing .if[Str] would be the same
-          .then -> `goodbye!`, //Response if inner condition is True
-          .else -> `I don't understand` // Response if inner condition is False
+        s == `bye` .if { //writing .if[Str] would be the same
+          .then -> `goodbye!`; //Response if inner condition is True
+          .else -> `I don't understand`; // Response if inner condition is False
 
         } //End of inner ThenElse
     } //End of outer ThenElse
@@ -168,9 +172,9 @@ Bot: {
 The `.message` method uses an `.if` checking whether the input `s` is equal to `hello`.
 The call is conceptually
 ``(s ==(`hello`)).if[Str]({..})``
-but we can just write ``(s == `hello`).if {..}``
-by removing parenthesis for single argument methods and relying on of generic type inference.
-The [Str] indicates that both the `.then` and `.else` branches must produce a `Str` result.
+but we can just write ``s == `hello` .if {..}``
+by removing parenthesis and relying on of generic type inference.
+The `[Str]` indicates that both the `.then` and `.else` branches must produce a `Str` result.
 The first `.then` branch is simple: it just returns the greeting string.
 The first `.else` branch contains another `.if` call, nested inside. This inner check sees if `s` is equal to `bye`.
 This nesting allows us to create more complex decision trees.
@@ -182,24 +186,24 @@ This nesting allows us to create more complex decision trees.
    ````
 
 2. ````
-   (`hello` == `hello`).if {
-     .then -> `hi...`,
-     .else -> ...
+   `hello` == `hello` .if {
+     .then -> `hi...`;
+     .else -> ...;
      }
    ````
 
 3. ````
    True.if {
-    .then -> `hi...`,
-    .else -> ...
-    }
+     .then -> `hi...`;
+     .else -> ...;
+     }
    ````
-
+   
 4. ````
-  {
-    .then -> `hi...`,
-    .else -> ...
-    }.then
+   {
+     .then -> `hi...`;
+     .else -> ...;
+     }.then
    ````
 
 5. ````
@@ -212,53 +216,53 @@ This nesting allows us to create more complex decision trees.
    ````
 
 2. ````
-   (`bye` == `hello`).if{
-     .then -> `hi...`,
-     .else -> (`bye` == `bye`).if{
-       .then -> `goodbye!`,
-       .else -> `I don't understand`
-       }
+   `bye` == `hello` .if{
+     .then -> `hi...`;
+     .else -> `bye` == `bye` .if{
+       .then -> `goodbye!`;
+       .else -> `I don't understand`;
+       };
      }
    ````
 
 3. ````
    False.if{
-     .then -> `hi...`,
-     .else -> (`bye` == `bye`).if{
-       .then -> `goodbye!`,
-       .else -> `I don't understand`
-       }
+     .then -> `hi...`;
+     .else -> `bye` == `bye` .if{
+       .then -> `goodbye!`;
+       .else -> `I don't understand`;
+       };
      }
    ````
 
 4. ````
    {
-     .then -> `hi...`,
-     .else -> (`bye` == `bye`).if{
-       .then -> `goodbye!`,
-       .else -> `I don't understand`
-       }
+     .then -> `hi...`;
+     .else -> `bye` == `bye` .if{
+       .then -> `goodbye!`;
+       .else -> `I don't understand`;
+       };
      }.else
    ````
 
 5. ````
-   (`bye` == `bye`).if{
-     .then -> `goodbye!`,
-     .else -> `I don't understand`
+   `bye` == `bye` .if{
+     .then -> `goodbye!`;
+     .else -> `I don't understand`;
      }
    ````
 
 6. ````
    True.if{
-     .then -> `goodbye!`,
-     .else -> `I don't understand`
+     .then -> `goodbye!`;
+     .else -> `I don't understand`;
      }
    ````
 
 7. ````
    {
-     .then -> `goodbye!`,
-     .else -> `I don't understand`
+     .then -> `goodbye!`;
+     .else -> `I don't understand`;
      }.then
    ````
 
@@ -272,36 +276,36 @@ This nesting allows us to create more complex decision trees.
    ````
 
 2. ````
-   (`test` == `hello`).if{
-     .then -> `hi...`,
-     .else -> (`test` == `bye`).if{
-       .then -> `goodbye!`,
-       .else -> `I don't understand`
-       }
+   `test` == `hello` .if{
+     .then -> `hi...`;
+     .else -> `test` == `bye` .if{
+       .then -> `goodbye!`;
+       .else -> `I don't understand`;
+       };
      }
    ````
 
 3. ````
    False.if{
-     .then -> `hi...`,
-     .else -> (`test` == `bye`).if{
-       .then -> `goodbye!`,
-       .else -> `I don't understand`
-       }
+     .then -> `hi...`;
+     .else -> `test` == `bye` .if{
+       .then -> `goodbye!`;
+       .else -> `I don't understand`;
+       };
      }
    ````
 
 4. ````
-   (`test` == `bye`).if{
-     .then -> `goodbye!`,
-     .else -> `I don't understand`
+   `test` == `bye` .if{
+     .then -> `goodbye!`;
+     .else -> `I don't understand`;
      }
    ````
    
 5. ````
    False.if{
-     .then -> `goodbye!`,
-     .else -> `I don't understand`
+     .then -> `goodbye!`;
+     .else -> `I don't understand`;
      }
    ````
 6. ````
@@ -319,7 +323,7 @@ Note how the generics are explicitly needed when **defining** the `.if` method b
 This is where our journey of learning Fearless programming starts to intersecting with concepts common to most other programming languages.
 I still vividly remember the moment it struck me: every possible computation can be represented as just an enormous pile of ifs invoking each other. Mind blowing!
 
-But just because something can be done, doesn't mean it's the best approach. Solving problems by throwing a massive heap of binary decisions at them (like firing wildly with a machine gun) rarely leads to elegant, maintainable code. A program built this way quickly becomes brittle and hard to evolve. Soon, we'll explore specialized decision-making constructs, each tailored to different scenarios, and we'll learn to select the right tool for each job. 
+But just because something can be done, doesn't mean it's the best approach. Solving problems by throwing a massive heap of binary decisions at them (like firing wildly with a machine gun) rarely leads to elegant, maintainable code. A program built this way quickly becomes brittle and hard to evolve. Soon, we'll explore specialised decision-making constructs, each tailored to different scenarios, and we'll learn to select the right tool for each job. 
 
 But for now, let's pause to appreciate what we've accomplished. Understanding the `.if` is a big achievement.
 
@@ -329,15 +333,7 @@ But for now, let's pause to appreciate what we've accomplished. Understanding th
 Generics are very common in Fearless.
 
 Possibly the most important generic types in the Fearless standard library are the function types, that looks similar to the following:
-(there are some minor differences that we will discuss later)
 -------------------------*/@Test void fun1 () { run("""
-//|OMIT_START
-package test
-alias base.Str as Str,
-alias base.Int as Int,
-alias base.Nat as Nat,
-alias base.Void as Void,
-//OMIT_END
 F[R]: { #: R }
 F[A,R]: { #(a: A): R }
 F[A,B,R]: { #(a: A, b: B): R }
@@ -348,24 +344,39 @@ Of course we can define more if more arguments are needed.
 As you can see, thanks to the way generic types works, we can call them all `F` because
 the presence of different numbers of generic arguments disambiguate their names.
 
+Fearless allows to simply omit the names of parameters that are not used; and since those are abstract methods those are all unused since there is no body at all.
+Thus we can also just write:
+-------------------------*/@Test void fun1b () { run("""
+F[R]: { #: R }
+F[A,R]: { #(A): R }
+F[A,B,R]: { #(A, B): R }
+F[A,B,C,R]: { #(A, B, C): R }
+"""); }/*--------------------------------------------
+
+
 With `F`, we can rewrite much of the code we showed in the beginning.
 For example:
 -------------------------*/@Test void f2 () { run("""
 //OMIT_START
 Direction:{}
 //OMIT_END
-Tank: { .heading: Direction, .aiming: Direction }
+Tank: { .heading: Direction; .aiming: Direction }
 Tanks: { #(heading: Direction, aiming: Direction): Tank->
-  { .heading ->heading, .aiming ->aiming }
+  { .heading ->heading; .aiming ->aiming }
   }
 """); }/*--------------------------------------------
 could be rewritten as 
 -------------------------*/@Test void f3 () { run("""
 //OMIT_START
+use base.Str as Str;
+use base.Int as Int;
+use base.Nat as Nat;
+use base.Void as Void;
+use base.F as F;
 Direction:{}
 //OMIT_END
-Tank: { .heading: Direction, .aiming: Direction }
-Tanks: F[Direction,Direction,Tank] { h,a -> { .heading -> h, .aiming -> a } }
+Tank: { .heading: Direction; .aiming: Direction }
+Tanks: F[Direction,Direction,Tank] { h,a -> { .heading -> h; .aiming -> a } }
 """); }/*--------------------------------------------
 This code is not just slightly shorter, but now `Tanks` is a valid element that can be passed to any method taking a generic `F[A,B,R]`.
 
@@ -389,84 +400,82 @@ We can define **short-circuited** versions for `.and` and `.or`, called `&&` and
 
 
 -------------------------*/@Test void bool3 () { run("""
-//|OMIT_START
-package test
-alias base.Str as Str,
-alias base.Int as Int,
-alias base.Nat as Nat,
-alias base.Void as Void,
-alias base.F as F,
+//OMIT_START
+use base.Str as Str;
+use base.Int as Int;
+use base.Nat as Nat;
+use base.Void as Void;
+use base.F as F;
 //OMIT_END
 Bool: {
-  .and(other: Bool): Bool,
-  .or(other: Bool): Bool,
-  .not: Bool,
-  .if[R](m: ThenElse[R]): R,
-  &&(other: F[Bool]): Bool,
-  ||(other: F[Bool]): Bool,
+  .and(Bool): Bool;
+  .or(Bool): Bool;
+  .not: Bool;
+  .if[R](ThenElse[R]): R;
+  &&(F[Bool]): Bool;
+  ||(F[Bool]): Bool;
   }
-ThenElse[R]:{ .then: R, .else: R }
+ThenElse[R]:{ .then: R; .else: R }
 
 True: Bool{
-  .and(other) -> other,
-  .or(other) -> this,
-  .not -> False,
-  .if(m) -> m.then,
-  &&(other) -> other#,
-  ||(other) -> this,
-  }  
-False:Bool{
-  .and(other) -> this,
-  .or(other) -> other,
-  .not -> True,
-  .if(m) -> m.else,
-  &&(other) -> this,
-  ||(other) -> other#,
+  .and other -> other;
+  .or  other -> this;
+  .not       -> False;
+  .if  m     -> m.then;
+  &&   other -> other#;
+  ||   other -> this;
+  }
+False: Bool{
+  .and other -> this;
+  .or  other -> other;
+  .not       -> True;
+  .if  m     -> m.else;
+  &&   other -> this;
+  ||   other -> other#;
   }
 """); }/*--------------------------------------------
 We can then use those operators as follows:
 ```
-Much:   {.code: Bool -> ..., }
-Slow:   {.code: Bool -> ..., }
-ATonOf: {.code: Bool -> ..., }
+Much:   {.code: Bool -> ... }
+Slow:   {.code: Bool -> ... }
+ATonOf: {.code: Bool -> ... }
 ```
 -------------------------*/@Test void bool4 () { run("""
 //|OMIT_START
-package test
-alias base.Str as Str,
-alias base.Int as Int,
-alias base.Nat as Nat,
-alias base.Void as Void,
-alias base.F as F,
+use base.Str as Str;
+use base.Int as Int;
+use base.Nat as Nat;
+use base.Void as Void;
+use base.F as F;
 Bool: {
-  .and(other: Bool): Bool,
-  .or(other: Bool): Bool,
-  .not: Bool,
-  .if[R](m: ThenElse[R]): R,
-  &&(other: F[Bool]): Bool,
-  ||(other: F[Bool]): Bool,
+  .and(Bool): Bool;
+  .or(Bool): Bool;
+  .not: Bool;
+  .if[R](ThenElse[R]): R;
+  &&(F[Bool]): Bool;
+  ||(F[Bool]): Bool;
   }
-ThenElse[R]:{ .then: R, .else: R }
+ThenElse[R]:{ .then: R; .else: R }
 
 True: Bool{
-  .and(other) -> other,
-  .or(other) -> this,
-  .not -> False,
-  .if(m) -> m.then,
-  &&(other) -> other#,
-  ||(other) -> this,
-  }  
-False:Bool{
-  .and(other) -> this,
-  .or(other) -> other,
-  .not -> True,
-  .if(m) -> m.else,
-  &&(other) -> this,
-  ||(other) -> other#,
+  .and other -> other;
+  .or  other -> this;
+  .not       -> False;
+  .if  m     -> m.then;
+  &&   other -> other#;
+  ||   other -> this;
   }
-Much:   {.code: Bool -> True, }
-Slow:   {.code: Bool -> False, }
-ATonOf: {.code: Bool -> False, }
+False: Bool{
+  .and other -> this;
+  .or  other -> other;
+  .not       -> True;
+  .if  m     -> m.else;
+  &&   other -> this;
+  ||   other -> other#;
+  }
+Much:   {.code: Bool -> True }
+Slow:   {.code: Bool -> False }
+ATonOf: {.code: Bool -> False }
 AA:{#:Bool ->
 //OMIT_END
 Much.code && { Slow.code } && {ATonOf.code} // version 1
@@ -492,17 +501,23 @@ both versions would always run all the three computations.
 Note how `{Slow.code}` is an object Literal of type `F[Bool]`.
 The full version would be  :
 ```
-Anon1[]:F[Bool] { #[](): Bool[] -> Anon2[]:Slow[]{}.code[](), }
+Anon1[]:F[Bool] { #[](): Bool[] -> Anon2[]:Slow[]{}.code[](); }
 ```
-That is, since the method `F[Bool]#` has exactly zero arguments, we can omit both the method name # and the arrow -> when implementing it.
+That is, since the method `F[Bool]#` has exactly zero arguments, we can omit both the method name `#` and the arrow `->` when implementing it.
 
 We can now compare and contrast the above with the syntax
 ```
 Tanks: F[Direction,Direction,Tank]{ h,a -> { .heading -> h, .aiming -> a } }
 ```
-to implement the method `F[Direction,Direction,Tank]#`.
-Note the presence of `->` after `h,a ->`.
-Since method `F[Bool]#` takes zero arguments, we implement it with just `{Slow.code}` instead of having to awkwardly write `{-> Slow.code}`
+Where 
+```
+h,a -> { .heading -> h, .aiming -> a }
+```
+implements the method `F[Direction,Direction,Tank]#`.
+
+Note the presence of `->` in `h,a ->`.
+The arrow `->` is needed here since we have two parameters: `h,a`.
+Instead, since method `F[Bool]#` takes zero arguments, we implement it with just `{Slow.code}` instead of having to awkwardly write `{-> Slow.code}`
 
 Finally, consider again
 ```
@@ -515,7 +530,7 @@ In Fearless, as in most programming languages, it is possible to
 encode non terminating computations.
 For example, what if `Slow` were defined as follows:
 ```
-Slow:{.code: Bool -> this.code, }
+Slow:{.code: Bool -> this.code; }
 ```
 The method call `Slow.code` reduces in one step to `Slow.code`, that reduces in itself again, and again, and again. This reduction never stops!
 Executing `Slow.code` would either never terminate or produce some kind of error.

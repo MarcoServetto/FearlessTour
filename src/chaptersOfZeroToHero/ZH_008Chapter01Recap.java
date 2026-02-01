@@ -104,6 +104,7 @@ That is,
   
 OMIT_START
 -------------------------*/@Test void emptySquareOk () { run("""
+use base.Int as Int;
 Direction:{.point: Point->Points#(+0,+1)}
 Points:{#(x: Int, y: Int): Point -> Point[]:{'self
   .x: Int -> x;

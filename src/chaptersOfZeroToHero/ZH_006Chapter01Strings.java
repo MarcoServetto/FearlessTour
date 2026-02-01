@@ -62,8 +62,9 @@ Note again how the standard library can define an amount of types that is out of
 However, those types do exist and we can code in Fearless using them.
 Note that strings in Fearless are still a finite number.
 
-While there are  ( 2<sup>64</sup> ) - 1 instances of `Nat`, there are ( 96<sup>2,147,483,647</sup> )  - 1 instances of Str.
-The number 96<sup>2,147,483,647</sup> is incomprehensibly large, far exceeding the number of atoms in the observable universe 10<sup>80</sup> and a googol 10<sup>100</sup>. However, it is still smaller than a googolplex 10<sup>googol</sup>.
+While there are  2<sup>64</sup> instances of `Nat`,
+there are just a little more than 10<sup>4,256,895,041</sup> instances of Str.
+The number 10<sup>4,256,895,041</sup> is incomprehensibly large, far exceeding the number of atoms in the observable universe 10<sup>80</sup> and a googol 10<sup>100</sup>. However, it is still smaller than a googolplex 10<sup>googol</sup>.
 
 ### Strings
 

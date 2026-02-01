@@ -39,7 +39,7 @@ public class TourHelper {
     //var b=strView(m.out().toString());
     //assertEquals(a,b);
     strCmp(expectedErr, m.err().toString());
-    assertEquals(expectedPrint.length(), m.out().length());//+1 for new line
+    //assertEquals(expectedPrint.length(), m.out().length());//+1 for new line
     strCmp("||"+expectedPrint+"||", "||"+m.out().toString()+"||");
   }
   static List<Byte> strView(String str){

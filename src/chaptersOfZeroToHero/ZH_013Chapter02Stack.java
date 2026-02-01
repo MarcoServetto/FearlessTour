@@ -31,12 +31,12 @@ We will now see how to define Stacks of any kind of entities.
 
 -------------------------*/@Test void stack1 () { run("""
 Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty,
-  +(e: T): Stack[T] -> { .match(m) -> m.elem(e, this) },
+  .match[R](m: StackMatch[T,R]): R -> m.empty;
+  +(e: T): Stack[T] -> { .match m -> m.elem(e, this) };
   }
 StackMatch[T,R]: {
-  .empty: R,
-  .elem(top:T, tail: Stack[T]): R,
+  .empty: R;
+  .elem(top:T, tail: Stack[T]): R;
   }
 """); }/*--------------------------------------------
 As you can see, this code is similar to both peano numbers and optionals. It is kind of a hybrid.
@@ -45,33 +45,26 @@ The `.match` method and the `StackMatch` type are very similar to `.match` and `
 The method `+` is similar to the method `.succ` on peano numbers, and the implementation is similar to the method `Opts#`.
 Look again to the code of `Opt` and `Number` from before to see the similarities:
 -------------------------*/@Test void optPeano () { run("""
-//|OMIT_START
-package test
-alias base.Str as Str,
-alias base.Int as Int,
-alias base.Nat as Nat,
-alias base.Void as Void,
-//OMIT_END
 Opt[T]: {
   .match[R](m: OptMatch[T,R]): R -> m.empty
   }
 OptMatch[T,R]: {
-  .empty: R,
-  .some(t: T): R,
+  .empty: R;
+  .some(t: T): R;
   }
 Opts: {
-  #[T](t: T): Opt[T] -> { .match(m) -> m.some(t) }
+  #[T](t: T): Opt[T] -> { .match m-> m.some(t) }
   }
 Number: {
-  .pred: Number,
-  .succ: Number -> { this },
-  +(other: Number): Number -> this.pred + (other.succ),
-  *(other: Number): Number -> (this.pred * other) + other,
+  .pred: Number;
+  .succ: Number -> { this };
+  +(other: Number): Number -> this.pred + (other.succ);
+  *(other: Number): Number -> (this.pred * other) + other;
   }
 Zero: Number{
-  .pred -> this.pred,
-  +(other) -> other,
-  *(other) -> this,
+  .pred   -> this.pred;
+  + other -> other;
+  * other -> this;
  }
 """); }/*--------------------------------------------
 We can use the stack in many different ways. Some usage examples below:
@@ -83,19 +76,20 @@ Note how we can use `{}` both for the empty stack and the empty optional. The in
 Here we show how to use match to sum all the elements in a `Stack[Nat]`.
 -------------------------*/@Test void stack2 () { run("""
 //OMIT_START
+use base.Nat as Nat;
 Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty,
-  +(e: T): Stack[T] -> { .match(m) -> m.elem(e, this) },
+  .match[R](m: StackMatch[T,R]): R -> m.empty;
+  +(e: T): Stack[T] -> { .match(m) -> m.elem(e, this) };
   }
 StackMatch[T,R]: {
-  .empty: R,
-  .elem(top:T, tail: Stack[T]): R
+  .empty: R;
+  .elem(top:T, tail: Stack[T]): R;
   }
 //OMIT_END
 Example: {
   .sum(ns: Stack[Nat]): Nat -> ns.match{
-    .empty -> 0,
-    .elem(top, tail) -> top + ( this.sum(tail) ),
+    0; // equivalent to .empty -> 0;
+    top, tail -> top + ( this.sum(tail) ); // equivalent to .elem(top, tail) -> ...;
     }
   }
 """); }/*--------------------------------------------
@@ -104,9 +98,9 @@ As you can see, we use the match to distinguish the two cases:
 - summing all the elements of a stack with a `top` and a `tail` can be done by summing the top with the sum of all the elements of the tail.
 
 Look again at the code `top + ( this.sum(tail) )`. Here `this` is just `Example`, so this code is equivalent to `top + ( Example.sum(tail) )`.
-That is, the code of method `Example.sum` is internally calling the method Example.sum again.
+That is, the code of method `Example.sum` is internally calling the method `Example.sum` again.
 There is nothing special in this, any method can call any method, so `Example.sum` can call `Example.sum` internally.
-A lot of people find this concept somewhat puzzling. To show that they find this behaviour to be more complex than a normal method call, they will call this call a **recursive** call and the method `Example.sum` a recursive method.
+A lot of people find this concept somewhat puzzling. To show that they find this behaviour to be more complex than a normal method call, they will refer to this as a **recursive** call and to the method `Example.sum` as a recursive method.
 We will see very soon how this terminology (recursion) is not really that well defined.
 We will now try to visualise the reduction of `Example.sum(Stack[Nat] + 1 + 2 + 3)`. It is a good exercise, also because it raises the question of how to represent the result of `Stack[Nat] + 1 + 2 + 3`.
 So, let start reducing it.
@@ -117,7 +111,7 @@ So, let start reducing it.
 
 As you can see, this is **quite hard to read**.
 Arguably, `Stack[Nat] + 1 + 2 + 3` was much more clear.
-Visualizing reductions is great because if helps us to understand the semantic of the code. Geting stuck in the mud of redundant verbose value syntax would make visualizing reductions less useful.
+Visualizing reductions is great if it helps us to understand the semantic of the code. Geting stuck in the mud of redundant verbose value syntax would make visualizing reductions less useful.
 To better visualize this method execution we will use a symbolic representation for stacks.
 
 We will represent the result of `Stack[Nat] + 1 + 2 + 3` as `[3,2,1]`.
@@ -126,16 +120,16 @@ We will represent the result of `Stack[Nat] + 1 + 2 + 3` as `[3,2,1]`.
 With this representation problem sorted out, we can now reduce
 
 01. `Example.sum([3,2,1])`
-02. `[3,2,1].match{ .empty -> 0, .elem(top, tail) -> top+(Example.sum(tail))}`
-03. `{ .empty -> 0, .elem(top, tail) -> top+(Example.sum(tail))}.elem(3,[2,1])`
+02. `[3,2,1].match{ 0; top,tail -> top+(Example.sum(tail))}`
+03. `{ 0; top,tail -> top+(Example.sum(tail))}.elem(3,[2,1])`
 04. `3+(Example.sum([2,1]))`
-05. `3+([2,1].match{ .empty -> 0, .elem(top, tail) -> top+(Example.sum(tail))})`
-06. `3+ ({ .empty -> 0, .elem(top, tail) -> top+(Example.sum(tail))}.elem(2,[1]))`
+05. `3+([2,1].match{ 0; top,tail -> top+(Example.sum(tail))})`
+06. `3+ ({ 0; top,tail -> top+(Example.sum(tail))}.elem(2,[1]))`
 07. `3+(2+(Example.sum([1])))`
-08. `3+(2+([1].match{ .empty -> 0, .elem(top, tail) -> top+(Example.sum(tail))}))`
-09. `3+(2+({ .empty -> 0, .elem(top, tail) -> top+(Example.sum(tail))}.elem(1,Stack[Nat])))`
+08. `3+(2+([1].match{ 0; top,tail -> top+(Example.sum(tail))}))`
+09. `3+(2+({ 0; top,tail -> top+(Example.sum(tail))}.elem(1,Stack[Nat])))`
 10. `3+(2+(1+(Example.sum(Stack[Nat]))))`
-11. `3+(2+(1+(Stack[Nat].match{ .empty -> 0, .elem(top, tail) -> top+(Example.sum(tail))}))`
+11. `3+(2+(1+(Stack[Nat].match{ 0; top,tail -> top+(Example.sum(tail))}))`
 12. `3+(2+(1+(0)))`
 13. `3+(2+(1.pred+(0.succ)))`
 14. `3+(2+(0+(0.succ)))`
@@ -163,17 +157,17 @@ We can add a concatenation operation `++` between stacks as follows:
 
 -------------------------*/@Test void stack3 () { run("""
 Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty,
-  ++(other: Stack[T]): Stack[T] -> other,
+  .match[R](m: StackMatch[T,R]): R -> m.empty;
+  ++(other: Stack[T]): Stack[T] -> other;
   +(e: T): Stack[T] -> {
-    .match(m) -> m.elem(e, this),
-    ++(other) -> this ++ other  + e,
-    },
+    .match m -> m.elem(e, this);
+    ++ other -> this ++ other  + e;
+    };
   }
 //OMIT_START
 StackMatch[T,R]: {
-  .empty: R,
-  .elem(top:T, tail: Stack[T]): R
+  .empty: R;
+  .elem(top:T, tail: Stack[T]): R;
   }
 //OMIT_END
 """); }/*--------------------------------------------
