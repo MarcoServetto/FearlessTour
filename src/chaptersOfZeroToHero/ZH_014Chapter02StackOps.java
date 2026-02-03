@@ -13,15 +13,15 @@ class ZH_014Chapter02StackOps {
 Above, we have shown how to make an operation over the stack using match
 ```
 .sum(ns: Stack[Nat]): Nat -> ns.match{
-  .empty -> 0,
-  .elem(top, tail) -> top + ( this.sum(tail) ),
+  .empty          -> 0;
+  .elem top, tail -> top + ( this.sum(tail) );
   }
 ```
 What if we want to multiply all the numbers together instead of summing them?
 ```
 .times(ns: Stack[Nat]): Nat -> ns.match{
-  .empty -> 1,
-  .elem(top, tail) -> top * ( this.times(tail) ),
+  .empty          -> 1;
+  .elem top, tail -> top * ( this.times(tail) );
   }
 ```
 As you can see, there could be many different operations done following the same pattern.
@@ -29,41 +29,64 @@ Repeating this pattern over and over would make the code quite long.
 We can abstract over this pattern with the idea of folding values on top of each other starting from a beginning point:
 
 -------------------------*/@Test void fold1 () { run("""
-StackMatch[T,R]: { .empty: R, .elem(top:T, tail: Stack[T]): R, }
+//OMIT_START
+use base.F as F;
+use base.Nat as Nat;
+use base.Bool as Bool;
+//OMIT_END
+StackMatch[T,R]: { .empty: R; .elem(top: T, tail: Stack[T]): R; }
 Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty,
-  .fold[R](start: R, f: F[T,R,R]): R -> start,
+  .match[R](m: StackMatch[T,R]): R -> m.empty;
+  .fold[R](start: R, f: F[T,R,R]): R -> start;
   +(e: T): Stack[T] -> { 
-    .match(m) -> m.elem(e, this),
-    .fold(start, f) -> f#(e, this.fold(start, f)),
-    },
+    .match m  -> m.elem(e, this);
+    .fold start, f -> f#(e, this.fold(start, f));
+    };
   }
 ExampleSum: { #(ns: Stack[Nat]): Nat -> ns.fold(0, { n1,n2 -> n1 + n2 })  }
-ExampleTimes: { #(ns: Stack[Nat]): Nat -> ns.fold(1, { n1,n2 -> n1 * n2 })  }//would work with .fold[Nat]
+ExampleTimes: { #(ns: Stack[Nat]): Nat -> ns.fold(1, { n1,n2 -> n1 * n2 })  }
 """); }/*--------------------------------------------
 
-Another icon operation over sequences is to map all the values to the result of an operation, for example adding 5 to all the numbers.
+Another iconic operation over sequences is to map all the values to the result of an operation, for example adding 5 to all the numbers.
 Of course this can be implemented with the match as shown below:
-```
+-------------------------*/@Test void fold1b () { run("""
+//OMIT_START
+use base.F as F;
+use base.Nat as Nat;
+StackMatch[T,R]: { .empty: R; .elem(top: T, tail: Stack[T]): R; }
+Stack[T]: {
+  .match[R](m: StackMatch[T,R]): R -> m.empty;
+  .fold[R](start: R, f: F[T,R,R]): R -> start;
+  +(e: T): Stack[T] -> { 
+    .match m  -> m.elem(e, this);
+    .fold start, f -> f#(e, this.fold(start, f));
+    };
+  }
+//OMIT_END
 Example:{
   .add5(ns: Stack[Nat]): Stack[Nat] -> ns.match{
-    .empty -> {},
-    .elem(top, tail) -> Example.add5(tail) + (top + 5),
+    .empty          -> {};
+    .elem top, tail -> Example.add5(tail) + (top + 5);
     }
 }
-```
-But again, operations like this one are going to be very common, so we better define a generic support for it in the Stack type:
+"""); }/*--------------------------------------------
+
+Operations like this one are going to be very common, so we better define a generic support for it in the Stack type:
 -------------------------*/@Test void map1 () { run("""
-StackMatch[T,R]: { .empty: R, .elem(top:T, tail: Stack[T]): R, }
+//OMIT_START
+use base.F as F;
+use base.Nat as Nat;
+//OMIT_END
+StackMatch[T,R]: { .empty: R; .elem(top:T, tail: Stack[T]): R; }
 Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty,
-  .fold[R](start:R, f: F[R,T,R]): R -> start,
-  .map[R](f: F[T, R]): Stack[R] -> {},
+  .match[R](m: StackMatch[T,R]): R -> m.empty;
+  .fold[R](start:R, f: F[R,T,R]): R -> start;
+  .map[R](f: F[T, R]): Stack[R] -> {};
   +(e: T): Stack[T] -> { 
-    .match(m) -> m.elem(e, this),
-    .fold(start, f) -> f#(this.fold(start, f), e),
-    .map(f) -> this.map(f) + ( f#(e) ),
-    },
+    .match m       -> m.elem(e, this);
+    .fold start, f -> f#(this.fold(start, f), e);
+    .map f         -> this.map(f) + ( f#(e) );
+    };
   }
 ExampleSum5: {   #(ns: Stack[Nat]): Stack[Nat] -> ns.map { n -> n + 5 }  }
 ExampleTimes2: { #(ns: Stack[Nat]): Stack[Nat] -> ns.map { n -> n * 2 }  }
@@ -74,22 +97,24 @@ Do you want to add 10 to all the numbers, multiply the result for 3 and then get
 Easy!
 -------------------------*/@Test void fluent1 () { run("""
 //OMIT_START
-StackMatch[T,R]: { .empty: R, .elem(top:T, tail: Stack[T]): R, }
+use base.F as F;
+use base.Nat as Nat;
+StackMatch[T,R]: { .empty: R; .elem(top:T, tail: Stack[T]): R; }
 Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty,
-  .fold[R](start:R, f: F[R,T,R]): R -> start,
-  .map[R](f: F[T, R]): Stack[R] -> {},
+  .match[R](m: StackMatch[T,R]): R -> m.empty;
+  .fold[R](start:R, f: F[R,T,R]): R -> start;
+  .map[R](f: F[T, R]): Stack[R] -> {};
   +(e: T): Stack[T] -> { 
-    .match(m) -> m.elem(e, this),
-    .fold(start, f) -> f#(this.fold(start, f), e),
-    .map(f) -> this.map(f) + ( f#(e) ),
-    },
+    .match m       -> m.elem(e, this);
+    .fold start, f -> f#(this.fold(start, f), e);
+    .map f         -> this.map(f) + ( f#(e) );
+    };
   }
 //OMIT_END
 ExampleFluent: { #(ns: Stack[Nat]): Nat -> ns
   .map { n -> n + 10 }
   .map { n -> n *  3 }
-  .fold(0, { n1,n2 -> n1 + n2 })//would work with .fold[Nat]
+  .fold(0, { n1,n2 -> n1 + n2 })
   }
 """); }/*--------------------------------------------
 
@@ -103,7 +128,7 @@ That is, a large amount of fearless code looks like the following
 UsefulBox#(keep,all,my,data,in,the,box)
   .transformData{dataElement -> use.the(dataElement).andGetNewElement }
   .transformData{dataElement -> .. }
-  .removeData{dataElement -> use.the(dataElement).toGetBoolean }
+  .removeDataIf{dataElement -> use.the(dataElement).toGetBoolean }
   .addData{dataElement -> use.the(dataElement).toGetManyElements }
   .extractResult{ .. }
 ```
@@ -118,37 +143,37 @@ Now as an exercise, we try to define a method `.filter` that removes elements fr
 But again, operations like this one are going to be very common, so we better define a generic support for it in the Stack type:
 ```
 Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty,
-  .fold[R](start:R, f: F[R,T,R]): R -> start,
+  .match[R](m: StackMatch[T,R]): R -> m.empty;
+  .fold[R](start:R, f: F[R,T,R]): R -> start;
   .map[R](f: F[T, R]): Stack[R] -> {}
-  .filter ???, //Base case
+  .filter ???; //Base case
   +(e: T): Stack[T] -> { 
-    .match(m) -> m.elem(e, this),
-    .fold(start, f) -> f#(this.fold(start, f), e),
-    .map(f) -> this.map(f) + ( f#(e) ),
-    .filter ???, //Inductive case
-    },
+    .match(m) -> m.elem(e, this);
+    .fold(start, f) -> f#(this.fold(start, f), e);
+    .map(f) -> this.map(f) + ( f#(e) );
+    .filter ???; //Inductive case
+    };
   }
 ```
 So, what do we write instead of ??? in the code above? 
 ```
-  .filter ???, //Base case
+  .filter ???; //Base case
   ...
-    .filter ???, //Inductive case
+    .filter ???; //Inductive case
 ```
 Well, first we need to figure out the type. Method `Stack[T].filter` does not transform the elements, it just selects which one to keep. Thus the return type is going to be the same: `Stack[T]`.
 As an argument, we need to take a function that tells `.filter` if the element should be kept or removed.
 We can use a function returning a `Bool`: `True` will mean "keep the element" and `False` will mean "discard the element".
 So, the first filter is going to be
 ```
-  .filter(f: F[T,Bool]): Stack[T]-> {},
+  .filter(f: F[T,Bool]): Stack[T]-> {};
 ```
 We return the empty stack because there are no elements to remove from the empty stack... it is already as empty as it can be.
 What about the second `.filter`? there we have `this` and `e` in scope.
 ```
   .filter(f) -> f#(e).if{
-    .then -> this.filter(f) + e,
-    .else -> this.filter(f),
+    .then -> this.filter(f) + e;
+    .else -> this.filter(f);
     },
 ```
 Here we can use an `.if` on the result of `f#(e)`.
@@ -158,24 +183,28 @@ In the `.else` case, we just propagate the operation on the stack tail.
 Here is the full code again.
 
 -------------------------*/@Test void stackFull () { run("""
+//OMIT_START
+use base.F as F;
+use base.Bool as Bool;
+//OMIT_END
 StackMatch[T,R]: {
-  .empty: R,
-  .elem(top:T, tail: Stack[T]): R,
+  .empty: R;
+  .elem(top:T, tail: Stack[T]): R;
   }
 Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty,
-  .fold[R](start:R, f: F[R,T,R]): R -> start,
-  .map[R](f: F[T, R]): Stack[R] -> {},
-  .filter(f: F[T,Bool]): Stack[T]-> {},
+  .match[R](m: StackMatch[T,R]): R -> m.empty;
+  .fold[R](start:R, f: F[R,T,R]): R -> start;
+  .map[R](f: F[T, R]): Stack[R] -> {};
+  .filter(f: F[T,Bool]): Stack[T]-> {};
   +(e: T): Stack[T] -> { 
-    .match(m) -> m.elem(e, this),
-    .fold(start, f) -> f#(this.fold(start, f), e),
-    .map(f) -> this.map(f) + ( f#(e) ),
-    .filter(f) -> f#(e).if{
-      .then -> this.filter(f) + e,
-      .else -> this.filter(f),
-      },
-    },
+    .match m       -> m.elem(e, this);
+    .fold start, f -> f#(this.fold(start, f), e);
+    .map f         -> this.map(f) + ( f#(e) );
+    .filter f      -> f#(e).if{
+      .then -> this.filter(f) + e;
+      .else -> this.filter(f);
+      };
+    };
   }
 """); }/*--------------------------------------------
 
@@ -183,9 +212,9 @@ You should pause here, absorb every detail, and even commit this little snippet 
 
 This compact piece of code is not just another programming example. Within it lies the distilled essence of the core ideas we've been exploring.
 
-What you're looking at is a mental blueprint. One that can become a key part of your intuitive programming toolkit. Once internalized, it fundamentally reshapes your thinking about problems. You'll begin seeing opportunities everywhere to elegantly apply these patterns, and clearly express yourself via code.
+What you're looking at is a mental blueprint. One that can become a key part of your intuitive programming toolkit. Once internalised, it fundamentally reshapes your thinking about problems. You'll begin seeing opportunities everywhere to elegantly apply these patterns, and clearly express yourself via code.
 
-This snippet is fundational for a powerful mental model, that will guide you toward cleaner solutions, clearer abstractions, and more maintainable code.
+This snippet is foundational for a powerful mental model, that will guide you toward cleaner solutions, clearer abstractions, and more maintainable code.
 
 END*/
 }

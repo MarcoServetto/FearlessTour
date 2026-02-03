@@ -24,6 +24,24 @@ That is, programming is often dressed as a necessary hurdle to "get over with" s
 
 We see programming an artistic expression demanding abstract thinking, focused concentration, and persistence in problem-solving. These are muscles that grow stronger with practice. Programmers find intrinsic satisfaction in the process of careful logical construction itself.
 
+### The Illusion of Progress: The Monkey and the Pedestal
+
+There is a philosophy of innovation often cited by the "moonshot" teams at Google X. They propose a hypothetical challenge: suppose you want to teach a monkey to recite Shakespeare while standing on a pedestal.
+How should you allocate your time and money?
+
+Most people start by building the pedestal. Why? Because building a pedestal is easy. You can go to a workshop, buy some wood, glue it together, and by the end of the day, you have a tangible object. You can show it to your boss and say, "Look, I made progress! I have the pedestal."
+This provides a dopamine hit. It provides the perception of progress.
+
+However, teaching a monkey to recite Shakespeare is incredibly hard. It might even be impossible. If you spend six months building the most beautiful marble pedestal, only to discover you cannot teach the monkey to speak, you have wasted six months. You haven't actually de-risked the project at all.
+
+### Tackling the Hard Part First
+To actually solve the problem, you must ignore the pedestal entirely and focus all your energy on the monkey. You must tackle the hardest, riskiest part of the problem first. Only when the monkey is reciting Hamlet does it make sense to invest a single minute in building the pedestal.
+In learning to program, "the pedestal" is often the tooling, the installation, the "Hello World" printed to a console, or the simple imperative scripts that feel like magic but crumble under complexity. These things give you the perception of progress without the foundational understanding required to build complex systems.
+
+This guide refuses to build the pedestal first.
+We will not start with the easy scripts that feel like magic but crumble under complexity. We aim to teach you how to model the world and construct logic from first principles.
+We are focusing on the monkey. This is why this guide starts with the hard stuff—Types, Abstractions, and Inductive Reasoning—front and centre.
+
 
 ### Expect confusion: everything is circularly dependent concepts
 

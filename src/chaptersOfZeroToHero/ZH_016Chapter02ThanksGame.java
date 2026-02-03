@@ -5,69 +5,68 @@ import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
 class ZH_016Chapter02ThanksGame {
   public static final String fullPreface= """
-package test
-alias base.Void as Void,
-alias base.Int as Int,
-alias base.Nat as Nat,
-alias base.Bool as Bool,
-alias base.True as True,
-alias base.False as False,
+use base.Void as Void;
+use base.Int as Int;
+use base.Nat as Nat;
+use base.Bool as Bool;
+use base.True as True;
+use base.False as False;
 F[R]:{#:R}
 F[A,R]:{#(a:A):R}
 F[A,B,R]:{#(a:A,b:B):R}
 Points:{ #(x: Int, y: Int): Point -> Point:{'self
-  .x: Int -> x,
-  .y: Int -> y,
-  +(other: Point): Point -> Points#(other.x + x, other.y + y),
-  .move(d: Direction): Point -> self + ( d.point ),
-  ==(other: Point): Bool -> self.x == (other.x)  .and (self.y == (other.y) ),
+  .x: Int -> x;
+  .y: Int -> y;
+  +(other: Point): Point -> Points#(other.x + x, other.y + y);
+  .move(d: Direction): Point -> self + ( d.point );
+  ==(other: Point): Bool -> self.x == (other.x)  .and (self.y == (other.y) );
   }}
-Direction: { .turn: Direction, .point:Point, }
-North: Direction {.turn -> East,  .point -> Points#(-1, +0), }
-East : Direction {.turn -> South, .point -> Points#(+0, +1), }
-South: Direction {.turn -> West,  .point -> Points#(+1, +0), }
-West : Direction {.turn -> North, .point -> Points#(+0, -1), }
+Direction: { .turn: Direction; .point: Point; }
+North: Direction {East;  .point -> Points#(-1, +0) }
+East : Direction {South; .point -> Points#(+0, +1) }
+South: Direction {West;  .point -> Points#(+1, +0) }
+West : Direction {North; .point -> Points#(+0, -1) }
 Tank: {
-  .heading: Direction,
-  .aiming: Direction,
-  .position:Point,
+  .heading:  Direction;
+  .aiming:   Direction;
+  .position: Point;
   .move:Tank -> Tanks#(
     this.heading,
     this.aiming,
     this.position.move(this.heading)
-    ),
+    );
   }
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank->
-  { .heading -> heading, .aiming -> aiming, .position -> position } }
+  { .heading -> heading; .aiming -> aiming; .position -> position } }
 StackMatch[T,R]: {
-  .empty: R,
-  .elem(top:T, tail: Stack[T]): R,
+  .empty: R;
+  .elem(top:T, tail: Stack[T]): R;
   }
 Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty,
-  .fold[R](start:R, f: F[R,T,R]): R -> start,
-  .map[R](f: F[T, R]): Stack[R] -> {},
-  .filter(f: F[T,Bool]): Stack[T]-> {},
-  .size:Nat->0,
-  ++(other: Stack[T]): Stack[T] -> other,
-  +(e: T): Stack[T] -> { 
-    .match(m) -> m.elem(e, this),
-    ++(other) -> this ++ other  + e,
-    .fold(start, f) -> f#(this.fold(start, f), e),
-    .map(f) -> this.map(f) + ( f#(e) ),
+  .match[R](m: StackMatch[T,R]): R -> m.empty;
+  .fold[R](start:R, f: F[R,T,R]): R -> start;
+  .map[R](f: F[T, R]): Stack[R] -> {};
+  .filter(f: F[T,Bool]): Stack[T]-> {};
+  .size:Nat->0;
+  ++(other: Stack[T]): Stack[T] -> other;
+  +(e: T): Stack[T] -> {
+    .match(m) -> m.elem(e, this);
+    ++(other) -> this ++ other  + e;
+    .fold(start, f) -> f#(this.fold(start, f), e);
+    .map(f) -> this.map(f) + ( f#(e) );
     .filter(f) -> f#(e).if{
-      .then -> this.filter(f) + e,
-      .else -> this.filter(f),
-      },
-    .size -> this.size + 1,
-    },
+      .then -> this.filter(f) + e;
+      .else -> this.filter(f);
+      };
+    .size -> this.size + 1;
+    };
   }
 Continuation[T,C,R]: { #(x: T, self: C): R }
 Let[R]: {
-  .let[T](x: F[T], c: Continuation[T,Let[R],R]): R-> c#(x#,this),
-  .return(f: F[R]): R -> f#,
+  .let[T](x: F[T], c: Continuation[T,Let[R],R]): R-> c#(x#,this);
+  .return(f: F[R]): R -> f#;
   }
-Let: { #[R]: Let[R] -> {} }        
+Let: { #[R]: Let[R] -> {} }       
 """;
 /*START
 --CHAPTER-- Chapter 2
@@ -80,30 +79,38 @@ Now we have enough understanding about Fearless that we can implement a simple g
 We start by repeating some of the code we discussed above:
 
 -------------------------*/@Test void oldCode1 () { run("""
+//OMIT_START
+use base.Void as Void;
+use base.Int as Int;
+use base.Nat as Nat;
+use base.Bool as Bool;
+use base.True as True;
+use base.False as False;
+//OMIT_END
 Points:{ #(x: Int, y: Int): Point -> Point:{'self
-  .x: Int -> x,
-  .y: Int -> y,
-  +(other: Point): Point -> Points#(other.x + x, other.y + y),
-  .move(d: Direction): Point -> self + ( d.point ),
-  ==(other: Point): Bool -> self.x == (other.x)  .and (self.y == (other.y) ),
+  .x: Int -> x;
+  .y: Int -> y;
+  +(other: Point): Point -> Points#(other.x + x, other.y + y);
+  .move(d: Direction): Point -> self + ( d.point );
+  ==(other: Point): Bool -> self.x == (other.x)  .and (self.y == (other.y) );
   }}
-Direction: { .turn: Direction, .point:Point, }
-North: Direction {.turn -> East,  .point -> Points#(-1, +0), }
-East : Direction {.turn -> South, .point -> Points#(+0, +1), }
-South: Direction {.turn -> West,  .point -> Points#(+1, +0), }
-West : Direction {.turn -> North, .point -> Points#(+0, -1), }
+Direction: { .turn: Direction; .point:Point; }
+North: Direction {East;  .point -> Points#(-1, +0) }
+East : Direction {South; .point -> Points#(+0, +1) }
+South: Direction {West;  .point -> Points#(+1, +0) }
+West : Direction {North; .point -> Points#(+0, -1) }
 Tank: {
-  .heading: Direction,
-  .aiming: Direction,
-  .position:Point,
+  .heading: Direction;
+  .aiming: Direction;
+  .position:Point;
   .move:Tank -> Tanks#(
     this.heading,
     this.aiming,
     this.position.move(this.heading)
-    ),
+    );
   }
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank->
-  { .heading -> heading, .aiming -> aiming, .position -> position } }
+  { .heading -> heading; .aiming -> aiming; .position -> position } }
 """); }/*--------------------------------------------
 We have points, directions and tanks with positions.
 Tanks can move in directions.
@@ -118,23 +125,24 @@ Then, all the surviving tanks move in their heading position, but only if that p
 A position is free if it is neither the current position or the destination of another tank.
 
 -------------------------*/@Test void newCode1 () { run("""
-//|OMIT_START
+//OMIT_START
 """+fullPreface+"""
 //OMIT_END
 NextState: F[Stack[Tank],Stack[Tank]]{
   #(tanks) -> Let#
     .let[Stack[Point]] danger    = { tanks.map{ t -> t.position.move(t.aiming) } }
-    .let[Stack[Tank]] survivors = { tanks.filter{t -> this.notIn(t,danger)} }
-    .let[Stack[Point]] occupied  = { (survivors.map{::position}) ++ (survivors.map{::move.position}) }
-    .return { survivors.map{t -> this.moveIfFree(t,occupied)} },
+    .let[Stack[Tank]]  survivors = { tanks.filter{t -> this.notIn(t,danger)} }
+    .let[Stack[Point]] occupied  = 
+      { survivors.map{::.position} ++ (survivors.map{::.move.position}) }
+    .return { survivors.map{t -> this.moveIfFree(t,occupied)} };
  
  .notIn(t: Tank, ps: Stack[Point]): Bool -> 
-    ps.fold[Bool](True,{acc, p -> acc .and  ( t.position == p .not) }),
+    ps.fold(True,{acc, p -> acc .and  ( t.position == p .not) });
 
   .moveIfFree(t: Tank, occupied: Stack[Point]): Tank -> this.notIn(t.move, occupied).if{
-    .then -> t.move,
-    .else -> t,
-    },
+    .then -> t.move;
+    .else -> t;
+    };
   }
 """); }/*--------------------------------------------
 
@@ -168,29 +176,29 @@ In the code above, there is a subtle logical bug. Can you find it?
 
 **Solution:** By checking if our specific `Tank` wants to move in an occupied position, we also check against the position this very tank wants to move into.
 With the code as written, every `Tank` will want to move in an occupied position, since we count the position they want to move in as an occupied position.
-If some other tank wants to also go in the same position, then there would be two different points in the occupied Stack that are in conflict with the point our current tank wants to go in.
+If some other tank wants to also go in the same position, then there would be two points in the occupied Stack that are in conflict with the point our current tank wants to go in.
 Thus, we can fix the bug by counting the number of points present in our desidered next location.
 
 Note how we used the word "our" there. By doing so, we are imagining us to be the tank that is moving. This is a useful psychological technique we can use as programmers to better visualise code execution.
 
 To fix this bug we can simply edit the `.moveIfFree` method as follows:
 -------------------------*/@Test void newCode2 () { run("""
-//|OMIT_START
+//OMIT_START
 """+fullPreface+"""
 NextState: F[Stack[Tank],Stack[Tank]]{
   #(tanks) -> Let#
     .let[Stack[Point]] danger    = { tanks.map{ t -> t.position.move(t.aiming) } }
     .let[Stack[Tank]] survivors = { tanks.filter{t -> this.notIn(t,danger)} }
-    .let[Stack[Point]] occupied  = { (survivors.map{::position}) ++ (survivors.map{::move.position}) }
-    .return { survivors.map{t -> this.moveIfFree(t,occupied)} },
+    .let[Stack[Point]] occupied  = { (survivors.map{::.position}) ++ (survivors.map{::.move.position}) }
+    .return { survivors.map{t -> this.moveIfFree(t,occupied)} };
  
   .notIn(t: Tank, ps: Stack[Point]): Bool -> 
-    ps.fold[Bool](True,{acc, p -> acc .and  ( t.position == p .not) }),
+    ps.fold(True,{acc, p -> acc .and  ( t.position == p .not) });
 
 //OMIT_END
   .moveIfFree(t: Tank, occupied: Stack[Point]): Tank -> occupied
-    .fold[Nat](0, {acc, p -> t.move.position == p .if{ .then -> 1, .else -> 0,} + acc })
-    == 1 .if { .then-> t.move, .else-> t, },
+    .fold(0, {acc, p -> t.move.position == p .if{ .then -> 1; .else -> 0} + acc })
+    == 1 .if { .then-> t.move; .else-> t; };
 //OMIT_START
   }
 //OMIT_END
@@ -199,26 +207,26 @@ NextState: F[Stack[Tank],Stack[Tank]]{
 Or, with two methods:
 
 -------------------------*/@Test void newCode3 () { run("""
-//|OMIT_START
+//OMIT_START
 """+fullPreface+"""
 NextState: F[Stack[Tank],Stack[Tank]]{
   #(tanks) -> Let#
     .let[Stack[Point]] danger    = { tanks.map{ t -> t.position.move(t.aiming) } }
     .let[Stack[Tank]] survivors = { tanks.filter{t -> this.notIn(t,danger)} }
-    .let[Stack[Point]] occupied  = { (survivors.map{::position}) ++ (survivors.map{::move.position}) }
-    .return { survivors.map{t -> this.moveIfFree(t,occupied)} },
+    .let[Stack[Point]] occupied  = { (survivors.map{::.position}) ++ (survivors.map{::.move.position}) }
+    .return { survivors.map{t -> this.moveIfFree(t,occupied)} };
  
  .notIn(t: Tank, ps: Stack[Point]): Bool -> 
-    ps.fold[Bool](True,{acc, p -> acc .and  ( t.position == p .not) }),
+    ps.fold(True,{acc, p -> acc .and  ( t.position == p .not) });
 
 //OMIT_END
   .moveIfFree(t: Tank, occupied: Stack[Point]): Tank -> 
     this.countHits(t,occupied) == 1
-      .match { .true -> t.move, .false -> t, }, //alternative to if/then/else
+      .match { .true -> t.move; .false -> t; }; //alternative to if/then/else
 
-  .countHits(t: Tank, occupied: Stack[Point]): Nat -> occupied.fold[Nat](0, {acc, p ->
-    t.move.position == p .if{ .then -> 1, .else -> 0,} + acc 
-    }),
+  .countHits(t: Tank, occupied: Stack[Point]): Nat -> occupied.fold(0, {acc, p ->
+    t.move.position == p .if{ .then -> 1; .else -> 0} + acc 
+    });
 //OMIT_START
   }
 //OMIT_END
@@ -226,24 +234,24 @@ NextState: F[Stack[Tank],Stack[Tank]]{
 
 There are many other ways to check this, and if the stack had a 'size' method, we could just do
 -------------------------*/@Test void newCode4 () { run("""
-//|OMIT_START
+//OMIT_START
 """+fullPreface+"""
 NextState: F[Stack[Tank],Stack[Tank]]{
   #(tanks) -> Let#
     .let[Stack[Point]] danger    = { tanks.map{ t -> t.position.move(t.aiming) } }
     .let[Stack[Tank]] survivors = { tanks.filter{t -> this.notIn(t,danger)} }
-    .let[Stack[Point]] occupied  = { (survivors.map{::position}) ++ (survivors.map{::move.position}) }
-    .return { survivors.map{t -> this.moveIfFree(t,occupied)} },
+    .let[Stack[Point]] occupied  = { (survivors.map{::.position}) ++ (survivors.map{::.move.position}) }
+    .return { survivors.map{t -> this.moveIfFree(t,occupied)} };
  
  .notIn(t: Tank, ps: Stack[Point]): Bool -> 
-    ps.fold[Bool](True,{acc, p -> acc .and  ( t.position == p .not) }),
+    ps.fold(True,{acc, p -> acc .and  ( t.position == p .not) });
 
 //OMIT_END
   .moveIfFree(t: Tank, occupied: Stack[Point]): Tank -> occupied
-    .filter{ ::== (t.move.position)}//TODO: those parenthesis should not be needed
+    .filter{ :: == (t.move.position) }
     .size
     == 1 
-    .if{ .then -> t.move, .else -> t, },
+    .if{ .then -> t.move; .else -> t };
 //OMIT_START
   }
 //OMIT_END

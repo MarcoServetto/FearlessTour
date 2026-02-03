@@ -102,6 +102,7 @@ In the same way, `South.turn.turn` is an expression which is equivalent to the o
 
 The example we are discussing is still incomplete, and it
 would cause an error if we try to compile it.
+Note how we are using comments to show the error together with the code.
 -------------------------*/@Test void error2() { run("""
 North: {.turn-> East; } 
 East : {.turn-> South;}

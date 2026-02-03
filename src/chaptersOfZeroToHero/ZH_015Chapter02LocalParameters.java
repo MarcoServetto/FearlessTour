@@ -16,11 +16,12 @@ This can encourage us to write repetitive and hard to read code.
 For example, we show below a difficult to read method computing the distance between two points; using the square root function (sqrt) present on `Nat`:
 -------------------------*/@Test void distance1 () { run("""
 //OMIT_START
-Point:{ .x: Nat, .y: Nat }
+use base.Nat as Nat;
+Point:{ .x: Nat; .y: Nat }
 A:{
 //OMIT_END
 .distance(p1: Point, p2: Point): Nat->
-  p1.x - (p2.x) * (p1.x - (p2.x)) + (p1.y - (p2.y) * (p1.y - (p2.y)))  .sqrt  
+  p1.x - (p2.x) * (p1.x - (p2.x)) + (p1.y - (p2.y) * (p1.y - (p2.y)))  .sqrt .nat  
 //OMIT_START
 }
 //OMIT_END
@@ -28,20 +29,22 @@ A:{
 
 Note that those are the needed parenthesis:
      `p1.x - p2.x` would be interpreted as `(p1.x - p2).x`
-This method uses the pythagorean theorem, but it is not ideal:
+This method uses the Pythagorean theorem, but it is not ideal:
   - we duplicate code for `p1.x - (p2.x)` and `p1.y - (p2.y)`
   - all the code is in a single hard to read line.
 
 What if we want to introduce more names?
-We can define a method on the fly and call it, as shown below:
+We can define a function on the fly and call it, as shown below:
 -------------------------*/@Test void distance2 () { run("""
 //OMIT_START
-Point:{ .x: Nat, .y: Nat }
+use base.Nat as Nat;
+use base.F as F;
+Point:{ .x: Nat; .y: Nat }
 A:{
 //OMIT_END
 .distance(p1: Point, p2: Point): Nat->
-  {#(diffX: Nat, diffY: Nat): Nat->
-     (diffX * diffX) + (diffY * diffY).sqrt }
+  F[Nat,Nat,Nat]{diffX, diffY ->
+     (diffX * diffX) + (diffY * diffY).sqrt.nat }
   #( p1.x - (p2.x), p1.y - (p2.y) )
 //OMIT_START
 }
@@ -51,7 +54,7 @@ A:{
 Theoretically, this new code achieves our goals, but most humans find this new version even harder to read.
 We think this is mostly because 
 1. The values for `diffX` and `diffY` are very far in the code from the declaration point of `diffX` and `diffX`.
-2. This new version is just much longer: we have to add the types for `diffX`, `diffY`, the method name `#` and the return type of such method.
+2. This new version is just much longer: we have to add the types for `diffX`, `diffY`, and the return type.
 3. This version is only working for two new parameters defined at the same time. What if we wanted to give a name to the result before `.sqrt`?
 
 We first show how to solve those 3 issues in the core language, then we show a new form of syntactic sugar making this approach more readable.
@@ -63,11 +66,10 @@ With this Let type we can define our .distance method as follows:
 
 -------------------------*/@Test void distance3 () { run("""
 //|OMIT_START
-package test
-alias base.Nat as Nat,
-alias base.Void as Void,
-alias base.F as F,
-Point:{ .x: Nat, .y: Nat }
+use base.Nat as Nat;
+use base.Void as Void;
+use base.F as F;
+Point:{ .x: Nat; .y: Nat }
 Let:{ #[T,R](x: T, f: F[T,R]): R -> f#x }
 A:{
 //OMIT_END
@@ -75,7 +77,7 @@ A:{
   Let#(p1.x - (p2.x), {diffX ->
   Let#(p1.y - (p2.y), {diffY ->
   Let#((diffX * diffX) + (diffY * diffY), {res ->
-  res.sqrt
+  res.sqrt.nat
   })})})
 //OMIT_START
 }
@@ -91,19 +93,18 @@ We will now refactor our Let to follow the fluent pattern:
 
 -------------------------*/@Test void letFull () { run("""
 //|OMIT_START
-package test
-alias base.Nat as Nat,
-alias base.Void as Void,
-alias base.F as F,
+use base.Nat as Nat;
+use base.Void as Void;
+use base.F as F;
+Point:{ .x: Nat; .y: Nat }
 //OMIT_END
 Continuation[T,C,R]: { #(x: T, self: C): R }
 Let[R]: {
-  .let[T](x: F[T], c: Continuation[T,Let[R],R]): R-> c#(x#,this),
-  .return(f: F[R]): R -> f#,
+  .let[T](x: F[T], c: Continuation[T,Let[R],R]): R-> c#(x#,this);
+  .return(f: F[R]): R -> f#;
   }
 Let: { #[R]: Let[R] -> {} }
 //OMIT_START
-Point:{ .x: Nat, .y: Nat }
 A:{
 //OMIT_END
 //...
@@ -111,7 +112,7 @@ A:{
   .let({p1.x - (p2.x)}, {diffX, self0 -> self0
   .let({p1.y - (p2.y)}, {diffY, self1 -> self1
   .let({(diffX * diffX) + (diffY * diffY)}, {res, self2 -> self2
-  .return {res.sqrt}
+  .return {res.sqrt.nat}
   })})})
 //OMIT_START
 }
@@ -140,24 +141,23 @@ The distance method can use this sugar three times and becomes as follows:
 
 -------------------------*/@Test void letFullSugar () { run("""
 //|OMIT_START
-package test
-alias base.Nat as Nat,
-alias base.Void as Void,
-alias base.F as F,
+use base.Nat as Nat;
+use base.Void as Void;
+use base.F as F;
+Point:{ .x: Nat; .y: Nat }
 Continuation[T,C,R]: { #(x: T, self: C): R }
 Let[R]: {
-  .let[T](x: F[T], c: Continuation[T,Let[R],R]): R -> c#(x#, this),
-  .return(f: F[R]): R -> f#,
+  .let[T](x: F[T], c: Continuation[T,Let[R],R]): R -> c#(x#, this);
+  .return(f: F[R]): R -> f#;
   }
 Let: { #[R]: Let[R] -> {} }
-Point:{ .x: Nat, .y: Nat }
 A:{
 //OMIT_END
 .distance(p1: Point, p2: Point): Nat -> Let#
   .let diffX = {p1.x - (p2.x)}
   .let diffY = {p1.y - (p2.y)}
   .let res   = {(diffX * diffX) + (diffY * diffY)}
-  .return {res.sqrt}
+  .return {res.sqrt.nat}
 //OMIT_START
 }
 //OMIT_END
