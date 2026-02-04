@@ -33,19 +33,18 @@ We call **Magic methods** the methods from the standard library giving direct ac
 
 The following code introduces updatable local variables, and uses a few new features.
 -------------------------*/@Test void var1 () { run("""
-//|OMIT_START
-package test
-alias base.Magic as Magic,
+//OMIT_START
+use base.Magic as Magic;
 //OMIT_END
 Void:{}
 Var[E: imm,mut,read]:{
-  mut  .set(v: E): Void -> Magic![Void],
-  mut  .get: E,
-  read .get: read/imm E,
+  mut  .set(v: E): Void -> Magic!;
+  mut  .get: E;
+  read .get: read/imm E;
   }
 Vars: {
   #[E: imm,mut,read](var: E): mut Var[E] -> { 
-    .get -> var,
+    .get -> var;
     }
   }
 """); }/*--------------------------------------------
@@ -65,30 +64,35 @@ They will both return the current value, but with different types:
 - If we have a `mut` receiver we produce the value with type `E`.
 - If we have a `read` receiver, we produce the value with a  weakened type `read/imm E`.
   
-Finally `Vars` is a factory type making new `Var[E]` originally containing the value provided by the user.
-The syntax `.get -> var,` implements both .get methods with the same exact body.
+Finally `Vars` is a factory type making new `Var[E]` objects, originally containing the value provided by the user.
+The syntax `.get -> var;` implements both .get methods with the same exact body.
 In this case, both methods will simply return the value of `var` provided while calling `Vars#`.
 However, the magic `.set` will impact those methods: when `.set` is called, the implementations of `.get` will change to return the new result instead.
 
 With `Var[E]` we can now encode mutable objects, like in the following `Animal` example:
 
 -------------------------*/@Test void mdfsImplicit () { run("""
-Points:{ #(x: Nat, y: Nat): Point -> Point:{.x: Nat -> x, .y: Nat -> y} }
+//OMIT_START
+use base.Nat as Nat;
+use base.Void as Void;
+use base.Block as Block;
+//OMIT_END
+Points:{ #(x: Nat, y: Nat): Point -> Point:{.x: Nat -> x; .y: Nat -> y} }
 
 Animals: {
   #(start: Point): mut Animal -> Block#
    .var[Point] loc= {start}
    .return{ mut Animal: {
-      read .location: Point -> loc.get,  
+      read .location: Point -> loc.get;
       mut .run(x:Nat): Void ->
-        loc.set(Points#(loc.get.x + x, loc.get.y)),
+        loc.set(Points#(loc.get.x + x, loc.get.y));
     }}}
 """); }/*--------------------------------------------
 
 As you can see, the code above defines `Point` and `Points` using features we understand well, and then defines `Animal` and `Animals`.
 Method `Animals#` uses `Block`.
 `Block` is a type in the standard library supporting fluent programming and the `=` sugar pretty much like our `Let`, but with many more features and utilities.
-In particular, `Block` offers a `.let` method working exactly like `Let.let` and a `.var` method that instead wraps the value  into a `Var[E]`.
+In particular, `Block` offers a `.let` method working exactly like `Let.let` and a `.var` method that instead wraps the value  into a `mut Var[E]`.
 That is, in this case the local parameter `loc` is of type `mut Var[Point]`.
 In this way, it is easy to create either local parameters or local variables. Local variables are just local parameters of type `mut Var[..]`.
 
@@ -101,18 +105,25 @@ As a sugar, any typename without a modifier in front is implicitly `imm`.
 To clarify this, here is the code from above with all the imm keywords explicitly added:
 
 -------------------------*/@Test void mdfsExplicit () { run("""
+//OMIT_START
+use base.Nat as Nat;
+use base.Void as Void;
+use base.Block as Block;
+//OMIT_END
 Points:{ imm #(x: imm Nat, y: imm Nat): imm Point ->
-  imm Point:{.x: imm Nat -> x, .y: imm Nat -> y} }
+  imm Point:{imm .x: imm Nat -> x; imm .y: imm Nat -> y} }
 
 Animals: {
   imm #(start: imm Point): mut Animal -> imm Block#
    .var[imm Point] loc= {start}
    .return{ mut Animal: {
-      read .location: imm Point -> loc.get,  
+      read .location: imm Point -> loc.get;  
       mut .run(x: imm Nat): imm Void ->
-        loc.set(imm Points#(loc.get.x + x, loc.get.y)),
+        loc.set(imm Points#(loc.get.x + x, loc.get.y));
     }}}
 """); }/*--------------------------------------------
+As you can see, having `imm` as a default saves a lot of code:
+most types are just always `imm`, like `imm Void` and `imm Nat`, but also factories like `imm Points`.
 
 ### Aliasing
 
@@ -131,16 +142,19 @@ However, when aliasing and mutation are misused or run outside of our control, t
 Consider the code below, showing a simple example of Aliasing.
 -------------------------*/@Test void aliasing1 () { run("""
 //OMIT_START
+use base.Nat as Nat;
+use base.Void as Void;
+use base.Block as Block;
 Points:{ imm #(x: imm Nat, y: imm Nat): imm Point ->
-  imm Point:{.x: imm Nat -> x, .y: imm Nat -> y} }
+  imm Point:{.x: imm Nat -> x; .y: imm Nat -> y} }
 
 Animals: {
   imm #(start: imm Point): mut Animal -> imm Block#
    .var[imm Point] loc= {start}
    .return{ mut Animal: {
-      read .location: imm Point -> loc.get,  
+      read .location: imm Point -> loc.get;
       mut .run(x: imm Nat): imm Void ->
-        loc.set(imm Points#(loc.get.x + x, loc.get.y)),
+        loc.set(imm Points#(loc.get.x + x, loc.get.y));
     }}}
 //OMIT_END
 AliasingExample: {#: Nat -> Block#
@@ -149,10 +163,9 @@ AliasingExample: {#: Nat -> Block#
   .do { bunny.run(15) }
   .return { mammal.location.x }
   }
-
 """); }/*--------------------------------------------
 
-Here we use a `Block` to declare two local paramters for animals.
+Here we use a `Block` to declare two local parameters for animals.
 One is a `bunny` and the other one is the same animal (aliased) but called `mammal`.
 The crucial point here is that those two local parameter are the same `mut Animal`.
 Mutating `bunny` will affect `mammal` and vice versa.
