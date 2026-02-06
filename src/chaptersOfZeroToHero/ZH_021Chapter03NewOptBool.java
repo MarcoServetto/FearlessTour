@@ -17,7 +17,6 @@ Immutable object literals can capture immutable bindings, so everything worked.
 But, when we add mutability in the mix, the world gets more complicated. More colourful, if you prefer.
 
 An `imm` method in an immutable object literal can only capture `imm` parameters.
-Also `iso` parameters can be captured, but this is because they are transparently converted into `imm` parameters.
 This means that with the type `F` as we defined it before:
 ```
   F[R]:{ #: R }
@@ -40,7 +39,7 @@ Note the use of `T:**`. We can use `*` and `**` as shortcut for large generic bo
 `*` is equivalent to `imm,mut,read`; `**` is equivalent to all of the reference capabilities; including some more unusual ones that we have not discussed yet.
 
 `F#` sees the world as `read` and supports generics with any RC. In particular, this means that a
-`read F[X]` can capture mut references as `read`. `MF` (mutable function) sees the world as `mut`. This
+`read F[X]` can capture `mut` references as `read`. `MF` (mutable function) sees the world as `mut`. This
 means that it can capture `mut` references as `mut`.
 Those two types are present in the Fearless standard library.
 A method requiring a function as a parameter can leverage RCs to enforce different guarantees
@@ -52,25 +51,94 @@ on it.
 3. The behaviour
 of `mut MF[X]` can actively mutate captured references.
 
-### Common interfaces
+### DataType, later!
 
-Boolean, numbers, strings and many other widely used types from the standard library implement
-a bunch of common types to make them usable in common situations.
-We are going to explain those in the details later, but we shall summarize them here.
+Boolean, numbers, strings and many other widely used types from the standard library implement `DataType`.
+`DataType` contains a lot of useful functionalities, and we will see them in the details later. For now you just need to know that this interface exists and that we need to implement a few method from it.
+
+### How RC impacts Bool
+
+Here you can see the full code of Bool, as it is in the actual Fearless standard library.
+````
+BoolMatch[R:**]:{ mut .true: R; mut .false: R; }
+ThenElse[R:**]: { mut .then: R; mut .else: R; }
+
+Bool:Sealed,DataType[Bool,Bool]{
+  .and(b: Bool): Bool;
+  &&(b: mut MF[Bool]): Bool;
+  &(b: Bool): Bool -> this.and(b);
+
+  .or(b: Bool): Bool;
+  |(b: Bool): Bool -> this.or(b);
+  ||(b: mut MF[Bool]): Bool;
+
+  .not: Bool;
+
+  .if[R:**](f: mut ThenElse[R]): R;
+  ?[R:**](f: mut ThenElse[R]): R -> this.if(f);
+
+  .match[R:**](m: mut BoolMatch[R]): R -> this?{.then->m.true; .else->m.false};
+
+  .assertTrue: Void -> this.assertEq True;
+  .assertFalse: Void -> this.assertEq False;
+
+  .str -> this.imm?{ .then->`True`; .else->`False` };//this as Str, from DataType
+
+  .info -> Infos.msg(this.str); //other methods from DataType here and below
+  .close -> this; .close -> ::; //methods from DataType
+  .cmp a, b, m -> a.imm?{
+    .then->b.imm?{ .then->m.eq; .else->m.gt };
+    .else->b.imm?{ .then->m.lt; .else->m.eq };
+    };
+  .hash h -> h.bool(this.imm);
+}
+True:Bool{
+  .and(b) -> b;
+  &&(b) -> b#;
+  .or(b) -> this;
+  ||(b) -> this;
+  .not -> False;
+  .if(f) -> f.then;
+  .imm -> True;
+}
+False:Bool{
+  .and(b) -> this;
+  &&(b) -> this;
+  .or(b) -> b;
+  ||(b) -> b#;
+  .not -> True;
+  .if(f) -> f.else;
+  .imm -> False;
+}
+````
+
+We are going to explain those in the details later, but we shall summarise them here.
 Do not worry, we are going to discuss all those types in details later!
 
 ````
 ToStr:{ read .str: Str }
-ToStr[A]:{ read .str(f: F[A,ToStr]): Str }
+ToStr[E:*]:{ read .str(ToStrBy[imm E]): Str }
+ToStrBy[T]:{ #(read T): read ToStr }
+
 ToInfo:{ read .info: Info }
-ToInfo[A]:{ read .info(f: F[A,ToInfo]): Info }
+ToInfoBy[E]:{ #(read E):read ToInfo }
+ToInfo[E:*]:{ read .info(ToInfoBy[imm E]): Info }
 Info:{ /*explained later; exposes information for communicating across programs*|/ }
-Order[T]:{ .. /*explained later; provides methods ==, !=, <=, >= etc*|/ }
-OrderHash[T]:Order[T]{ .hash(h:Hasher): Nat }
-OrderHash[T,E]:{ .order(f: F[E,OrderHash[E]]): OrderHash[T] }
-Hasher:{ .. /*explained later*|/}
-ToImm[T]:{ read .imm: T }
+
+ToImm[T0]:{ read .imm: T0 }
+ToImmBy[E,E0]:{#(t: read E):read ToImm[E0]}
+ToImm[E:*,E0,T0]:{ read .imm(by: ToImmBy[imm E,E0]): T0 }
+
+Order[T]:{ /*explained later; provides methods ==, !=, <=, >= etc*|/ }
+Order[T,E:*]:{ /*explained later; like order but for generics *|/ }
+OrderHash[T]:Order[T],ToStr{ /*explained later; Order plus mappings*|/ }
+OrderHash[T,E:*]:Order[T,E],ToStr[E]{ /*explained later; like OrderHash but for generics *|/ }
+
+DataType[T,T0]:ToInfo,ToImm[T0],WidenTo[T],OrderHash[T],Extensible[T]{ read .close(t: read T): read DataType[T,T0]; }
+DataType[T,T0,E:*,E0]:ToInfo[E],ToImm[E,E0,T0],WidenTo[T],OrderHash[T,E],Extensible[T]{ read .close(t: read T): read DataType[T,T0,E,E0]; /*...*/ }
+DataTypeBy[E,K,K0]:ToInfoBy[E],ToImmBy[E,K0],OrderHashBy[E,K]{ #(e: read E): read DataType[K,K0]; /*...*/ }
 ````
+
 Method `ToStr.str` represents an object as a string.
 Method `ToInfo.info` represents an object in a structured data format (similar to JSON) useful for communication across programs.
 Type `OrderHash[T]` provides hashing and comparisons methods to a type `T` extending it. Objects extending `OrderHash[T]` can easily be organised in efficient data structures.

@@ -11,40 +11,30 @@ class ZH_019Chapter03Packages {
 
 ### Packages and libraries
 
-Up to now, we've shown Fearless code as individual text examples. However, a realistic Fearless program will be organized into multiple files to manage complexity effectively. To support this, Fearless provides the concept of **packages**.
+Up to now, we've shown Fearless code as individual text examples. However, a realistic Fearless program will be organised into multiple files to manage complexity effectively. A Fearless file is a text file with the `.fear` extension, but fearless files do not live in a vacuum; the sit in a directly/folder called the project folder or just **the project**.
+The project can contain any kind of files, but they must have portable lowercase file names that would be accepted by Windows, Linux and MacOs.
+These files can be freely organised into subfolders within the project.
 
-A Fearless file is a text file with the `.fear` extension. The first line of each Fearless file specifies its package using the following syntax:
+Additionally, a Fearless project may contain pre-compiled libraries. Such libraries are simply zipped folders containing Fearless source files.
 
-```
-package somePackageName
-```
-
-We say that such a file is inside the package `somePackageName`.
-
-A Fearless project is a folder (or directory) containing multiple Fearless files.
-These files can be freely organised into subfolders within the project folder.
-
-Additionally, a Fearless project may contain pre-compiled libraries. Such libraries are simply zipped folders containing Fearless files along with cached data that speeds up compilation.
-
-Note that your project's files cannot be in a package name already defined by the standard library or by any pre-compiled library included in the project.
+Fearless source files are divided into **packages**.
+A package is a folder whose name starts with `_`.
+For example, all the files inside `_geometry` are in the `geometry` package.
 
 With packages, types are identified by their package name combined with the type name. For example, the type `Block` defined in the package `base` has the full name `base.Block`. 
 Using those long winded names everywhere would make the code repetitive and harder to read.
-To mitigate this, Fearless supports **type aliases**.
+To mitigate this, Fearless supports **use directives**.
+Use directives need to be in the rank file.
+The rank file is a file in the package with name `_rank_app.fear`; other specific standard names are possible, but we will not discuss them here.
 
-For example a Fearless file can start with the following:
-
+For example we can have the following:
 ```
-package test
-
-alias base.Num as Num,
-alias base.SimpleString as Str,
+//inside file _test/_rank_app.fear
+use base.Num as Num;
+use base.Block as B;
 ``` 
+In the example above, the use lines allow all code in package `test` to use the shorter names `Num` and `B` instead of their longer forms `base.Num` and `base.Block`.
 
-Type aliases apply across the entire package, not just code in the specific file containing the `alias`.
-In the example above, the aliases allow all code in package `test` to use the shorter names `Num` and `Str` instead of their longer forms `base.Num` and `base.SimpleString`.
-
-That is, `base.SimpleString` is the full name for the string type we discussed in this guide.
 Note that there can be many files inside of package `test`, and the aliases will work across all of those files.
 
 Moreover, within a package, all types declared in that package can always be referred to by their simple names.
@@ -53,11 +43,7 @@ This means that if your project is small enough to fit into a single package, yo
 
 - All the types you defined can be referenced directly by their simple names.
 
-- You can define your aliases once and for all in one single file of your package, and all your other files will consistently see them.
-
-
-Note how the alias keyword creates a type alias, not to be confused with aliasing between references that we discussed earlier.
-
+- You can define what you `use` once and for all in one single file of your package, and all your other files will consistently see them.
 
 ### Sealed
 
@@ -83,10 +69,19 @@ For example, if a package `foo` declares a type `_Foo`:
 This allows for a form of package private types, where we can declare types whose name starts with `_` to indicate that the users of our code should not refer to those types, they are only intended as a way to internally encode the behaviour of the library.
 Of course all the fresh type names that the inference adds to our code start with `_`, and thus are package private.
 OMIT_START
--------------------------*/@Test void anotherPackage() { run("fooBar","Test","""
-package fooBar
-alias base.Block as B,
-alias base.Void as Void,
+-------------------------*/@Test void anotherPackage() { run("""
+MyTrue: base.True {}
+//ERROR|In file: [###]/_test/_rank_app111.fear
+//ERROR|
+//ERROR|001| MyTrue: base.True {}
+//ERROR|   | ^^^^^^^^^^^^^^^^^^^^
+//ERROR|
+//ERROR|While inspecting type declaration "MyTrue"
+//ERROR|Type declaration "MyTrue" implements sealed type "base.True".
+//ERROR|Sealed types can only be implemented in their own package.
+//ERROR|Type declaration "MyTrue" is defined in package "test".
+//ERROR|Type "True" is defined in package "base".
+//ERROR|Error 9 WellFormedness
 """); }/*--------------------------------------------
 OMIT_END
 END*/

@@ -27,7 +27,7 @@ As for most type systems, RCs are a conservative approximation, where some objec
 
 Reference capabilities do not directly track mutable and immutable objects, but track the parameters/references to such objects.
 We will call a parameter with an `imm` type an `imm` parameter. Same for the other reference capabilities.
-An `imm` parameter will always refer to an immutable object. A `mut` parameter will always refer to a mutable object.
+An `imm` parameter refers to an immutable object. A `mut` parameter refer to a mutable object.
 A `read` parameter may refer to either a mutable or an immutable object.
 That is, `read` parameters are useful to write code able to work on all kinds of objects.
 In addition to `imm`, `mut` and `read`, there are more kinds of reference capabilities, but we will see them later.
@@ -35,24 +35,28 @@ In addition to `imm`, `mut` and `read`, there are more kinds of reference capabi
 
 ### Promotions
 
-As we discussed before, a mutable object can become immutable, and the type system can recognize it.
+As we discussed before, a mutable object can become immutable, and the type system can recognise it.
 This happens through a process called promotion.
 There are many kinds of promotion; we will now see the simplest and most useful form of promotion:
 The result of any method returning a mut but taking in input no `mut` or `read` parameters can be promoted to `imm`.
 For example
 -------------------------*/@Test void promotion () { run("""
 //OMIT_START
-Points:{ #(x: Nat, y: Nat): Point -> Point:{.x: Nat -> x, .y: Nat -> y} }
+use base.Void as Void;
+use base.Nat as Nat;
+use base.Block as Block;
+Points:{ #(x: Nat, y: Nat): Point -> Point:{.x: Nat -> x; .y: Nat -> y} }
 
 Animals: {
   #(start: Point): mut Animal -> Block#
    .var[Point] loc= {start}
    .return{ mut Animal: {
-      read .location: Point -> loc.get,  
-      mut .run(x:Nat): Void ->
-        loc.set(Points#(loc.get.x + x, loc.get.y)),
+      read .location: Point -> loc.get;
+      mut .run(x: Nat): Void ->
+        loc.set(Points#(loc.get.x + x, loc.get.y));
     }}}
 //OMIT_END
+//Animals: { #(start: Point): mut Animal -> ... }
 PromotionExample: {
   #: imm Animal -> Animals#(Points#(10,20))
   }
@@ -61,6 +65,7 @@ PromotionExample: {
 The code above compiles and produces an immutable Animal.
 The method `Animals#` is declared to return a `mut Animal`.
 However, this call can be promoted to `imm` because the method `Animals#` is called using an immutable point.
+
 Code `PromotionExample#.run(10)` would not compile because method `PromotionExample#` return an immutable `Animal` and
 `Animal.run` is a `mut` method.
 
