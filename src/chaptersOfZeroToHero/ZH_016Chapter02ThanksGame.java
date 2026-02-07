@@ -76,7 +76,7 @@ Let: { #[R]: Let[R] -> {} }
 
 Now we have enough understanding about Fearless that we can implement a simple game in fearless.
 
-We start by repeating some of the code we discussed above:
+We start by repeating and improving some of the code we discussed above:
 
 -------------------------*/@Test void oldCode1 () { run("""
 //OMIT_START
@@ -87,13 +87,6 @@ use base.Bool as Bool;
 use base.True as True;
 use base.False as False;
 //OMIT_END
-Points:{ #(x: Int, y: Int): Point -> Point:{'self
-  .x: Int -> x;
-  .y: Int -> y;
-  +(other: Point): Point -> Points#(other.x + x, other.y + y);
-  .move(d: Direction): Point -> self + ( d.point );
-  ==(other: Point): Bool -> self.x == (other.x)  .and (self.y == (other.y) );
-  }}
 Direction: { .turn: Direction; .point:Point; }
 North: Direction {East;  .point -> Points#(-1, +0) }
 East : Direction {South; .point -> Points#(+0, +1) }
@@ -111,10 +104,36 @@ Tank: {
   }
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank->
   { .heading -> heading; .aiming -> aiming; .position -> position } }
+Points:{ #(x: Int, y: Int): Point -> Point:{'self
+  .x: Int -> x;
+  .y: Int -> y;
+  +(other: Point): Point -> Points#(other.x + x, other.y + y);
+  .move(d: Direction): Point -> self + ( d.point );
+  ==(other: Point): Bool -> self.x == (other.x)  .and (self.y == (other.y) );
+  }}
 """); }/*--------------------------------------------
-We have points, directions and tanks with positions.
+With the code above, we have points, directions and tanks with positions.
 Tanks can move in directions.
-Note how we added an `==` method on Point.
+Some changes in `Point`:
+- We now create the `Point` inside of `Points`.
+- We use the new syntax `'self`
+- We added an `==` method, comparing two points using their coordinates.
+- Both `.move` and `==` use `self` instead of `this`.
+
+To refer to the current `Point` in `.move` and `==` we can not use `this` any more:
+Since `Point` is now defined inside of `Points`,
+the `this` in scope would be an instance of `Points`,
+not `Point`.
+We use `'self` to name the current object `self`.
+There is nothing special about the name `self`. 
+We can use `'anyName` at the beginning of an object literal to name the current object `anyName`.
+Indeed, the absence of `'xxxx` at the top level is just another layer of syntactic sugar!
+All the top level object literals implicitly use `'this`.
+
+> In this new version of `Point` we could write any of those three equivalent version for `==`
+> `==(other:Point): Bool -> self.x == (other.x)  .and (self.y == (other.y) );`
+> `==(other:Point): Bool -> x == (other.x)  .and (y == (other.y) );`
+> `==(other:Point): Bool -> other.x == x  .and (other.y == y) );`
 
 The state of the game will be represented by a `Stack[Tank]`.
 The game is implemented by a `NextState` function.

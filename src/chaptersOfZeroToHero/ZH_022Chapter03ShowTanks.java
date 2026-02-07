@@ -30,7 +30,7 @@ Thus, we will use the standard library type `base.ToStr` shown before.
 ```
 ToStr:{ read .str: Str }
 ```
-Note how `.`str` is 'read': In this way it can be called on both mutable and immutable objects.
+Note how `.str` is `read`: In this way it can be called on both mutable and immutable objects.
 
 # The new code for the tanks game
 
@@ -40,25 +40,29 @@ The following file defines all our aliases.
 ```
 //File _tank_game/_rank_app.fear
 use base.Main as Main;
+use base.Str as Str;
 use base.Int as Int;
 use base.Bool as Bool;
 use base.F as F;
-use base.Str as Str;
 use base.ToStr as ToStr;
 use base.List as List;
+use base.Block as Block;
+use base.Sealed as Sealed;
+use base.WidenTo as WidenTo;
 ````
+We have meet all of those types except `List`, similar to `Stack` but part of the standard library, and `WidenTo`, that we will discuss soon.
 
 The following file defines `Point`. We will implement `ToStr` also for `Point`.
-The code below uses the novel syntax `'self`, to name the current `Point` object. Since `Point` is defined inside of `Points`, the `this` in scope would be an instance of `Points`, not `Point`. Using `'someName` at the beginning of an object literal, allows to name the current object.
-That is, all the top level object literals implicitly use `'this`.
+Note again the syntax `'self`, to name the current `Point` object. Since `Point` is defined inside of `Points`, the `this` in scope would be an instance of `Points`, not `Point`.
+
 ```
 //File _tank_game/point.fear
 Points:{#(x: Int, y: Int): Point -> Point: ToStr{ 'self
   .x: Int -> x;
   .y: Int -> y;
   +(other: Point): Point -> Points#(other.x + x, other.y + y);
-  .move(d: Direction): Point -> self + ( d.point );
-  ==(other:Point): Bool -> self.x == (other.x)  .and (self.y == (other.y) );
+  .move(d: Direction): Point -> d.point + self;
+  ==(other:Point): Bool -> other.x == x  .and (other.y == y );
   .str -> `[x=` + x + `, y=` + y + `]`;
   }}
 ```
@@ -74,8 +78,8 @@ East : Direction {::.east}
 South: Direction {::.south}
 West : Direction {::.west}
 DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
-Direction: ToStr {
-  .match[R: **](mut DirectionMatch[R]): R;
+Direction: ToStr, Sealed, WidenTo[Direction] {
+  read .match[R: **](mut DirectionMatch[R]): R;
   .turn: Direction -> this.match{
     .north -> East;
     .east  -> South;
@@ -96,6 +100,27 @@ Direction: ToStr {
     };
   }
 ````
+Note how now `Direction` implements `ToStr`, `Sealed` and the mysterious `WidenTo[Direction]`.
+
+Type `WidenTo[S]` is defined in the standard library and is similar to `Sealed`.
+- `Sealed` means that code in other packages would not be able to define new kinds of `Direction`. Implementing `Sealed` makes the type system check this extra condition.
+- `WidenTo[Direction]` means that the type inference will always
+infer `Direction` instead of any type implementing `Direction`.
+Basically, `WidenTo[Direction]` makes so that the inference would never infer `North`.
+>`DataType` does use `WidenTo[S]` internally, and this is why 
+> the inference will always infer `Bool` instead of `True`/`False` and `Nat` instead of `42`.
+
+Here, if we were to omit `WidenTo[Direction]`, the code 
+````
+  .turn: Direction -> this.match{
+    .north -> East;
+    .east  -> South;
+    .south -> West;
+    .west  -> North;
+    };
+````
+May fail to compile:
+the inference would see `.north -> East;` and may conclude that the method `.north` is returning `East` of type `East`, thus this match should return an `East` instead of a direction.
 
 We define `DirectionMatch[R]` to be mutable. This is because we want to allow the execution of `.match` to mutate the state of objects captured by the running operation. In some cases we will want our matchers to be more restrictive and to only support operations that do not perform mutations, but in most cases we will use the shown signature.
 Note how assuming the intention of defining an enumeration, the three lines
@@ -118,7 +143,7 @@ Tank: ToStr {
   .repr1: Str -> ` / | \ `;
   .repr2: Str -> ` | < | `;
   .repr3: Str -> ` \ _ / `;
-  .str -> `` | this.repr1 |this.repr2 | this.repr3 |;
+  .str -> `` | (this.repr1) | (this.repr2) | (this.repr3) |;
   }
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank ->
   { .heading -> heading; .aiming -> aiming; .position -> position; }
@@ -126,7 +151,7 @@ Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank ->
 ```
 The code above is wrong in two different ways:
 - We do not check our aiming/heading direction and simply show a predefined representation. This is intentional at this point, so that we could show the structure of the code before going into the details. Writing a skeleton of the code is often a good technique to start our coding tasks.
-- The code as written does not compile. The method .str reports 3 errors:
+- The code as written does not compile. The method `.str` reports 3 errors:
    We can not call `this.repr1`, `this.repr2` and `this.repr3` from `.str`.
 
 This is because the `.str` method is `read` and we declared those repr methods as `imm`.
@@ -138,7 +163,7 @@ We remove the line implementing `.str` in `Tank` and we write `Tanks` as follows
 ```
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank -> {'self
   .heading -> heading; .aiming -> aiming; .position -> position;
-  .str -> ``| self.repr1 | self.repr2 | self.repr3 |;
+  .str -> ``| (self.repr1) | (self.repr2) | (self.repr3) |;
   }}
 ```
 Here `self` is always immutable since it is created as an `imm Tank`.
@@ -146,16 +171,27 @@ Here `self` is always immutable since it is created as an `imm Tank`.
 Now we need to implement the repr methods.
 The challenge is that we need to synthesise the right character `<`,`>`,`V`,`A`,`-`,`|` for the various cases.
 We can do it using `DirectionMatch`.
-
+The first and the last line (`AimingRepr1`/`AimingRepr3`) simply depend on the direction we are going.
+The centre line (`AimingRepr2`) is a little harder since it also depends on the heading direction. 
 ```
-Tank: ToStr {
-  .heading: Direction;
-  .aiming: Direction;
-  .position:Point;
-  .move:Tank -> Tanks#(this.heading, this.aiming, this.position.move(this.heading));
-  .repr1:Str-> this.aiming .match AimingRepr1;
-  .repr2:Str-> this.aiming .match AimingRepr2{this.heading .match HeadingChar};
-  .repr3:Str-> this.aiming .match AimingRepr3;
+AimingRepr1: DirectionMatch[Str]{
+  .north -> ` / | \ `;
+  .east  -> ` / - \ `; 
+  .south -> ` / - \ `;
+  .west  -> ` / - \ `;
+  }
+AimingRepr3: DirectionMatch[Str]{
+  .north -> ` \ _ / `;
+  .east  -> ` \ _ / `; 
+  .south -> ` \ | / `;
+  .west  -> ` \ _ / `;
+  }
+AimingRepr2: DirectionMatch[Str]{
+  mut .centre: Str;
+  .north -> ` | ` + (this.centre) + ` | `;
+  .east  -> ` - ` + (this.centre) + ` | `;
+  .south -> ` | ` + (this.centre) + ` | `;
+  .west  -> ` | ` + (this.centre) + ` - `;
   }
 HeadingChar: DirectionMatch[Str]{
   .north -> `A`;
@@ -163,24 +199,14 @@ HeadingChar: DirectionMatch[Str]{
   .south -> `V`;
   .west  -> `>`;
   }
-AimingRepr1: DirectionMatch[Str]{
-  .north -> ` / | \ `;
-  .east  -> ` / - \ `; 
-  .south -> ` / - \ `;
-  .west  -> ` / - \ `;
-  }
-AimingRepr2: DirectionMatch[Str]{
-  .centre:Str;
-  .north -> ` | ` + this.centre + ` |  `;
-  .east  -> ` - ` + this.centre + ` |  `;
-  .south -> ` | ` + this.centre + ` |  `;
-  .west  -> ` | ` + this.centre + ` -  `;
-  }
-AimingRepr3: DirectionMatch[Str]{
-  .north -> ` \ _ / `;
-  .east  -> ` \ _ / `; 
-  .south -> ` \ | / `;
-  .west  -> ` \ _ / `;
+Tank: ToStr {
+  .heading:  Direction;
+  .aiming:   Direction;
+  .position: Point;
+  .move:     Tank -> Tanks#(this.heading, this.aiming, this.position.move(this.heading));
+  .repr1:    Str  -> this.aiming .match AimingRepr1;
+  .repr2:    Str  -> this.aiming .match mut AimingRepr2{this.heading .match HeadingChar};
+  .repr3:    Str  -> this.aiming .match AimingRepr3;
   }
 ```
 
@@ -194,11 +220,11 @@ We could have alternatively made a factory capturing the missing information in 
 ... 
   .repr2: Str -> this.aiming .match (AimingRepr2#(this.heading .match HeadingChar));
 ...
-AimingRepr2: Function[Str, DirectionMatch[Str]]:{ centre->{
-  .north -> ` | ` + centre + ` |  `;
-  .east  -> ` - ` + centre + ` |  `;
-  .south -> ` | ` + centre + ` |  `;
-  .west  -> ` | ` + centre + ` -  `;
+AimingRepr2: Function[Str, mut DirectionMatch[Str]]:{ centre->{
+  .north -> ` | ` + centre + ` | `;
+  .east  -> ` - ` + centre + ` | `;
+  .south -> ` | ` + centre + ` | `;
+  .west  -> ` | ` + centre + ` - `;
   }}
 
 ```
@@ -207,7 +233,7 @@ Both styles are perfectly valid and good Fearless code. We just like the first o
 Now we can represent tanks as strings.
 We can test our code as follows:
 ```
-Test:Main {sys -> sys.out.println(  Tanks#(North, West, Points#(1, 2))  )}
+Test:Main {sys -> sys.out.println(  Tanks#(North, West, Points#(+1, +2))  )}
 ```
 This code will print
 
@@ -217,7 +243,7 @@ This code will print
  \ _ /   
 ```
 
-We can now rewrite state change using features from the standard library instead of our poor man stack.
+We can now rewrite state change using features from the standard library instead of our poor man `Stack[E]`.
 
 ```
 //File _tank_game/next_state.fear
@@ -225,7 +251,8 @@ NextState:F[List[Tank],List[Tank]]{
   #(tanks)->Block#
     .let danger= { tanks.flow.map{ t -> t.position.move(t.aiming) }.list }
     .let survivors= { tanks.flow.filter{t -> danger.flow.filter{::==(t.position)}.isEmpty } .list }
-    .let occupied= { (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}) .list }
+    .let occupied= {
+      (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}) .list }
     .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} };
  
   .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
@@ -259,6 +286,7 @@ use base.F as F;
 use base.ToStr as ToStr;
 use base.List as List;
 use base.Block as Block;
+use base.Sealed as Sealed;
 use base.WidenTo as WidenTo;
 //----------------------------------
 //File _tank_game/point.fear
@@ -266,8 +294,8 @@ Points:{#(x: Int, y: Int): Point -> Point: ToStr{ 'self
   .x: Int -> x;
   .y: Int -> y;
   +(other: Point): Point -> Points#(other.x + x, other.y + y);
-  .move(d: Direction): Point -> self + ( d.point );
-  ==(other:Point): Bool -> self.x == (other.x)  .and (self.y == (other.y) );
+  .move(d: Direction): Point -> d.point + self;
+  ==(other:Point): Bool -> other.x == x  .and (other.y == y );
   .str -> `[x=` + x + `, y=` + y + `]`;
   }}
 //----------------------------------
@@ -277,7 +305,7 @@ East : Direction {::.east}
 South: Direction {::.south}
 West : Direction {::.west}
 DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
-Direction: ToStr, WidenTo[Direction] {
+Direction: ToStr, Sealed, WidenTo[Direction] {
   read .match[R: **](mut DirectionMatch[R]): R;
   .turn: Direction -> this.match{
     .north -> East;
@@ -320,23 +348,23 @@ HeadingChar: DirectionMatch[Str]{
   .west  -> `>`;
   }
 AimingRepr1: DirectionMatch[Str]{
-  .north -> ` / | \u005c\u005c `;
-  .east  -> ` / - \u005c\u005c `; 
-  .south -> ` / - \u005c\u005c `;
-  .west  -> ` / - \u005c\u005c `;
+  .north -> ` / | \\ `;
+  .east  -> ` / - \\ `; 
+  .south -> ` / - \\ `;
+  .west  -> ` / - \\ `;
   }
 AimingRepr2: DirectionMatch[Str]{
   mut .centre: Str;
-  .north -> ` | ` + (this.centre) + ` |  `;
-  .east  -> ` - ` + (this.centre) + ` |  `;
-  .south -> ` | ` + (this.centre) + ` |  `;
-  .west  -> ` | ` + (this.centre) + ` -  `;
+  .north -> ` | ` + (this.centre) + ` | `;
+  .east  -> ` - ` + (this.centre) + ` | `;
+  .south -> ` | ` + (this.centre) + ` | `;
+  .west  -> ` | ` + (this.centre) + ` - `;
   }
 AimingRepr3: DirectionMatch[Str]{
-  .north -> ` \u005c\u005c _ / `;
-  .east  -> ` \u005c\u005c _ / `; 
-  .south -> ` \u005c\u005c | / `;
-  .west  -> ` \u005c\u005c _ / `;
+  .north -> ` \\ _ / `;
+  .east  -> ` \\ _ / `; 
+  .south -> ` \\ | / `;
+  .west  -> ` \\ _ / `;
   }
 //----------------------------------
 //File _tank_game/next_state.fear
@@ -344,7 +372,8 @@ NextState:F[List[Tank],List[Tank]]{
   #(tanks)->Block#
     .let danger= { tanks.flow.map{ t -> t.position.move(t.aiming) }.list }
     .let survivors= { tanks.flow.filter{t -> danger.flow.filter{::==(t.position)}.isEmpty } .list }
-    .let occupied= { (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}) .list }
+    .let occupied= { 
+      (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}) .list }
     .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
  
   read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
@@ -354,6 +383,12 @@ NextState:F[List[Tank],List[Tank]]{
       .else -> t;
     };
   }
+Test:Main {sys -> sys.out.println(  Tanks#(North, West, Points#(+1, +2))  )}
+//PRINT|
+//PRINT| / - \\ \n\
+//PRINT| | A - \n\
+//PRINT| \\ _ / \n\
+//PRINT|
 """); }/*--------------------------------------------
 
 

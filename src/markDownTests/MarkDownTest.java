@@ -27,7 +27,7 @@ public class MarkDownTest {
       .toList();
   }
   String lineToCode(String line){
-    line= line.replace("*|/", "*/").replace("\\u005c\\u005c","\\");
+    line= line.replace("*|/", "*/").replace("\\\\","\\").replace("\\n\\","");
     boolean code= TextTag.CodeStart.match(line) || TextTag.CodeEnd.match(line);
     if (code){ return "````"; }
     return line;
