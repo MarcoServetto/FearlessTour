@@ -260,6 +260,8 @@ We now focus on those two lines:
   We range from 0..9 and for each of those we create a `Var` initialised with six spaces.
 That is, the type of `res` is `mut List[mut List[mut Var[Str]]]`.
 This is a large and intricate type, representing a list of list of variable strings.
+The next section will discuss `List`s and `Flow`s in the detail.
+
 The code shown below uses `res` to represent a grid of information, that can be updated as needed.
 
 ````
@@ -278,7 +280,22 @@ Otherwise, we write the three lines representing `t` on the appropriate position
 Note how we call `.get(..).get(..).set(..)`
 to access two layers of `List` and then set a new value in our variable.
 
-The next section will discuss `List`s and `Flow`s in the detail.
+What we are creating now is basically a 'text art' based game.
+Those were popular in the (far) past. Of course Fearless supports proper graphics, and we will see how to render nice looking images of tanks later on; but this way of printing the 'current screen' line by line is how those more fancy graphic systems work too under the hood.
+Here we use characters as graphical symbols, they use (much smaller) coloured pixels as graphical symbols.
+
+But the idea of doing graphics by using a grid of graphical symbols is the same,
+and the struggle to decide what symbol to place in each location is very similar too.
+
+That is, the techniques and mindset shown here do scale to full modern 2-D, or even 3-D graphics.
+The computer screen is conceptually accessed as a large `mut List[mut List[mut Var[Color]]]`
+and the computer is simply insanely fast at switching those colours around creating the illusion of movement.
+
+When wanting to display shapes on the screen, the logic will look a lot like what we had for our tanks: forall shapes to display, display the shape.
+To display an individual shape: for all the parts of the shape: display the individual part (the three lines of the tank in our example).
+The act of displaying a shape part is the act of setting new colours in specific places in the large `mut List[mut List[mut Var[Color]]]` screen.
+
+Hopefully this removes another layer of mystery on how computers works, and the realisation that those little pixels are indeed explicit entities that operations in the computer are able to update fast enough to create the illusion of movement clarifies in a visceral way how fast those computers are.
 
 END*/
 }

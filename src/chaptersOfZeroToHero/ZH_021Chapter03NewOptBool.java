@@ -219,6 +219,16 @@ Calling this method is equivalent to claim
 
 Note how this is conceptually similar to the `.assertTrue` method we have seen before. Indeed, the internal call ``Error.msg `..` `` is pretty much what the body of `.assertEq` from `DataType` does.
 
+A Fearless method can indicate failure by throwing an error.
+Errors are not part of the basic semantic of Fearless, and they can be thrown using magic methods or convenience methods using magic methods internally.
+For example, the method `Error.msg(Str)` will throw an error using that string as an error message, plus some more debugging information.
+When a method throws an error the computation stops and the error is reported outside of the program. That is, the whole Fearless application stops and burns.
+This is often the desired behaviour, especially when debugging.
+However, this behaviour can be overridden using 
+`Try#{ ../*code that can fail*|/.. }`. We will discuss the details of `Try` later, and for now we will assume all errors to simply obliterate the running code.
+
+
+
 The two methods `Opt[E].or` and `Opt[E]||` are similar to `Bool.or` and `Bool||`:
 
 - `Opt[E].or` returns the value stored in the optional,
