@@ -105,7 +105,7 @@ Cat:{ .name: Str }
 ...
 Nicer :{ #(owner: Person, ps: List[Person]): Person->ps.flow
   .fold({owner}, {acc, p -> 
-    p.cats.size >= (acc.cats.size) .if {.then->p, .else->acc,  } 
+    p.cats.size >= (acc.cats.size) .if {.then->p; .else->acc;  } 
   }}
 ```
 The `.fold` works pretty much in the same way of the `.fold` method we have seen on the stack.
@@ -130,7 +130,7 @@ Nat:Sealed,DataType[Nat,Nat],SumNumber[Nat]{
 As you can see, to call `Flow[E].sum`, we need an argument implementing 
 `SumNumber[E]`.
 All the numeric types implement `SumNumber[_]`, so we can use any numeric value as as starting point for our sum.
-This patterns allows to limit what parameter types I can pass to a generic entity.
+This patterns allows to limit what parameter types we can pass to a generic entity.
 The parameter type and the receiver generic type can cooperate to accept each other.
 Method `.join` works in the same conceptual way.
 
@@ -141,7 +141,7 @@ Lists are similar to the Stacks we discussed before, but they have different fun
 
 
 ### Limited size and failures:
-Lists contain any number of elements, from 0 up to the maximum positive number represented by an `Int`.
+Lists contain any number of elements, from 0 up to 2,147,483,639.
 That is a big but not unlimited number, and flows could in principle contain many more elements than that. This means that some operations may fail when we can not make a list with a number of elements bigger than that limit. For example `myFlow.list` may fail to create a list big enough to store all the elements of the flow.
 
 ### Core List methods for Random Access: .size, .isEmpty and .get
@@ -220,7 +220,7 @@ the capability of the list and the capability of the elements. This gives us a r
 Since reference capabilities impact the whole reachable object graph, an object storing mutable objects needs to be mutable too.
 Thus, we need to use `mut` twice.
 Using `.get` we can obtain `mut` references to the contained animals and mutate them.
-If we have a binding `animals` containing `[bunny,bunny]`; that is, the same bunny twice, we can call `animals.get(0).run` and the bunny will mutate; it will now be in a new position. Since the same bunny is contained in the list twice, `animals.get(1).location` will also result in the same updated location.
+If we have a parameter `animals` containing `[bunny,bunny]`; that is, the same bunny twice, we can call `animals.get(0).run` and the bunny will mutate; it will now be in a new position. Since the same bunny is contained in the list twice, `animals.get(1).location` will also result in the same updated location.
 You can think of it as a hard container of soft elements, for example a table with soft and malleable clay sculptures permanently glued into it.
 
 **Unclear and confusing options:**
@@ -241,9 +241,9 @@ This and a few other patterns are also optimised by the compiler to not create a
 - `List[mut Animal]`, also written as `imm List[mut Animal]` behaves exactly like a `List[Animal]`, that is, an immutable list of immutable elements, but the type system does not know about this. As for before, if we have an `animals: List[mut Animal]` and we need a `List[Animal]` we can just call `animals.as{::}`.
 This last case often emerges from promotion: we may start with a `mut List[mut Animal]` and then turn it into immutable.
 
-### Other core list methods: `+`, `++`, `.subList`
+### Other core list methods: `+>`, `<+`, `++`, `.subList`
 
-We can concatenate lists and elements using methods `++` and `+`.
+We can concatenate lists and elements using methods `++`, `+>` and `<+`.
 The expression below are all equivalent:
 ```
 Lists#(1,2,3,4)
@@ -280,10 +280,9 @@ Sometimes `EList[E]` is used as a builder/accumulator to eventually create a `Li
 
 The standard library provides a simple way to define and combine ordering operations (`<`, `<=`, `==`, `!=`, `>=`, `>`) through the type `Order[T]`.
 
-### Understanding `Order[T]`
+### Understanding `Order[T]` and `OrderMatch[R]`
 
-The type Order represents the outcome of a comparison between two elements.
-First we want to understand the match type for ordering:
+The type `OrderMatch` mediates the outcome of a comparison between two elements.
 
 ````
 OrderMatch[R:**]: { mut .lt: R; mut .eq: R; mut .gt: R; }
@@ -296,11 +295,12 @@ Order[T]:{
   read .cmp[R:**](t0: read T, t1: read T, m: mut OrderMatch[R]): R;
   }
 ````
-Here `.cmp` Does not return a thingy that can be `lt/eq/gt` so that we can then later match on it. It directly takes the matcher, so that we can immediately jump to the final result `R`.
+Here `.cmp` does not return a thingy that can be `lt/eq/gt` so that we can then later match on it. It directly takes the matcher, so that we can immediately jump to the final result `R`.
 We could implement it on our `Point` type as following:
 ````
 Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
-  .x: Nat -> x; .y: Nat -> y;
+  read .x: Nat -> x;
+  read .y: Nat -> y;
   .cmp t0, t1, m -> Block#
     .if {t0.x < (t1.x)}.return {m.lt}
     .if {t0.x > (t1.x)}.return {m.gt}
@@ -311,7 +311,8 @@ Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
   }}
 ````
 As you can see, now we have a `.cmp` method in `Point`, and we can use it to implement `==`.
-Crucially: `==` only uses `.cmp`. Great! we should move it into `Order[T]`
+Crucially: `==` only uses `.cmp`. Great! This means we can move it into `Order[T]`.
+By moving methods up in the subtyping hierarchy, we achieve more code reuse: every type impementing `Order` will also have `==`.
 
 ````
 Order[T]:{
@@ -325,6 +326,8 @@ Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
 ````
 This code above does not compile.
 Can you spot why?
+
+
 **Solution coming soon**
 
 **Solution coming soon**
@@ -336,7 +339,7 @@ Can you spot why?
 **Solution coming soon**
 
 **Solution:** 
-In this code `this.cmp(this,other,{...});` we use `this` twice: the first time as `Order[T]` to call `.cmp`, but the second time we use it as a `T`.
+In the code `this.cmp(this,other,{...});` we use `this` twice: the first time as `Order[T]` to call `.cmp`, but the second time we use it as a `T`.
 And the type system do not see any connection between `T` and `Order[T]`.
 The code used to work in `Point` because `Point` implements `Order[Point]`; thus in the context of `Point`, `self` was both a `Point` and an `Order[Point]`.
 
@@ -357,8 +360,8 @@ Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
 Now we can implement `==` on `Order[T]` and `Point` will automatically get an `==` method.
 Right now it does not look like a great result, we implement one method `.cmp` to get one method `==`.
 But.... there are many more convenience operators we can define on top of `.cmp`.
-`==` equals, `!=` different, `<` less then, `<=` less or equal, `>` greater then, `>=` greater or equal.
-There is more! we can check if our point is in a range between two other points.
+`==` equal, `!=` different, `<` less then, `<=` less or equal, `>` greater then, `>=` greater or equal.
+There is more! We can check if our point is in a range between two other points.
 Ranges can be open an closed on both ends, causing four methods: `.inRange(lo,hi):Bool`, `.inRangeOpen(lo,hi)`, `.inRangeLoOpen(lo,hi)`,`.inRangeHiOpen(lo,hi)`.
 As you can see, this is already 10 methods.
 
@@ -376,13 +379,13 @@ Order[T]:{
   //and 9 more methods <,>,<=,>= etc implemented using .cmp
   }
 Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
-  .x: Nat -> x; .y: Nat -> y;
-  .cmp t0, t1, m -> t0.x.cmp(t0.x,t1.x,{.lt->m.lt; .gt->m.gt; 
-    .eq->t0.y.cmp(t0.y,t1.y,m));
+  read .x: Nat -> x; 
+  read .y: Nat -> y;
+  .cmp t0, t1, m -> t0.x.cmp(t0.x,t1.x,{.lt->m.lt; .gt->m.gt; .eq->t0.y.cmp(t0.y,t1.y,m)});
   .close->self;
   }}
 ````
-This is better, but having to pass `t0.x` and `t0.y` twice is still a repetition.
+This is better, but having to pass `t0.x` and `t0.y` twice is still a repetition, and the delegation `.lt->m.lt; .gt->m.gt;` is redundant.
 Any coding investment we do in `Order[T]` can pay off every time we implement it, so a little more abstraction is worth it:
 
 ````
@@ -403,7 +406,8 @@ Order[T]:{
   //and 9 more methods <,>,<=,>= etc implemented using .cmp
   }
 Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
-  .x: Nat -> x; .y: Nat -> y;
+  read .x: Nat -> x;
+  read .y: Nat -> y;
   .cmp t0, t1, m -> t0.x<=>(t1.x,m &&{t0.y<=>(t1.y,m)});
   .close->self;
   }}
@@ -439,7 +443,7 @@ OrderBy[T]:OrderBy[T,T]{
 }
 ````
 Those two types are designed to cooperate well with the type inference and syntactic sugar.
-If we have our iconic `Person:Order[Person]` with an `.age:Nat`, we can write
+If we have our iconic `Person:Order[Person]` with a `read .age:Nat`, we can write
 `{::}` to get an `OrderBy[Person,Person]` and
 `{::.age}` to get an `OrderBy[Person,Nat]`.
 On the other side, if we want to give a top level name for a specific way to order persons, we can do it by using `OrderBy[Person]`:
@@ -455,23 +459,25 @@ And now we can use `ByCats` to compare two persons based on who own more cats, b
 ````
 OrderBy[T,K]:{
   #(read T): read Order[K];
+
   .then[K0](next: OrderBy[T,K0]): OrderBy[T] -> 
     {t0,t1,m -> this#t0 <=> ( this#t1, m &&{ next#t0<=>(next#t1,m)}) };
+
   .view[A](f: F[read A,read T]): OrderBy[A] ->
     {a0,a1,m-> this#(f#a0)<=>(this#(f#a1),m)};    
   }
 ````
 - Method `.then` lexicographically composes the `OrderBy` with another one.
 Example usage: `{::.age}.then{::.name}` would compare a person by age first and name second. `{::.age}.then ByCats` would compare by age first and by total cats weight second.
-- Method `.view` allows to compare entities of type `A` if we can convert them into a `T` for witch we have an `OrderBy`.
+- Method `.view` allows to compare entities of type `A` if we can convert them into a `T` for which we have an `OrderBy`.
 Example usage: `ByCats.view{::.driver}`
 would compare a `Car` by the total cats weight of its `.driver`.
 
 Here some more boring examples:
 ```
-Persons:{#(name:Str, age:Nat):Person -> Person:{.name: Str -> name; .age: Nat -> age }}
+Persons:{#(name:Str, age:Nat):Person -> Person:{read .name: Str -> name; read .age: Nat -> age }}
 Older:OrderBy[Person]{ p1,p2,m -> p1.age <=> (p2.age, m) }
-OlderLonger:OrderBy[Person]{ p1,p2,m -> p1.age <=> (p2.age, m&&{p1.name.size <=> (p2.name.size,m)} }
+OlderLonger:OrderBy[Person]{p1,p2,m-> p1.age <=> (p2.age, m&&{p1.name.size <=> (p2.name.size,m)} }
 ```
 
 ### Comparators and Flows: `.max`, `.min`, `.sort` and `.distinct`
@@ -490,18 +496,18 @@ myCars.flow
   .max{::}//if Car implements Order[Car]
   .list //to get the list of all the max cars
 myCars.flow
-  .max{::driver}//comparing drivers. Ok since Person implements Order[Person]
+  .max{::.driver}//comparing drivers. Ok since Person implements Order[Person]
   .get //this requires that there is exactly one max
 myCars.flow
-  .max({::driver}.then Older) //here we check using the Older comparator
+  .max({::.driver}.then Older) //here we check using the Older comparator
   .opt//this requires that there is exactly zero or one max
 myCars.flow
-  .max(OrderByCaseInsensitive.view{::driver.name}.then {::driver.age}) //here names ignoring case
+  .max(OrderByCaseInsensitive.view{::.driver.name}.then {::.driver.age}) //here names ignoring case
   .first //this gives us an Opt[Car] and allows for further max cars to be discarded.
 
 myCars.flow
-  .max(OrderByCaseInsensitive.view{::driver.name})
-  .max{::driver.age}//this example has the same behaviour of the one above
+  .max(OrderByCaseInsensitive.view{::.driver.name})
+  .max{::.driver.age}//this example has the same behaviour of the one above
   .first//like with .filter: we can divide two conditions on two calls if we prefer
 
 myCars.flow
@@ -536,7 +542,7 @@ The `OrderHash[T].hash` method plays this role by computing a numeric summary of
 Two objects that are equal via `==` must have the same hash value. This consistency is required for the map to work correctly.
 Implementing the `.hash` method by returning zero is inefficient but technically correct: since all objects will have the same hash code, all equal objects will also trivially have the same hash code.
 The map attempts to use the hash code as a fast screening test to quickly differentiate objects, and uses the slower `==` only when needed.
-The default zero `.hash` method de facto disables this crucial optimisation. Instead, a good hash function spreads out objects evenly across the Nat numbers  to maximise the efficiency of the map operations.
+The zero `.hash` method de facto disables this crucial optimisation. Instead, a good hash function spreads out objects evenly across the Nat numbers  to maximise the efficiency of the map operations.
 Having the `.hash` method within the `OrderHash[T]` type helps maintain alignment between the behaviours of hashing and equality. By encapsulating both within the same type, it simplifies the enforcement of the principle that equal objects must have identical hash codes, thereby supporting more predictable and reliable map behaviour.
 
 Ideally, we would just need this
@@ -563,9 +569,9 @@ Again, needed in the error messages to turn a `T` into an `OrderHash[T]` that po
 
 ````
 //usage
-Persons: { #(age: Num, name: Str):Person -> Person: OrderHash[Person]{'self
-  .age: Nat    -> age;
-  .name: Str   -> name;
+Persons: { #(age: Num, name: Str): Person -> Person: OrderHash[Person]{'self
+  read .age:  Nat   -> age;
+  read .name: Str   -> name;
   .cmp p1,p2,m -> p1.age <=> (p2.age, m && { p1.name <=> (p2.name,m) });
   .hash        -> age.hash.hashWith(name.hash);
   .str         -> `Person[age=`+age+`, name=`+name+`]`;
@@ -630,13 +636,14 @@ Sets#({::},1,2,3,4,5)//set of 5 numbers
 Sets#(OrderBy[Str]{s1,s2,m->...},'a','aa','aaaaa')//Does not compile.
 Sets#(StrSizeOrder,'a','aa','aaaaa')//good
 StrSizeOrder:OrderHashBy[Str]{
-  t0,t1,m-> t0.size<=>(t1.size,m);
-  .hash s->s.size.hash;
-  .str s->s; 
+  t0,t1,m-> t0.imm.size<=>(t1.imm.size,m);
+  .hash s->s.imm.size.hash;
+  .str s->s.imm; 
   }//Here we manually define an ordering for strings using their size.
 ```
 Note how our first attempt for a set with custom ordering does not compile.
 We need to use `OrderHashBy` and not just `OrderBy`.
+Note how `.cmp`, `.hash` and `.str` receiver a `read` version of the parameters, thus we may have to call `.imm` to access the `imm` methods.
 
 We can create a set from a flow by calling `.set{::}`, or passing a specific order.
 
@@ -646,11 +653,12 @@ In the same way there is an `EList[E]` type that is an editable variant of `List
 
 Finally, `List[E]` and `Opt[E]` do not implement `Order[E]` or `OrderHash[E]`.
 They do not need to and they may not contain ordered elements.
-If I want to sort a list of ordered elements I can do
+If we want to sort a list of ordered elements we can do
+````
 myList.flow
   .sort{::}
   .list
-
+````
 However, how to sort a list of lists?
 
 ### Introducing `Order[T,E]` and `OrderHash[T,E]`.
@@ -673,7 +681,7 @@ Order[T,E:*]: {
 ````
 The order code above requires to implement `.close` and `.cmp`, and implements method
 `.order(by)` that takes an `OrderBy` for the element and produces an `Order[T]` by delegating to the `.close` and `.cmp` methods we just defined.
-The core of this approach is that the outer `.cmp` takes an explicit `by` parameter, while the inner `.cmp` receives it since it is captured in the object literal.
+The core of this approach is that the outer `.cmp` takes an explicit `by` parameter, while the inner `.cmp` just have it, since it is captured in the object literal.
 
 For example, `Opt[E:*]` implements `Order[Opt[E],E]` (via `_Opt[E]`, via `DataType`).
 That is, we can now understand much better the code of `Opt` shown before:
@@ -681,6 +689,7 @@ That is, we can now understand much better the code of `Opt` shown before:
 Opt[E:*]: _Opt[E]{
   ...
   .close->this; //shows the type system that T is just Opt[E]
+
   .cmp by, a, b, m -> a.match{
     .empty -> b.match{ .empty -> m.eq; .some _ -> m.lt; };
     .some ea -> b.match{
@@ -694,7 +703,9 @@ Type `OrderHash[T,E]` serves exactly the same role of `Order[T,E]` but at the `O
 ````
 OrderHash[T,E:*]:Order[T,E],ToStr[E]{
   read .hash[K](by: OrderHashBy[imm E,K]): Nat;
+
   read .close(t: read T): read OrderHash[T,E];
+
   read .orderHash[K](by: OrderHashBy[imm E,K]): read OrderHash[T] -> {
     .close -> this.close;
     .close t -> this.close(t).orderHash(by);
@@ -703,6 +714,9 @@ OrderHash[T,E:*]:Order[T,E],ToStr[E]{
     .str  -> this.str by;
     };
   }
+ToStr:{ read .str: Str } //repeated here for your convenience
+ToStrBy[T]:{ #(read T): read ToStr }
+ToStr[E:*]:{ read .str(ToStrBy[imm E]): Str }
 ````
 That help us to understand those other already seen `Opt` methods:
 ````
@@ -746,6 +760,15 @@ Remember again how this is the same pattern we have seen for strings:
 `myList.str{::str{::}}`.
 Overall, this is also similar to how `.as` works for nested lists.
 
+### Confused much?
+Yea... we get it. This stuff is heavy.
+It would be pretty incredible if you could follow all those logical steps at the first read.
+
+Most programmers learn to **use** this stuff by learning the common usage patterns instead of actually understanding what is going on under the hood.
+
+You may be thinking that you have to chose between deep understanding and pragmatically relying on usage patterns, but this is a false dichotomy.
+By learning and repeating the usage patterns we get more aware of the code structure, the available terms and the allowed actions.
+Basically, it is much easier to solve a puzzle once you remember what all the pieces are and do.
 
 OMIT_START
 -------------------------*/@Test void tests() { run("""
