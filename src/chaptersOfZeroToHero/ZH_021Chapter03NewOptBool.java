@@ -221,7 +221,7 @@ Note how this is conceptually similar to the `.assertTrue` method we have seen b
 
 A Fearless method can indicate failure by throwing an error.
 Errors are not part of the basic semantic of Fearless, and they can be thrown using magic methods or convenience methods using magic methods internally.
-For example, the method `Error.msg(Str)` will throw an error using that string as an error message, plus some more debugging information.
+For example, the method `Error.msg(Str)` will throw an error using that string as an error message.
 When a method throws an error the computation stops and the error is reported outside of the program. That is, the whole Fearless application stops and burns.
 This is often the desired behaviour, especially when debugging.
 However, this behaviour can be overridden using 
