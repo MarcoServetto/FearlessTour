@@ -192,7 +192,7 @@ This allows us to create `Tank` objects with custom, specific states based on th
 to the `.of` method. We have moved from having only a few fixed `Direction` objects to being able to create many
 different `Tank` objects, each remembering its own specific heading and aiming.
 
-To summarize, `Tank: { ... -> heading, ... }` is a form of object literal expression;
+To summarize, `Tank: { ... -> heading; ... }` is a form of object literal expression;
 it's a way to define the structure of a type and forge an object of that type in one step,
 often using captured parameter values to customize it.
 
@@ -331,7 +331,7 @@ We have now seen more examples for the three kinds of expressions:
 
 - Parameters: `this`, `heading`, `aiming`
 - Method calls: `North.turn`, `Tanks.of(North,East)`, `Tanks.of(North,East.reverse)`
-- Object literals `North`, `East`, `Tank: { ... -> heading, ... }`, `{..}`
+- Object literals `North`, `East`, `Tank: { ... -> heading; ... }`, `{..}`
 
 Method bodies are expressions, so any method body will be exactly one expression. Expressions can have sub expressions:
 `Tanks.of(North,East.reverse)` has sub expressions
