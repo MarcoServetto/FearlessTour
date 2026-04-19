@@ -81,7 +81,7 @@ MyTrue: base.True {}
 //ERROR|Sealed types can only be implemented in their own package.
 //ERROR|Type declaration "MyTrue" is defined in package "test".
 //ERROR|Type "True" is defined in package "base".
-//ERROR|Error 9 WellFormedness
+//ERROR|Error 7 WellFormedness
 """); }/*--------------------------------------------
 OMIT_END
 END*/

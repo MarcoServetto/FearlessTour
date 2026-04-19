@@ -51,7 +51,7 @@ West : {.turn-> North;}
 //ERROR|the signature must be inherited from a supertype.
 //ERROR|Cannot infer signature of method ".turn".
 //ERROR|No supertype has a method named ".turn" with 0 parameters.
-//ERROR|Error 9 WellFormedness
+//ERROR|Error 7 WellFormedness
 //OMIT_END
 """); }/*--------------------------------------------
 
@@ -122,7 +122,7 @@ West : {.turn-> North;}
 //ERROR|the signature must be inherited from a supertype.
 //ERROR|Cannot infer signature of method ".turn".
 //ERROR|No supertype has a method named ".turn" with 0 parameters.
-//ERROR|Error 9 WellFormedness
+//ERROR|Error 7 WellFormedness
 """); }/*--------------------------------------------
 
 While the exact error message may vary between different versions
