@@ -114,20 +114,20 @@ ThenElse[R]:{ .then: R; .else: R; }
 True: Bool{
   .and(other) -> other;
   .or(other) -> this;
-  .not -> False;
-  .if(m) -> m.then; //If True, execute the .then branch
+  .not  -> False;
+  .if m -> m.then; //If True, execute the .then branch
   }
 False:Bool{
   .and(other) -> this;
   .or(other) -> other;
-  .not -> True;
-  .if(m) -> m.else; //If False, execute the .else branch
+  .not  -> True;
+  .if m -> m.else; //If False, execute the .else branch
   }
 //OMIT_START
 A:{#:Bool ->
 True .and False .if[Bool] ThenElse[Bool]{//[Bool] needed since this Bool does not implement WidenTo
-  .then:Bool -> True;//TODO: all those annotations are needed,
-  .else:Bool -> False;//this is because inference can temporarly override user define annotations
+  .then:Bool -> True.not.not;//TODO: all those annotations are needed,
+  .else:Bool -> False.not.not;//this is because inference can temporarly override user define annotations
   }
 }
 //OMIT_END

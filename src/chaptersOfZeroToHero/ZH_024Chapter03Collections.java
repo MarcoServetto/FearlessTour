@@ -1098,7 +1098,7 @@ TestMapsAndSets:F[Tests,Tests]{::
     Maps#({::},
       Persons#(25,`Bob`,List[Cat]), `Toronto 34b Warden St.`,
       Persons#(34,`Alice`,List[Cat]), `Wellington 134 Kelburn Parade`
-      ).opt(Persons#(38,`Neil Armstrong`,List[Cat])).or(`Moon`).assertEq `Moon`
+      ).opt(Persons#(38,`Neil Armstrong`,List[Cat])).orValue(`Moon`).assertEq `Moon`
     )
 
   // map.flow preserves insertion order

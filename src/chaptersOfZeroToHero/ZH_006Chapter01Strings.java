@@ -134,7 +134,7 @@ Test:base.Main {sys -> base.Debug#(`Hello ` + `world`)}//OK
 """); }/*--------------------------------------------
 -------------------------*/@Test void exampleStringsEscape () { run("""
 Test:base.Main {sys -> base.Debug#(`He`^`ll`^`o ` + `wor\\ld`)}//OK
-//PRINT|He`ll`o wor\\ld
+//PRINT|He"ll"o wor\\ld
 """); }/*--------------------------------------------
 
 //OMIT_END

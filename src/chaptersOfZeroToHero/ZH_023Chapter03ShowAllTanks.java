@@ -137,7 +137,7 @@ ReadGame: { mut .in: mut InputCursorNode; mut .read:List[Tank]->{};}
 //----------------------------------
 //File _tank_game/print_game.fear
 TanksToS: F[List[Tank],Str]{ ts -> Block#
-  .let res = {0.rangeUntil(30).map{_->this.newLine}.list }
+  .let res = {0 ~~ 30.map{_->this.newLine}.list }
   .do{ ts.flow.forEach{ t -> Block#
     .let x= { t.position.x }
     .let y= { t.position.y }
@@ -149,14 +149,14 @@ TanksToS: F[List[Tank],Str]{ ts -> Block#
     .done
     }}
   .return { res.flow.map{::.flow.map{::.get}.join(``)}.join(``|) };
-  read .newLine: mut List[mut Var[Str]] -> 0.rangeUntil(10).map{ _ -> Vars#(`      `)}.list;
+  read .newLine: mut List[mut Var[Str]] -> 0 ~~ 10 .map{ _ -> Vars#(`      `)}.list;
   }
 PrintGame: {
   mut .out: mut Output;
   mut .singleLine(ts: List[Tank]): Void -> this.out.println(TanksToS#(ts));
   mut .lines(rounds: Nat, ts: List[Tank]): Void -> Block#
     .var current= {ts}
-    .return{ 0.rangeUntil(rounds).forEach{step -> Block#(
+    .return{ 0 ~~ rounds .forEach{step -> Block#(
       this.out.println(`Step `+step|),
       this.out.println(`------------------------------------------------------------`|),
       this.singleLine(current.get),
@@ -247,12 +247,12 @@ Where tanks can be displayed on the screen, showing the various steps of the gam
 
 We now focus on those two lines:
 ```
-  .let res = {0.rangeUntil(30).map{_->this.newLine}.list }
+  .let res = {0 ~~ 30 .map{_->this.newLine}.list }
   ...
-  read .newLine: mut List[mut Var[Str]] -> 0.rangeUntil(10).map{ _ -> Vars#(`      `)}.list;
+  read .newLine: mut List[mut Var[Str]] -> 0 ~~ 10 .map{ _ -> Vars#(`      `)}.list;
 ```
 
-- Here we use `.rangeUntil` to create a flow containing the numbers 0..29.
+- Here we use `~~` to create a flow containing the numbers 0..29.
 - Then we use `.map` to call `this.newLine` 30 times.
   Note how we use the `_` to show that we do not need the current element of the flow (a number in 0..29).
 - Finally, we use `.list` to turn the flow into a list.

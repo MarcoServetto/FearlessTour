@@ -9,7 +9,9 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 
+import mainCoordinator.ResolveResource;
 import markDownTests.TextTag;
+import tools.JavacTool;
 import utils.Err;
 
 public class TourHelper {
@@ -30,6 +32,8 @@ public class TourHelper {
       "_test/_rank_app111.fear",code,
       stdBase,stdRt,out
       );
+    System.setProperty(JavacTool.appDirKey,ResolveResource.stLibPath.getParent()
+      .resolve("fearlessArtefact","fearless","app").toString());
     m.runFearless();
     System.err.println("Err was: "+m.err());
     System.out.println("Out was: "+m.out());
