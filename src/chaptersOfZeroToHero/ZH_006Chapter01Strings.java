@@ -49,9 +49,9 @@ space and new line
 It is now 96 symbols. Those are all the symbols we can easily type on most keyboards.
 With this, we could express any text!
 We call numbers expressed in this form (simple) strings.
-It is very compact to represent very large numbers in this notation. For example number 5,000 would be just `` `Q8` ``
-1,000,030 in base-96 has a representation of `` `1cM ` ``. Note the space after the character `` `M` ``.
-If we did not use the backtick character (`` ` ``) it would be very hard to spot trailing spaces in our base-96 numbers.
+It is very compact to represent very large numbers in this notation. For example number 5,000 would be just `` "Q8" ``
+1,000,030 in base-96 has a representation of `` "1cM " ``. Note the space after the character ` "M" `.
+If we did not use the double quote character (`` " ``) it would be very hard to spot trailing spaces in our base-96 numbers.
 
 As you can see, strings are useful to represent text.
 However, there are logically just very large numbers, and we have learned before how to represent numbers from zero to eleven.
@@ -72,12 +72,12 @@ So much about computers and programs is expressed with text. `Str` is the type o
 The `Str` type has many methods that are unique to strings and does not have methods allowing to treat them as numbers.
 That is, when working with text, there is absolutely no reason to think about the corresponding giant numbers in base 96.
 
-For example we can write `` `Hello`.size`` to get `5`.
+For example we can write `` "Hello".size`` to get `5`.
 We will discuss those methods when they become relevant in the rest of the guide.
 
-Strings and comments can contain any character, thus they can contain unbalanced parenthesis. For example, the following is a valid string: `` `A(B` ``.
+Strings and comments can contain any character, thus they can contain unbalanced parenthesis. For example, the following is a valid string: `` "A(B" ``.
 If we ignore parentheses in strings and comments, a Fearless program always has balanced parentheses.
-For example: ``A:{ .foo:Str->`B}`}``
+For example: ``A:{ .foo:Str->"B}"}``
 is a valid type declaration, with balanced parenthesis. The `}` inside of the string literal does not matter.
 
 If we use those gigantic numbers to represent text,
@@ -87,45 +87,44 @@ We have seen how we can merge numbers of type`Nat` with `+` and `*`
 I could do `10 + (5*10)` and get `105`.
 Can we do the same thing with text?
 In the same way `10` is an object literal extending the standard library type `Nat`,
-`` `bob` `` is an object literal extending the standard library type `Str` (string).
+`` "bob" `` is an object literal extending the standard library type `Str` (string).
 `Str` offers a method `+` doing concatenation, so
-`` `bo`+`b` `` reduces to ``bob``.
+`` "bo"+"b" `` reduces to ``"bob"``.
 
-Similarly, `` `Hello ` + `world` `` will reduce to `` `Hello world` ``.
-Note the space after the o in `` `Hello ` ``.
+Similarly, `` "Hello " + "world" `` will reduce to `` "Hello world" ``.
+Note the space after the `"o"` in `` "Hello " ``.
 
 That is, the `+` method does not sum the two strings as numbers but just concatenate them.
 
 If you find the space at the end of `Hello` hard to see, you
 can isolate the strange looking ending space as follow:
-`` `Hello` + ` ` + `world` ``
+`` "Hello" + " " + "world" ``
 
 ### All humans alive as a string
-The number of humans currently alive is 8 Billions, or `` ` inRW` ``.
+The number of humans currently alive is 8 Billions, or `` " inRW" ``.
 A more precise estimate is 8,122,862,820; corresponding to 
 ... hmm... 
-`` `<newLine>Zb2A` ``? maybe?
+`` "<newLine>Zb2A" ``? maybe?
 
 As you can see, when the new line character ends up in the number representation it becomes unobvious how to write it down when embedded in other text.
-The same problem would emerge if the backtick character (`` ` ``) was present; since we used backticks to delimit the border of our 
+The same problem would emerge if the double quote character (`` " ``) was present; since we used double quote to delimit the border of our 
 base 96 number. And we really need to select some characters to be used to show the start and end of our base-96 numbers to avoid confusion.
 How can we handle this issue?
 This is an instance of a more general problem: how to embed text inside text.
 
 We have seen the `+` concatenation operator, and how it can be used to make some strings more readable. `Str` also offer other kind of concatenation operators, allowing to create and represent strings with new lines and backticks too.
 
-In Fearless, ``` `` | `Zb2A` ``` is the representation of `` `Zb2A` `` with a newline at the start.
-In the details, ``` `` ``` is the empty string,
+In Fearless, ``` "" | "Zb2A" ``` is the representation of `` "Zb2A" `` with a newline at the start.
+In the details, ``` "" ``` is the empty string,
 `|` is the concatenation operator with new line,
-and `` `Zb2a` `` is the rest of the string.
+and `` "Zb2a" `` is the rest of the string.
 `|` works exactly like `+`, but also jams a new line in the middle.
-Similarly, `^` is the concatenation operator with back tick.
-`^` works exactly like `+`, but also jams a `` ` `` in the middle.
+Similarly, `^` is the concatenation operator with double quote.
+`^` works exactly like `+`, but also jams a `` " `` in the middle.
  
-Thus `` `Hi, `^`John`^`, are you really John?` `` is containing `John` in backticks.
-It is also a number, a massively large number. So large that it would not make sense for us to show it. Well, here it is:
-1,218,548,022,657,255,659,383,869,870,726,090,934,496,236,095,273,804,605,882,264,818
-
+Thus `` "Hi, "^"John"^", are you really John?" `` is containing `John` in double quotes.
+Alternatively, Fearless allows strings to be delimited by backticks `` ` ``; allowing to write the string above as
+`` `Hi, "John", are you really John?` ``.
 
 //OMIT_START
 -------------------------*/@Test void exampleStrings () { run("""

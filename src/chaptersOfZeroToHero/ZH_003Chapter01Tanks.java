@@ -386,7 +386,7 @@ Adding spaces around all tokens this would look as follows:
 ```
 Bar # ( Add |- )
 ```
-This is a call of the method called `#` on the receiver `Bar`, and the single parameter is a call of the method called `:-` on the receiver `Add`.
+This is a call of the method called `#` on the receiver `Bar`, and the single parameter is a call of the method called `|-` on the receiver `Add`.
 Method `|-` takes zero parameters.
 
 On the other side, parameter names start with a lower-case letter, and
