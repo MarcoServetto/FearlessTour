@@ -9,18 +9,32 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 
+import java.nio.file.Files;
+
 import mainCoordinator.ResolveResource;
 import markDownTests.TextTag;
+import tools.Fs;
 import tools.JavacTool;
 import utils.Err;
 
 public class TourHelper {
-  static{ Err.setUp(AssertionFailedError.class, Assertions::assertEquals, Assertions::assertTrue); }
+  static{
+    Err.setUp(AssertionFailedError.class, Assertions::assertEquals, Assertions::assertTrue);
+    System.setProperty(JavacTool.appDirKey, appDir().toString());
+  }
+  private static Path appDir(){
+    var artefactRoot= ResolveResource.stLibPath.getParent().resolve("fearlessArtefact");
+    var found= Fs.walk(artefactRoot, s->s
+      .filter(Files::isDirectory)
+      .filter(p->p.getFileName().toString().equals(JavacTool.deployedModsDirName))
+      .filter(p->!Fs.walk(p, s2->s2.filter(f->f.toString().endsWith(".jar")).toList()).isEmpty())
+      .toList());
+    assert found.size()==1: "Expected exactly one non-empty '"+JavacTool.deployedModsDirName+"' dir under "+artefactRoot+", found: "+found;
+    return found.getFirst().getParent();
+  }
   protected static void strCmp(String expected, String got){ Err.strCmp(expected, got); }
-  private static Path prefix=Path.of("C:\\").resolve("Users","Lardo","OneDrive","Documents","GitHub");
-  static public final Path std= prefix.resolve("StandardLibrary","fearlessArtefact","fearless","app","stdLib");
-  static public final Path stdBase= std.resolve("base");
-  static public final Path stdRt= std.resolve("rt");
+  static public final Path stdBase= ResolveResource.stLibPath;
+  static public final Path stdRt= ResolveResource.stLibRTPath;
   static public final Path out= Path.of("tmpOut");
 
   public static void run(String code){
@@ -32,8 +46,6 @@ public class TourHelper {
       "_test/_rank_app111.fear",code,
       stdBase,stdRt,out
       );
-    System.setProperty(JavacTool.appDirKey,ResolveResource.stLibPath.getParent()
-      .resolve("fearlessArtefact","fearless","app").toString());
     m.runFearless();
     System.err.println("Err was: "+m.err());
     System.out.println("Out was: "+m.out());

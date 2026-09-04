@@ -343,7 +343,7 @@ There are two kinds of libraries:
 A few kinds of numbers are part of the Fearless standard library:
 
 `Nat` (Natural Numbers): These represent non-negative whole numbers (`0`, `1`, `2`, `3`, and so on). You write them just like you'd expect: `1`, `0`, `34`, `45235`.
-They have familiar methods like `+`, `-`, `*`, `.succ`, `.pred`, similar to our `Number` example. For example: `5 + 3` results in `8`.
+They have familiar methods like `+`, `-`, `*`, `.getSucc`, `.getPred`, similar to our `Number` example. For example: `5 + 3` results in `8`.
 
 `Int` (Integers): These represent positive and negative whole numbers (..., `-2`, `-1`, `+0`, `+1`, `+2`, ...). To distinguish them, you must include the sign before the number. Note that `+0` is the only way to write zero as an `Int`.
 Some `Int`s: `+10`, `-25`, `+0`, `+12345`, `-987`.
@@ -356,34 +356,36 @@ Well, this is what we meant: there are some special type names that are used to 
 Overall, all the type names not starting with an A to Z letter are defined by the fearless standard library, and as such can
 not be defined by regular Fearless programmers. 
 
-#### How they work? Like our clock, just... BIGGER!
+#### How they work? Like our clock, just... BIGGER! (or so it would seem)
 
-Crucially, `Nat` and `Int` work exactly like our `Number` example, using **modulo arithmetic**. The key difference is the size of the "clock face". Instead of wrapping around after `11`, they wrap around after reaching an enormously large value.
-`Nat` behaves like a massive clock counting from `0` up to this  huge maximum.
-Adding `1` to this maximum `Nat` wraps around back to `0`.
-Subtracting `1` from `0` wraps around to the maximum `Nat`.
+At first glance, you may expect `Nat` and `Int` to work exactly like our `Number` example, using **modulo arithmetic**: a clock face so big it takes forever to wrap around. Instead of wrapping around after `11`, `Nat` would wrap around after reaching an enormously large value.
+`Nat` would behave like a massive clock counting from `0` up to this huge maximum.
+Adding `1` to this maximum `Nat` would wrap around back to `0`.
+Subtracting `1` from `0` would wrap around to the maximum `Nat`.
 
-That is, in the standard library there are many, many types defined following roughly the schema below:
+That is, if it worked this way, the standard library would define many, many types following roughly the schema below:
 
 
 ```
 //Nat: Familiar Logic, Ludicrous Scale
-Nat:{ 
-  .pred:Nat; .succ:Nat;
+Nat:{
+  .getPred:Nat; .getSucc:Nat;
   +(other: Nat): Nat->....;/*more method as in Number*|/
   }
 0: Nat{
-   .pred-> 18446744073709551615; .succ-> 1,
+   .getPred-> 18446744073709551615; .getSucc-> 1,
    +(other)-> other;/*more method as in Number*|/
    }
-1: Nat{.pred->  0; .succ->  2; }
+1: Nat{.getPred->  0; .getSucc->  2; }
 ...
-18446744073709551615: Nat{.pred-> 18446744073709551614; .succ->  0; }
+18446744073709551615: Nat{.getPred-> 18446744073709551614; .getSucc->  0; }
 ```
-The schemas look just like our clock's.
-The only difference? The scale is mind-boggling. The max value isn't `11`; 
-It is ( 2<sup>64</sup> ) - 1, that is 18,446,744,073,709,551,615.
+The schemas would look just like our clock's.
+The only difference would be the scale, which is mind-boggling. The max value isn't `11`;
+It would be ( 2<sup>64</sup> ) - 1, that is 18,446,744,073,709,551,615.
 More than 18 followed by 18 zeros!
+
+>**Spoiler:** this is not quite how `Nat` and `Int` actually behave. Keep reading: the real story, a few sections below, is arguably even more important than the huge number of types.
 
 >Eighteen quintillion, four hundred forty-six quadrillion,
 >seven hundred forty-four trillion, seventy-three billion,
@@ -398,9 +400,9 @@ Did someone actually type them all out?
 Of course, there isn't really a file containing billions of billions of lines like this:
 ```
 ...
-18446744070000000004: Nat{.pred-> 18446744070000000003; .succ->  18446744070000000005; }
-18446744070000000005: Nat{.pred-> 18446744070000000004; .succ->  18446744070000000006; }
-18446744070000000006: Nat{.pred-> 18446744070000000005; .succ->  18446744070000000007; }
+18446744070000000004: Nat{.getPred-> 18446744070000000003; .getSucc->  18446744070000000005; }
+18446744070000000005: Nat{.getPred-> 18446744070000000004; .getSucc->  18446744070000000006; }
+18446744070000000006: Nat{.getPred-> 18446744070000000005; .getSucc->  18446744070000000007; }
 ...
 ```
 But let's imagine, just for fun. Picture "The Infinite Typist", a mythical programmer fueled by pure
@@ -425,71 +427,63 @@ or even stored on your hard drive.
 However, those types do exist and we can code in Fearless using them.
 This also means that the type names `0`, `1`, `2` and so on are already taken,
 and thus we can not actually define our numbers called `0`-`11` as we did before.
-Crucially, even though the implementation is optimized, the behavior perfectly matches
-the conceptual model of that massive, wrap-around clock face.
 
-In addition to `Nat` we have `Int`.
-`Int` implements another kind of modulo arithmetic, where we can have negative values, and instead of rolling back to zero when we overflow, we roll back to the smallest possible negative value.
-That is, `Int` follows the schema below:
+Now, the promised spoiler: the implementation does **not** match the wrap-around clock face model above.
+Calling `.getSucc` on the maximum `Nat`, or `.getPred` on `0`, does not silently wrap around: it throws.
+We will see why, and what to do about it when wrap-around is genuinely wanted, in the next section.
+
+In addition to `Nat` we have `Int`, which can represent negative values too.
+If `Int` also followed the (hypothetical) wrap-around clock model, instead of rolling back to zero when we overflow, it would roll back to the smallest possible negative value.
+That is, `Int` would follow the schema below:
 ```
-Int:{ 
-  .pred:Int; .succ:Int;
+Int:{
+  .getPred:Int; .getSucc:Int;
   +(other: Int): Int->...,/*more method as in Number*|/
   }
 +0: Int{
-   .pred-> -1; .succ-> +1;
+   .getPred-> -1; .getSucc-> +1;
    +(other)-> other;/*more method as in Number*|/
    }
-+1: Int{.pred->  +0; .succ->  +2; }
++1: Int{.getPred->  +0; .getSucc->  +2; }
 ...
-+9223372036854775807: Int{.pred-> +9223372036854775806; .succ->  -9223372036854775808; }
--1: Int{.pred->  -2; .succ->  +0; }
++9223372036854775807: Int{.getPred-> +9223372036854775806; .getSucc->  -9223372036854775808; }
+-1: Int{.getPred->  -2; .getSucc->  +0; }
 ...
--9223372036854775808: Int{.pred-> +9223372036854775806; .succ->  -9223372036854775807; }
+-9223372036854775808: Int{.getPred-> +9223372036854775807; .getSucc->  -9223372036854775807; }
 ```
-As you can see, the predecessor of `+0` is `-1` and the successor and predecessor of
-the biggest numbers are linked together.
+Away from the two extremes, this part is actually accurate: the predecessor of `+0` really is `-1`.
+It is only the wrap-around at the very top and bottom (the successor of the biggest `Int`, the predecessor of the smallest one) that does not happen: those two calls throw instead, exactly like for `Nat`.
 
 Finally, `Float` and `Num` are numeric types useful to represent fractions.
 We will discuss them later.
 
 ### Staring into the Abyss: Overflow and Murphy's Law
 
-Because `Nat` and `Int` use this fixed-size, wrap-around (modulo) arithmetic,
-they are subject to overflow (going past the max) and underflow (going below the min).
-Just like `11.succ` became `0` on our small clock, adding `1` to the maximum `Nat`
-silently produces `0`. Adding two large positive `Int`s
-might silently result in a negative `Int`.
-
-There is no warning bell, no error message. It just happens.
+`Nat` and `Int` are fixed-size: only finitely many `Nat` (or `Int`) types exist, so every one of them has a maximum (and, for `Int`, a minimum). This means they are subject to overflow (going past the max) and underflow (going below the min), exactly as our wrap-around clock model predicted.
 
 Murphy's Law ("Anything that can go wrong, will go wrong") practically guarantees that
 if your program runs long enough or handles large enough inputs,
 something, somewhere, will eventually trigger an unexpected overflow if you're solely
 relying on `Nat` or `Int` without careful checks.
 
-Overflows and Underflows are fundamental trade-off for the speed
-gained by optimized integers in most programming languages.
-This isn't a Fearless-specific issue; it's a real issue in most languages and the
-cause of a large amount of bugs.
-The big issue is that Overflows and Underflows do not make the code fail, they make
+In most programming languages, overflow and underflow are a fundamental trade-off for the speed
+gained by optimized integers: past the boundary, arithmetic silently wraps around, exactly like our naive clock model.
+The big issue with that classic approach is that overflow and underflow do not make the code fail, they make
 it misbehave in dangerous ways: consider using a `Nat` to represent the dose of medicine
-to inject in a patience every second, where the doctor can press a `+1` and `-1` button 
-to regulate the flux. 
-Would would happen if a doctor wanting to stop the flux accidentally presses `-1`
-one too many times? 
-If the programmer has not been careful, the patient may receive Eighteen quintillion
+to inject in a patient every second, where the doctor can press a `+1` and `-1` button
+to regulate the flux.
+What would happen if a doctor wanting to stop the flux accidentally presses `-1`
+one too many times?
+If the language silently wrapped `0 .getPred` around to the maximum `Nat`, the patient would receive Eighteen quintillion
 units of medicine the second after.
-  
+
 The creators of the Fearless standard library did not like this outcome.
-The solution was add a layer of checks on top of the behavior of `Int`, `Nat` and many other types.
-In this way, with the base behavior of the standard library, Overflows, Underflows and other 
-dangerous numeric operations with odd unpredictable results are going to stop the 
-whole execution instead of performing probably nonsensical operations.
-We will discuss the details on how to tune those checks can be tuned later in the guide. 
-For now, it is important that you realize that those problems do exists.  
-Ignoring it is building on shaky ground.
-Accepting this reality is step one to writing robust code.
+So, unlike the naive clock model, `Nat`'s and `Int`'s default arithmetic (`+`, `-`, `*`, `.getSucc`, `.getPred`, and friends) does not wrap around at all: going past either boundary throws immediately and stops execution, instead of silently producing a nonsensical value.
+There is no silent misbehaviour: the doctor's mistaken `-1` on a `Nat` already at `0` crashes loudly, instead of quietly overdosing the patient.
+
+Sometimes true wrap-around arithmetic is exactly what you want (for example, when computing a hash). For those cases, `Nat` and `Int` also expose an explicit family of wrapping operations, named `.aluAddWrap`, `.aluSubWrap`, `.aluMulWrap`, and so on: those are the ones that behave like our original clock model, wrapping around silently. Everything else, by default, is checked.
+We will discuss the details of these checks later in the guide.
+For now, it is important that you realize overflow and underflow are real risks in most languages, and that Fearless's answer is to fail loudly by default rather than silently.
 
  
 //OMIT_START
@@ -520,10 +514,10 @@ N10: Number{.pred->  N9; .succ-> N11; }
 N11: Number{.pred-> N10; .succ->  N0; }
 
 HasPredSucc:{
-  .hasPredNat(a:base.Nat):base.Nat->a.pred;
-  .hasSuccNat(a:base.Nat):base.Nat->a.succ;
-  .hasPredInt(a:base.Int):base.Int->a.pred;
-  .hasSuccInt(a:base.Int):base.Int->a.succ;
+  .hasPredNat(a:base.Nat):base.Nat->a.getPred;
+  .hasSuccNat(a:base.Nat):base.Nat->a.getSucc;
+  .hasPredInt(a:base.Int):base.Int->a.getPred;
+  .hasSuccInt(a:base.Int):base.Int->a.getSucc;
 }
 """); }/*--------------------------------------------
 //OMIT_END

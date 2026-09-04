@@ -31,6 +31,7 @@ use base.Nat as Nat;
 use base.Bool as Bool;
 use base.F as F;
 use base.ToStr as ToStr;
+use base.ToImm as ToImm;
 use base.List as List;
 use base.Block as Block;
 use base.Sealed as Sealed;
@@ -78,8 +79,9 @@ Direction: ToStr, Sealed, WidenTo[Direction] {
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank -> {'self
   .heading -> heading; .aiming -> aiming; .position -> position;
   .str -> ``| (self.repr1) | (self.repr2) | (self.repr3) |;
+  .imm -> self;
   }}
-Tank: ToStr {
+Tank: ToStr, ToImm[Tank] {
   .heading:  Direction;
   .aiming:   Direction;
   .position: Point;
@@ -121,7 +123,7 @@ NextState:F[List[Tank],List[Tank]]{
     .let survivors= { tanks.flow.filter{t -> danger.flow.filter{::==(t.position)}.isEmpty } .list }
     .let occupied= { 
       (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}) .list }
-    .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
+    .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list.imm{::} };
  
   read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
     .filter{::==(t.position)}
@@ -137,26 +139,26 @@ ReadGame: { mut .in: mut InputCursorNode; mut .read:List[Tank]->{};}
 //----------------------------------
 //File _tank_game/print_game.fear
 TanksToS: F[List[Tank],Str]{ ts -> Block#
-  .let res = {0 ~~ 30.map{_->this.newLine}.list }
+  .let res = {0 =~~ 30 .flow.map{_->this.newLine}.list }
   .do{ ts.flow.forEach{ t -> Block#
     .let x= { t.position.x }
     .let y= { t.position.y }
-    .if {x.inRange(0,10).not} .done
-    .if {y.inRange(0,10).not} .done
+    .if {x.inRange(0=~~10).not} .done
+    .if {y.inRange(0=~~10).not} .done
     .do{ res.get(y * 3)    .get(x).set(t.repr1) }
     .do{ res.get(y * 3 + 1).get(x).set(t.repr2) }
     .do{ res.get(y * 3 + 2).get(x).set(t.repr3) }
     .done
     }}
   .return { res.flow.map{::.flow.map{::.get}.join(``)}.join(``|) };
-  read .newLine: mut List[mut Var[Str]] -> 0 ~~ 10 .map{ _ -> Vars#(`      `)}.list;
+  read .newLine: mut List[mut Var[Str]] -> 0 =~~ 10 .flow.map{ _ -> Vars#(`      `)}.list;
   }
 PrintGame: {
   mut .out: mut Output;
   mut .singleLine(ts: List[Tank]): Void -> this.out.println(TanksToS#(ts));
   mut .lines(rounds: Nat, ts: List[Tank]): Void -> Block#
     .var current= {ts}
-    .return{ 0 ~~ rounds .forEach{step -> Block#(
+    .return{ 0 =~~ rounds .flow.forEach{step -> Block#(
       this.out.println(`Step `+step|),
       this.out.println(`------------------------------------------------------------`|),
       this.singleLine(current.get),
@@ -247,12 +249,12 @@ Where tanks can be displayed on the screen, showing the various steps of the gam
 
 We now focus on those two lines:
 ```
-  .let res = {0 ~~ 30 .map{_->this.newLine}.list }
+  .let res = {0 =~~ 30 .flow.map{_->this.newLine}.list }
   ...
-  read .newLine: mut List[mut Var[Str]] -> 0 ~~ 10 .map{ _ -> Vars#(`      `)}.list;
+  read .newLine: mut List[mut Var[Str]] -> 0 =~~ 10 .flow.map{ _ -> Vars#(`      `)}.list;
 ```
 
-- Here we use `~~` to create a flow containing the numbers 0..29.
+- Here we use `=~~` to create a range containing the numbers 0..29 (inclusive of `0`, exclusive of `30`), then `.flow` to turn it into a flow.
 - Then we use `.map` to call `this.newLine` 30 times.
   Note how we use the `_` to show that we do not need the current element of the flow (a number in 0..29).
 - Finally, we use `.list` to turn the flow into a list.
@@ -267,8 +269,8 @@ The code shown below uses `res` to represent a grid of information, that can be 
 ````
     .let x= { t.position.x }
     .let y= { t.position.y }
-    .if {x.inRange(0,10).not} .done
-    .if {y.inRange(0,10).not} .done
+    .if {x.inRange(0=~~10).not} .done
+    .if {y.inRange(0=~~10).not} .done
     .do{ res.get(y * 3)    .get(x).set(t.repr1) }
     .do{ res.get(y * 3 + 1).get(x).set(t.repr2) }
     .do{ res.get(y * 3 + 2).get(x).set(t.repr3) }

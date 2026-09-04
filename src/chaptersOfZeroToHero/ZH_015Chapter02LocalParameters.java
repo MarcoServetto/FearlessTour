@@ -13,7 +13,7 @@ class ZH_015Chapter02LocalParameters {
 Up to now, all the parameters we have seen are method parameters; either the receiver (parameter zero) or one of the others.
 This can encourage us to write repetitive and hard to read code.
 
-For example, we show below a difficult to read method computing the distance between two points; using the square root function (sqrt) present on `Nat`:
+For example, we show below a difficult to read method computing the distance between two points; using the square root function (softSqrt) present on `Nat`:
 -------------------------*/@Test void distance1 () { run("""
 //OMIT_START
 use base.Nat as Nat;
@@ -21,7 +21,7 @@ Point:{ .x: Nat; .y: Nat }
 A:{
 //OMIT_END
 .distance(p1: Point, p2: Point): Nat->
-  p1.x - (p2.x) * (p1.x - (p2.x)) + (p1.y - (p2.y) * (p1.y - (p2.y)))  .sqrt .nat  
+  p1.x - (p2.x) * (p1.x - (p2.x)) + (p1.y - (p2.y) * (p1.y - (p2.y)))  .softSqrt .softNat
 //OMIT_START
 }
 //OMIT_END
@@ -44,7 +44,7 @@ A:{
 //OMIT_END
 .distance(p1: Point, p2: Point): Nat->
   F[Nat,Nat,Nat]{diffX, diffY ->
-     (diffX * diffX) + (diffY * diffY).sqrt.nat }
+     (diffX * diffX) + (diffY * diffY).softSqrt.softNat }
   #( p1.x - (p2.x), p1.y - (p2.y) )
 //OMIT_START
 }
@@ -55,7 +55,7 @@ Theoretically, this new code achieves our goals, but most humans find this new v
 We think this is mostly because 
 1. The values for `diffX` and `diffY` are very far in the code from the declaration point of `diffX` and `diffX`.
 2. This new version is just much longer: we have to add the types for `diffX`, `diffY`, and the return type.
-3. This version is only working for two new parameters defined at the same time. What if we wanted to give a name to the result before `.sqrt`?
+3. This version is only working for two new parameters defined at the same time. What if we wanted to give a name to the result before `.softSqrt`?
 
 We first show how to solve those 3 issues in the core language, then we show a new form of syntactic sugar making this approach more readable.
 We can define a standard `Let` type allowing to define local parameters by generalising the idea of the code above:
@@ -77,7 +77,7 @@ A:{
   Let#(p1.x - (p2.x), {diffX ->
   Let#(p1.y - (p2.y), {diffY ->
   Let#((diffX * diffX) + (diffY * diffY), {res ->
-  res.sqrt.nat
+  res.softSqrt.softNat
   })})})
 //OMIT_START
 }
@@ -112,7 +112,7 @@ A:{
   .let({p1.x - (p2.x)}, {diffX, self0 -> self0
   .let({p1.y - (p2.y)}, {diffY, self1 -> self1
   .let({(diffX * diffX) + (diffY * diffY)}, {res, self2 -> self2
-  .return {res.sqrt.nat}
+  .return {res.softSqrt.softNat}
   })})})
 //OMIT_START
 }
@@ -157,7 +157,7 @@ A:{
   .let diffX = {p1.x - (p2.x)}
   .let diffY = {p1.y - (p2.y)}
   .let res   = {(diffX * diffX) + (diffY * diffY)}
-  .return {res.sqrt.nat}
+  .return {res.softSqrt.softNat}
 //OMIT_START
 }
 //OMIT_END
@@ -175,7 +175,7 @@ Let see again this code, comparing line by line to see what changes thanks to th
   .let diffX= {p1.x - (p2.x)}           | .let({p1.x - (p2.x)}, {diffX, self0 -> self0
   .let diffY= {p1.y - (p2.y)}           | .let({p1.y - (p2.y)}, {diffY, self1 -> self1
   .let res={(diffX*diffX)+(diffY*diffY)}| .let({(diffX*diffX)+(diffY*diffY)},{res,self2->self2
-  .return {res.sqrt}                    | .return {res.sqrt}
+  .return {res.softSqrt.softNat}          | .return {res.softSqrt.softNat}
                                         | })})}) 
 ```
 

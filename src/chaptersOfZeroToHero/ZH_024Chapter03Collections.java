@@ -183,27 +183,27 @@ A type representing the grid could look like this:
 Grid:{
   .inner: List[Elem];
   .get(x: Nat, y: Nat): Elem -> this.inner.get(y * 5 + x);
-  .y(index: Nat): Nat -> index .div 5;
-  .x(index: Nat): Nat -> index .rem 5;
+  .y(index: Nat): Nat -> index .getTruncDiv 5;
+  .x(index: Nat): Nat -> index .getRem 5;
   }
 ```
 Note: since `index` is a Nat, the division is rounded down (**integer division**).
-For example `13 .div 5 = 2`; and the reminder/`.rem` operation returns the reminder of the
-integer division: `13 .rem 5 = 3`
+For example `13 .getTruncDiv 5 = 2`; and the reminder/`.getRem` operation returns the reminder of the
+integer division: `13 .getRem 5 = 3`
 
 This kind of encoding was crucial in the past for extracting performance benefits from primitive machines with severe memory constraints. Today, while less common, it remains critical in some contexts.
 
 ### The `.as` method
-`List[E].as` is a method creating a new list where the elements have gone through some kind of transformation.
-That is, the following three expressions are equivalent:
+`List[E].as` is **not** a general-purpose transformation method: for that, use `.flow.map{...}.list`, as we have already seen.
+Instead, `List[E].as` is a zero-cost retyping: the compiler checks that the function passed to it has the shape of an identity (or a widening) function, and if so, reinterprets the list at a different (but compatible) element type without copying anything.
+That is, the following two expressions are equivalent, and both simply return the original list, reinterpreted:
 
 ```
-  Lists#(`3`,`4`,`5`)
-  Lists#(1,2,3).as{::+ 2 .str}
-  Lists#(1,2,3).flow.map{::+ 2 .str}.list
+  Lists#(1,2,3)
+  Lists#(1,2,3).as{::}
 ```
 
-While method `List[E].as` mostly behaves as `.flow.map.list`, the compiler can optimise it to run faster in a few crucial cases.
+We will see below why this restricted, zero-cost form of retyping is useful.
 
 ### Lists and mutability
 Stacks as shown before are always immutable, while lists support both mutable and immutable elements.
@@ -500,7 +500,7 @@ myCars.flow
   .get //this requires that there is exactly one max
 myCars.flow
   .max({::.driver}.then Older) //here we check using the Older comparator
-  .opt//this requires that there is exactly zero or one max
+  .getOpt//this requires that there is exactly zero or one max
 myCars.flow
   .max(OrderByCaseInsensitive.view{::.driver.name}.then {::.driver.age}) //here names ignoring case
   .first //this gives us an Opt[Car] and allows for further max cars to be discarded.
@@ -772,7 +772,6 @@ Basically, it is much easier to solve a puzzle once you remember what all the pi
 
 OMIT_START
 -------------------------*/@Test void tests() { run("""
-use base.Tests as Tests;
 use base.F as F;
 
 use base.Void as Void;
@@ -798,6 +797,12 @@ use base.OrderBy as OrderBy;
 use base.OrderHash as OrderHash;
 use base.OrderHashBy as OrderHashBy;
 use base.OrderMatch as OrderMatch;
+
+Tests: {
+  .testSuite(v: F[Tests,Tests]): Tests -> v#(this);
+  .test(v: Void): Tests -> this;
+  .done: Void -> {};
+  }
 
 AllTest:base.Main{s->
   Tests
@@ -895,8 +900,8 @@ Data:{
 Grid:{
   .inner: List[Nat];
   .get(x: Nat, y: Nat): Nat -> this.inner.get(y * 5 + x);
-  .y(index: Nat): Nat -> index.div 5;
-  .x(index: Nat): Nat -> index.rem 5;
+  .y(index: Nat): Nat -> index.getTruncDiv 5;
+  .x(index: Nat): Nat -> index.getRem 5;
   }
 Grids:{
   #(inner: List[Nat]): Grid -> { .inner -> inner; }
@@ -973,12 +978,7 @@ TestListsBasics:F[Tests,Tests]{::
   .test(Grids#(Lists#(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14)).y(13).assertEq 2)
   .test(Grids#(Lists#(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14)).x(13).assertEq 3)
 
-  // as behaves like flow.map.list in common cases
-  .test(
-    Lists#(1,2,3).as{::+ 2 .str}.orderHash{::} ==
-      (Lists#(1,2,3).flow.map{::+ 2 .str}.list)
-    .assertTrue
-    )
+  // as is a zero-cost identity retyping, not a general transform
   .test(Lists#(1,2,3).as{::}.orderHash{::} == (Lists#(1,2,3)).assertTrue)
   }
 
@@ -1021,17 +1021,18 @@ TestOrderBasics:F[Tests,Tests]{::
   .test(Points#(1,2) <  (Points#(1,3)).assertTrue)
   .test(Points#(1,9) >  (Points#(0,99)).assertTrue)
 
-  // range helpers (on ordered numbers)
-  .test(5.inRange(0,10).assertTrue)
-  .test(5.inRangeOpen(0,10).assertTrue)
-  .test(0.inRangeOpen(0,10).assertFalse)
-  .test(10.inRangeOpen(0,10).assertFalse)
+  // range helpers (on ordered numbers): =~~= is inclusive-inclusive, ~~ is
+  // open-open, =~~ excludes only the high end, ~~= excludes only the low end.
+  .test(5.inRange(0=~~=10).assertTrue)
+  .test(5.inRange(0~~10).assertTrue)
+  .test(0.inRange(0~~10).assertFalse)
+  .test(10.inRange(0~~10).assertFalse)
 
-  .test(0.inRangeHiOpen(0,10).assertTrue)
-  .test(10.inRangeHiOpen(0,10).assertFalse)
+  .test(0.inRange(0=~~10).assertTrue)
+  .test(10.inRange(0=~~10).assertFalse)
 
-  .test(0.inRangeLoOpen(0,10).assertFalse)
-  .test(10.inRangeLoOpen(0,10).assertTrue)
+  .test(0.inRange(0~~=10).assertFalse)
+  .test(10.inRange(0~~=10).assertTrue)
   }
 
 TestOrderByAndFlows:F[Tests,Tests]{::
@@ -1200,11 +1201,11 @@ TestCarsFlowExamples:F[Tests,Tests]{::
         }
     )
 
-  // .opt after .max: only valid when there is 0 or 1 max
+  // .getOpt after .max: only valid when there is 0 or 1 max
   .test(
     Data.cars2.flow
       .max{::.id}                 // unique max id = 4
-      .opt
+      .getOpt
       .match{
         .empty -> False.assertTrue;
         .some c -> c.id.assertEq 4;
