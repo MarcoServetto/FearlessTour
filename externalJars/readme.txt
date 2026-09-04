@@ -1,4 +1,6 @@
 This folder needs to contain all the JARs needed to compile and run FearlessTour.
+The jars themselves are gitignored (not committed): download each one below into this
+folder before building.
 For now, the list is:
 
 ## Flexmark

@@ -188,7 +188,7 @@ Grid:{
   }
 ```
 Note: since `index` is a Nat, the division is rounded down (**integer division**).
-`.getTruncDiv` is short for "get, truncated division": it divides and then truncates (cuts off) whatever comes after the decimal point, rather than rounding to the nearest whole number.
+`.getTruncDiv` is short for "get, truncated division": it divides and then truncates (cuts off) whatever comes after the decimal point.
 For example `13 .getTruncDiv 5 = 2`; and the reminder/`.getRem` operation returns the reminder of the
 integer division: `13 .getRem 5 = 3`
 
@@ -196,30 +196,19 @@ This kind of encoding was crucial in the past for extracting performance benefit
 
 ### The `.as` method
 `List[E].as` is **not** a general-purpose transformation method: for that, use `.flow.map{...}.list`, as we have already seen.
-Instead, `List[E].as` is a zero-cost retyping: the compiler checks that the function passed to it has the shape of an identity (or a widening) function, and if so, reinterprets the list at a different (but compatible) element type without copying anything.
-That is, the following two expressions are equivalent, and both simply return the original list, reinterpreted:
-
-```
-  Lists#(1,2,3)
-  Lists#(1,2,3).as{::}
-```
-
-This is not specific to numbers: the same holds for any element type. For example, given
+Instead, `List[E].as` is a zero-cost retyping: the compiler checks that the function passed to it is `{::}` (or something reducible to it), and if so, reinterprets the list at a different, compatible element type, without touching a single element.
+`{::}` is the identity function; here are some of the retypings it lets `.as` perform, given
 ```
 Animal: { .name: Str; }
 Dog: Animal { .name: Str; .bark: Str -> `Woof`; }
-Dogs: { #(name: Str): Dog -> {.name -> name; .bark -> `Woof`;} }
 ```
-`Lists#(Dogs#(\`Rex\`)).as{::}` again just returns the original list, reinterpreted.
-
-That "or a widening function" we mentioned above is not idle: `{::}` also lets `.as` change the element type itself, from a type to one of its supertypes, since a function returning its own argument unchanged is trivially also a widening function.
-That is, since `Dog` implements `Animal`, the following compiles, with `.as` again not touching a single `Dog`:
+all of this works too:
 ```
-  .allPets: List[Animal] -> Lists#(Dogs#(`Rex`)).as{::}
+  Lists#(1,2,3).as{::}                                              //List[Nat] to itself
+  .greetAll(pets: List[mut Dog]): List[Dog] -> pets.as{::}          //List[mut Dog] to List[Dog]
+  .allPets(pets: List[Dog]): List[Animal] -> pets.as{::}            //List[Dog] to List[Animal], since Dog implements Animal
+  .allGroups(gs: List[List[Dog]]): List[List[Animal]] -> gs.as{::.as{::}} //nested: one .as per level
 ```
-Without `.as`, this would need an actual (still cheap, but not free) `.flow.map{::}.list` to produce a `List[Animal]` out of a `List[Dog]`.
-
-We will see below why this restricted, zero-cost form of retyping is useful.
 
 ### Lists and mutability
 Stacks as shown before are always immutable, while lists support both mutable and immutable elements.
@@ -254,13 +243,9 @@ If we can not promote this result to `imm`, we can convert it to `imm` by doing 
 There `{::}` will be desugared as `F[Num,Num]{a->a}`. That is, a simple identity function, mapping the elements to themselves. Since method .as returns an `imm List`, we are effectively converting the `mut List[E]` into an `imm List[E]`.
 This and a few other patterns are also optimised by the compiler to not create a new object but reuse the old one. Basically by calling this method we are guiding the type system to recognise that a `mut List[Num]` is really just an `imm List[Num]`.
 
-- `List[mut Animal]`, also written as `imm List[mut Animal]` behaves exactly like a `List[Animal]`, that is, an immutable list of immutable elements, but the type system does not know about this: `mut Animal` and `imm Animal` are, in general, different types, since some other `Animal` somewhere in the program could genuinely be mutable.
-As for before, if we have a `pets: List[mut Dog]` (recall `Dog` from above) and we need a `List[Dog]`, we can just call `pets.as{::}`:
-```
-  .greetAll(pets: List[mut Dog]): List[Dog] -> pets.as{::}
-```
-Here the list comes in as an (immutable list of) `mut Dog`, and goes out as an (immutable list of) `Dog`, that is, `imm Dog`, at zero cost: no `Dog` is copied or touched, we are only convincing the type system of something that was already true.
-This last case often emerges from promotion: we may start with a `mut List[mut Animal]` and then turn it into immutable.
+- `List[mut Animal]`, also written as `imm List[mut Animal]`, behaves exactly like a `List[Animal]`, that is, an immutable list of immutable elements, but the type system does not know about this: `mut Animal` and `imm Animal` are different types.
+This is `.greetAll` from above: `pets.as{::}` is how we tell the type system that a `List[mut Dog]` is fine to also use as a `List[Dog]`.
+This case often emerges from promotion: we may start with a `mut List[mut Animal]` and then turn it into immutable.
 
 ### Other core list methods: `+>`, `<+`, `++`, `.subList`
 

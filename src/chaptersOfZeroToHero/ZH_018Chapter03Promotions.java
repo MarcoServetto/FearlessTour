@@ -40,8 +40,8 @@ This happens through a process called promotion.
 There are many kinds of promotion; we will now see the simplest and most useful form of promotion:
 The result of any method returning a mut but taking in input no `mut` or `read` parameters can be promoted to `imm`.
 
-One easy detail to miss the first time around: "taking in input" includes the receiver, `this`, exactly as if it were one more parameter.
-A method with no explicit parameters at all can still fail this rule, if its own receiver is `mut` or `read`.
+One easy detail to miss the first time around: the receiver is parameter number zero, so "no `mut` or `read` parameters" includes it.
+A method with no explicit parameters at all can still fail this rule, if its own receiver (parameter zero) is `mut` or `read`.
 
 For example
 -------------------------*/@Test void promotion () { run("""
@@ -68,18 +68,12 @@ PromotionExample: {
 
 The code above compiles and produces an immutable Animal.
 The method `Animals#` is declared to return a `mut Animal`.
-However, this call can be promoted to `imm` because the method `Animals#` is called using an immutable point, and (implicitly) `Animals#` itself is called on an immutable receiver: `Animals` has no fields, so an `Animals` literal is trivially immutable, and the unannotated `#` defaults to an `imm` receiver.
+However, this call can be promoted to `imm`: `Animals` (the receiver) is an `imm` object literal, and `Points#(10,20)` (the argument) is an `imm` value.
 
 Code `PromotionExample#.run(10)` would not compile because method `PromotionExample#` return an immutable `Animal` and
 `Animal.run` is a `mut` method.
 
-### How promotion is actually decided
-
-The rule talks about the parameters' *declared* types, but what actually triggers promotion, for each one, is a comparison against the *actual* type of the thing you passed there.
-`Animals#(start: Point)` merely declares `start` as `Point` (that is, `imm Point`); it does not, by itself, make the call promotable.
-What makes it promotable is that the caller happened to pass an argument whose real, actual type is *also* `imm` (here, `Points#(10,20)`, a freshly built, uncapturing `Point`): the actual argument is at least as immutable as the parameter merely required.
-The same reasoning applies to the receiver: an unannotated `#` merely requires (at least) `imm` for `this`; since `Animals` has no fields, any `Animals` literal used as a receiver is actually `imm`, so that requirement, too, is met with room to spare.
-When every parameter (receiver included) is met this way, the whole call is allowed to round its declared `mut` return down to whatever the actual arguments can support, `imm` included.
+> Here should go a short explanation of how promotion is actually decided: for each parameter (parameter zero, `this`, included), compare the *actual* type of the argument against that parameter's merely *declared* type; promotion succeeds when, for every parameter, the actual type is at least as immutable as declared. Contrast a call where a `read`-declared parameter is given an actually-`imm` argument (promotes) with one where it is given an actually-`read` argument (does not).
 
 ### The `iso` capability: not committed to `mut` or `imm`
 
@@ -118,16 +112,16 @@ The exact same call, `Animals#(Points#(10,20))`, is used twice: once bound to a 
 Neither usage forces the other: `Animals#` does not commit to either capability, `iso` does.
 This is why `iso` is the return type most factory-style methods should really have, and why `mut` in a return type is often really "at least `iso`, rounded down to `mut` because that is the more familiar word".
 
-Note how the first usage pins its local down explicitly, `.let[mut Animal] pet= {...}`, rather than just `.let pet= {...}`.
-This is not a stylistic choice: without it, there is no declared type for the type checker to compare the lambda's result against at all, so it does not attempt promotion, and `pet` simply gets the exact type the lambda's body computed to, whatever that happens to be.
-We will rely on this same `.let[T]` pinning again later in this chapter, to let a multi-step computation promote to an immutable result.
+Note how the first usage pins the local down explicitly, `.let[mut Animal] pet= {...}`, rather than just `.let pet= {...}`.
+This is not a stylistic choice: unpinned, `.let` just takes the exact type its lambda returns, with no promotion attempted; the pin is what gives it a declared type to promote into.
+We will rely on this same `.let[T]` pinning again later in this chapter.
 
 ### When promotion breaks: an argument that is only as good as declared, not better
 
-Promotion needs *every* parameter along the way, receiver included, to actually be given something more immutable than that parameter merely requires.
-The moment even one of them is given something that is only exactly as permissive as declared, with no room to spare, that call's result is fixed as plain `mut`; and plain `mut` cannot later be promoted to `imm`, no matter what surrounds it.
+Promotion needs *every* parameter along the way, receiver included, to actually be given an argument more immutable than that parameter merely requires.
+The moment even one actual argument is exactly as immutable as declared and no more, that call's result is fixed as plain `mut`; and plain `mut` cannot later be promoted to `imm`.
 
-This is easy to run into without noticing, exactly because "the receiver is only as immutable as declared" so often does not look like a parameter at all, since the receiver is just `this`:
+This is easy to run into without noticing, because the receiver being "only as immutable as declared" does not look like an argument at all, since inside the method it is just `this`:
 -------------------------*/@Test void brokenPromotion () { run("""
 use base.Void as Void;
 use base.Nat as Nat;
@@ -159,14 +153,14 @@ VisitZoo: {
 //OMIT_END
 """); }/*--------------------------------------------
 
-`.residents` has a `read` receiver, so inside it `this` is only exactly `read`: there is no room to spare on that parameter, since `Zoo` really might be `mut` somewhere else in the program.
-The lambda `{p -> this.home}`, passed where `.map` merely requires (at least) a `read` function, is therefore also only exactly as good as required, with nothing better to offer: unlike `Animals#(Points#(10,20))` earlier, there is no surplus here for promotion to work with.
-`.list`'s declared return is `mut List[Point]`, and with no surplus anywhere along the way, that is exactly what we get; `.residents` is declared to return a plain (immutable) `List[Point]`, so this is a compile error: a `mut List[Point]` can not be silently treated as one.
+`.residents` is declared `read`, so inside it `this` (parameter zero, at this call) is exactly `read`, no more.
+The lambda `{p -> this.home}`, passed where `.map` declares (at least) a `read` function, is built from that same exactly-`read` `this`.
+`.list`'s declared return is `mut List[Point]`, and nothing here was more immutable than declared, so that `mut` stands; `.residents` declares a plain (immutable) `List[Point]`, so this is a compile error.
 
 A few ways out, and picking between them is a real design decision, not a formality:
-- **Keep the receiver `imm`.** `this` is only exactly `read` because `.residents` is declared `read` here; a method left unannotated (the default, `imm` receiver) gives `this` a genuine surplus over any `read` requirement, since it is then actually immutable. Whenever a type has no real need for a `read`/`mut`-receiver method, leaving it unannotated keeps every computation inside it eligible for promotion, `this` included.
-- **Do not use `this` for it at all.** If `.residents` did not need `this` at all (for example, if the point to repeat came in as a parameter instead of through `this.home`), that parameter could again carry its own surplus, and the whole call would promote to `imm` on its own, exactly like `Animals#` did.
-- **Prove it by hand.** Sometimes neither of the above is an option, because the type genuinely needs a `read`/`mut` receiver and genuinely needs to capture `this`. We will later meet `List[E].as{::}`, which lets us assert "this is already immutable" for a list we can vouch for. The same idea exists for arbitrary types: implementing `ToImm[T]`'s `read .imm: T` method lets a type assert "an object built this way, right here, is always safe to treat as `imm`" for a value the type system itself could not have derived that fact for.
+- **Keep the receiver `imm`.** A method left unannotated (the default, `imm` receiver) makes `this` actually `imm`, more than any `read` requirement asks for. Whenever a type has no real need for a `read`/`mut`-receiver method, leaving it unannotated keeps every computation inside it eligible for promotion, `this` included.
+- **Do not use `this` for it at all.** If `.residents` did not need `this` (for example, if the point to repeat came in as a parameter instead of through `this.home`), that parameter alone could again be actually `imm`, and the whole call would promote on its own, exactly like `Animals#` did.
+- **Prove it by hand.** Sometimes neither of the above is an option, because the type genuinely needs a `read`/`mut` receiver and genuinely needs `this`. We will later meet `List[E].as{::}`, which lets us assert "this is already immutable" for a list we can vouch for. The same idea exists for arbitrary types: implementing `ToImm[T]`'s `read .imm: T` method lets a type assert "an object built this way, right here, is always safe to treat as `imm`".
 
 We will meet this exact situation again in the tank game later in this chapter: `NextState` is written so that its own receiver stays `imm`, precisely so that capturing `this` inside its `List`/`Flow` computation does not stop the result from promoting to the plain (immutable) `List` it declares.
 
