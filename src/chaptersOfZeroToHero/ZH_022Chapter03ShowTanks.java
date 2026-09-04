@@ -277,9 +277,9 @@ In the code above, the `List[E].flow` method returns a `Flow[E]` and the methods
 We will see many operations on flow by examples in the next few pages.
 
 One more detail: note how each `.let` pins down its own type explicitly (`.let[List[Point]] danger= ...`, not just `.let danger= ...`).
-Recall from the Promotions section: a freshly built value can be recognised as immutable only when nothing not-yet-known-to-be-immutable was used to build it.
-Without the pin, `danger`/`survivors`/`occupied` would each be left as `mut`, and that `mut`-ness would carry all the way to `NextState`'s result, which would then no longer match the declared (immutable) `List[Tank]` return type.
-Pinning each one to its true, immutable type as soon as it is built is what lets the type system recognise the final result as immutable too, without needing to prove anything by hand.
+Recall from the Promotions section: without a declared type to check a `.let`'s value against, no promotion is attempted at all, and it simply gets the exact type its expression computed to.
+Without the pin, `danger`/`survivors`/`occupied` would each be left as `mut` (the exact type `.flow`/`.map`/`.list` compute to), and that `mut`-ness would carry all the way to `NextState`'s result, which would then no longer match the declared (immutable) `List[Tank]` return type.
+Pinning each one to its true, immutable declared type is what gives the type checker something to promote each of them into, all the way to the final, immutable result.
 
 Here you can see all the code of this section packed together.
 
