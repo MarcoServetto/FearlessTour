@@ -39,7 +39,7 @@ East : {.turn-> South;}
 South: {.turn-> West; }
 West : {.turn-> North;}
 //OMIT_START
-//ERROR|In file: [###]/_test/_rank_app111.fear
+//ERROR|In file: [###]_test/_rank_app111.fear
 //ERROR|
 //ERROR|001| North: {.turn-> East; }
 //ERROR|   | --------^^^^^^^^^^^^---
@@ -109,7 +109,7 @@ East : {.turn-> South;}
 South: {.turn-> West; }
 West : {.turn-> North;}
 //OMIT_START
-//ERROR|In file: [###]/_test/_rank_app111.fear
+//ERROR|In file: [###]_test/_rank_app111.fear
 //ERROR|
 //OMIT_END
 //ERROR|001| North: {.turn-> East; }

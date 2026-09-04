@@ -1,0 +1,4 @@
+tmpOut/
+tmpOutQuick/
+.fearless_out/
+externalJars/*.jar

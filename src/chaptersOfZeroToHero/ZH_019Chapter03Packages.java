@@ -71,7 +71,7 @@ Of course all the fresh type names that the inference adds to our code start wit
 OMIT_START
 -------------------------*/@Test void anotherPackage() { run("""
 MyTrue: base.True {}
-//ERROR|In file: [###]/_test/_rank_app111.fear
+//ERROR|In file: [###]_test/_rank_app111.fear
 //ERROR|
 //ERROR|001| MyTrue: base.True {}
 //ERROR|   | ^^^^^^^^^^^^^^^^^^^^
