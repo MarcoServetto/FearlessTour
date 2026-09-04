@@ -31,7 +31,6 @@ use base.Nat as Nat;
 use base.Bool as Bool;
 use base.F as F;
 use base.ToStr as ToStr;
-use base.ToImm as ToImm;
 use base.List as List;
 use base.Block as Block;
 use base.Sealed as Sealed;
@@ -79,9 +78,8 @@ Direction: ToStr, Sealed, WidenTo[Direction] {
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank -> {'self
   .heading -> heading; .aiming -> aiming; .position -> position;
   .str -> ``| (self.repr1) | (self.repr2) | (self.repr3) |;
-  .imm -> self;
   }}
-Tank: ToStr, ToImm[Tank] {
+Tank: ToStr {
   .heading:  Direction;
   .aiming:   Direction;
   .position: Point;
@@ -117,13 +115,13 @@ AimingRepr3: DirectionMatch[Str]{
   }
 //----------------------------------
 //File _tank_game/next_state.fear
-NextState:F[List[Tank],List[Tank]]{
-  #(tanks)->Block#
-    .let danger= { tanks.flow.map{ t -> t.position.move(t.aiming) }.list }
-    .let survivors= { tanks.flow.filter{t -> danger.flow.filter{::==(t.position)}.isEmpty } .list }
-    .let occupied= { 
+NextState:{
+  #(tanks: List[Tank]): List[Tank] ->Block#
+    .let[List[Point]] danger= { tanks.flow.map{ t -> t.position.move(t.aiming) }.list }
+    .let[List[Tank]] survivors= { tanks.flow.filter{t -> danger.flow.filter{::==(t.position)}.isEmpty } .list }
+    .let[List[Point]] occupied= {
       (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}) .list }
-    .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list.imm{::} };
+    .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
  
   read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
     .filter{::==(t.position)}

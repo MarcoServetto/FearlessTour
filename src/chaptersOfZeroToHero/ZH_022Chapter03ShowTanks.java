@@ -45,7 +45,6 @@ use base.Nat as Nat;
 use base.Bool as Bool;
 use base.F as F;
 use base.ToStr as ToStr;
-use base.ToImm as ToImm;
 use base.List as List;
 use base.Block as Block;
 use base.Sealed as Sealed;
@@ -166,12 +165,9 @@ We remove the line implementing `.str` in `Tank` and we write `Tanks` as follows
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank -> {'self
   .heading -> heading; .aiming -> aiming; .position -> position;
   .str -> ``| (self.repr1) | (self.repr2) | (self.repr3) |;
-  .imm -> self;
   }}
 ```
 Here `self` is always immutable since it is created as an `imm Tank`.
-We take the same opportunity to implement `.imm`, declared by `ToImm[Tank]` on `Tank` below: since `self` is already immutable, `.imm` can simply return `self` unchanged.
-We will see later, when talking about `List`, why every type benefits from having a way to say "I am already immutable".
 
 Now we need to implement the repr methods.
 The challenge is that we need to synthesise the right character `<`,`>`,`V`,`A`,`-`,`|` for the various cases.
@@ -205,7 +201,7 @@ HeadingChar: DirectionMatch[Str]{
   .south -> `V`;
   .west  -> `>`;
   }
-Tank: ToStr, ToImm[Tank] {
+Tank: ToStr {
   .heading:  Direction;
   .aiming:   Direction;
   .position: Point;
@@ -253,13 +249,13 @@ We can now rewrite state change using features from the standard library instead
 
 ```
 //File _tank_game/next_state.fear
-NextState:F[List[Tank],List[Tank]]{
-  #(tanks)->Block#
-    .let danger= { tanks.flow.map{ t -> t.position.move(t.aiming) }.list }
-    .let survivors= { tanks.flow.filter{t -> danger.flow.filter{::==(t.position)}.isEmpty } .list }
-    .let occupied= { 
+NextState:{
+  #(tanks: List[Tank]): List[Tank] ->Block#
+    .let[List[Point]] danger= { tanks.flow.map{ t -> t.position.move(t.aiming) }.list }
+    .let[List[Tank]] survivors= { tanks.flow.filter{t -> danger.flow.filter{::==(t.position)}.isEmpty } .list }
+    .let[List[Point]] occupied= {
       (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}) .list }
-    .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list.imm{::} };
+    .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
  
   read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
     .filter{::==(t.position)}
@@ -280,8 +276,10 @@ In the code above, the `List[E].flow` method returns a `Flow[E]` and the methods
 `Flow[E].isEmpty` is true if the flow is empty, `Flow[E].size` returns the size of the flow, and `Flow[E].list` returns a `List[E]` with the same elements of the flow.
 We will see many operations on flow by examples in the next few pages.
 
-One more detail: `NextState.#` builds `danger`/`survivors`/`occupied` inside a `Block#.let` chain, and anything built that way comes back mutable, even when (as here) nothing is ever actually mutated.
-`NextState` is declared to return a plain `List[Tank]`, not a mutable one, so at the very end we call `.list.imm{::}` instead of just `.list`: `{::}` is the same identity shape we will meet again with `.as` in the next chapter, and it lets us tell the type system that the result is, in fact, already immutable, without actually copying anything.
+One more detail: note how each `.let` pins down its own type explicitly (`.let[List[Point]] danger= ...`, not just `.let danger= ...`).
+Recall from the Promotions section: a freshly built value can be recognised as immutable only when nothing not-yet-known-to-be-immutable was used to build it.
+Without the pin, `danger`/`survivors`/`occupied` would each be left as `mut`, and that `mut`-ness would carry all the way to `NextState`'s result, which would then no longer match the declared (immutable) `List[Tank]` return type.
+Pinning each one to its true, immutable type as soon as it is built is what lets the type system recognise the final result as immutable too, without needing to prove anything by hand.
 
 Here you can see all the code of this section packed together.
 
@@ -293,7 +291,6 @@ use base.Nat as Nat;
 use base.Bool as Bool;
 use base.F as F;
 use base.ToStr as ToStr;
-use base.ToImm as ToImm;
 use base.List as List;
 use base.Block as Block;
 use base.Sealed as Sealed;
@@ -340,7 +337,6 @@ Direction: ToStr, Sealed, WidenTo[Direction] {
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank -> {'self
   .heading -> heading; .aiming -> aiming; .position -> position;
   .str -> ``| (self.repr1) | (self.repr2) | (self.repr3) |;
-  .imm -> self;
   }}
 AimingRepr1: DirectionMatch[Str]{
   .north -> ` / | \\ `;
@@ -367,7 +363,7 @@ HeadingChar: DirectionMatch[Str]{
   .south -> `V`;
   .west  -> `>`;
   }
-Tank: ToStr, ToImm[Tank] {
+Tank: ToStr {
   .heading:  Direction;
   .aiming:   Direction;
   .position: Point;
@@ -378,13 +374,13 @@ Tank: ToStr, ToImm[Tank] {
   }
 //----------------------------------
 //File _tank_game/next_state.fear
-NextState:F[List[Tank],List[Tank]]{
-  #(tanks)->Block#
-    .let danger= { tanks.flow.map{ t -> t.position.move(t.aiming) }.list }
-    .let survivors= { tanks.flow.filter{t -> danger.flow.filter{::==(t.position)}.isEmpty } .list }
-    .let occupied= { 
+NextState:{
+  #(tanks: List[Tank]): List[Tank] ->Block#
+    .let[List[Point]] danger= { tanks.flow.map{ t -> t.position.move(t.aiming) }.list }
+    .let[List[Tank]] survivors= { tanks.flow.filter{t -> danger.flow.filter{::==(t.position)}.isEmpty } .list }
+    .let[List[Point]] occupied= {
       (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}) .list }
-    .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list.imm{::} };
+    .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
  
   read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
     .filter{::==(t.position)}
