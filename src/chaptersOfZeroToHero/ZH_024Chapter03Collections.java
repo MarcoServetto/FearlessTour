@@ -129,8 +129,8 @@ Nat:Sealed,DataType[Nat,Nat],SumNumber[Nat]{
 ````
 As you can see, to call `Flow[E].sum`, we need an argument implementing 
 `SumNumber[E]`.
-All the numeric types implement `SumNumber[_]`, so we can use any numeric value as as starting point for our sum.
-This patterns allows to limit what parameter types we can pass to a generic entity.
+All the numeric types implement `SumNumber[_]`, so we can use any numeric value as a starting point for our sum.
+This pattern allows us to limit what parameter types we can pass to a generic entity.
 The parameter type and the receiver generic type can cooperate to accept each other.
 Method `.join` works in the same conceptual way.
 
@@ -188,6 +188,7 @@ Grid:{
   }
 ```
 Note: since `index` is a Nat, the division is rounded down (**integer division**).
+`.getTruncDiv` is short for "get, truncated division": it divides and then truncates (cuts off) whatever comes after the decimal point, rather than rounding to the nearest whole number.
 For example `13 .getTruncDiv 5 = 2`; and the reminder/`.getRem` operation returns the reminder of the
 integer division: `13 .getRem 5 = 3`
 
@@ -201,6 +202,17 @@ That is, the following two expressions are equivalent, and both simply return th
 ```
   Lists#(1,2,3)
   Lists#(1,2,3).as{::}
+```
+
+This is not specific to numbers: the same holds for any element type. For example, given
+```
+Customer: { .name: Str; }
+Customers: { #(name: Str): Customer -> {'self .name -> name; } }
+```
+the following two expressions are equivalent as well:
+```
+  Lists#(Customers#(`Ann`), Customers#(`Bob`))
+  Lists#(Customers#(`Ann`), Customers#(`Bob`)).as{::}
 ```
 
 We will see below why this restricted, zero-cost form of retyping is useful.
@@ -238,7 +250,12 @@ If we can not promote this result to `imm`, we can convert it to `imm` by doing 
 There `{::}` will be desugared as `F[Num,Num]{a->a}`. That is, a simple identity function, mapping the elements to themselves. Since method .as returns an `imm List`, we are effectively converting the `mut List[E]` into an `imm List[E]`.
 This and a few other patterns are also optimised by the compiler to not create a new object but reuse the old one. Basically by calling this method we are guiding the type system to recognise that a `mut List[Num]` is really just an `imm List[Num]`.
 
-- `List[mut Animal]`, also written as `imm List[mut Animal]` behaves exactly like a `List[Animal]`, that is, an immutable list of immutable elements, but the type system does not know about this. As for before, if we have an `animals: List[mut Animal]` and we need a `List[Animal]` we can just call `animals.as{::}`.
+- `List[mut Animal]`, also written as `imm List[mut Animal]` behaves exactly like a `List[Animal]`, that is, an immutable list of immutable elements, but the type system does not know about this: `mut Animal` and `imm Animal` are, in general, different types, since some other `Animal` somewhere in the program could genuinely be mutable.
+As for before, if we have a `customers: List[mut Customer]` (recall `Customer` from above) and we need a `List[Customer]`, we can just call `customers.as{::}`:
+```
+  .greetAll(customers: List[mut Customer]): List[Customer] -> customers.as{::}
+```
+Here the list comes in as an (immutable list of) `mut Customer`, and goes out as an (immutable list of) `Customer`, that is, `imm Customer`, at zero cost: no `Customer` is copied or touched, we are only convincing the type system of something that was already true.
 This last case often emerges from promotion: we may start with a `mut List[mut Animal]` and then turn it into immutable.
 
 ### Other core list methods: `+>`, `<+`, `++`, `.subList`

@@ -13,7 +13,10 @@ class ZH_015Chapter02LocalParameters {
 Up to now, all the parameters we have seen are method parameters; either the receiver (parameter zero) or one of the others.
 This can encourage us to write repetitive and hard to read code.
 
-For example, we show below a difficult to read method computing the distance between two points; using the square root function (softSqrt) present on `Nat`:
+Before we get to locals, a quick note on two naming conventions you will keep running into: methods starting with `get` and methods starting with `soft`.
+We already met `get` in `.getPred`/`.getSucc`: a `get` method promises a precise, correct answer, but only for the cases where one actually exists; `0.getPred` has no natural number to give back, so instead of making one up, it stops the whole execution.
+A `soft` method takes the opposite approach: it never stops the execution, and instead gives back the closest reasonable answer it can, even when an exact one is not possible.
+For example, we show below a difficult to read method computing the distance between two points; using the square root function (`.softSqrt`) present on `Nat`. Most numbers (like `2`) do not have a whole-number, or even a neat fractional, square root, so `.softSqrt` gives back the closest `Float` it can find, rather than stopping the execution over it. Then `.softNat` turns that `Float` back into a `Nat`, again taking the closest reasonable value: it rounds down, and clamps negative numbers to `0`.
 -------------------------*/@Test void distance1 () { run("""
 //OMIT_START
 use base.Nat as Nat;

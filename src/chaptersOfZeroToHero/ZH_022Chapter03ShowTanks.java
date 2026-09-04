@@ -170,6 +170,8 @@ Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank -> {'se
   }}
 ```
 Here `self` is always immutable since it is created as an `imm Tank`.
+We take the same opportunity to implement `.imm`, declared by `ToImm[Tank]` on `Tank` below: since `self` is already immutable, `.imm` can simply return `self` unchanged.
+We will see later, when talking about `List`, why every type benefits from having a way to say "I am already immutable".
 
 Now we need to implement the repr methods.
 The challenge is that we need to synthesise the right character `<`,`>`,`V`,`A`,`-`,`|` for the various cases.
@@ -275,8 +277,11 @@ The idea is that the standard library does not define those useful `.map`/`.filt
 Instead, there is a unified concept of `Flow`. Many different data types can be converted into flows, the elements can be manipulated using a very expressive set of `Flow` methods, then the result can be converted back into some supported data type.
 
 In the code above, the `List[E].flow` method returns a `Flow[E]` and the methods `Flow[E].map`/`.filter` return another `Flow[E]`.
-`Flow[E].isEmpty` is true if the flow is empty, `Flow[E].size` returns the size of the flow, and `Flow[E].list` returns a `List[E]` with the same elements of the flow. 
+`Flow[E].isEmpty` is true if the flow is empty, `Flow[E].size` returns the size of the flow, and `Flow[E].list` returns a `List[E]` with the same elements of the flow.
 We will see many operations on flow by examples in the next few pages.
+
+One more detail: `NextState.#` builds `danger`/`survivors`/`occupied` inside a `Block#.let` chain, and anything built that way comes back mutable, even when (as here) nothing is ever actually mutated.
+`NextState` is declared to return a plain `List[Tank]`, not a mutable one, so at the very end we call `.list.imm{::}` instead of just `.list`: `{::}` is the same identity shape we will meet again with `.as` in the next chapter, and it lets us tell the type system that the result is, in fact, already immutable, without actually copying anything.
 
 Here you can see all the code of this section packed together.
 
