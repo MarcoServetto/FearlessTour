@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
+import utils.Range;
 
 public record HtmlCreator(Path rootPath){
   private static final String HTML_HEADER = """
@@ -57,7 +58,7 @@ public record HtmlCreator(Path rootPath){
   public void generateHtmlPages(List<Chapter> chapters) {
     List<SectionInfo> allSections = collectSections(chapters);
     String sideBar = generateSidebar(allSections);
-    for(int i=0;i<allSections.size();i++){ generatePage(i,sideBar,allSections);}
+    for(int i : Range.of(allSections)){ generatePage(i,sideBar,allSections);}
   }
   private void generatePage(int i, String sideBar, List<SectionInfo> allSections){
     var title=   allSections.get(i).pageTitle();
