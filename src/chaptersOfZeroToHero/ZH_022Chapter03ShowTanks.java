@@ -290,7 +290,7 @@ use base.List as List;
 use base.Block as Block;
 use base.Sealed as Sealed;
 use base.WidenTo as WidenTo;
-//----------------------------------
+// ----------------------------------
 //File _tank_game/point.fear
 Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{ 'self
   .x: Nat -> x;
@@ -305,7 +305,7 @@ Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{ 'self
   ==(other:Point): Bool -> other.x == x  .and (other.y == y );
   .str -> `[x=` + x + `, y=` + y + `]`;
   }}
-//----------------------------------
+// ----------------------------------
 //File _tank_game/direction.fear
 North: Direction {::.north}
 East : Direction {::.east}
@@ -327,7 +327,7 @@ Direction: ToStr, Sealed, WidenTo[Direction] {
     .west  -> `West`;
     };
   }
-//----------------------------------
+// ----------------------------------
 //File _tank_game/tank.fear
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank -> {'self
   .heading -> heading; .aiming -> aiming; .position -> position;
@@ -367,7 +367,7 @@ Tank: ToStr {
   .repr2:    Str  -> this.aiming .match mut AimingRepr2{this.heading .match HeadingChar};
   .repr3:    Str  -> this.aiming .match AimingRepr3;
   }
-//----------------------------------
+// ----------------------------------
 //File _tank_game/next_state.fear
 NextState:{
   #(tanks: List[Tank]): List[Tank] ->Block#
@@ -384,7 +384,7 @@ NextState:{
       .else -> t;
     };
   }
-//----------------------------------
+// ----------------------------------
 //File _tank_game/print_one.fear
 Test:Main {sys -> sys.out.println(  Tanks#(North, West, Points#(1, 2))  )}
 //PRINT|

@@ -51,7 +51,7 @@ Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{ 'self
   ==(other:Point): Bool -> other.x == x  .and (other.y == y );
   .str -> `[x=` + x + `, y=` + y + `]`;
   }}
-//----------------------------------
+// ----------------------------------
 //File _tank_game/direction.fear
 North: Direction {::.north}
 East : Direction {::.east}
@@ -73,7 +73,7 @@ Direction: ToStr, Sealed, WidenTo[Direction] {
     .west  -> `West`;
     };
   }
-//----------------------------------
+// ----------------------------------
 //File _tank_game/tank.fear
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank -> {'self
   .heading -> heading; .aiming -> aiming; .position -> position;
@@ -113,7 +113,7 @@ AimingRepr3: DirectionMatch[Str]{
   .south -> ` \\ | / `;
   .west  -> ` \\ _ / `;
   }
-//----------------------------------
+// ----------------------------------
 //File _tank_game/next_state.fear
 NextState:{
   #(tanks: List[Tank]): List[Tank] ->Block#
@@ -130,11 +130,11 @@ NextState:{
       .else -> t;
     };
   }
-//----------------------------------
+// ----------------------------------
 //File _tank_game/read_game.fear
 ReadGame: { mut .in: mut InputCursorNode; mut .read:List[Tank]->{};}
 //OMIT_END
-//----------------------------------
+// ----------------------------------
 //File _tank_game/print_game.fear
 TanksToS: F[List[Tank],Str]{ ts -> Block#
   .let res = {0 =~~ 30 .flow.map{_->this.newLine}.list }
@@ -164,7 +164,7 @@ PrintGame: {
       current.set(NextState#(current.get))
       )}}
   }
-//----------------------------------
+// ----------------------------------
 //File _tank_game/_rank_app.fear
 Test: Main {sys -> Block#
   .let out= {sys.out}
