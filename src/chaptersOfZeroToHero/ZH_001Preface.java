@@ -114,7 +114,7 @@ Kind regards, // or Sincerely?
 Bob Snoozeman
 ```
 
-As you can see, even comments can have their little language inside: `TODO:` is a short 4 letter annotation meaning that there is an open task.
+As you can see, even comments can have their little language inside: `TODO:` is a short 5 symbol annotation meaning that there is an open task.
 
 In the next page we will see our first example of code.
 
