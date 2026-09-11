@@ -821,6 +821,7 @@ AllTest:base.Main{s->
     .testSuite TestOrderingCollections
     .testSuite TestCarsFlowExamples
     .testSuite TestOrderByCaseInsensitive
+    .testSuite TestByCatsNamedComparator
 
     .done
   }
@@ -928,6 +929,9 @@ StrSizeOrder:OrderHashBy[Str]{
   t0,t1,m -> t0.imm.size<=>(t1.imm.size, m);
   .hash s -> s.imm.size.hash;
   .str s  -> s.imm;
+  }
+ByCats:OrderBy[Person]{
+  p1,p2,m -> p1.cats.flow.map{::.weight}.sum 0 <=> (p2.cats.flow.map{::.weight}.sum 0, m);
   }
 TestFlowsBasics:F[Tests,Tests]{::
   // map: persons -> names
@@ -1077,7 +1081,7 @@ TestOrderByAndFlows:F[Tests,Tests]{::
     Lists#(
       Cars#(2, Persons#(40,`Old`,List[Cat])),
       Cars#(1, Persons#(20,`Young`,List[Cat]))
-      ).flow.sort(({::.age}.view{::.imm.driver})).list.get(0).id.assertEq 1
+      ).flow.sort(({::.age}.view (F[read Car,read Person]{::.imm.driver}))).list.get(0).id.assertEq 1
     )
   }
 
@@ -1270,6 +1274,39 @@ TestOrderByCaseInsensitive:F[Tests,Tests]{::
         .empty -> False.assertTrue;
         .some c -> c.id.assertEq 2;
         }
+    )
+  }
+TestByCatsNamedComparator:F[Tests,Tests]{::
+  // ByCats: a top-level named OrderBy[Person] comparing persons by their
+  // total cat weight (guide narrative example, never directly compiled before).
+  .test(
+    Lists#(
+      Cars#(1, Persons#(30,`Alice`, Lists#(Cats#(`Mimi`,3),Cats#(`Nori`,5)))), // driver cat weight 8
+      Cars#(2, Persons#(25,`Bob`,   List[Cat])),                              // driver cat weight 0
+      Cars#(3, Persons#(40,`Carol`, Lists#(Cats#(`Puff`,2))))                 // driver cat weight 2
+      ).flow.max(ByCats.view{::.imm.driver}).first
+      .match{
+        .empty -> False.assertTrue;
+        .some c -> c.id.assertEq 1;
+        }
+    )
+  .test(
+    Lists#(
+      Cars#(1, Persons#(30,`Alice`, Lists#(Cats#(`Mimi`,3),Cats#(`Nori`,5)))),
+      Cars#(2, Persons#(25,`Bob`,   List[Cat])),
+      Cars#(3, Persons#(40,`Carol`, Lists#(Cats#(`Puff`,2))))
+      ).flow.min(ByCats.view{::.imm.driver}).first
+      .match{
+        .empty -> False.assertTrue;
+        .some c -> c.id.assertEq 2;
+        }
+    )
+  // {::.age}.then ByCats: same age, so the tie is broken by total cat weight.
+  .test(
+    Lists#(
+      Persons#(30,`Alice`, Lists#(Cats#(`Mimi`,3))),
+      Persons#(30,`Zed`,   Lists#(Cats#(`Mimi`,3),Cats#(`Nori`,5)))
+      ).flow.max(({::.age}.then ByCats)).get.name.assertEq `Zed`
     )
   }
 
