@@ -1077,7 +1077,7 @@ TestOrderByAndFlows:F[Tests,Tests]{::
     Lists#(
       Cars#(2, Persons#(40,`Old`,List[Cat])),
       Cars#(1, Persons#(20,`Young`,List[Cat]))
-      ).flow.sort(({::.age}.view{::.imm.driver})).list.get(0).id.assertEq 1
+      ).flow.sort(({::.age}.view (F[read Car,read Person]{::.imm.driver}))).list.get(0).id.assertEq 1
     )
   }
 
