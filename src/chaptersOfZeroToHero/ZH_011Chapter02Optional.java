@@ -111,7 +111,7 @@ Opt[Person] //(2) no one is here
   The method `.match` is the only method we could be overriding there!
 - We can turn `.empty->0;` into just `0;` and `.some p'->p'.age;` into just `::.age;`
   Since those methods take different number of parameters (zero and one), there is no ambiguity 
-  of which body satisfy which method.
+  of which body satisfies which method.
 
 
 END*/

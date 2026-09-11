@@ -11,7 +11,7 @@ class ZH_022Chapter03ShowTanks {
 ### Visualising the Tank game
 
 Now that we know how to write a full Fearless program, we can write a program reading tanks from a file and running the Tank game on the console.
-Ashii art is a well known way to visualise simple games. We will use this to visualise the state of a Tank.
+ASCII art is a well known way to visualise simple games. We will use this to visualise the state of a Tank.
 Below the representation of a tank heading `East` and aiming `North`, and another one heading `North` and aiming `West` 
 
 ```
@@ -50,7 +50,7 @@ use base.Block as Block;
 use base.Sealed as Sealed;
 use base.WidenTo as WidenTo;
 ````
-We have meet all of those types except `List`, similar to `Stack` but part of the standard library, and `WidenTo`, that we will discuss soon.
+We have met all of those types except `List`, similar to `Stack` but part of the standard library, and `WidenTo`, that we will discuss soon.
 
 The following file defines `Point`. We will implement `ToStr` also for `Point`.
 Note again the syntax `'self`, to name the current `Point` object. Since `Point` is defined inside of `Points`, the `this` in scope would be an instance of `Points`, not `Point`.

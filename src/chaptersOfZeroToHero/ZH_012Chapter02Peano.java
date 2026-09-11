@@ -13,9 +13,9 @@ class ZH_012Chapter02Peano {
 We have seen how in the standard library we have many finite, but gigantic, number types:
 There are  2<sup>64</sup> instances of `Nat` and there are 
 just a little more than 10<sup>4,256,895,041</sup> instances of `Str`.
-Each `Nat` can be stored in exactly eight bytes, were a byte is eight bit.
+Each `Nat` can be stored in exactly eight bytes, where a byte is eight bits.
 Strings use an incremental space consumption; this means that storing small strings would use
-only a little amount of memory (with 34 bytes being the minimum size; still much more than the 8 bytes needed for a `Nat`.
+only a little amount of memory (with 34 bytes being the minimum size; still much more than the 8 bytes needed for a `Nat`).
 
 On the other extreme, storing a single element of a string near to the maximum representable size would take about 2 GB (two giga bytes).
 2 GB is a large amount of memory, but nowadays we have computers with thousands of times more memory than that.
@@ -37,7 +37,7 @@ Zero:Number { this.pred } // equivalent to .pred->this.pred
 """); }/*--------------------------------------------
 
 As you can see, it is confusingly simple and minimal.
-Here some examples of peano numbers:
+Here are some examples of peano numbers:
 ```
 Zero  //0
 Zero.succ  //1 == {Zero}
@@ -79,7 +79,7 @@ This is now a good time to summarise how to write numbers in fearless:
 
 Basically, if we use the fraction symbol `/` we talk about those arbitrarily large fractional numbers.
 It is very common to write large numbers followed by `/1` as a way to specify that we mean arbitrary size numbers.
-For example `+249023892334949590290854892389343489723789478923/1` is a very large instance of `Num`; much bigger than what it can be represented with `Nat` or `Int`.
+For example `+249023892334949590290854892389343489723789478923/1` is a very large instance of `Num`; much bigger than what can be represented with `Nat` or `Int`.
 
 OMIT_START
 -------------------------*/@Test void num1 () { run("""

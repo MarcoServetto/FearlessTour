@@ -196,7 +196,7 @@ In the code above, there is a subtle logical bug. Can you find it?
 **Solution:** By checking if our specific `Tank` wants to move in an occupied position, we also check against the position this very tank wants to move into.
 With the code as written, every `Tank` will want to move in an occupied position, since we count the position they want to move in as an occupied position.
 If some other tank wants to also go in the same position, then there would be two points in the occupied Stack that are in conflict with the point our current tank wants to go in.
-Thus, we can fix the bug by counting the number of points present in our desidered next location.
+Thus, we can fix the bug by counting the number of points present in our desired next location.
 
 Note how we used the word "our" there. By doing so, we are imagining us to be the tank that is moving. This is a useful psychological technique we can use as programmers to better visualise code execution.
 

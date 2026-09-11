@@ -93,7 +93,7 @@ ExampleTimes2: { #(ns: Stack[Nat]): Stack[Nat] -> ns.map { n -> n * 2 }  }
 """); }/*--------------------------------------------
 
 By adding fold and map to stacks, we have now unlocked a surprising amount of expressive power.
-Do you want to add 10 to all the numbers, multiply the result for 3 and then get the sum of all of them?
+Do you want to add 10 to all the numbers, multiply the result by 3 and then get the sum of all of them?
 Easy!
 -------------------------*/@Test void fluent1 () { run("""
 //OMIT_START

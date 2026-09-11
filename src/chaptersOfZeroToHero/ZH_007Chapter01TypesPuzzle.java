@@ -157,7 +157,7 @@ Rectangles:{#(topLeft: Point, bottomRight: Point): Rectangle -> Rectangle:{
 """); }/*--------------------------------------------
 
 As you can see, there is overall more code, and we need to explicitly wrap and unwrap those extra types.
-Is this extra verbosity is worth it? It depends on the specific situation we are in. In particular, for short programs and simple code examples relying on less types is appropriate. Thus, most examples of this guide will use strings and numbers directly instead of wrapping them into types encoding their role.
+Is this extra verbosity worth it? It depends on the specific situation we are in. In particular, for short programs and simple code examples relying on less types is appropriate. Thus, most examples of this guide will use strings and numbers directly instead of wrapping them into types encoding their role.
 
 Now, for the other issue: the user can confuse the meaning of the two points.
 How to fix that? the two points are not top-left and right-bottom in an absolute sense, but just in relation to each other.
@@ -296,7 +296,7 @@ Tank: {
 Tanks: { #(h: Direction, a: Direction, p: Point): Tank->{ h; .aiming->a; .position->p} }
 """); }/*--------------------------------------------
 
-Depending on the reader, this code could be more or less readable then the one before.
+Depending on the reader, this code could be more or less readable than the one before.
 The difference is that we have consistently avoided the method name for one of the methods we are defining.
 This is unambiguous since that would be the only remaining abstract method that we need to implement; thus the conventional sugar applies.
 

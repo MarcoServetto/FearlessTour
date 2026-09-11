@@ -64,7 +64,7 @@ First, two matcher types:
 ThenElse[R:**]: { mut .then: R; mut .else: R; }
 BoolMatch[R:**]:{ mut .true: R; mut .false: R; }
 ````
-We have seen `ThenElse[R]` before; `BoolMatch[R]` is the same but with names for the two cases. They work in the same way, but sometime one of the two is more readable then the other.
+We have seen `ThenElse[R]` before; `BoolMatch[R]` is the same but with names for the two cases. They work in the same way, but sometimes one of the two is more readable than the other.
 Note how we take any kind of `R` by using `R:**` and the methods require a `mut` receiver.
 We are not requiring the boolean to be `mut`. This is about the `ThenElse` object that is usually created in order to call the `.if` (or `?`) method.
 With `mut .then` and `mut .else`, the operation inside the `.match` is able to mutate external state if need be.
@@ -92,7 +92,7 @@ Bool:Sealed,DataType[Bool,Bool]{
 ````
 We then proceed with the methods we have seen before, implemented exactly as before, or trivial extensions:
 - `.and`, `&` (alias for `.and`), `&&` (computing other only when needed)
-- `.or`, `|` (alias for `.pr`), `||` (computing other only when needed)
+- `.or`, `|` (alias for `.or`), `||` (computing other only when needed)
 - `.if`, `?` (alias for `.if`), `.match` (taking the other matcher for more regular naming)
 - `.not`, returning the other boolean
 - `==>`, logical implication; defined with `.not` and `||`.
@@ -177,7 +177,7 @@ OptMatch[E:*, R:**]:{
 }
 ````
 Also `OptMatch` is pretty much what we would expect.
-Note how the two methods `.some` and `.empty` takes a `mut` receiver.
+Note how the two methods `.some` and `.empty` take a `mut` receiver.
 We are not requiring the optional to be `mut`. This is about the `OptMatch` object that is usually
 created in order to call the `.match` method.
 With `mut .some` and `mut .empty`, the operation inside the `.match` is able to mutate external state if need be.
@@ -355,9 +355,9 @@ As you can see, designing generic container types supporting a range of referenc
 You may have noticed a shift in tone. The code for `_Opt[E]` looks significantly more intimidating than the conceptual `Opt[T]` we wrote in Chapter 2.
 
 We are crossing the bridge from **conceptual logic** to **production engineering**.
-The logic remains identical: an Optional is still just "something or nothing." However, a production-grade library seamlessly handle `mut`,`imm` and `read` data.
+The logic remains identical: an Optional is still just "something or nothing." However, a production-grade library seamlessly handles `mut`,`imm` and `read` data.
 
-Up to now we pushed to make sure to explain every single details when first used. We will eventually provide all the details and teach you the ins and outs of every corner; but there is no more a clear linear path to follow.
+Up to now we pushed to make sure to explain every single detail when first used. We will eventually provide all the details and teach you the ins and outs of every corner; but there is no more a clear linear path to follow.
 Here we are showing you the real implementation of those very useful types, and by their nature of being used in all contexts of the language, they are interconnected with every aspect of the language.
 
 We could have hidden this complexity from you. Alternatively, we could have kept showing you more and more layers of simplified toy versions of the standard library.

@@ -43,7 +43,7 @@ As you can see, we list our directions and we define the matcher listing the dir
 Finally, we connect the direction-type with the direction-match-method and their string representation.
 
 Admittedly, many other languages require significantly less code for enumerations.
-However, in Fearless you can see how the whole mechanism works, and how simple method calls encode all the needed logic. In turn, this make it more natural to extend enumerations with other useful methods and features.
+However, in Fearless you can see how the whole mechanism works, and how simple method calls encode all the needed logic. In turn, this makes it more natural to extend enumerations with other useful methods and features.
 
 The code of `Enum[E]` and `Enums[E]` is actually quite simple and educational:
 

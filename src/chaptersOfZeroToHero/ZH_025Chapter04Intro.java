@@ -18,7 +18,7 @@ When data moves between representations, errors are possible and need to be mana
 
 While data transmission is the source of many errors and a great example to introduce error management, we will also see how errors are pervasive in many other aspects of programming.
 
-Many activities, from sending an email to saving a document involves the transmission and storage of data. However, the underlying systems—whether networks or storage devices—do not handle Fearless objects and types directly. Instead, they operate using the most basic units of digital data: bits.
+Many activities, from sending an email to saving a document involve the transmission and storage of data. However, the underlying systems—whether networks or storage devices—do not handle Fearless objects and types directly. Instead, they operate using the most basic units of digital data: bits.
 
 ### Understanding Bits and Bytes
 A bit is the smallest unit of data in computing, with a possible value of either `0` or `1`.
@@ -50,9 +50,9 @@ Graphically, the general plan is as follows:
 
 When the whole infrastructure is completed, we would only need to worry about transforming our data to/from this unified representation. The other steps will simply reuse existing code.
 
-### Attempts toward an unified information format: Rigid vs Flexible representation of data.
+### Attempts toward a unified information format: Rigid vs Flexible representation of data.
 
-What could an unified representation format be? We need a type that is flexible enough to represent any kind of information, but structured enough to avoid the drawbacks of strings.
+What could a unified representation format be? We need a type that is flexible enough to represent any kind of information, but structured enough to avoid the drawbacks of strings.
 
 - `Bool` is a very rigid type, it only contains two values; `True` and `False`.
 - `Void` is even more rigid, it only contains the `Void` value.
@@ -73,7 +73,7 @@ Info: {
   }
 ```
 Now an `Info` can contain both some message of type string and a list of more information.
-We could then represent our tank as follow:
+We could then represent our tank as follows:
 ```
 Info{ .list -> List#({.msg->`North`}, {.msg->`East`}, {.list->List#({.msg->`10`}, {.msg->`5`} )} )}
 ```

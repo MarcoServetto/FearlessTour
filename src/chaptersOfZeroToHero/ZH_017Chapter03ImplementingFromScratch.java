@@ -167,7 +167,7 @@ AliasingExample: {#: Nat -> Block#
 
 Here we use a `Block` to declare two local parameters for animals.
 One is a `bunny` and the other one is the same animal (aliased) but called `mammal`.
-The crucial point here is that those two local parameter are the same `mut Animal`.
+The crucial point here is that those two local parameters are the same `mut Animal`.
 Mutating `bunny` will affect `mammal` and vice versa.
 Then we use `.do` to run code returning `Void`.
 Finally, we return the `x` coordinate of `mammal`.

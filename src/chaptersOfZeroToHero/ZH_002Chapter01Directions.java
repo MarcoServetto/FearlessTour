@@ -79,7 +79,7 @@ This sentence contains a single word; and yet, it is still a sentence.
 An English sentence is a collection of words and punctuation with at least one word. In the same way, some expressions in Fearless are simply
 a single type name. However, just as sophisticated sentences in English are fundamental to effective communication, more elaborate expressions are crucial in programming.
 
-### Method calls: expressions composed by multiple parts.
+### Method calls: expressions composed of multiple parts.
 
 Method calls are expressions composed of other expressions.
 Method calls allow us to write the equivalent of sentences in natural language.

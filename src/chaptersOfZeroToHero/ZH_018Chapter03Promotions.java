@@ -14,7 +14,7 @@ In Fearless, objects can form complex networks of dependencies by referring to e
 mutation is grounded in the definition of ROG. This definition of mutation captures that objects can represent their state deep inside other objects in their ROG. There are three ways objects are mutated: 
 
 1. An object can be born with a specific ROG that will never mutate.
-2. An object can be mutated across all their life time.
+2. An object can be mutated across all its life time.
 3. An object can be mutated for an initial phase of its life, and then never again.
 
 Clearly this last way subsumes the other two, simply by varying the length of the initial phase. We call an object inside this initial phase mutable, and one outside immutable.
@@ -27,7 +27,7 @@ As for most type systems, RCs are a conservative approximation, where some objec
 
 Reference capabilities do not directly track mutable and immutable objects, but track the parameters/references to such objects.
 We will call a parameter with an `imm` type an `imm` parameter. Same for the other reference capabilities.
-An `imm` parameter refers to an immutable object. A `mut` parameter refer to a mutable object.
+An `imm` parameter refers to an immutable object. A `mut` parameter refers to a mutable object.
 A `read` parameter may refer to either a mutable or an immutable object.
 That is, `read` parameters are useful to write code able to work on all kinds of objects.
 In addition to `imm`, `mut` and `read`, there are more kinds of reference capabilities, but we will see them later.
@@ -70,7 +70,7 @@ The code above compiles and produces an immutable Animal.
 The method `Animals#` is declared to return a `mut Animal`.
 However, this call can be promoted to `imm`: `Animals` (the receiver) is an `imm` object literal, and `Points#(10,20)` (the argument) is an `imm` value.
 
-Code `PromotionExample#.run(10)` would not compile because method `PromotionExample#` return an immutable `Animal` and
+Code `PromotionExample#.run(10)` would not compile because method `PromotionExample#` returns an immutable `Animal` and
 `Animal.run` is a `mut` method.
 
 > Ideally we should expand and talk more about promotions and their interactions with inference.

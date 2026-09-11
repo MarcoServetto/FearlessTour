@@ -12,7 +12,7 @@ class ZH_009Chapter02GenericTypes {
 
 ### Generic Types: a type abstraction
 
-We have seen how methods abstract over values. We will now see how generic are a way to abstract over types.
+We have seen how methods abstract over values. We will now see how generics are a way to abstract over types.
 
 When we declare a method we abstract over values; consider when we declared method `-` as follows:
 ```
@@ -27,7 +27,7 @@ Forall `this` and `other`, subtraction returns `other._rightSub(this)`.
 We will now see **Generics**. While methods abstract over values,
 generics abstract over types, and are specified in square parenthesis `[..]`.
 
-Generics allows to encode decisions on arbitrary data. For example, consider the concept of `Fork`s in the road,where the road can choose to go either `Left` or `Right`.
+Generics allow to encode decisions on arbitrary data. For example, consider the concept of `Fork`s in the road, where the road can choose to go either `Left` or `Right`.
 We could have a method `.choose` that took two parameters and returned either the one on the left or the one on the right.
 
 -------------------------*/@Test void fork1 () { run("""
@@ -54,9 +54,9 @@ Of course, once we have forks we can nest them to select a value between three, 
 firstChoice.choose(`Option1`,  secondChoice.choose(`Option2`, `Option3`)  )
 ```
 where `firstChoice` and `secondChoice` are `Fork`s that we obtained somewhere.
-Note how we need the generic type `Var` so that our `Fork` can work on any type:
+Note how we need the generic type `Val` so that our `Fork` can work on any type:
 We can write ``someFork.choose(`Hello`,`Hi`)`` but also ``someFork.choose(1,5)``.
-However, ``someFork.choose(`Hello`,5)`` would be ill typed: there needs to be a type that can be used to instantiate `Var`.
+However, ``someFork.choose(`Hello`,5)`` would be ill typed: there needs to be a type that can be used to instantiate `Val`.
 The type inference is usually taking care of finding the types that instantiate a generic method call.
 However, we can pass the parameter ourselves if we want, using syntax ``someFork.choose[Str](`Hello`,`Hi`)``.
 As you can see, we can add `[..]` after the method name and before the list of parameters,
@@ -129,12 +129,12 @@ And... that is exactly the syntax, and semantic, of generic methods: it is a way
 
 
 #### Generic methods and generic types
-Even with all of this explanation, calls of method `Turn.choose` are not very readable:
+Even with all of this explanation, calls of method `Fork.choose` are not very readable:
 ``someFork.choose(`Hello`,`Hi`)`` is really cryptic.
 We think this is for the same reason the original `Rectangles#` was cryptic: the role of the two parameters is not obvious by just reading the text.
 
 We can make it more readable by introducing a literal forcing us to name the two branches.
-In this way, a call to `Turn.choose` could look as follows:
+In this way, a call to `Fork.choose` could look as follows:
 
 -------------------------*/@Test void fork2 () { run("""
 //OMIT_START
@@ -215,7 +215,7 @@ someFork.choose( SomeLeftRight[]:LeftRight[Str]{
 
 That is, the argument of `Fork.choose` is a literal of some anonymous type that implements `LeftRight[Str]`, since that is the expected type for the argument of `Fork.choose`.
 In order to implement a `LeftRight[Str]`, we need to specify an implementation for the two abstract methods, `.left` and `.right`.
-Another advantage of this new way, is that we can now write complex and time consuming computations inside the body of methods `.left` and `.right`, and only one of those computations is only going to be triggered.
+Another advantage of this new way, is that we can now write complex and time consuming computations inside the body of methods `.left` and `.right`, and only one of those computations is going to be triggered.
 
 A good way to understand how generic types work is to do the same reasoning we did for generic methods; the code below can be understood as the following:
 ```
@@ -243,9 +243,9 @@ In the same way,
 
 - Generic methods and Generic types are ways to declare an infinite amount of methods and types.
 
-- Dynamic dispatch is used to make decisions. Here `Turn` has an abstract method `.choose`.
-The `Left.choose` implementation choses the `.left` option, while the
-`Right.choose` implementation choses the `.right` option.
+- Dynamic dispatch is used to make decisions. Here `Fork` has an abstract method `.choose`.
+The `Left.choose` implementation chooses the `.left` option, while the
+`Right.choose` implementation chooses the `.right` option.
 
 In Fearless, there are many types that look like `Fork`, we will see them next.
 Overall, `Fork` itself is not really used in Fearless, but it is a really interesting type, and it should open your mind to the next big topic: Booleans.

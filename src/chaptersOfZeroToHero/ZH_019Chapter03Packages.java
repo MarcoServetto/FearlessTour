@@ -11,7 +11,7 @@ class ZH_019Chapter03Packages {
 
 ### Packages and libraries
 
-Up to now, we've shown Fearless code as individual text examples. However, a realistic Fearless program will be organised into multiple files to manage complexity effectively. A Fearless file is a text file with the `.fear` extension, but fearless files do not live in a vacuum; the sit in a directly/folder called the project folder or just **the project**.
+Up to now, we've shown Fearless code as individual text examples. However, a realistic Fearless program will be organised into multiple files to manage complexity effectively. A Fearless file is a text file with the `.fear` extension, but fearless files do not live in a vacuum; they sit in a directory/folder called the project folder or just **the project**.
 The project can contain any kind of files, but they must have portable lowercase file names that would be accepted by Windows, Linux and MacOs.
 These files can be freely organised into subfolders within the project.
 
