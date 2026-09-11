@@ -28,7 +28,7 @@ This imports/reuses all of the methods from the implemented types without
 mentioning them one by one.
 In the `Direction` example, `.reverse` is implicitly and automatically
 inherited by all of the directions.
-- We have also seen inference; where we can omit type informations that
+- We have also seen inference; where we can omit type information that
 are clear from the context. For example, when implementing method `Direction.turn` in 
 `North` we could write `.turn -> East` instead of `.turn: Direction -> East`.
 The return type `Direction` is clear from the context.
@@ -130,7 +130,7 @@ the development process is boring, repetitive and error prone:
 it's incredibly easy to make a typo. What if we accidentally include `.aiming-> North`
 five times instead of four?
 
-Would not it be better if we could just ask for a Tank with a specific heading and aiming direction when we need one?
+Wouldn't it be better if we could just ask for a Tank with a specific heading and aiming direction when we need one?
 We can create a `Tank` maker by defining a type `Tanks` whose job is to create `Tank` objects for us.
 We give it the details (heading and aiming), and it gives us back the specific `Tank` object we need.
 
@@ -202,7 +202,7 @@ Syntactically, explicit method parameters are defined inside
 of round brackets.
 When there are no explicit parameters, 
 these brackets can be optionally omitted / left out.
-For example, the methods `.turn` and `.reverse` take no explicit parameters, so before we omitted the parenthesis.
+For example, the methods `.turn` and `.reverse` take no explicit parameters, so earlier we omitted the parenthesis.
 These same methods could equivalently be declared as `.turn()` and `.reverse()`.
 To call the method `.turn` twice we showed the syntax `North.turn.turn`
 but we could have equivalently called it with syntax 
@@ -293,7 +293,7 @@ To do so, we introduced the name `MadeTank`,
 to indicate tanks originating from that point in the code.
 The name `MadeTank` is not very useful, we will probably never want to
 talk only about tanks made with the `Tanks.of` method,
-so we can rely on the sugar and type inference to chose a name for us and to infer that the literal we are creating is extending `Tank`.
+so we can rely on the sugar and type inference to choose a name for us and to infer that the literal we are creating is extending `Tank`.
 In this case, the name for our literal is going to be some fresh name
 that never appears anywhere in the code.
 That is, the code below is an equivalent but shorter version of the code above.
@@ -376,7 +376,7 @@ That is, the following is a list of valid and invalid method names:
 .foo  #  ==  ++  <=  .bar23  <#--  <+  //valid
 .foo+  +bar  a=b  zoo  <hello>  .+>  : = //invalid
 ```
-> Yes, symbol `=` is a little special and it is invalid as an operator on it's own.
+> Yes, symbol `=` is a little special and it is invalid as an operator on its own.
 
 In turn, this means that the code below is syntactically valid
 ```

@@ -30,8 +30,8 @@ Let's make this more concrete.
 - Code 2: ``Try#{Directions.map.get(`Nope`)}`` returns an object of type `Action[Direction]`.
 - Code 3: ``Directions.map.tryGet(`Nope`)`` behaves identically to Code 2, but could be faster.
 
-We can use code 1 when we trust that the error will not raise, or because if the error condition happens, then what we want is for the program to terminate with a good error message.
-When we want to consciously extract an element that may or may not be there, with the intention that the element being missing does not represent an error, we can use the method `.opt`, as in `Directions.map.opt(`Nope`)`, returning an `Opt[Direction]`.
+We can use code 1 when we trust that the error will not be raised, or because if the error condition happens, then what we want is for the program to terminate with a good error message.
+When we want to consciously extract an element that may or may not be there, with the intention that the element being missing does not represent an error, we can use the method `.opt`, as in ``Directions.map.opt(`Nope`)``, returning an `Opt[Direction]`.
 
 Using `Try#` or `.tryGet` means that we suspect that the value may not be there because of some buggy logic or input.
 
@@ -51,7 +51,7 @@ Action[R:**]: {
   }
 ```
 The `ActionMatch[R,RR]` type is unsurprising. Very similar to `OptMatch[T,R]` or `StackMatch[T,R]`.
-As we discussed before, remember that `R:*` stays for `R:imm,mut,read` and `R:**` includes all of the reference capabilities.
+As we discussed before, remember that `R:*` stands for `R:imm,mut,read` and `R:**` includes all of the reference capabilities.
 At its core, Action has a very simple implementation.
 We call the generic parameters `R` and `RR` to suggest that `R` is the result of the action, while `RR` is the result of processing either the action result or the `Info`.
 
@@ -59,7 +59,7 @@ We call the generic parameters `R` and `RR` to suggest that `R` is the result of
 Note how everything is either `mut` or `**`. This is because actions are often used together with side effects and mutations.
 The actual implementation of `Action[R]` also offers some convenience methods (`.map`,`.mapInfo`, `.andThen`, `!` and `.context`).
 Methods `!` and `.context` are widely used and beginner friendly, while method `.map`, and `.andThen` are used more rarely.
-Here we exam those methods one by one:
+Here we examine those methods one by one:
 
 >Note: Action.mapInfo is also present, but we do not discuss it in the guide
 
@@ -341,11 +341,11 @@ By inserting run time checks as shown above, we can minimise the lifetime of fau
 With immutable objects like `Point`, it is usually sufficient to insert appropriate checks during object creation.
 We will later see other techniques supporting offensive programming when working with mutable data.
 
-Some programmers think the code should simply never fail by construction; basically it should encode the proof of it's own correctness inside it's structure.
+Some programmers think the code should simply never fail by construction; basically it should encode the proof of its own correctness inside its structure.
 While amazing in theory, this mindset causes issues in the real world, where programmers are negotiating their code quality with time and skill constraints.
-Bob, the stressed programmer would probably chose to somehow twist the intended behaviour in subtle ways so that the code compiles and he does not get fired.
+Bob, the stressed programmer would probably choose to somehow twist the intended behaviour in subtle ways so that the code compiles and he does not get fired.
 The offensive programming philosophy instead gives plenty of escape hatches to Bob:
-he can produce code working correctly in most real situations, while failing with observed bugs when needed. This explicitly and sincerely communicate what is going on.
+he can produce code working correctly in most real situations, while failing with observed bugs when needed. This explicitly and sincerely communicates what is going on.
 
 
 The whole idea of offensive programming is that code should fail immediately when an unexpected situation is detected.
@@ -361,7 +361,7 @@ In Fearless both issues are solved at the same time by tunable assertion levels.
 #### Tunable assertion levels:
 There are many different layers of assertions:
  - assert:  observed bug: the code of this package has a bug.
- - assertPre: precondition violation: the code of this package has been called with parameters that violate it's requirements.
+ - assertPre: precondition violation: the code of this package has been called with parameters that violate its requirements.
  - assertSys: The program is fine but the system running this program does not support the needed requirements. For example, a file must be present for the application to work; memory or stack are insufficient; OS resources can not be obtained.
  - assertNetwork: The program and the system are fine, but some needed remote service is unavailable.
  - given that there are already 4 levels, we also have `.assert5`... `.assert16` to cover other user defined situations. `assert1`..`assert4` are aliases for those shown named assertion kinds.
@@ -416,7 +416,7 @@ So if the condition is false/throws an assert can
 - write the failure on a log and continue
 - use a recovery expression and write the failure on a log.(only available if recovery provided)
 
-This encompass the ignore/evaluate the check and ignore/evaluate the recovery.
+This encompasses the ignore/evaluate the check and ignore/evaluate the recovery.
 An assert without a recovery is equivalent to an assert where the recovery is the identity function, so we pass the same value, and an assert with no value is equivalent to having/returning `Void`.
 
 Under this, disabled is kind of ambiguous and we may want more names.

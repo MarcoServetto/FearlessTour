@@ -103,7 +103,7 @@ There is nothing special in this, any method can call any method, so `Example.su
 A lot of people find this concept somewhat puzzling. To show that they find this behaviour to be more complex than a normal method call, they will refer to this as a **recursive** call and to the method `Example.sum` as a recursive method.
 We will see very soon how this terminology (recursion) is not really that well defined.
 We will now try to visualise the reduction of `Example.sum(Stack[Nat] + 1 + 2 + 3)`. It is a good exercise, also because it raises the question of how to represent the result of `Stack[Nat] + 1 + 2 + 3`.
-So, let start reducing it.
+So, let's start reducing it.
 1. `Stack[Nat] + 1 + 2 + 3`
 2. `Stack[Nat]{.match(m) -> m.elem(1,Stack[Nat])} + 2 + 3`
 3. `Stack[Nat]{.match(m) -> m.elem(2,Stack[Nat]{.match(m) -> m.elem(1,Stack[Nat]})} + 3`
@@ -111,7 +111,7 @@ So, let start reducing it.
 
 As you can see, this is **quite hard to read**.
 Arguably, `Stack[Nat] + 1 + 2 + 3` was much more clear.
-Visualizing reductions is great if it helps us to understand the semantic of the code. Geting stuck in the mud of redundant verbose value syntax would make visualizing reductions less useful.
+Visualizing reductions is great if it helps us to understand the semantic of the code. Getting stuck in the mud of redundant verbose value syntax would make visualizing reductions less useful.
 To better visualize this method execution we will use a symbolic representation for stacks.
 
 We will represent the result of `Stack[Nat] + 1 + 2 + 3` as `[3,2,1]`.

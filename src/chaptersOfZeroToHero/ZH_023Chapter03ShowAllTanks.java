@@ -17,7 +17,7 @@ To do this, we will use mutation:
 - We will then fill it by looking at all the tanks.
 - Finally, we will concatenate all the results into a big string.
 
-Since each tanks is represented as 3 lines, we will have a grid 30 * 10.
+Since each tank is represented as 3 lines, we will have a grid 30 * 10.
 Initially, every cell will contain `      `: six spaces, representing the absence of a tank. This is because each tank line is 6 characters.
 -------------------------*/@Test void showAllTanks1(){ run("""
 //OMIT_START
@@ -295,7 +295,7 @@ When wanting to display shapes on the screen, the logic will look a lot like wha
 To display an individual shape: for all the parts of the shape: display the individual part (the three lines of the tank in our example).
 The act of displaying a shape part is the act of setting new colours in specific places in the large `mut List[mut List[mut Var[Color]]]` screen.
 
-Hopefully this removes another layer of mystery on how computers works, and the realisation that those little pixels are indeed explicit entities that operations in the computer are able to update fast enough to create the illusion of movement clarifies in a visceral way how fast those computers are.
+Hopefully this removes another layer of mystery on how computers work, and the realisation that those little pixels are indeed explicit entities that operations in the computer are able to update fast enough to create the illusion of movement clarifies in a visceral way how fast those computers are.
 
 END*/
 }

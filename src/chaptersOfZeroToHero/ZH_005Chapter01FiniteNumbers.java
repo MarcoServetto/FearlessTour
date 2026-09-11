@@ -255,7 +255,7 @@ That is, if we want to get `7` we need to use
 13. `7`
 
 In order to obtain `7`, those parentheses are needed.
-Fearless do not have operator precedence: operators are just methods,
+Fearless does not have operator precedence: operators are just methods,
 and when parentheses are omitted,
 the method will eagerly capture the first piece of code that looks like a parameter.
 This behavior is called **left associativity**.
@@ -351,12 +351,12 @@ Some `Int`s: `+10`, `-25`, `+0`, `+12345`, `-987`.
 Crucially, `+10` or `-25` are treated as single tokens by the Fearless compiler. `Int` also provides methods like `+`, `-`, `*`, etc. For example: `+10 + -3` results in `+7`.
 
 Note how those tokens, `10`, `134`, `-987` are just type names.
-Remember how we said that type names *mostly* starts with upper case letters?
+Remember how we said that type names *mostly* start with upper case letters?
 Well, this is what we meant: there are some special type names that are used to directly represent numbers.
-Overall, all the type names not starting with an A to Z letter are defined by the fearless standard library, and as such can
+Overall, all the type names not starting with an A to Z letter are defined by the Fearless standard library, and as such can
 not be defined by regular Fearless programmers. 
 
-#### How they work? Like our clock, just... BIGGER!
+#### How do they work? Like our clock, just... BIGGER!
 
 *(A quick warning before we start: for the next few paragraphs we describe `Nat` and `Int` exactly as if they always silently wrapped around like a clock. This is a simplification, in the same spirit as saying `1 + 1` is `2` without dwelling on every way a computation could instead fail. We come back to this, and to what actually happens, at the end of this section.)*
 
@@ -470,7 +470,7 @@ if your program runs long enough or handles large enough inputs,
 something, somewhere, will eventually trigger an unexpected overflow if you're solely
 relying on `Nat` or `Int` without careful checks.
 
-Overflows and Underflows are fundamental trade-off for the speed
+Overflows and Underflows are a fundamental trade-off for the speed
 gained by optimized integers in most programming languages.
 This isn't a Fearless-specific issue; it's a real issue in most languages and the
 cause of a large amount of bugs.
@@ -484,12 +484,12 @@ If the programmer has not been careful, the patient may receive Eighteen quintil
 units of medicine the second after.
 
 The creators of the Fearless standard library did not like this outcome.
-The solution was add a layer of checks on top of the behavior of `Int`, `Nat` and many other types.
+The solution was to add a layer of checks on top of the behavior of `Int`, `Nat` and many other types.
 In this way, with the base behavior of the standard library, Overflows, Underflows and other
 dangerous numeric operations with odd unpredictable results are going to stop the
 whole execution instead of performing probably nonsensical operations.
-We will discuss the details on how to tune those checks can be tuned later in the guide.
-For now, it is important that you realize that those problems do exists.
+We will discuss the details on how those checks can be tuned later in the guide.
+For now, it is important that you realize that those problems do exist.
 Ignoring it is building on shaky ground.
 Accepting this reality is step one to writing robust code.
 

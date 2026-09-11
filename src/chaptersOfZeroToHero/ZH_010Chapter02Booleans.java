@@ -93,7 +93,7 @@ The code above shows that we can combine booleans to get more booleans. This is 
 
 Can we add a concept of choice on our booleans, as we did for `Fork`?
 
-This is where the Generics we saw earlier becomes essential. We need a way to represent the two possible code paths (what to do if `True`, what to do if `False`) and the result they produce. Remember the `Fork` example where `.choose[Val]` worked with any type `Val`? We need something similar here. Let's define a method `Bool.if`, that can produce a result of any type, let's call that type `R`, for Result.
+This is where the Generics we saw earlier become essential. We need a way to represent the two possible code paths (what to do if `True`, what to do if `False`) and the result they produce. Remember the `Fork` example where `.choose[Val]` worked with any type `Val`? We need something similar here. Let's define a method `Bool.if`, that can produce a result of any type, let's call that type `R`, for Result.
 To provide the two code paths we need a container object. We can define a generic type called `ThenElse[R]`. The `[R]` is a type parameter, just like `[Val]` was in `Fork`. It stands for the Result type that both code paths must ultimately produce.
 
 -------------------------*/@Test void bool2 () { run("""
@@ -173,7 +173,7 @@ The `.message` method uses an `.if` checking whether the input `s` is equal to `
 The call is conceptually
 ``(s ==(`hello`)).if[Str]({..})``
 but we can just write ``s == `hello` .if {..}``
-by removing parenthesis and relying on of generic type inference.
+by removing parenthesis and relying on generic type inference.
 The `[Str]` indicates that both the `.then` and `.else` branches must produce a `Str` result.
 The first `.then` branch is simple: it just returns the greeting string.
 The first `.else` branch contains another `.if` call, nested inside. This inner check sees if `s` is equal to `bye`.
@@ -312,7 +312,7 @@ This nesting allows us to create more complex decision trees.
    `I don't understand`
    ````
 ---
-> You may have notice that in the last reduction we omitted the execution step with the body of the `.if`: the explicit call to `.then` or `.else`.
+> You may have noticed that in the last reduction we omitted the execution step with the body of the `.if`: the explicit call to `.then` or `.else`.
 We will do this more and more, skipping steps to make reductions more compact.
 Indeed, when showing the method `Str==`, used over and over in the examples before, we just reduced it to `True` or `False` in a single step, but the actual execution of `Str==` does involve many, many steps.
 
@@ -320,7 +320,7 @@ As you can see from the example, the `.if` method directs the flow of execution.
 Generics ensure that the outcomes of different branches are type-compatible.
 Note how the generics are explicitly needed when **defining** the `.if` method but they are all inferred when **using** the `.if` method.
 
-This is where our journey of learning Fearless programming starts to intersecting with concepts common to most other programming languages.
+This is where our journey of learning Fearless programming starts to intersect with concepts common to most other programming languages.
 I still vividly remember the moment it struck me: every possible computation can be represented as just an enormous pile of ifs invoking each other. Mind blowing!
 
 But just because something can be done, doesn't mean it's the best approach. Solving problems by throwing a massive heap of binary decisions at them (like firing wildly with a machine gun) rarely leads to elegant, maintainable code. A program built this way quickly becomes brittle and hard to evolve. Soon, we'll explore specialised decision-making constructs, each tailored to different scenarios, and we'll learn to select the right tool for each job. 
@@ -498,7 +498,7 @@ Much.code .and (Slow.code .and (ATonOf.code) ) // version 2
 ```
 both versions would always run all the three computations.
 
-Note how `{Slow.code}` is an object Literal of type `F[Bool]`.
+Note how `{Slow.code}` is an object literal of type `F[Bool]`.
 The full version would be  :
 ```
 Anon1[]:F[Bool] { #[](): Bool[] -> Anon2[]:Slow[]{}.code[](); }

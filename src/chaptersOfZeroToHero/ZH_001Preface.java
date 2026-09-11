@@ -22,7 +22,7 @@ If you are new to programming, the sentence above was probably incomprehensible.
 Often programming is taught as a tool to reach a practical goal, like building a website, a video-game, or automating a task.
 That is, programming is often dressed as a necessary hurdle to "get over with" so you can achieve something else. We aim to move beyond treating programming as an obstacle.
 
-We see programming an artistic expression demanding abstract thinking, focused concentration, and persistence in problem-solving. These are muscles that grow stronger with practice. Programmers find intrinsic satisfaction in the process of careful logical construction itself.
+We see programming as an artistic expression demanding abstract thinking, focused concentration, and persistence in problem-solving. These are muscles that grow stronger with practice. Programmers find intrinsic satisfaction in the process of careful logical construction itself.
 
 ### The Illusion of Progress: The Monkey and the Pedestal
 
@@ -56,9 +56,9 @@ Car <--> Wheels
 - Cars have wheels, wheels are the thing cars have.
 
 - Note how we used language in a structured way when we made up the symbol `<-->`.
-What does that symbol mean? It mean anything we want it to mean, we just made it up. By using it over and over we may solidify its meaning.
+What does that symbol mean? It means anything we want it to mean, we just made it up. By using it over and over we may solidify its meaning.
 
-Both natural language and programming languages are web of relationships.
+Both natural language and programming languages are a web of relationships.
 The meaning of the terms emerges from how the terms connect with each other.
 
 ### Fearless programs and Fearless code
@@ -114,7 +114,7 @@ Kind regards, // or Sincerely?
 Bob Snoozeman
 ```
 
-As you can see, even comments can have their little language inside: `TODO:` is a short 5 letter annotation meaning that there is an open task.
+As you can see, even comments can have their little language inside: `TODO:` is a short 5 symbol annotation meaning that there is an open task.
 
 In the next page we will see our first example of code.
 

@@ -14,9 +14,9 @@ Up to now, all the parameters we have seen are method parameters; either the rec
 This can encourage us to write repetitive and hard to read code.
 
 A quick note on two naming conventions you will keep running into: methods starting with `get` and methods starting with `soft`.
-A `get` method promises a precise, correct answer, but only for the cases where one actually exists; the name warns that such a precise answer may not exists.
+A `get` method promises a precise, correct answer, but only for the cases where one actually exists; the name warns that such a precise answer may not exist.
 `3.3 .getNat` can not return `3.3` as a `Nat`. There is no `Nat` precisely representing `3.3`.
-Instead of making up a arbitrary answer, `get` methods stop the whole execution.
+Instead of making up an arbitrary answer, `get` methods stop the whole execution.
 A `soft` method takes the opposite approach: it never stops the execution, and instead gives back the closest reasonable answer it
 can, even when an exact one is not possible.
 For example, we show below a difficult to read method computing the distance between two points;
@@ -62,7 +62,7 @@ A:{
 
 Theoretically, this new code achieves our goals, but most humans find this new version even harder to read.
 We think this is mostly because 
-1. The values for `diffX` and `diffY` are very far in the code from the declaration point of `diffX` and `diffX`.
+1. The values for `diffX` and `diffY` are very far in the code from the declaration point of `diffX` and `diffY`.
 2. This new version is just much longer: we have to add the types for `diffX`, `diffY`, and the return type.
 3. This version is only working for two new parameters defined at the same time. What if we wanted to give a name to the result before `.softSqrt`?
 
@@ -177,7 +177,7 @@ The body of such a method is whatever method chain follows.
 By using a two argument method, the `Let` library can specify the receiver for the continuation of the call chain.
 In the case of the `Let[R]`, it is just the same `Let[R]` object; we will see later cases where it is useful to change the receiver to a different value or type.
 
-Let see again this code, comparing line by line to see what changes thanks to this sugar
+Let's see again this code, comparing line by line to see what changes thanks to this sugar
 
 ```
 .distance(p1:Point, p2:Point):Nat->Let#
@@ -189,7 +189,7 @@ Let see again this code, comparing line by line to see what changes thanks to th
 ```
 
 In the code above, we call `diffX`, `diffY` and `res` local parameters, or **locals** for short.
-Local parameters are a staple of most programming language, but in Fearless they are represented 
+Local parameters are a staple of most programming languages, but in Fearless they are represented
 via syntactic sugar instead of being a core language feature.
 In other languages they are often known by one (or more) of the following names:
 local bindings, bindings, let-bindings, lets, constants, local variables, (final) variables.

@@ -27,14 +27,14 @@ That is, the first 10 numbers (starting from zero) are assigned a single symbol:
 and numbers bigger than nine are represented using two or more symbols.
 There is nothing special about the number nine, and we could imagine having more symbols for higher numbers.
 For example, consider the English words for numbers, nine, ten, eleven, twelve, thirteen, fourteen,fifteen...
-As you can see, thirteen, fourteen,fifteen follow a pattern, suggesting they are conceptually composed by two symbols:
+As you can see, thirteen, fourteen,fifteen follow a pattern, suggesting they are conceptually composed of two symbols:
 thir-teen, four-teen,fif-teen, but this does not happen for nine, ten, eleven, twelve, or any number before that.
 So, what if we select some more symbols to use for ten, eleven and twelve?
 We could select `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `A`, `B`, `C`.
 Now we have 13 symbols, so we can use those symbols to represent numbers in base 13:
   `C` is twelve,
   `AC` is `ten times thirteen plus twelve`; equivalent to 140 in base 10.
-As you can see, we used only two symbols `AB` instead of three `140`.
+As you can see, we used only two symbols `AC` instead of three `140`.
 Using higher bases we can represent higher numbers with less symbols.
 Moreover, `CAB` is both a number in base 13, but also an English word. Basically, when we grow the base, we start being able to express not just numbers, but text.
 
@@ -82,7 +82,7 @@ is a valid type declaration, with balanced parenthesis. The `}` inside of the st
 
 If we use those gigantic numbers to represent text,
 we better define some ways to concatenate text.
-We have seen how we can merge numbers of type`Nat` with `+` and `*`
+We have seen how we can merge numbers of type `Nat` with `+` and `*`
 `10 + 5` is `15`, and if I wanted to concatenate them,
 I could do `10 + (5*10)` and get `105`.
 Can we do the same thing with text?
@@ -97,7 +97,7 @@ Note the space after the `"o"` in `` "Hello " ``.
 That is, the `+` method does not sum the two strings as numbers but just concatenate them.
 
 If you find the space at the end of `Hello` hard to see, you
-can isolate the strange looking ending space as follow:
+can isolate the strange looking ending space as follows:
 `` "Hello" + " " + "world" ``
 
 ### All humans alive as a string
@@ -112,7 +112,7 @@ base 96 number. And we really need to select some characters to be used to show 
 How can we handle this issue?
 This is an instance of a more general problem: how to embed text inside text.
 
-We have seen the `+` concatenation operator, and how it can be used to make some strings more readable. `Str` also offer other kind of concatenation operators, allowing to create and represent strings with new lines and backticks too.
+We have seen the `+` concatenation operator, and how it can be used to make some strings more readable. `Str` also offers other kinds of concatenation operators, allowing to create and represent strings with new lines and backticks too.
 
 In Fearless, ``` "" | "Zb2A" ``` is the representation of `` "Zb2A" `` with a newline at the start.
 In the details, ``` "" ``` is the empty string,

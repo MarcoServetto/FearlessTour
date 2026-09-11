@@ -32,13 +32,13 @@ If you are in this second group, you are welcome! This guide is for you. Thank y
 Please, follow along with those steps:
 Go to <a href="https://github.com/FearlessLang/StandardLibrary/tree/main/fearlessStandalone">Fearless Compiler</a>
 
-Download the file appropriate to your Operative System,
+Download the file appropriate to your Operating System,
 put it in some folder and unzip it.
 That is the fearless compiler. Congrats, now you have it on your machine.
 
 Then, click on the executable called `fearlessw` or `fearlessw.exe`.
 
-You will see a windows asking to create an empty project in a location of your choice. Chose anywhere you like, for example a new folder on your Desktop.
+You will see a window asking to create an empty project in a location of your choice. Choose anywhere you like, for example a new folder on your Desktop.
 This new folder will contain the following files:
 - `start.fearless`
 - `_demo`

@@ -83,7 +83,7 @@ This is also used for code reuse.
   - Examples: `North`, `12`, `45`, `+34`, `-13`, `` `Foo` ``, `` `foo dd` ``, `{}`
 (the last one will have the type name inferred by the type system)
 
-- Lambda: this is the common name given to an object literal with exactly one method is implemented. Syntactic sugar is present to make this case easier.
+- Lambda: this is the common name given to an object literal with exactly one method implemented. Syntactic sugar is present to make this case easier.
   - Examples: `{a,b->a+b}`,  `{ a -> a.foo }`, `{ 1 + 2 }`, `{::foo}`, `{::foo.bar }`, `{::+3 }`
 
 - Instance: used to focus on types and subtypes relationships

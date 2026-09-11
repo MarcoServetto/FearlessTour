@@ -174,7 +174,7 @@ The element in position `x, y` can be accessed using the formula
 `index = y * 5 + x`, where 5 is the number of columns in the grid.
 
 On the other side, if we have the `index` , we can recover the original `x, y` coordinates as:
-`y = index divided by 5` and `x = reminder of the division between index and 5`
+`y = index divided by 5` and `x = remainder of the division between index and 5`
 This bidirectional mapping makes it easy to simulate a 2D grid using a flat array.
 
 A type representing the grid could look like this:
@@ -189,7 +189,7 @@ Grid:{
 ```
 Note: since `index` is a Nat, the division is rounded down (**integer division**).
 `.getTruncDiv` is short for "get, truncated division": it divides and then truncates (cuts off) whatever comes after the decimal point.
-For example `13 .getTruncDiv 5 = 2`; and the reminder/`.getRem` operation returns the reminder of the
+For example `13 .getTruncDiv 5 = 2`; and the remainder/`.getRem` operation returns the remainder of the
 integer division: `13 .getRem 5 = 3`
 
 This kind of encoding was crucial in the past for extracting performance benefits from primitive machines with severe memory constraints. Today, while less common, it remains critical in some contexts.
@@ -293,7 +293,7 @@ The type `OrderMatch` mediates the outcome of a comparison between two elements.
 ````
 OrderMatch[R:**]: { mut .lt: R; mut .eq: R; mut .gt: R; }
 ````
-This looks like a standard matcher with three possible outcome: either the data is `lt` (less then), `eq` (equal), or `gt` (greater then).
+This looks like a standard matcher with three possible outcomes: either the data is `lt` (less than), `eq` (equal), or `gt` (greater than).
 But.. what is this data? Here we are talking about the result of a comparison operation. There is no need to materialise the data, we can just pass the matcher itself.
 Consider this code:
 ````
@@ -346,7 +346,7 @@ Can you spot why?
 
 **Solution:** 
 In the code `this.cmp(this,other,{...});` we use `this` twice: the first time as `Order[T]` to call `.cmp`, but the second time we use it as a `T`.
-And the type system do not see any connection between `T` and `Order[T]`.
+And the type system does not see any connection between `T` and `Order[T]`.
 The code used to work in `Point` because `Point` implements `Order[Point]`; thus in the context of `Point`, `self` was both a `Point` and an `Order[Point]`.
 
 We can solve this type limitation by adding a `.close` method:
@@ -366,12 +366,12 @@ Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
 Now we can implement `==` on `Order[T]` and `Point` will automatically get an `==` method.
 Right now it does not look like a great result, we implement one method `.cmp` to get one method `==`.
 But.... there are many more convenience operators we can define on top of `.cmp`.
-`==` equal, `!=` different, `<` less then, `<=` less or equal, `>` greater then, `>=` greater or equal.
+`==` equal, `!=` different, `<` less than, `<=` less or equal, `>` greater than, `>=` greater or equal.
 There is more! We can check if our point is in a range between two other points.
-Ranges can be open an closed on both ends, causing four methods: `.inRange(lo,hi):Bool`, `.inRangeOpen(lo,hi)`, `.inRangeLoOpen(lo,hi)`,`.inRangeHiOpen(lo,hi)`.
+Ranges can be open and closed on both ends, causing four methods: `.inRange(lo,hi):Bool`, `.inRangeOpen(lo,hi)`, `.inRangeLoOpen(lo,hi)`,`.inRangeHiOpen(lo,hi)`.
 As you can see, this is already 10 methods.
 
-Still, the implementation of `.cmp` is much longer then we would like.
+Still, the implementation of `.cmp` is much longer than we would like.
 Can we build some abstraction to make it more direct?
 It is very verbose because we are repeating checks `<` and `>` for the components.
 But.. those components implement `Order[T]` too, so we could call `.cmp` directly.
@@ -649,7 +649,7 @@ StrSizeOrder:OrderHashBy[Str]{
 ```
 Note how our first attempt for a set with custom ordering does not compile.
 We need to use `OrderHashBy` and not just `OrderBy`.
-Note how `.cmp`, `.hash` and `.str` receiver a `read` version of the parameters, thus we may have to call `.imm` to access the `imm` methods.
+Note how `.cmp`, `.hash` and `.str` receive a `read` version of the parameters, thus we may have to call `.imm` to access the `imm` methods.
 
 We can create a set from a flow by calling `.set{::}`, or passing a specific order.
 
@@ -687,7 +687,7 @@ Order[T,E:*]: {
 ````
 The order code above requires to implement `.close` and `.cmp`, and implements method
 `.order(by)` that takes an `OrderBy` for the element and produces an `Order[T]` by delegating to the `.close` and `.cmp` methods we just defined.
-The core of this approach is that the outer `.cmp` takes an explicit `by` parameter, while the inner `.cmp` just have it, since it is captured in the object literal.
+The core of this approach is that the outer `.cmp` takes an explicit `by` parameter, while the inner `.cmp` just has it, since it is captured in the object literal.
 
 For example, `Opt[E:*]` implements `Order[Opt[E],E]` (via `_Opt[E]`, via `DataType`).
 That is, we can now understand much better the code of `Opt` shown before:
@@ -724,7 +724,7 @@ ToStr:{ read .str: Str } //repeated here for your convenience
 ToStrBy[T]:{ #(read T): read ToStr }
 ToStr[E:*]:{ read .str(ToStrBy[imm E]): Str }
 ````
-That help us to understand those other already seen `Opt` methods:
+That helps us to understand those other already seen `Opt` methods:
 ````
 Opt[E:*]: _Opt[E]{
   ...
@@ -772,7 +772,7 @@ It would be pretty incredible if you could follow all those logical steps at the
 
 Most programmers learn to **use** this stuff by learning the common usage patterns instead of actually understanding what is going on under the hood.
 
-You may be thinking that you have to chose between deep understanding and pragmatically relying on usage patterns, but this is a false dichotomy.
+You may be thinking that you have to choose between deep understanding and pragmatically relying on usage patterns, but this is a false dichotomy.
 By learning and repeating the usage patterns we get more aware of the code structure, the available terms and the allowed actions.
 Basically, it is much easier to solve a puzzle once you remember what all the pieces are and do.
 

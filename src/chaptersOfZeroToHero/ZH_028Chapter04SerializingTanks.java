@@ -10,7 +10,7 @@ class ZH_028Chapter04SerializingTanks {
 
 ## Serialising Tanks
 
-With our understanding from before, we can reimplement `Tanks` as follow:
+With our understanding from before, we can reimplement `Tanks` as follows:
 ```
 Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
   heading, aiming, point -> Tank:ToInfo, ToStr,OrderHash[Tank]{'self
@@ -58,10 +58,10 @@ ReadGame: {
   }
 ```
 
-As you can see, the no-args `.read` method takes the text of the file, parse it as an `Info` and then parse that `Info` as a list of `Tank`s
+As you can see, the no-args `.read` method takes the text of the file, parses it as an `Info` and then parses that `Info` as a list of `Tank`s
 
 You may be scratching your head about where this file comes from.
-We are not specifying a actual operation like read the file called `` `input.txt` ``. Where is this file coming from?
+We are not specifying an actual operation like read the file called `` `input.txt` ``. Where is this file coming from?
 It turns out that every single OS has ways to capture files intended as input, and 
 this is exactly what `sys.inputCursor# !` is doing.
 The idea is that there can be many files intended as input, and more may be added at any time.
@@ -77,7 +77,7 @@ InputCursorNode: ToIso[InputCursorNode], WidenTo[InputCursorNode]{
   mut .image: Opt[Image];
   ...//many more methods for other kinds of files.
   }
-```
+````
 - `sys.inputCursor` is the capability to observe the files intended as input.
 - `sys.inputCursor#` gets the first input node.
 - `sys.inputCursor# !` extracts the actual `InputCursorNode`, throwing error if no input has been provided yet.
@@ -85,7 +85,7 @@ InputCursorNode: ToIso[InputCursorNode], WidenTo[InputCursorNode]{
 - `this.in.text!` we extract the content from the optional with `!`.
 
 Note how this code simply leaks any kind of error anywhere it may raise.
-There are three many kinds of error here:
+There are three main kinds of error here:
 - 1 Reading the string from file
 - 2 Deserializing the string into an `Info`
 - 3 Deserializing the info into a `List[Tank]`
@@ -111,7 +111,7 @@ ReadGame: {..
 
 Instead of `.map` we now use `.andThen` + `Try#`.
 The type is the same, but the error management is now very different.
-There are three many points of error:
+There are three main points of error:
 - 1 Reading the string from file
 - 2 Deserializing the string into an `Info`
 - 3 Deserializing the info into a `List[Tank]`
