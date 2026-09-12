@@ -2,7 +2,7 @@ package compileHtml;
 
 import java.nio.file.Path;
 
-import mainCoordinator.ResolveResource;
+import resources.ResolveResource;
 
 import java.io.IOException;
 import markDownTests.DocumentProcessor;

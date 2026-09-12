@@ -512,7 +512,7 @@ _Opt[E:*]:DataType[Opt[E],Opt[imm E],E,imm E]{
   read .as[R:imm](mut MF[read/imm E, R]): Opt[R];  
 }
 """); }/*--------------------------------------------
-
+OMIT_END
 
 We are going to explain those in the details later, but we shall summarise them here.
 Do not worry, we are going to discuss all those types in details later!
@@ -548,8 +548,5 @@ Method `ToImm[T].imm` converts an object of any reference capabilities into an i
 
 Note how many of those types have a generic variant, like `ToStr` and `ToStr[T]`. As we will see later, this is because for generic containers we need a way to convert the contained objects to be able to convert the container itself.
 
-
-
-OMIT_END
 END*/
 }

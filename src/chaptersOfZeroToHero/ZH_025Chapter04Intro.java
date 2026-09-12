@@ -101,7 +101,7 @@ That is a `Map[Str,Info]`.
 If we add such a map component to `Info` we get the following.
 ```
 Info:{
-  .msg:Str->'';
+  .msg:Str->``;
   .list:List[Info]->{};
   .map:Map[Str,Info]->Maps#{::};//empty map Str->Info
   }
