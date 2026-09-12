@@ -11,7 +11,7 @@ import org.opentest4j.AssertionFailedError;
 
 import java.nio.file.Files;
 
-import mainCoordinator.ResolveResource;
+import resources.ResolveResource;
 import markDownTests.TextTag;
 import tools.Fs;
 import tools.JavacTool;

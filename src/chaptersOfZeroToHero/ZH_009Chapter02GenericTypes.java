@@ -122,7 +122,7 @@ Fork : {
   .chooseDirection(leftVal: Direction, rightVal: Direction): Direction;
   .choosePoint(leftVal: Point, rightVal: Point): Point;
   ...
-  .chose[Type](leftVal: Type, rightVal: Type): Type;
+  .choose[Type](leftVal: Type, rightVal: Type): Type;
   }
 ```
 And... that is exactly the syntax, and semantic, of generic methods: it is a way to declare an infinite amount of methods, all following a simple pattern, where the only thing that changes is  some types.

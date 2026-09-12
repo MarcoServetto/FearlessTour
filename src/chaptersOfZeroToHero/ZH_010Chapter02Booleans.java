@@ -507,11 +507,11 @@ That is, since the method `F[Bool]#` has exactly zero arguments, we can omit bot
 
 We can now compare and contrast the above with the syntax
 ```
-Tanks: F[Direction,Direction,Tank]{ h,a -> { .heading -> h, .aiming -> a } }
+Tanks: F[Direction,Direction,Tank]{ h,a -> { .heading -> h; .aiming -> a } }
 ```
-Where 
+Where
 ```
-h,a -> { .heading -> h, .aiming -> a }
+h,a -> { .heading -> h; .aiming -> a }
 ```
 implements the method `F[Direction,Direction,Tank]#`.
 
