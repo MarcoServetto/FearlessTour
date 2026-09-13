@@ -10,7 +10,7 @@ class ZH_010Chapter02Booleans {
 
 ### Booleans: True, False and internalised choices.
 
-If you have done some logic in your school, you will be familiar with the concepts of `True`, `False`, `and`, `or` and `not`.
+If you have done some logic at school, you will be familiar with the concepts of `True`, `False`, `and`, `or` and `not`.
 
 Anyway, we are going to recall them now:
 In the same way we have only the four cardinal `Direction`s, we only have two fundamental truth values: `True` and `False`. They are called the `Bool`s or the booleans, in memory of George Boole, who laid the groundwork for what is now known as Boolean algebra.
@@ -339,7 +339,7 @@ F[A,R]: { #(a: A): R }
 F[A,B,R]: { #(a: A, b: B): R }
 F[A,B,C,R]: { #(a: A, b: B, c: C): R }
 """); }/*--------------------------------------------
-Those types represent functions with zero, one, two ,three arguments.
+Those types represent functions with zero, one, two, three arguments.
 Of course we can define more if more arguments are needed.
 As you can see, thanks to the way generic types works, we can call them all `F` because
 the presence of different numbers of generic arguments disambiguate their names.

@@ -16,7 +16,7 @@ We have seen how methods abstract over values. We will now see how generics are 
 
 When we declare a method we abstract over values; consider when we declared method `-` as follows:
 ```
-  -(other: Number): Number -> other._rightSub(this),
+  -(other: Number): Number -> other._rightSub(this);
 ```
 We did this because writing `10 - 4` is much clearer than writing `4._rightSub(10)`.
 The method call `4._rightSub(10)` works on those two **concrete** values. The method body of `-` is `other._rightSub(this)` and works on all kinds of values of the right type. The exact values are abstracted away.
@@ -68,7 +68,7 @@ Where types and expressions are lists of types and expressions separated by comm
 When we omit the `[..]` we are asking the type inference to infer that part.
 On the other side, when we declare a generic method, as in
 ```
-.choose[Val](leftVal: Val, rightVal: Val): Val,
+.choose[Val](leftVal: Val, rightVal: Val): Val;
 ```
 we need to specify all the generic types that we are introducing.
 If we omit the `[..]` in the method declaration, then the conventional sugar allowing to omit any empty parentheses triggers. Thus, when we declared

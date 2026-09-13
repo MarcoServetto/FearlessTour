@@ -24,7 +24,7 @@ Test:Main {sys -> sys.out.println(`Hello, World!`)}
 If we run this program, it will print `Hello, World!`.
 You may be having two radically different reactions to the sentence above.
 - You understand perfectly and you are relieved that we finally reached the traditional `Hello World`. If this is you, probably you are one of the few humans still knowing what a terminal/shell/console is.
-If you are in this group, you should be easily able to figure how to run that Fearless program. Yes, you can use a shell as for any other programming language.
+If you are in this group, you should be easily able to figure out how to run that Fearless program. Yes, you can use a shell as for any other programming language.
  
 - You have no idea what *running a program* means, let alone how to do it.
 If you are in this second group, you are welcome! This guide is for you. Thank you for engaging in the more theoretical part of our material; what you have learned will be crucial going forward in this more practical part.

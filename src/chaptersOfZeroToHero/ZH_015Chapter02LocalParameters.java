@@ -93,7 +93,7 @@ A:{
 //OMIT_END
 """); }/*--------------------------------------------
 
-now we can use any amount of lets to declare local bindings and use them in the rest of the code.
+Now we can use any amount of lets to declare local bindings and use them in the rest of the code.
 However, the code is now kind of noisy: every `Let` introduces a new layer of object literals, and thus we end up with a lot of closed parenthesis at the end.
 
 Also, this code does not follow the 'fluent' pattern we discussed before.

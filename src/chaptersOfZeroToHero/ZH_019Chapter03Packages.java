@@ -55,7 +55,7 @@ All kinds of numbers and strings are sealed, optionals and booleans are sealed. 
 Sealed types can still be extended if the type name is directly used as a literal, so
 `True` 
 is valid, but
-`True{.not->True,}`
+`True{.not->True}`
 is not valid.
 
 ### Package private types

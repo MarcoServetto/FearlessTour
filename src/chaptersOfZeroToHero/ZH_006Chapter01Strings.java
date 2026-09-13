@@ -26,9 +26,9 @@ That is, the first 10 numbers (starting from zero) are assigned a single symbol:
 `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`
 and numbers bigger than nine are represented using two or more symbols.
 There is nothing special about the number nine, and we could imagine having more symbols for higher numbers.
-For example, consider the English words for numbers, nine, ten, eleven, twelve, thirteen, fourteen,fifteen...
-As you can see, thirteen, fourteen,fifteen follow a pattern, suggesting they are conceptually composed of two symbols:
-thir-teen, four-teen,fif-teen, but this does not happen for nine, ten, eleven, twelve, or any number before that.
+For example, consider the English words for numbers, nine, ten, eleven, twelve, thirteen, fourteen, fifteen...
+As you can see, thirteen, fourteen, fifteen follow a pattern, suggesting they are conceptually composed of two symbols:
+thir-teen, four-teen, fif-teen, but this does not happen for nine, ten, eleven, twelve, or any number before that.
 So, what if we select some more symbols to use for ten, eleven and twelve?
 We could select `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `A`, `B`, `C`.
 Now we have 13 symbols, so we can use those symbols to represent numbers in base 13:
@@ -36,7 +36,7 @@ Now we have 13 symbols, so we can use those symbols to represent numbers in base
   `AC` is `ten times thirteen plus twelve`; equivalent to 140 in base 10.
 As you can see, we used only two symbols `AC` instead of three `140`.
 Using higher bases we can represent higher numbers with less symbols.
-Moreover, `CAB` is both a number in base 13, but also an English word. Basically, when we grow the base, we start being able to express not just numbers, but text.
+Moreover, `CAB` is both a number in base 13 and an English word. Basically, when we grow the base, we start being able to express not just numbers, but text.
 
 So... what if we include all of the following symbols?
 ```
@@ -101,7 +101,7 @@ can isolate the strange looking ending space as follows:
 `` "Hello" + " " + "world" ``
 
 ### All humans alive as a string
-The number of humans currently alive is 8 Billions, or `` " inRW" ``.
+The number of humans currently alive is 8 billion, or `` " inRW" ``.
 A more precise estimate is 8,122,862,820; corresponding to 
 ... hmm... 
 `` "<newLine>Zb2A" ``? maybe?

@@ -237,7 +237,7 @@ content of `Direction`. This is called indentation.
 Of course, `???` is not valid Fearless code.
 Originally, we wrote the name of the current direction:
 `North.turn.turn`, `East.turn.turn`, ...
-Methods allows us to reuse some code, but here instead of repeating the same exact behaviour over and over again, we want our behaviour to be contextual over the current direction.
+Methods allow us to reuse some code, but here instead of repeating the same exact behaviour over and over again, we want our behaviour to be contextual over the current direction.
 That is, `???` should be `North` inside of `North.reverse` and `South` inside of `South.reverse`.
 
 We need a way to refer to the current direction within the `.reverse` method. If we're calculating `North.reverse`, we need `North.turn.turn`. If we're calculating `East.reverse`, we need `East.turn.turn`.
