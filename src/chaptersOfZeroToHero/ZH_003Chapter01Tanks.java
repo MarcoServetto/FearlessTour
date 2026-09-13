@@ -256,7 +256,7 @@ You may think that declaring a new type inside of the method body
 contradicts the general idea that method bodies must be expressions.
 However, an object literal expression is just a special kind of type declaration.
 Before we have directly used type names, like `North`, as a object literals.
-As we discussed, the object literal `North` is desugared into`SomeName147: North {}`.
+As we discussed, the object literal `North` is desugared into `SomeName147: North {}`.
 All object literals are type declarations. Some object literals do not look like
 type declarations because of the sugar allowing to omit `SomeName147:` and 
 because of the general rule that empty parenthesis like `{}` can be omitted.

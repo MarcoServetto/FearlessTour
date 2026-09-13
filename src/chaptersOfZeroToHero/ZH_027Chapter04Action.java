@@ -58,7 +58,7 @@ We call the generic parameters `R` and `RR` to suggest that `R` is the result of
 `Action[R]` has a single abstract `.run` method that takes an `ActionMatch[R,RR]`.
 Note how everything is either `mut` or `**`. This is because actions are often used together with side effects and mutations.
 The actual implementation of `Action[R]` also offers some convenience methods (`.map`,`.mapInfo`, `.andThen`, `!` and `.context`).
-Methods `!` and `.context` are widely used and beginner friendly, while method `.map`, and `.andThen` are used more rarely.
+Methods `!` and `.context` are widely used and beginner friendly, while methods `.map` and `.andThen` are used more rarely.
 Here we examine those methods one by one:
 
 >Note: Action.mapInfo is also present, but we do not discuss it in the guide

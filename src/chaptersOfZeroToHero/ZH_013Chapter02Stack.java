@@ -106,8 +106,8 @@ We will now try to visualise the reduction of `Example.sum(Stack[Nat] + 1 + 2 + 
 So, let's start reducing it.
 1. `Stack[Nat] + 1 + 2 + 3`
 2. `Stack[Nat]{.match(m) -> m.elem(1,Stack[Nat])} + 2 + 3`
-3. `Stack[Nat]{.match(m) -> m.elem(2,Stack[Nat]{.match(m) -> m.elem(1,Stack[Nat]})} + 3`
-4. `Stack[Nat]{.match(m) -> m.elem(3,Stack[Nat]{.match(m) -> m.elem(2,Stack[Nat]{.match(m) -> m.elem(1,Stack[Nat]})})}`
+3. `Stack[Nat]{.match(m) -> m.elem(2,Stack[Nat]{.match(m) -> m.elem(1,Stack[Nat])})} + 3`
+4. `Stack[Nat]{.match(m) -> m.elem(3,Stack[Nat]{.match(m) -> m.elem(2,Stack[Nat]{.match(m) -> m.elem(1,Stack[Nat])})})}`
 
 As you can see, this is **quite hard to read**.
 Arguably, `Stack[Nat] + 1 + 2 + 3` was much more clear.
@@ -129,7 +129,7 @@ With this representation problem sorted out, we can now reduce
 08. `3+(2+([1].match{ 0; top,tail -> top+(Example.sum(tail))}))`
 09. `3+(2+({ 0; top,tail -> top+(Example.sum(tail))}.elem(1,Stack[Nat])))`
 10. `3+(2+(1+(Example.sum(Stack[Nat]))))`
-11. `3+(2+(1+(Stack[Nat].match{ 0; top,tail -> top+(Example.sum(tail))}))`
+11. `3+(2+(1+(Stack[Nat].match{ 0; top,tail -> top+(Example.sum(tail))})))`
 12. `3+(2+(1+(0)))`
 13. `3+(2+(1.pred+(0.succ)))`
 14. `3+(2+(0+(0.succ)))`

@@ -145,7 +145,7 @@ But again, operations like this one are going to be very common, so we better de
 Stack[T]: {
   .match[R](m: StackMatch[T,R]): R -> m.empty;
   .fold[R](start:R, f: F[R,T,R]): R -> start;
-  .map[R](f: F[T, R]): Stack[R] -> {}
+  .map[R](f: F[T, R]): Stack[R] -> {};
   .filter ???; //Base case
   +(e: T): Stack[T] -> { 
     .match(m) -> m.elem(e, this);
@@ -169,12 +169,12 @@ So, the first filter is going to be
   .filter(f: F[T,Bool]): Stack[T]-> {};
 ```
 We return the empty stack because there are no elements to remove from the empty stack... it is already as empty as it can be.
-What about the second `.filter`? there we have `this` and `e` in scope.
+What about the second `.filter`? There we have `this` and `e` in scope.
 ```
   .filter(f) -> f#(e).if{
     .then -> this.filter(f) + e;
     .else -> this.filter(f);
-    },
+    };
 ```
 Here we can use an `.if` on the result of `f#(e)`.
 In the `.then` case, we propagate the operation on the stack tail and we sum the current element.

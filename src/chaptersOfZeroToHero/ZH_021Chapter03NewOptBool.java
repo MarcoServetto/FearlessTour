@@ -98,7 +98,7 @@ We then proceed with the methods we have seen before, implemented exactly as bef
 - `==>`, logical implication; defined with `.not` and `||`.
 
 Overall, as you can see, we are choosing to support many different ways to do the same conceptual thing: see methods `.or` and `|`, `.if`, `?` and `.match`.
-We do this to support different programming styles instead to impose our preferences.
+We do this to support different programming styles instead of imposing our preferences.
 
 Next we are going to see some new methods. They all either come from `DataType` or use features coming from `DataType`
 ````
@@ -211,8 +211,8 @@ Opt[E:*]: _Opt[E]{
 
 Methods `.isEmpty` and `.isSome` simply return a boolean stating if the optional was empty or not.
 
-Method `!` is a convenience method that returns the optional content or produces and error.
-Calling this method is equivalent to claim
+Method `!` is a convenience method that returns the optional content or produces an error.
+Calling this method is equivalent to claiming
 
 > I, the programmer, know that in this case the optional will definitively have a value inside.
 > If not, this is an observed bug.
@@ -257,7 +257,7 @@ We have a `.str` method, allowing to easily turn optionals into a string.
 The code above shows `.str` taking a parameter `by`.
 Then we match on the `this` optional; on `.empty` we return a constant string, but on `.some x` we need to turn `x` into a string and then join some other strings before and after to forge the expected output.
 Crucially, `x` is of type `E`; thus we do not know anything about `x` and we can not call any method on it to turn it into a string.
-This is where `by` comes into place. `by` takes the `x` and turn it, not into a `Str` but in a `ToStr`.
+This is where `by` comes into play. `by` takes the `x` and turns it, not into a `Str` but into a `ToStr`.
 
 String concatenation operations like `+` take a `ToStr` and call `.str` internally.
 `DataType` implements `ToStr`, so we can `.str` numbers, booleans, etc.

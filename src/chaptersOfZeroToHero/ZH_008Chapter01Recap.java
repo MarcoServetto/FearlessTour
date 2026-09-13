@@ -29,7 +29,7 @@ This is also used for code reuse.
 
 - Type name:
   - Relevance: giving type names to concepts allows us to talk about concepts and to classify them into cases
-  - Syntax: Uppercase starting identifier, including letters, numbers underscores but not spaces
+  - Syntax: Uppercase starting identifier, including letters, numbers, underscores but not spaces
   - Examples: `North`, `Direction`
   
 - Type:
@@ -39,7 +39,7 @@ This is also used for code reuse.
   
 - Method name:
   - Relevance: giving names to methods (aka operations) allows to mnemonically connect behaviour with names.
-  - Syntax: dot `.` followed by lowercase identifier, including letters, numbers underscore but no spaces; or operator symbols.
+  - Syntax: dot `.` followed by lowercase identifier, including letters, numbers, underscore but no spaces; or operator symbols.
   - Examples: `.foo`, `._bar`, `._12`, `.baz`, `+`, `++`, `+>`, `<=`, `*|/-`
   
 - Parameter name:

@@ -271,7 +271,7 @@ of eager application.
 
 Note how this applies also for named methods.
 For example we used parenthesis in `this.pred + (other.succ)`.
-This is needed. without those parenthesis, the code would be interpreted as
+This is needed. Without those parenthesis, the code would be interpreted as
  `(this.pred + other).succ`
 
 
@@ -375,7 +375,7 @@ Nat:{
   +(other: Nat): Nat->....;/*more methods as in Number*|/
   }
 0: Nat{
-   .getPred-> 18446744073709551615; .getSucc-> 1,
+   .getPred-> 18446744073709551615; .getSucc-> 1;
    +(other)-> other;/*more methods as in Number*|/
    }
 1: Nat{.getPred->  0; .getSucc->  2; }
@@ -436,7 +436,7 @@ That is, `Int` follows the schema below:
 ```
 Int:{
   .getPred:Int; .getSucc:Int;
-  +(other: Int): Int->...,/*more methods as in Number*|/
+  +(other: Int): Int->....;/*more methods as in Number*|/
   }
 +0: Int{
    .getPred-> -1; .getSucc-> +1;

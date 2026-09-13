@@ -205,7 +205,7 @@ Thanks to our syntactic sugar and inference, the body  of method `Rotation+` is 
 The expression `{ d-> this#(r#(d)) }` is equivalent to 
 `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }`.
 Before we discussed how `North` is a literal.
-`North` is just sugar for `SomeName147:North{}`. Exactly in the same way and via the same process `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }` can be shortened by the sugar to `{ d-> this#(r#(d) }`.
+`North` is just sugar for `SomeName147:North{}`. Exactly in the same way and via the same process `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }` can be shortened by the sugar to `{ d-> this#(r#(d)) }`.
 
 At first look, you may think that the body `this#(r#(d))`
 would go in an infinite reduction since we call method `Rotation#`  on `this`
