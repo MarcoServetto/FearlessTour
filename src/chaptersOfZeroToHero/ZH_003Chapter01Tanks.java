@@ -185,9 +185,9 @@ This new `Tank`'s `.aiming` method will return the value
 that was passed in as the `aiming` parameter.
 
 **Capturing values:** The Tank object returned by `.of` **captures** (or remembers) the specific `heading` and `aiming` values
-*that were provided when `.of` was called.
-*If we call `Tanks.of(North, East)`, the object created will be a `Tank` heading `North` and aiming
-*`East`. If we call `Tanks.of(South, West)`, it will be a `Tank` heading `South` and aiming `West`.
+that were provided when `.of` was called.
+If we call `Tanks.of(North, East)`, the object created will be a `Tank` heading `North` and aiming
+`East`. If we call `Tanks.of(South, West)`, it will be a `Tank` heading `South` and aiming `West`.
 This allows us to create `Tank` objects with custom, specific states based on the inputs we give
 to the `.of` method. We have moved from having only a few fixed `Direction` objects to being able to create many
 different `Tank` objects, each remembering its own specific heading and aiming.

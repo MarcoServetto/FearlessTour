@@ -639,8 +639,8 @@ Sets also support `.flow`, working exactly as for lists. Again, the order of the
 See below some examples of using sets.
 ```
 Sets#({::},1,2,3,4,5)//set of 5 numbers
-Sets#(OrderBy[Str]{s1,s2,m->...},'a','aa','aaaaa')//Does not compile.
-Sets#(StrSizeOrder,'a','aa','aaaaa')//good
+Sets#(OrderBy[Str]{s1,s2,m->...},`a`,`aa`,`aaaaa`)//Does not compile.
+Sets#(StrSizeOrder,`a`,`aa`,`aaaaa`)//good
 StrSizeOrder:OrderHashBy[Str]{
   t0,t1,m-> t0.imm.size<=>(t1.imm.size,m);
   .hash s->s.imm.size.hash;

@@ -194,7 +194,7 @@ they will have some implementation for method `Rotation#`.
 This implementation may simply come from `Turn0`, `Turn90`, `Turn180` or `Turn270`.
 
 But, there is another possibility: the `Rotation` object returned by `Rotation+` has yet another version of `Rotation#`.
-This last implementation is flexible: its behaviour depends from the captured rotations!
+This last implementation is flexible: its behaviour depends on the captured rotations!
 
 The method `Rotation+` is considered very elegant code.
 Inside it, `this` refers to the first `Rotation` (`Turn90` in `Turn90 +(Turn180)`).
