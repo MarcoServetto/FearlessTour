@@ -171,7 +171,7 @@ Tank: { .heading: Direction -> heading; .aiming: Direction -> aiming; }
 **This is the method body:** the code that executes when `Tanks.of` is called. It defines what the method does.
 What does `Tank: { ... }` mean here, inside a method body? It looks like our earlier `Tank` type definition,
 but it is now also an object literal.
-In addition of defining the `Tank` type, it also serves as a template for `Tank` objects.
+In addition to defining the `Tank` type, it also serves as a template for `Tank` objects.
 The execution of `Tanks.of` will evaluate this object literal and thus return
 a `Tank` object customized with `heading` and `aiming`.
 
@@ -185,9 +185,9 @@ This new `Tank`'s `.aiming` method will return the value
 that was passed in as the `aiming` parameter.
 
 **Capturing values:** The Tank object returned by `.of` **captures** (or remembers) the specific `heading` and `aiming` values
-*that were provided when `.of` was called.
-*If we call `Tanks.of(North, East)`, the object created will be a `Tank` heading `North` and aiming
-*`East`. If we call `Tanks.of(South, West)`, it will be a `Tank` heading `South` and aiming `West`.
+that were provided when `.of` was called.
+If we call `Tanks.of(North, East)`, the object created will be a `Tank` heading `North` and aiming
+`East`. If we call `Tanks.of(South, West)`, it will be a `Tank` heading `South` and aiming `West`.
 This allows us to create `Tank` objects with custom, specific states based on the inputs we give
 to the `.of` method. We have moved from having only a few fixed `Direction` objects to being able to create many
 different `Tank` objects, each remembering its own specific heading and aiming.
@@ -213,7 +213,7 @@ empty brackets.
 This newly shown method can be called with syntax:
 `Tanks.of(North, East)`
 Here `Tanks` is the first implicit parameter and it is called **the receiver**.
-The other are provided after the method name in parenthesis.
+The others are provided after the method name in parenthesis.
 
 The syntax `.of(heading: Direction, aiming: Direction): Tank`
 defines a method called `.of` with parameters `heading` and `aiming`.

@@ -194,7 +194,7 @@ they will have some implementation for method `Rotation#`.
 This implementation may simply come from `Turn0`, `Turn90`, `Turn180` or `Turn270`.
 
 But, there is another possibility: the `Rotation` object returned by `Rotation+` has yet another version of `Rotation#`.
-This last implementation is flexible: its behaviour depends from the captured rotations!
+This last implementation is flexible: its behaviour depends on the captured rotations!
 
 The method `Rotation+` is considered very elegant code.
 Inside it, `this` refers to the first `Rotation` (`Turn90` in `Turn90 +(Turn180)`).
@@ -216,7 +216,7 @@ was called, thus the behaviour of method `this#` was fully determined before `Ro
 and the return value of `Rotation+` created.
 We are sure that the method `Rotation#` of `this` is implemented because all literals have no abstract methods, and parameters (like `this`) are replaced with literals when methods are called.
 
-A common source of confusion when looking to code like 
+A common source of confusion when looking at code like
 -------------------------*/@Test void rotationPlus2() { run("""
 //OMIT_START
 Direction:{ /*..as before..*/ .turn: Direction}

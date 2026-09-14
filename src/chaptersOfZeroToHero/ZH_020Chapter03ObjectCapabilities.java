@@ -13,7 +13,7 @@ class ZH_020Chapter03ObjectCapabilities {
 Finally, we have discussed all of the knowledge needed to make our first Fearless program.
 
 -------------------------*/@Test void finallyMain() { run("""
-//in file _test/_rank/app.fear
+//in file _test/_rank_app.fear
 use base.Main as Main;
 use base.Output as Output;
 
@@ -50,7 +50,7 @@ That is it, you are sorted to use Fearless on your machine.
 Double click on `start.fearless` and the program will start.
 (The first run may take a while since the project is warming up).
 
-Then, open `_test/_rank_app.fear` with any kind of text editor (not a word processor; use something like notepad, gedit, kate, or notepad++)
+Then, open `_demo/_rank_app.fear` with any kind of text editor (not a word processor; use something like notepad, gedit, kate, or notepad++)
 You can now see and edit the fearless code.
 Try to write a different message instead of `Hello World!` and re run the project, by double clicking again on `start.fearless`.
 

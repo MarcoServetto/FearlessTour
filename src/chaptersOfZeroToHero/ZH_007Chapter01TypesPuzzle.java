@@ -110,7 +110,7 @@ Ys:{#(val: Int): Y -> Y:{.val: Int -> val} }
 Point: { .x: X; .y: Y }
 Points: {#(x: X, y: Y): Point -> { .x -> x; .y -> y } }
 """); }/*--------------------------------------------
-Now to create a point the use has to either do
+Now to create a point the user has to either do
 `Points#(Xs#+2,Ys#+5)` or otherwise use values of types `X` and `Y`.
 We can imagine long chains of method calls passing arguments with various names, sometimes `x`, `y` sometimes `row`, `col` and sometimes just `a`, `b`, `c`.
 It could be hard to track the role of those numbers without relying on the type system.
@@ -199,7 +199,7 @@ N: G {I}
 """); }/*--------------------------------------------
 What does the code above mean? For us humans, it now looks incomprehensible, but for a machine it looks exactly the same as the code before.
 
-That is, there is nothing in the code that makes `G` more "norty" than L, or `.b` more "vertical" than `.c`.
+That is, there is nothing in the code that makes `I` more "norty" than L, or `.b` more "vertical" than `.c`.
 
 We can use more precise terminology:
 - Intrinsic Meaning/Intrinsic Semantics: the meaning derived purely from the structure and connections within the code itself, independent of human interpretation.

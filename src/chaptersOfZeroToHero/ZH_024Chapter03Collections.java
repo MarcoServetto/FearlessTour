@@ -10,7 +10,7 @@ class ZH_024Chapter03Collections {
 
 ## Flows and related data types
 
-As you can see, In Chapter 2 we showed how to build our own `Stack[E]` by hand and how to make the tank game using our own stack and `.map` methods. Here in Chapter 3 we have shown `List[E]` and how to make the tank game using `Flow[E]`.
+As you can see, in Chapter 2 we showed how to build our own `Stack[E]` by hand and how to make the tank game using our own stack and `.map` methods. Here in Chapter 3 we have shown `List[E]` and how to make the tank game using `Flow[E]`.
 We will conclude Chapter 3 showing many useful examples of flows and related data types, and many nice ways they can be used.
 
 ### Method `.map`
@@ -104,9 +104,9 @@ Person:{ .name:Str; .cats: List[Cat] }
 Cat:{ .name: Str }
 ...
 Nicer :{ #(owner: Person, ps: List[Person]): Person->ps.flow
-  .fold({owner}, {acc, p -> 
-    p.cats.size >= (acc.cats.size) .if {.then->p; .else->acc;  } 
-  }}
+  .fold({owner}, {acc, p ->
+    p.cats.size >= (acc.cats.size) .if {.then->p; .else->acc;  }
+  })}
 ```
 The `.fold` works pretty much in the same way of the `.fold` method we have seen on the stack.
 The method takes two parameters: an initial value and a lambda accumulating elements on that value.
@@ -167,7 +167,7 @@ This zero-based indexing system has beneficial mathematical properties. For exam
  0,1 | 1,1 | 2,1 | 3,1 | 4,1  -->   5 |  6 |  7 |  8 |  9
  0,2 | 1,2 | 2,2 | 3,2 | 4,2  -->  10 | 11 | 12 | 13 | 14 
 ```
-This grid shows how a two-dimensional coordinate system `x, y` can be flattened into a single list index. For example, `3, 1` maps to index `8`, since it’s the 4th element in the 2nd row of a 5-column grid.
+This grid shows how a two-dimensional coordinate system `x, y` can be flattened into a single list index. For example, `3, 1` maps to index `8`, since it's the 4th element in the 2nd row of a 5-column grid.
 
 That is, we can encode this grid in a single list.
 The element in position `x, y` can be accessed using the formula
@@ -483,7 +483,7 @@ Here some more boring examples:
 ```
 Persons:{#(name:Str, age:Nat):Person -> Person:{read .name: Str -> name; read .age: Nat -> age }}
 Older:OrderBy[Person]{ p1,p2,m -> p1.age <=> (p2.age, m) }
-OlderLonger:OrderBy[Person]{p1,p2,m-> p1.age <=> (p2.age, m&&{p1.name.size <=> (p2.name.size,m)} }
+OlderLonger:OrderBy[Person]{p1,p2,m-> p1.age <=> (p2.age, m&&{p1.name.size <=> (p2.name.size,m)}) }
 ```
 
 ### Comparators and Flows: `.max`, `.min`, `.sort` and `.distinct`
@@ -536,7 +536,7 @@ Hash maps (or hash tables) are one of the most popular data structures in progra
 They are a data structure that stores key-element pairs, allowing for fast retrieval of elements based on keys. It uses a hash function to compute an index (or "hash") from each key, which determines where the element is stored in a large private list. This allows for nearly constant-time complexity for lookups.
 Fearless `Map[K,E]` uses hashing too. We have already seen that stacks and lists contain elements. Maps also contain elements, but connected to keys. Maps are a way to link keys to elements, similar to how a dictionary associates words with definitions. For example, a map could link a person's name (the key) to their phone number (the element).
 
-It’s no coincidence that we have both a `Map[K,E]` type and a `Flow[E].map` method.
+It's no coincidence that we have both a `Map[K,E]` type and a `Flow[E].map` method.
 They both represent the idea of connecting one kind of value with another kind.
 The `.map` method transforms a value representing the input of one stage of a computation into a value representing the output of such computation.
 In a similar way, the `Map[K,E]` type holds a mapping between keys and elements, connecting distinct pieces of data.
@@ -639,8 +639,8 @@ Sets also support `.flow`, working exactly as for lists. Again, the order of the
 See below some examples of using sets.
 ```
 Sets#({::},1,2,3,4,5)//set of 5 numbers
-Sets#(OrderBy[Str]{s1,s2,m->...},'a','aa','aaaaa')//Does not compile.
-Sets#(StrSizeOrder,'a','aa','aaaaa')//good
+Sets#(OrderBy[Str]{s1,s2,m->...},`a`,`aa`,`aaaaa`)//Does not compile.
+Sets#(StrSizeOrder,`a`,`aa`,`aaaaa`)//good
 StrSizeOrder:OrderHashBy[Str]{
   t0,t1,m-> t0.imm.size<=>(t1.imm.size,m);
   .hash s->s.imm.size.hash;

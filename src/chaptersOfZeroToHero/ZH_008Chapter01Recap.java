@@ -58,7 +58,7 @@ This is also used for code reuse.
   - Examples:<BR/>
   `mut .foo(a: A): B;` (abstract method),<BR/>
   `mut .foo(a: A): B -> a.toB;` (concrete method full form),<BR/>
-  `mut .foo(a: A): B -> a.toB;` (concrete method inferred types),<BR/>
+  `mut .foo(a)-> a.toB;` (concrete method inferred types),<BR/>
   `a->a.foo` or `a.foo` inside `{a->a.foo}` and `{a.foo}` 
   (concrete method inferred name and types),
 
