@@ -174,7 +174,7 @@ We can see `.andThen` as a version of `.map` allowing more control over how the 
 The `.map` method takes a function that transforms a value of type `R` into a new value of type `RR`. This transformation is straightforward and direct. If `Action[R]` contains a value, that value is transformed using the provided function to produce an `Action[RR]`.
 If the original `Action[R]` is successful (i.e., produces a value), `.map` applies the function to this value and wraps the result in a new `Action[RR]`. If the original `Action[R]` is a failure (i.e., produces an `Info` object), `.map` does nothing to the failure information—it simply carries it forward unchanged.
 
-`.andThen` extends the functionality of `.map` by allowing the transformation function itself to produce the new `Action[RR]`. This is useful when the transformation’s outcome isn’t just a value, but a new computation or action that might itself succeed or fail.
+`.andThen` extends the functionality of `.map` by allowing the transformation function itself to produce the new `Action[RR]`. This is useful when the transformation's outcome isn't just a value, but a new computation or action that might itself succeed or fail.
 The function used in `.andThen` takes a value of type `R` and returns a new `Action[RR]`.
 Method `.andThen` is designed to handle nested actions. If the original `Action[R]` is successful, `.andThen` uses the value to generate a new `Action[RR]` using the provided function. This new Action is then executed as part of the overall computation. If the original `Action[R]` is a failure, both `.map` and `.andThen` simply propagate the failure information.
 Method `.andThen` is particularly useful in scenarios where subsequent actions depend on the results of previous ones.
@@ -263,7 +263,7 @@ stack trace:
 ...
 ````
 The first chunk prints the info.
-it could be just `.msg` or could be richer if the info contained more data.
+It could be just `.msg` or could be richer if the info contained more data.
 But we also get this **stack trace** details.
 What is that about?
 It is about the set of active calls when the error leaked.

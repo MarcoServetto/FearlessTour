@@ -207,7 +207,7 @@ This nesting allows us to create more complex decision trees.
    ````
 
 5. ````
-   `hi, I'm Bot; how can I help you?`
+   `Hi, I'm Bot; how can I help you?`
    ````
 ---
 

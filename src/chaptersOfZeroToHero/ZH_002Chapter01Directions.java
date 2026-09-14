@@ -15,7 +15,7 @@ In Fearless we have three main concepts:
 - Methods
 - Expressions
 
-To demonstrate these concepts, let’s consider an example expressing
+To demonstrate these concepts, let's consider an example expressing
 the four cardinal directions:
 
 -------------------------*/@Test void compile4() { run("""

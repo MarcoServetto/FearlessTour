@@ -216,7 +216,7 @@ was called, thus the behaviour of method `this#` was fully determined before `Ro
 and the return value of `Rotation+` created.
 We are sure that the method `Rotation#` of `this` is implemented because all literals have no abstract methods, and parameters (like `this`) are replaced with literals when methods are called.
 
-A common source of confusion when looking to code like 
+A common source of confusion when looking at code like
 -------------------------*/@Test void rotationPlus2() { run("""
 //OMIT_START
 Direction:{ /*..as before..*/ .turn: Direction}

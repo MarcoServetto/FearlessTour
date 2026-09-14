@@ -240,9 +240,9 @@ Test:Main {sys -> sys.out.println(  Tanks#(North, West, Points#(1, 2))  )}
 This code will print
 
 ```
- / - \ 
- - A |
- \ _ /   
+ / - \
+ | A -
+ \ _ /
 ```
 
 We can now rewrite state change using features from the standard library instead of our poor man `Stack[E]`.

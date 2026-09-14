@@ -171,7 +171,7 @@ Tank: { .heading: Direction -> heading; .aiming: Direction -> aiming; }
 **This is the method body:** the code that executes when `Tanks.of` is called. It defines what the method does.
 What does `Tank: { ... }` mean here, inside a method body? It looks like our earlier `Tank` type definition,
 but it is now also an object literal.
-In addition of defining the `Tank` type, it also serves as a template for `Tank` objects.
+In addition to defining the `Tank` type, it also serves as a template for `Tank` objects.
 The execution of `Tanks.of` will evaluate this object literal and thus return
 a `Tank` object customized with `heading` and `aiming`.
 
@@ -213,7 +213,7 @@ empty brackets.
 This newly shown method can be called with syntax:
 `Tanks.of(North, East)`
 Here `Tanks` is the first implicit parameter and it is called **the receiver**.
-The other are provided after the method name in parenthesis.
+The others are provided after the method name in parenthesis.
 
 The syntax `.of(heading: Direction, aiming: Direction): Tank`
 defines a method called `.of` with parameters `heading` and `aiming`.
