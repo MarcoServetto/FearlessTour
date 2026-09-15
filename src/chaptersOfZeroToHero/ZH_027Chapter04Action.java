@@ -215,7 +215,7 @@ We could use errors to enforce that whenever a `Point` is observed, the `.x` and
 ```
 Points: F[Nat,Nat,Point], FromInfo[Point] {
 
-  .fromInfo(i) -> Points#(i.map.get(`x`).msg.nat, i.map.get(`y`).msg.nat);
+  .fromInfo(i) -> Points#(i.getMap.get(`x`).getMsg.getNat, i.getMap.get(`y`).getMsg.getNat);
 
   # x, y ->Block#
     .do { x.checkInRange(0,10) }

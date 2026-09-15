@@ -18,7 +18,7 @@ To do this, we will use mutation:
 - Finally, we will concatenate all the results into a big string.
 
 Since each tank is represented as 3 lines, we will have a grid 30 * 10.
-Initially, every cell will contain `      `: six spaces, representing the absence of a tank. This is because each tank line is 6 characters.
+Initially, every cell will contain `       `: seven spaces, representing the absence of a tank. This is because each tank line is 7 characters.
 -------------------------*/@Test void showAllTanks1(){ run("""
 //OMIT_START
 use base.Main as Main;
@@ -149,7 +149,7 @@ TanksToS: F[List[Tank],Str]{ ts -> Block#
     .done
     }}
   .return { res.flow.map{::.flow.map{::.get}.join(``)}.join(``|) };
-  read .newLine: mut List[mut Var[Str]] -> 0 =~~ 10 .flow.map{ _ -> Vars#(`      `)}.list;
+  read .newLine: mut List[mut Var[Str]] -> 0 =~~ 10 .flow.map{ _ -> Vars#(`       `)}.list;
   }
 PrintGame: {
   mut .out: mut Output;
@@ -249,7 +249,7 @@ We now focus on those two lines:
 ```
   .let res = {0 =~~ 30 .flow.map{_->this.newLine}.list }
   ...
-  read .newLine: mut List[mut Var[Str]] -> 0 =~~ 10 .flow.map{ _ -> Vars#(`      `)}.list;
+  read .newLine: mut List[mut Var[Str]] -> 0 =~~ 10 .flow.map{ _ -> Vars#(`       `)}.list;
 ```
 
 - Here we use `=~~` to create a range containing the numbers 0..29 (inclusive of `0`, exclusive of `30`), then `.flow` to turn it into a flow.
@@ -257,7 +257,7 @@ We now focus on those two lines:
   Note how we use the `_` to show that we do not need the current element of the flow (a number in 0..29).
 - Finally, we use `.list` to turn the flow into a list.
 - `.newLine` internally does a very similar work:
-  We range from 0..9 and for each of those we create a `Var` initialised with six spaces.
+  We range from 0..9 and for each of those we create a `Var` initialised with seven spaces.
 That is, the type of `res` is `mut List[mut List[mut Var[Str]]]`.
 This is a large and intricate type, representing a list of list of variable strings.
 The next section will discuss `List`s and `Flow`s in the detail.

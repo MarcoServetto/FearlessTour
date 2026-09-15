@@ -103,7 +103,7 @@ ReadGame: {..
     .accessR(fileName)                      //mut ReadPath
     .readStr                                //mut Action[Str]
     .andThen{s -> Try#{Infos.fromStr(s)}}   //mut Action[Info]
-    .andThen{i -> Try#{i.list.flow.map{i->Tanks.fromInfo(i)}.list}}
+    .andThen{i -> Try#{i.getList.flow.map{i->Tanks.fromInfo(i)}.list}}
   }
 ```
 > Note: could we have `Flow.tryMap`, and make it work also for `Action[mut T]`?  
@@ -137,7 +137,7 @@ We can also add information to the error messages using code as below
 ```
     .andThen{s -> Try#{Infos.fromStr(s)}
       .context{`While deserializing Info from string`}}
-    .andThen{i -> Try#{i.list.flow.map{i->Tanks.fromInfo(i)}.list}
+    .andThen{i -> Try#{i.getList.flow.map{i->Tanks.fromInfo(i)}.list}
       .context{`While deserializing tanks from Info`}}
 ```
 Note how the indentation helps seeing the context text becoming part of the action.

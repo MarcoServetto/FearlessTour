@@ -303,7 +303,7 @@ Here below you can see the other `Opt[E]` methods. Note how `.info`, `.imm` and 
 Finally, here we can see in the type `_Opt[E:*]` all the gory type signatures. You might find them quite surprising.
 
 ````
-_Opt[E:*]:DataType[Opt[E],Opt[imm E],E,imm E],_AssertEmpty{
+_Opt[E:*]:BaseContainer[E],DataType[Opt[E],Opt[imm E],E,imm E]{
   mut  .match[R:**](mut OptMatch[E, R]): R;
   read .match[R:**](mut OptMatch[read/imm E, R]): R;
   imm  .match[R:**](mut OptMatch[imm E, R]): R;
