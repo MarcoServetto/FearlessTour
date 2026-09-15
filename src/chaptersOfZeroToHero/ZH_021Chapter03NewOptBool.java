@@ -58,7 +58,7 @@ Boolean, numbers, strings and many other widely used types from the standard lib
 
 ### Bool, as actually declared
 
-Here you can see the full code of Bool, as it is in the actual Fearless standard library.
+Here you can see the core code of Bool, as it is in the actual Fearless standard library.
 First, two matcher types:
 ````
 ThenElse[R:**]: { mut .then: R; mut .else: R; }
@@ -159,9 +159,9 @@ False:Bool{
 Finally, the declaration for `True` and `False` is exactly what we have seen before.
 Note how we can implement the `read .imm: imm Bool` method by just returning `True` or `False`. An object literal summoned by name can be of any RC, of course including `imm`.
 
-### Full code for `Opt[T]`
+### Core code for `Opt[T]`
 
-Below we show the full standard library code for optionals.
+Below we show the core standard library code for optionals.
 
 `Opts` is the factory for `Opt[T]`. This is exactly what we have seen before. Note how `Opts#` returns a `mut Opt[T]`.
 This is what gives the most flexibility to the user.
@@ -196,14 +196,13 @@ Opt[E:*]: _Opt[E]{
   .isSome     -> this.match{.some _ -> True; .empty -> False};  
   !           -> this.match{.some x -> x; .empty -> Error.msg `Opt was empty`};  
 
-  .or default -> this.match{.some x -> x; .empty -> default};
-  
-  |   default -> this.or(default);
-  ||  default -> this.match{.some x -> x; .empty -> default#};
-  
+  .orValue default -> this.match{.some x -> x; .empty -> default};
+
+  .orLazy  default -> this.match{.some x -> x; .empty -> default#};
+
   .flow       -> this.match{.empty -> Flows#; .some x -> Flows#(x)};
 
-  .as[R] f    -> this.match{.some x->Opts#(f#x); .empty->{}};
+  .mapSome[R:*] f -> this.match{.some x->Opts#(f#x); .empty->{}};
   
   .ifSome  f  -> this.match{.some x -> f#x; .empty -> {}};
   .ifEmpty f  -> this.match{.some _ -> {}; .empty -> f#};
@@ -229,18 +228,14 @@ However, this behaviour can be overridden using
 
 
 
-The two methods `Opt[E].or` and `Opt[E]||` are similar to `Bool.or` and `Bool||`:
+The two methods `Opt[E].orValue` and `Opt[E].orLazy` both return the value stored in the optional, or a default when the optional is empty:
 
-- `Opt[E].or` returns the value stored in the optional,
-or the parameter value as a default result if the optional is empty.
-- `Opt[E]||` returns the value stored in the optional,
-or it executes the lazy parameter value to get a default result if the optional is empty.
-
-Exactly as for `Bool`, method `|` is just an alias for `.or`.
+- `Opt[E].orValue` takes the default value directly.
+- `Opt[E].orLazy` takes a lazy default: a `MF[E]` only called if the optional is empty.
 
 Method `.flow` returns a `Flow[E]`. Flows are a very important data type in the fearless standard libraries and we will discuss them later.
 
-The method `.as` is used to change the type of the optional, taking a function to map the content to a new type.
+The method `.mapSome` is used to change the type of the optional, taking a function to map the content to a new type.
 
 Finally, methods  `.ifSome` and `.ifEmpty` execute some `Void` returning computation in case the optional has a value or not.
 
@@ -308,20 +303,17 @@ Here below you can see the other `Opt[E]` methods. Note how `.info`, `.imm` and 
 Finally, here we can see in the type `_Opt[E:*]` all the gory type signatures. You might find them quite surprising.
 
 ````
-_Opt[E:*]:DataType[Opt[E],Opt[imm E],E,imm E],_AssertEmpty{
+_Opt[E:*]:BaseContainer[E],DataType[Opt[E],Opt[imm E],E,imm E]{
   mut  .match[R:**](mut OptMatch[E, R]): R;
   read .match[R:**](mut OptMatch[read/imm E, R]): R;
   imm  .match[R:**](mut OptMatch[imm E, R]): R;
 
-  mut  .or(E): E;
-  read .or(read/imm E): read/imm E;
+  mut  .orValue(E): E;
+  read .orValue(read/imm E): read/imm E;
 
-  mut  |(E): E;
-  read |(read/imm E): read/imm E;
-
-  mut  ||(mut MF[E]): E;
-  read ||(mut MF[read/imm E]): read/imm E;
-  imm  ||(mut MF[imm E]): imm E;
+  mut  .orLazy(mut MF[E]): E;
+  read .orLazy(mut MF[read/imm E]): read/imm E;
+  imm  .orLazy(mut MF[imm E]): imm E;
 
   mut  !: E;
   read !: read/imm E;
@@ -338,7 +330,8 @@ _Opt[E:*]:DataType[Opt[E],Opt[imm E],E,imm E],_AssertEmpty{
 
   read .isEmpty: Bool;
   read .isSome: Bool;
-  read .as[R:imm](mut MF[read/imm E, R]): Opt[R];  
+  mut  .mapSome[R:*](mut MF[E, R]): mut Opt[R];
+  read .mapSome[R:*](mut MF[read/imm E, R]): mut Opt[R];
 }
 ````
 
@@ -379,7 +372,6 @@ use base.Infos as Infos;
 use base.Error as Error;
 use base.Flow as Flow;
 use base.Flows as Flows;
-//use base._AssertEmpty as _AssertEmpty;
 
 F[R:**]: {read #: R}
 F[A:**,R:**]: {read #(a: A): R}
@@ -449,14 +441,13 @@ Opt[E:*]: _Opt[E]{
   .isSome     -> this.match{.some _ -> True; .empty -> False};  
   !           -> this.match{.some x -> x; .empty -> Error.msg `Opt was empty`};  
 
-  .or default -> this.match{.some x -> x; .empty -> default};
-  
-  |   default -> this.or(default);
-  ||  default -> this.match{.some x -> x; .empty -> default#};
-  
+  .orValue default -> this.match{.some x -> x; .empty -> default};
+
+  .orLazy  default -> this.match{.some x -> x; .empty -> default#};
+
   .flow       -> this.match{.empty -> Flows#; .some x -> Flows#(x)};
 
-  .as[R] f    -> this.match{.some x->Opts#(f#x); .empty->{}};
+  .mapSome[R:*] f -> this.match{.some x->Opts#(f#x); .empty->{}};
   
   .ifSome  f  -> this.match{.some x -> f#x; .empty -> {}};
   .ifEmpty f  -> this.match{.some _ -> {}; .empty -> f#};
@@ -484,15 +475,12 @@ _Opt[E:*]:DataType[Opt[E],Opt[imm E],E,imm E]{
   read .match[R:**](mut OptMatch[read/imm E, R]): R;
   imm  .match[R:**](mut OptMatch[imm E, R]): R;
 
-  mut  .or(E): E;
-  read .or(read/imm E): read/imm E;
+  mut  .orValue(E): E;
+  read .orValue(read/imm E): read/imm E;
 
-  mut  |(E): E;
-  read |(read/imm E): read/imm E;
-
-  mut  ||(mut MF[E]): E;
-  read ||(mut MF[read/imm E]): read/imm E;
-  imm  ||(mut MF[imm E]): imm E;
+  mut  .orLazy(mut MF[E]): E;
+  read .orLazy(mut MF[read/imm E]): read/imm E;
+  imm  .orLazy(mut MF[imm E]): imm E;
 
   mut  !: E;
   read !: read/imm E;
@@ -509,7 +497,8 @@ _Opt[E:*]:DataType[Opt[E],Opt[imm E],E,imm E]{
 
   read .isEmpty: Bool;
   read .isSome: Bool;
-  read .as[R:imm](mut MF[read/imm E, R]): Opt[R];  
+  mut  .mapSome[R:*](mut MF[E, R]): mut Opt[R];
+  read .mapSome[R:*](mut MF[read/imm E, R]): mut Opt[R];
 }
 """); }/*--------------------------------------------
 OMIT_END
@@ -536,8 +525,8 @@ Order[T,E:*]:{ /*explained later; like order but for generics *|/ }
 OrderHash[T]:Order[T],ToStr{ /*explained later; Order plus mappings*|/ }
 OrderHash[T,E:*]:Order[T,E],ToStr[E]{ /*explained later; like OrderHash but for generics *|/ }
 
-DataType[T,T0]:ToInfo,ToImm[T0],WidenTo[T],OrderHash[T],Extensible[T]{ read .close(t: read T): read DataType[T,T0]; }
-DataType[T,T0,E:*,E0]:ToInfo[E],ToImm[E,E0,T0],WidenTo[T],OrderHash[T,E],Extensible[T]{ read .close(t: read T): read DataType[T,T0,E,E0]; /*...*|/ }
+DataType[T,T0]:ToInfo,ToImm[T0],WidenTo[T],OrderHash[T],Pipe[T]{ read .close(t: read T): read DataType[T,T0]; }
+DataType[T,T0,E:*,E0]:ToInfo[E],ToImm[E,E0,T0],WidenTo[T],OrderHash[T,E],Pipe[T]{ read .close(t: read T): read DataType[T,T0,E,E0]; /*...*|/ }
 DataTypeBy[E,K,K0]:ToInfoBy[E],ToImmBy[E,K0],OrderHashBy[E,K]{ #(e: read E): read DataType[K,K0]; /*...*|/ }
 ````
 

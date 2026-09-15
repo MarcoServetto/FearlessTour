@@ -368,8 +368,8 @@ Right now it does not look like a great result, we implement one method `.cmp` t
 But.... there are many more convenience operators we can define on top of `.cmp`.
 `==` equal, `!=` different, `<` less than, `<=` less or equal, `>` greater than, `>=` greater or equal.
 There is more! We can check if our point is in a range between two other points.
-Ranges can be open and closed on both ends, causing four methods: `.inRange(lo,hi):Bool`, `.inRangeOpen(lo,hi)`, `.inRangeLoOpen(lo,hi)`,`.inRangeHiOpen(lo,hi)`.
-As you can see, this is already 10 methods.
+Ranges can be open or closed on either end, but this does not need four separate methods: a single `.inRange(range):Bool` handles all four combinations, since the range argument itself (built with `=~~=`, `=~~`, `~~=` or `~~`) already knows which ends are inclusive.
+As you can see, this is already 7 methods.
 
 Still, the implementation of `.cmp` is much longer than we would like.
 Can we build some abstraction to make it more direct?
@@ -382,7 +382,7 @@ Order[T]:{
   read .cmp[R:**](t0: read T, t1: read T, m: mut OrderMatch[R]): R;
   read .close: read T; /// convert 'this' from type 'Order[T]' to type 'T'
   read ==(other: read T): Bool -> this.cmp(this.close,other,{.lt->False; .eq->True; .gt->False;});
-  //and 9 more methods <,>,<=,>= etc implemented using .cmp
+  //and 6 more methods <,>,<=,>=,.inRange etc implemented using .cmp
   }
 Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
   read .x: Nat -> x; 
@@ -409,7 +409,7 @@ Order[T]:{
   read <=>[R:**](other: read Order[T], m: mut OrderMatch[R]): R ->
     this.cmp(this.close, other.close, m);
   read ==(other: read T): Bool -> this.cmp(this.close,other,{.lt->False; .eq->True; .gt->False;});
-  //and 9 more methods <,>,<=,>= etc implemented using .cmp
+  //and 6 more methods <,>,<=,>=,.inRange etc implemented using .cmp
   }
 Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
   read .x: Nat -> x;
@@ -563,11 +563,11 @@ OrderHash[T]:Order[T],ToStr{
   read .close(t: read T): read OrderHash[T];
   read .assertEq(expected: read T):Void -> ...;
   read .assertEq(expected: read T, msg:F[Str]):Void -> ...;
-  read .assertNe(expected: read T):Void -> ...;
+  read .assertNotEq(expected: read T):Void -> ...;
   ...
 }
 ````
-By adding `ToStr` we are able to automatically derive 20 assert methods helping to check expectations over `T`; the conversion to string is needed for decent error message.
+By adding `ToStr` we are able to automatically derive 12 assert methods helping to check expectations over `T`; the conversion to string is needed for decent error message.
 Moreover this allows maps to be much more consistent with lists when it comes to printing: both need to just take a way to print the element; all the functionalities about map keys are provided once and for all at map initialisation time.
 Note how we also add `.close` in the other direction: before we have seen 
 `.close:T` allowing to turn `Order[T]` into `T`. This one allows to turn a `T` parameter into an `OrderHash[T]`. With this we can convert in both directions.
@@ -575,7 +575,7 @@ Again, needed in the error messages to turn a `T` into an `OrderHash[T]` that po
 
 ````
 //usage
-Persons: { #(age: Num, name: Str): Person -> Person: OrderHash[Person]{'self
+Persons: { #(age: Nat, name: Str): Person -> Person: OrderHash[Person]{'self
   read .age:  Nat   -> age;
   read .name: Str   -> name;
   .cmp p1,p2,m -> p1.age <=> (p2.age, m && { p1.name <=> (p2.name,m) });
@@ -608,8 +608,8 @@ myMap.get(Persons#(34,`Alice`)) // `Wellington 134 Kelburn parade`
 If the key is not present in the map, `.get` will cause an error.
 We can instead use `.opt` to extract an optional `Opt[E]` result. For example
 ```
-myMap.get(Persons#(`Neil Armstrong`,38)) // error
-myMap.opt(Persons#(`Neil Armstrong`,38)).or `Moon` // alternative default value.
+myMap.get(Persons#(38,`Neil Armstrong`)) // error
+myMap.opt(Persons#(38,`Neil Armstrong`)).orValue `Moon` // alternative default value.
 ```
 
 Maps can have `mut`, `imm` or `read` elements; but only immutable keys. This is because the implementation of `Map[K,E]` needs to assume that the result of `.hash` and `==` is consistent over time.
@@ -1086,7 +1086,7 @@ TestOrderByAndFlows:F[Tests,Tests]{::
   }
 
 TestMapsAndSets:F[Tests,Tests]{::
-  // Map basics: size/isEmpty/get/opt.or and insertion order
+  // Map basics: size/isEmpty/get/opt.orValue and insertion order
   .test(
     Maps#({::},
       Persons#(25,`Bob`,List[Cat]), `Toronto 34b Warden St.`,

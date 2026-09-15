@@ -101,13 +101,14 @@ However, actions that do no actions when called are misleading, so the code abov
 Action[R:**]: {
   mut .run[RR:**](mut ActionMatch[R,RR]): RR;
   ..
-  mut .context(msg: read F[Str]): mut Action[R] -> {m -> this.run{
+  mut .context(msg: read LazyInfo): mut Action[R] -> {m -> this.run{
     .ok x   -> m.ok(x);
-    .info i -> m.info(Infos.msg(msg#) + i);
+    .info i -> m.info(msg#.info + i);
     }};
   }
 ```
 Method `.context` is a convenience method to add contextual information to actions.
+Its parameter `msg: read LazyInfo` is a lazy `F[read ToInfo]`: any lazy value that can become an `Info` is accepted, so a lazy `Str`, as used below, works because `Str` implements `ToInfo`.
 Internally, it uses method `Info+`, that we have not seen yet:
 The method `Info+` makes it easy to compose information together.
 Two `Info` messages are concatenated, two `Info` lists are concatenated and two `Info` maps are merged:
@@ -135,7 +136,7 @@ Note that the computation required to format this extra information will only be
 ```
 MF[R:**]: { mut #: R } //mutable function, seen before
 Action[R:**]: {
-  mut .run[RR:**](mut ActionMatch[R,RR]): RR,
+  mut .run[RR:**](mut ActionMatch[R,RR]): RR;
   mut .map[RR:**](f: mut MF[R,RR]): mut Action[RR] -> {m -> this.run{
     .ok x   -> m.ok(f#x);
     .info i -> m.info(i);
@@ -215,17 +216,17 @@ We could use errors to enforce that whenever a `Point` is observed, the `.x` and
 ```
 Points: F[Nat,Nat,Point], FromInfo[Point] {
 
-  .fromInfo(i) -> Points#(i.map.get(`x`).msg.nat, i.map.get(`y`).msg.nat);
+  .fromInfo(i) -> Points#(i.getMap.get(`x`).getMsg.getNat, i.getMap.get(`y`).getMsg.getNat);
 
   # x, y ->Block#
     .do { x.checkInRange(0,10) }
     .do { y.checkInRange(0,10) }
     .return{ Point: DataType[Point,Point]{'self
-      .x: Nat -> x,
-      .y: Nat -> y,
-      +(other: Point): Point -> Points#(other.x + x, other.y + y),
-      .move(d: Direction): Point -> self + ( d.point ),
-      .cmp {.x,.y}1, {.x,.y}2, m -> x1 <=> (x1,m && { y1 <=>(y2,m) };
+      .x: Nat -> x;
+      .y: Nat -> y;
+      +(other: Point): Point -> Points#(other.x + x, other.y + y);
+      .move(d: Direction): Point -> self + ( d.point );
+      .cmp {.x,.y}1, {.x,.y}2, m -> x1 <=> (x2, m && { y1 <=> (y2,m) });
       .hash -> x.hash.hashWith(y.hash);
       .info -> Infos.map(`x`,x,  `y`,y);
       .str -> `[` + x + `, ` + y + `]`;

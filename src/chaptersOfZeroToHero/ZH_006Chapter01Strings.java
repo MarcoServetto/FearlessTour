@@ -43,7 +43,7 @@ So... what if we include all of the following symbols?
 0123456789
 abcdefghijklmnopqrstuvwxyz
 ABCDEFGHIJKLMNOPQRSTUVWXYZ
-+-*/=<>,.;:()[]{}`'"!?@#$%^&_|~\
++-*|/=<>,.;:()[]{}`'"!?@#$%^&_|~\
 space and new line
 ```
 It is now 96 symbols. Those are all the symbols we can easily type on most keyboards.
@@ -101,7 +101,7 @@ can isolate the strange looking ending space as follows:
 `` "Hello" + " " + "world" ``
 
 ### All humans alive as a string
-The number of humans currently alive is 8 billion, or `` " inRW" ``.
+The number of humans currently alive is 8 billion, or `` " inRw" ``.
 A more precise estimate is 8,122,862,820; corresponding to 
 ... hmm... 
 `` "<newLine>Zb2A" ``? maybe?
@@ -117,7 +117,7 @@ We have seen the `+` concatenation operator, and how it can be used to make some
 In Fearless, ``` "" | "Zb2A" ``` is the representation of `` "Zb2A" `` with a newline at the start.
 In the details, ``` "" ``` is the empty string,
 `|` is the concatenation operator with new line,
-and `` "Zb2a" `` is the rest of the string.
+and `` "Zb2A" `` is the rest of the string.
 `|` works exactly like `+`, but also jams a new line in the middle.
 Similarly, `^` is the concatenation operator with double quote.
 `^` works exactly like `+`, but also jams a `` " `` in the middle.

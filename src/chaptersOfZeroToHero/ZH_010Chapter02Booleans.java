@@ -80,7 +80,7 @@ Booleans are present in the Fearless standard library, and the implementation fo
 
 All of those lines reduce in a single step:
 - <code class="ws">True  .not       --&gt; False</code>  because `True.not` returns `False`
-- <code class="ws">False .not       --&gt; True </code> because `True.not` returns `True`
+- <code class="ws">False .not       --&gt; True </code> because `False.not` returns `True`
 - <code class="ws">True  .and False --&gt; False</code>  because `True.and` returns `other`
 - <code class="ws">False .or  True  --&gt; True </code>  because `False.or` returns `other`
 - <code class="ws">True  .or  False --&gt; True </code>  because `True.or` returns `this`
@@ -341,7 +341,7 @@ F[A,B,C,R]: { #(a: A, b: B, c: C): R }
 """); }/*--------------------------------------------
 Those types represent functions with zero, one, two, three arguments.
 Of course we can define more if more arguments are needed.
-As you can see, thanks to the way generic types works, we can call them all `F` because
+As you can see, thanks to the way generic types work, we can call them all `F` because
 the presence of different numbers of generic arguments disambiguate their names.
 
 Fearless allows to simply omit the names of parameters that are not used; and since those are abstract methods those are all unused since there is no body at all.
