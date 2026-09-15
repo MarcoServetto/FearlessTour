@@ -90,13 +90,13 @@ Tank: ToStr {
   }
 HeadingChar: DirectionMatch[Str]{
   .north -> `A`;
-  .east  -> `<`; 
+  .east  -> `<`;
   .south -> `V`;
   .west  -> `>`;
   }
 AimingRepr1: DirectionMatch[Str]{
   .north -> ` / | \\ `;
-  .east  -> ` / - \\ `; 
+  .east  -> ` / - \\ `;
   .south -> ` / - \\ `;
   .west  -> ` / - \\ `;
   }
@@ -109,7 +109,7 @@ AimingRepr2: DirectionMatch[Str]{
   }
 AimingRepr3: DirectionMatch[Str]{
   .north -> ` \\ _ / `;
-  .east  -> ` \\ _ / `; 
+  .east  -> ` \\ _ / `;
   .south -> ` \\ | / `;
   .west  -> ` \\ _ / `;
   }
@@ -122,7 +122,7 @@ NextState:{
     .let[List[Point]] occupied= {
       (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}) .list }
     .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
- 
+
   read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
     .filter{::==(t.position)}
     .size == 1 .if{
@@ -189,15 +189,15 @@ Step 5
 
 
 
-       / - \ 
-       | V | 
-       \ | / 
+       / - \
+       | V |
+       \ | /
                                      / - \
                                      | < |
                                      \ | /
-             / | \ 
-             | > | 
-             \ _ / 
+             / | \
+             | > |
+             \ _ /
 
 
 
@@ -214,21 +214,21 @@ Step 5
 
 Step 6
 ------------------------------------------------------------
-       / - \     
-       | > |     
-       \ | /     
+       / - \
+       | > |
+       \ | /
              / - \
              - V |
              \ _ /
- 
+
 
 
        / - \                   / - \
        | V |                   | < |
        \ | /                   \ | /
-                   / | \  
-                   | > | 
-                   \ _ / 
+                   / | \
+                   | > |
+                   \ _ /
 
 
 

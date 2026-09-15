@@ -115,14 +115,14 @@ Tank: {
 The parametric `Tank.turnTurret` method is great progress! Instead of needing multiple turret-turning methods, we now have one method that takes a `Rotation` object as input. We have separated the "what" (turn the turret) from the "how much" (the specific Rotation object).
 
 
-This code example shows the core ideas of programming: 
+This code example shows the core ideas of programming:
  1. We define names to denote concepts. Those names can be type names, method names and parameter names.
  2. Using those names we model a world where our code will be able to run.
  3. We encode behavior by passing values around from method to method.
  4. Parameters are used to hold those values while we wire them from one place to another.
 
 Under this lens, we can describe programming as **Naming Parametric Abstractions**.
-We have now seen two kinds of abstractions: 
+We have now seen two kinds of abstractions:
 - Methods allow us to abstract away the specific implementation of a method body: we can simply call the method again instead of typing again the full body.
 - Subtyping allows us to abstract types into categories: when mentioning `Direction` as a type we mean any of the values implementing `Direction`.
 We will see other forms of abstraction later on.
@@ -167,7 +167,7 @@ As you can see, we can define `+` as a method. As we have seen with `#`, we can 
 Method `Rotation+` has two parameters: `this` and `r`; the two `Rotation`s we want to compose.
 For example `this` could be `Turn90` and `r` could be `Turn180`.
 
-Using syntax 
+Using syntax
 `(Turn90+(Turn180))#(North)`
 method `Rotation+` will combine those two parameters to produce a new `Rotation` object, equivalent to `Turn270`.
 Then it is going to rotate `North` 270 degrees producing `West`.
@@ -178,7 +178,7 @@ Direction:{ /*..as before..*/ .turn: Direction}
 //OMIT_END
 Rotation: {
   #(d: Direction):Direction;
-  +(r: Rotation): Rotation-> { d -> this#( r#(d) ) } 
+  +(r: Rotation): Rotation-> { d -> this#( r#(d) ) }
 }
 Turn0: Rotation{::}
 Turn90: Rotation{::.turn}
@@ -202,7 +202,7 @@ Inside it, `this` refers to the first `Rotation` (`Turn90` in `Turn90 +(Turn180)
 The object literal `{ d -> this#( r#(d) ) }` creates a new `Rotation` object. When this new object's `#` method is called later, it will use the `this` and `r` that were captured when it was created.
 
 Thanks to our syntactic sugar and inference, the body  of method `Rotation+` is very compact.
-The expression `{ d-> this#(r#(d)) }` is equivalent to 
+The expression `{ d-> this#(r#(d)) }` is equivalent to
 `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }`.
 Before we discussed how `North` is a literal.
 `North` is just sugar for `SomeName147:North{}`. Exactly in the same way and via the same process `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }` can be shortened by the sugar to `{ d-> this#(r#(d)) }`.
@@ -223,7 +223,7 @@ Direction:{ /*..as before..*/ .turn: Direction}
 //OMIT_END
 Rotation: {
   #(d: Direction):Direction;
-  +(r: Rotation): Rotation-> { d -> this#( r#(d) ) } 
+  +(r: Rotation): Rotation-> { d -> this#( r#(d) ) }
 }
 //OMIT_START
 Turn0: Rotation{::}

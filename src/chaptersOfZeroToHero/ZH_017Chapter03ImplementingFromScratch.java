@@ -20,7 +20,7 @@ We will keep showing you the full code of concepts that can be expressed concise
 For those, we will only show you how to use them.
 
 Moreover, certain operations simply can not be done in the language directly.
-All that we discussed lives in the world of the language itself. If we want our code to have any impact at all on the world outside of the program itself, we need something more. 
+All that we discussed lives in the world of the language itself. If we want our code to have any impact at all on the world outside of the program itself, we need something more.
 
 For example, no matter how many generics, types and methods we write from scratch, we will not be able to draw an image on the screen, or to save a file, or to read information from the internet.
 Those are examples of **external side effects**.
@@ -43,7 +43,7 @@ Var[E: imm,mut,read]:{
   read .get: read/imm E;
   }
 Vars: {
-  #[E: imm,mut,read](var: E): mut Var[E] -> { 
+  #[E: imm,mut,read](var: E): mut Var[E] -> {
     .get -> var;
     }
   }
@@ -63,7 +63,7 @@ Then we define two variants of the method `.get`, one for `mut` and one for `rea
 They will both return the current value, but with different types:
 - If we have a `mut` receiver we produce the value with type `E`.
 - If we have a `read` receiver, we produce the value with a  weakened type `read/imm E`.
-  
+
 Finally `Vars` is a factory type making new `Var[E]` objects, originally containing the value provided by the user.
 The syntax `.get -> var;` implements both .get methods with the same exact body.
 In this case, both methods will simply return the value of `var` provided while calling `Vars#`.
@@ -117,7 +117,7 @@ Animals: {
   imm #(start: imm Point): mut Animal -> imm Block#
    .var[imm Point] loc= {start}
    .return{ mut Animal: {
-      read .location: imm Point -> loc.get;  
+      read .location: imm Point -> loc.get;
       mut .run(x: imm Nat): imm Void ->
         loc.set(imm Points#(loc.get.x + x, loc.get.y));
     }}}

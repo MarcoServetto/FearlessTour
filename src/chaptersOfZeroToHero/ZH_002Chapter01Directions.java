@@ -10,7 +10,7 @@ class ZH_002Chapter01Directions {
 # Chapter 1
 
 ### The three Main Fearless Concepts
-In Fearless we have three main concepts: 
+In Fearless we have three main concepts:
 - Types
 - Methods
 - Expressions
@@ -34,7 +34,7 @@ We can create connections between those types by adding **methods**
 to our directions:
 
 -------------------------*/@Test void error1() { run("""
-North: {.turn-> East; } 
+North: {.turn-> East; }
 East : {.turn-> South;}
 South: {.turn-> West; }
 West : {.turn-> North;}
@@ -104,7 +104,7 @@ The example we are discussing is still incomplete, and it
 would cause an error if we try to compile it.
 Note how we are using comments to show the error together with the code.
 -------------------------*/@Test void error2() { run("""
-North: {.turn-> East; } 
+North: {.turn-> East; }
 East : {.turn-> South;}
 South: {.turn-> West; }
 West : {.turn-> North;}
@@ -137,12 +137,12 @@ The method `.turn` does not know what type it returns.
 >errors help us be precise and to avoid more mistakes later.
 
 Types help reasoning and they are used to ensure that
-our program is safe to use. 
+our program is safe to use.
 Many programmers rely on types to understand code.
 
 So, what does the `North.turn` method return? `East`. So we can write:
 -------------------------*/@Test void noError() { run("""
-North: {.turn: East  -> East; } 
+North: {.turn: East  -> East; }
 East : {.turn: South -> South;}
 South: {.turn: West  -> West; }
 West : {.turn: North -> North;}
@@ -171,7 +171,7 @@ Since `North`,`East`,`South` and `West` are all directions,
 we can introduce a `Direction` type to group `North`,`East`,
 `South` and `West` as kinds of `Direction`.
 We say that `North`,`East`,`South` and `West` implement `Direction`.
-We also say that `Direction` is a supertype of 
+We also say that `Direction` is a supertype of
 `North`,`East`,`South` and `West`.
 
 There is now a type `Direction` that has an abstract method `.turn`
@@ -232,7 +232,7 @@ West : Direction { .turn -> North;}
 
 Now the code of `.reverse` appears only one time in our program.
 Note how we are using some new lines and spaces to show visually the
-content of `Direction`. This is called indentation. 
+content of `Direction`. This is called indentation.
 
 Of course, `???` is not valid Fearless code.
 Originally, we wrote the name of the current direction:
@@ -280,14 +280,14 @@ the first step correctly jumps from `North.reverse` into `North.turn.turn`:
   Later, we will see how to declare and use other parameters.
 2. method calls: `North.turn` and `North.reverse`.
   Later we will see more kinds of method calls.
-3. object literals: `North`, `East`, `South` and `West`. 
+3. object literals: `North`, `East`, `South` and `West`.
   The object literals we have seen are simply the names of existing types.
   Later on in this tutorial we will see more kinds of objects,
   capable of summoning into existence novel or unique values;
   in addition to the ones already existing.
 
 Note: `North`, `East`, `South`, and `West` can be used directly as
-objects because they have no abstract methods. 
+objects because they have no abstract methods.
 Since `Direction` has at least one abstract method (`.turn`),
 it  can not be used directly as a valid object literal.
 We will call types with abstract methods **abstract types**.
