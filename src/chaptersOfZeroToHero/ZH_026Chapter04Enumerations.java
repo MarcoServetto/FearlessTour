@@ -16,28 +16,117 @@ Enumerations usually offer many common features, like ordering, `.str`, `.info` 
 The standard library offers a simple way to add those common features to our enumerations: just implement the types `Enum` and `Enums` as shown below:
 
 ```
-//Code we can write to declare our own enumerations
-Directions: Enums[Direction]{ List#(North,East,South,West) }
-Direction: Enum[Direction]{ Directions }
-North: Direction{`North`}
-East:  Direction{`East`}
-South: Direction{`South`}
-West:  Direction{`West`}
+Directions: Enums[Direction]{
+  .list -> Lists#(North,East,South,West);
+  .strBy -> {::};
+  }
+Direction: Enum[Direction]{
+  .enums->Directions;
+  .close->this; .close->::;
+  }
+North: Direction{.imm->North; `North`}
+East:  Direction{.imm->East;  `East` }
+South: Direction{.imm->South; `South`}
+West:  Direction{.imm->West;  `West` }
 ```
+
+With this alone, `Directions.list` is the four directions in declaration order, `North.index` is `0`
+and `West.index` is `3`, `North < East` is `True`, `Directions.map.get(`North`)` is `North`, and
+`Directions.fromInfo(North.info)` round-trips back to `North`:
+
+OMIT_START
+-------------------------*/@Test void withoutMatch () { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Lists as Lists;
+use base.Debug as Debug;
+use base.Enums as Enums;
+use base.Enum as Enum;
+Test: Main{s-> Block#(
+  Block#(
+    Debug#(Directions.list.size),
+    Debug#(North.index),
+    Debug#(West.index),
+    Debug#(North < East),
+    Debug#(Directions.map.get(`North`))
+    ),
+  Debug#(Directions.fromInfo(North.info)),
+  Void
+  )}
+
+Directions: Enums[Direction]{
+  .list -> Lists#(North,East,South,West);
+  .strBy -> {::};
+  }
+Direction: Enum[Direction]{
+  .enums->Directions;
+  .close->this; .close->::;
+  }
+North: Direction{.imm->North; `North`}
+East:  Direction{.imm->East;  `East` }
+South: Direction{.imm->South; `South`}
+West:  Direction{.imm->West;  `West` }
+//PRINT|4
+//PRINT|0
+//PRINT|3
+//PRINT|True
+//PRINT|North
+//PRINT|North
+"""); }/*--------------------------------------------
+OMIT_END
+
 Or, if we want to also support our `.match` method:
 
 ```
-Directions: Enums[Direction]{ List#(North,East,South,West) }
+DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
 Direction: Enum[Direction]{
-  Directions;
-  .match[R:**](m: mut DirectionMatch[R]): R;
+  .enums->Directions;
+  read .match[R:**](m: mut DirectionMatch[R]): R;
+  .close->this; .close->::;
   }
-DirectionMatch[R:**]{ mut .north: R; mut .east: R; mut .south: R; mut .west: R }
-North: Direction{::.north; `North`}
-East:  Direction{::.east;  `East` }
-South: Direction{::.south; `South`}
-West:  Direction{::.west;  `West` }
+North: Direction{::.north; .imm->North; `North`}
+East:  Direction{::.east;  .imm->East;  `East` }
+South: Direction{::.south; .imm->South; `South`}
+West:  Direction{::.west;  .imm->West;  `West` }
 ```
+
+Now `North.match(DirectionMatch[Str]{ .north->`n`; .east->`e`; .south->`s`; .west->`w`; })` is `n`;
+every value still gets `.list`/`.map`/`.index`/`.info`/`.fromInfo` for free from `Enums`/`Enum`, on top
+of its own `.match`:
+
+OMIT_START
+-------------------------*/@Test void withMatch () { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Lists as Lists;
+use base.Str as Str;
+use base.Debug as Debug;
+use base.Enums as Enums;
+use base.Enum as Enum;
+Test: Main{s-> Block#(
+  Debug#(North.match(DirectionMatch[Str]{ .north->`n`; .east->`e`; .south->`s`; .west->`w`; })),
+  Void
+  )}
+
+DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
+Directions: Enums[Direction]{
+  .list -> Lists#(North,East,South,West);
+  .strBy -> {::};
+  }
+Direction: Enum[Direction]{
+  .enums->Directions;
+  read .match[R:**](m: mut DirectionMatch[R]): R;
+  .close->this; .close->::;
+  }
+North: Direction{::.north; .imm->North; `North`}
+East:  Direction{::.east;  .imm->East;  `East` }
+South: Direction{::.south; .imm->South; `South`}
+West:  Direction{::.west;  .imm->West;  `West` }
+//PRINT|n
+"""); }/*--------------------------------------------
+OMIT_END
 
 As you can see, we list our directions and we define the matcher listing the direction in method form.
 Finally, we connect the direction-type with the direction-match-method and their string representation.
@@ -53,28 +142,31 @@ FromInfo[E]: { .fromInfo(i: Info): E }
 
 Enums[E]: FromInfo[E]{
   .list: List[E];
-  .map: Map[Str,E] -> this.list.flow.mapping({::},{ ::; .key  e -> e.str; });
-  .fromInfo i -> this.map.get(i.msg);
+  .strBy: ToStrBy[E];
+  .map: Map[Str,E] -> this.list.flow.mapping({::},{.key e->(this.strBy#e).str; .elem e->e;}).as{::};
+  .indexMap: Map[Str,Nat] -> this.list.flow.fold(
+    {Maps#[Str,Str,Nat]{::}.as{::}},
+    {acc,e->acc.with((this.strBy#e).str,acc.size).as{::}}
+    );
+  .fromInfo i -> this.map.get(i.getMsg);
   }
 Enum[E]: DataType[E,E]{
-  .enums: Enums[E];
+  read .enums: Enums[E];
   .info -> Infos.msg(this.str);
-   //enumerate gives pair index/element
-  .index:Nat->this.enums.list.flow
-    .enumerate.filter{{.e.str}->this.str == str}.get.i
-  //alternative: .flatMapIndex give index,e
-  .index:Nat->this.enums.list.flow
-    .flatMapIndex{i,e->this.str == (e.str)? {Flows#i; .else-> Flows#}.get
-  .cmp {.index}1, {.index}2, m -> index1 <=> (index2,m);
-  .hash-> this.index;
+  read .index: Nat -> this.enums.indexMap.get(this.str);
+  read .close(t: read E): read Enum[E];
+  .cmp t0,t1,m -> this.close(t0).index<=>(this.close(t1).index,m);
+  .hash -> this.index;
   }
 ```
 Thanks to `Enums[Direction]` we get a `.map` method mapping names to directions.
 - Method `.map` returns a `Map[Str,Direction]` linking the string names of directions
- (`North`, `East`, etc.) to their corresponding `Direction` objects. This allows us to look up a Direction by its name. This is computed by using the method `.mapping`; taking a literal with a `.key` method and an `.elem` method, converting the flow elements into the key and element values for the newly created map. We also need to provide the identity function to *confirm* that strings implement `OrderHash`.
+ (`North`, `East`, etc.) to their corresponding `Direction` objects. This allows us to look up a Direction by its name. This is computed by using the method `.mapping`; taking a literal with a `.key` method and an `.elem` method, converting the flow elements into the key and element values for the newly created map.
+`E` is a bare generic parameter, so it carries no methods of its own - not even `.str` - which is why
+`Enums[E]` also needs a `.strBy: ToStrBy[E]` witness: a function turning any value of type `E` into
+something with a `.str`. `Directions.strBy -> {::};` says that witness is just the identity, which is
+valid precisely because every concrete `Direction` value already has its own `.str`.
 That is, the result of `.map` will be equivalent to the result of ``Maps#({::},`North`,North,  `East`,East,  `South`,South,  `West`,West)``.
-
->Note: .enumerate and .flatMapIndex do not exist yet.
 
 Many enumeration types will have similar utility methods.
 Note how methods `.list` and `.map` are fully deterministic. They take no arguments: the receiver contains no information (since it is a singleton) and there are no other parameters. This means that every time that code is executed, it would produce the same result.
