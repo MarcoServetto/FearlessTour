@@ -12,7 +12,7 @@ class ZH_022Chapter03ShowTanks {
 
 Now that we know how to write a full Fearless program, we can write a program reading tanks from a file and running the Tank game on the console.
 ASCII art is a well known way to visualise simple games. We will use this to visualise the state of a Tank.
-Below the representation of a tank heading `East` and aiming `North`, and another one heading `North` and aiming `West` 
+Below the representation of a tank heading `East` and aiming `North`, and another one heading `North` and aiming `West`
 
 ```
 / | \  / - \
@@ -74,7 +74,7 @@ Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{ 'self
 ```
 Note how in this version `Point.x/.y` are `Nat`, thus `.move` has to directly match on the direction instead of summing with another `Point` with positive OR negative `x/y`. By using `Nat` `x/y` will be always positive.
 
-We now define `Direction`. 
+We now define `Direction`.
 Instead of dispersing the implementation of `.point` and `.turn` inside all the directions, we define a `.match` and use it as a way to define generic extensible operations.
 This is the standard way to define those kinds of data types in fearless.
 We call **enumerations** any type whose subtypes are all constants.
@@ -108,10 +108,10 @@ Type `WidenTo[S]` is defined in the standard library and is similar to `Sealed`.
 - `WidenTo[Direction]` means that the type inference will always
 infer `Direction` instead of any type implementing `Direction`.
 Basically, `WidenTo[Direction]` makes so that the inference would never infer `North`.
->`DataType` does use `WidenTo[S]` internally, and this is why 
+>`DataType` does use `WidenTo[S]` internally, and this is why
 > the inference will always infer `Bool` instead of `True`/`False` and `Nat` instead of `42`.
 
-Here, if we were to omit `WidenTo[Direction]`, the code 
+Here, if we were to omit `WidenTo[Direction]`, the code
 ````
   .turn: Direction -> this.match{
     .north -> East;
@@ -130,7 +130,7 @@ DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R
 Direction: {
   .match[R: **](mut DirectionMatch[R]): R;
 ```
-are completely determined given the declaration for the four directions. Experienced Fearless programmers find writing those 3 lines trivial but boring. However, writing those three lines over and over again has a great educational value for new programmers, since they require using the match pattern, reference capabilities, generic types and generic methods. 
+are completely determined given the declaration for the four directions. Experienced Fearless programmers find writing those 3 lines trivial but boring. However, writing those three lines over and over again has a great educational value for new programmers, since they require using the match pattern, reference capabilities, generic types and generic methods.
 
 
 Now we define our tanks:
@@ -173,18 +173,18 @@ Now we need to implement the repr methods.
 The challenge is that we need to synthesise the right character `<`,`>`,`V`,`A`,`-`,`|` for the various cases.
 We can do it using `DirectionMatch`.
 The first and the last line (`AimingRepr1`/`AimingRepr3`) simply depend on the direction we are going.
-The centre line (`AimingRepr2`) is a little harder since it also depends on the heading direction. 
+The centre line (`AimingRepr2`) is a little harder since it also depends on the heading direction.
 ```
 //File _tank_game/tank.fear
 AimingRepr1: DirectionMatch[Str]{
   .north -> ` / | \ `;
-  .east  -> ` / - \ `; 
+  .east  -> ` / - \ `;
   .south -> ` / - \ `;
   .west  -> ` / - \ `;
   }
 AimingRepr3: DirectionMatch[Str]{
   .north -> ` \ _ / `;
-  .east  -> ` \ _ / `; 
+  .east  -> ` \ _ / `;
   .south -> ` \ | / `;
   .west  -> ` \ _ / `;
   }
@@ -197,7 +197,7 @@ AimingRepr2: DirectionMatch[Str]{
   }
 HeadingChar: DirectionMatch[Str]{
   .north -> `A`;
-  .east  -> `<`; 
+  .east  -> `<`;
   .south -> `V`;
   .west  -> `>`;
   }
@@ -219,7 +219,7 @@ Note how `AimingRepr2` requires knowing the  central character, and we can pass 
 We could have alternatively made a factory capturing the missing information in the lambda:
 
 ```
-... 
+...
   .repr2: Str -> this.aiming .match (AimingRepr2#(this.heading .match HeadingChar));
 ...
 AimingRepr2: Function[Str, mut DirectionMatch[Str]]:{ centre->{
@@ -256,7 +256,7 @@ NextState:{
     .let[List[Point]] occupied= {
       (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}) .list }
     .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
- 
+
   read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
     .filter{::==(t.position)}
     .size == 1 .if{
@@ -335,13 +335,13 @@ Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank -> {'se
   }}
 AimingRepr1: DirectionMatch[Str]{
   .north -> ` / | \\ `;
-  .east  -> ` / - \\ `; 
+  .east  -> ` / - \\ `;
   .south -> ` / - \\ `;
   .west  -> ` / - \\ `;
   }
 AimingRepr3: DirectionMatch[Str]{
   .north -> ` \\ _ / `;
-  .east  -> ` \\ _ / `; 
+  .east  -> ` \\ _ / `;
   .south -> ` \\ | / `;
   .west  -> ` \\ _ / `;
   }
@@ -354,7 +354,7 @@ AimingRepr2: DirectionMatch[Str]{
   }
 HeadingChar: DirectionMatch[Str]{
   .north -> `A`;
-  .east  -> `<`; 
+  .east  -> `<`;
   .south -> `V`;
   .west  -> `>`;
   }
@@ -376,7 +376,7 @@ NextState:{
     .let[List[Point]] occupied= {
       (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}) .list }
     .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
- 
+
   read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
     .filter{::==(t.position)}
     .size == 1 .if{

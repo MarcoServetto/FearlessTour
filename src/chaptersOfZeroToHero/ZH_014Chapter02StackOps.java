@@ -38,7 +38,7 @@ StackMatch[T,R]: { .empty: R; .elem(top: T, tail: Stack[T]): R; }
 Stack[T]: {
   .match[R](m: StackMatch[T,R]): R -> m.empty;
   .fold[R](start: R, f: F[T,R,R]): R -> start;
-  +(e: T): Stack[T] -> { 
+  +(e: T): Stack[T] -> {
     .match m  -> m.elem(e, this);
     .fold start, f -> f#(e, this.fold(start, f));
     };
@@ -57,7 +57,7 @@ StackMatch[T,R]: { .empty: R; .elem(top: T, tail: Stack[T]): R; }
 Stack[T]: {
   .match[R](m: StackMatch[T,R]): R -> m.empty;
   .fold[R](start: R, f: F[T,R,R]): R -> start;
-  +(e: T): Stack[T] -> { 
+  +(e: T): Stack[T] -> {
     .match m  -> m.elem(e, this);
     .fold start, f -> f#(e, this.fold(start, f));
     };
@@ -82,7 +82,7 @@ Stack[T]: {
   .match[R](m: StackMatch[T,R]): R -> m.empty;
   .fold[R](start:R, f: F[R,T,R]): R -> start;
   .map[R](f: F[T, R]): Stack[R] -> {};
-  +(e: T): Stack[T] -> { 
+  +(e: T): Stack[T] -> {
     .match m       -> m.elem(e, this);
     .fold start, f -> f#(this.fold(start, f), e);
     .map f         -> this.map(f) + ( f#(e) );
@@ -104,7 +104,7 @@ Stack[T]: {
   .match[R](m: StackMatch[T,R]): R -> m.empty;
   .fold[R](start:R, f: F[R,T,R]): R -> start;
   .map[R](f: F[T, R]): Stack[R] -> {};
-  +(e: T): Stack[T] -> { 
+  +(e: T): Stack[T] -> {
     .match m       -> m.elem(e, this);
     .fold start, f -> f#(this.fold(start, f), e);
     .map f         -> this.map(f) + ( f#(e) );
@@ -135,7 +135,7 @@ UsefulBox#(keep,all,my,data,in,the,box)
 What is this `UsefulBox`? What does `.transformData` do?
 **Anything you want**, the above is just example code.
 The idea is that in the Fearless standard library there are many different types that work like `UsefulBox` and programmers often define their own types working in a similar way.
-While the idea of defining your own types supporting useful/flexible methods may feel overwhelming, remember that we just did it for `Stack`. 
+While the idea of defining your own types supporting useful/flexible methods may feel overwhelming, remember that we just did it for `Stack`.
 
 #### Exercise: filter
 Now as an exercise, we try to define a method `.filter` that removes elements from the stack
@@ -147,7 +147,7 @@ Stack[T]: {
   .fold[R](start:R, f: F[R,T,R]): R -> start;
   .map[R](f: F[T, R]): Stack[R] -> {};
   .filter ???; //Base case
-  +(e: T): Stack[T] -> { 
+  +(e: T): Stack[T] -> {
     .match(m) -> m.elem(e, this);
     .fold(start, f) -> f#(this.fold(start, f), e);
     .map(f) -> this.map(f) + ( f#(e) );
@@ -155,7 +155,7 @@ Stack[T]: {
     };
   }
 ```
-So, what do we write instead of ??? in the code above? 
+So, what do we write instead of ??? in the code above?
 ```
   .filter ???; //Base case
   ...
@@ -196,7 +196,7 @@ Stack[T]: {
   .fold[R](start:R, f: F[R,T,R]): R -> start;
   .map[R](f: F[T, R]): Stack[R] -> {};
   .filter(f: F[T,Bool]): Stack[T]-> {};
-  +(e: T): Stack[T] -> { 
+  +(e: T): Stack[T] -> {
     .match m       -> m.elem(e, this);
     .fold start, f -> f#(this.fold(start, f), e);
     .map f         -> this.map(f) + ( f#(e) );

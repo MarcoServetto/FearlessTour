@@ -66,7 +66,7 @@ Let[R]: {
   .let[T](x: F[T], c: Continuation[T,Let[R],R]): R-> c#(x#,this);
   .return(f: F[R]): R -> f#;
   }
-Let: { #[R]: Let[R] -> {} }       
+Let: { #[R]: Let[R] -> {} }
 """;
 /*START
 --CHAPTER-- Chapter 2
@@ -125,7 +125,7 @@ Since `Point` is now defined inside of `Points`,
 the `this` in scope would be an instance of `Points`,
 not `Point`.
 We use `'self` to name the current object `self`.
-There is nothing special about the name `self`. 
+There is nothing special about the name `self`.
 We can use `'anyName` at the beginning of an object literal to name the current object `anyName`.
 Indeed, the absence of `'xxxx` at the top level is just another layer of syntactic sugar!
 All the top level object literals implicitly use `'this`.
@@ -151,11 +151,11 @@ NextState: F[Stack[Tank],Stack[Tank]]{
   #(tanks) -> Let#
     .let[Stack[Point]] danger    = { tanks.map{ t -> t.position.move(t.aiming) } }
     .let[Stack[Tank]]  survivors = { tanks.filter{t -> this.notIn(t,danger)} }
-    .let[Stack[Point]] occupied  = 
+    .let[Stack[Point]] occupied  =
       { survivors.map{::.position} ++ (survivors.map{::.move.position}) }
     .return { survivors.map{t -> this.moveIfFree(t,occupied)} };
- 
- .notIn(t: Tank, ps: Stack[Point]): Bool -> 
+
+ .notIn(t: Tank, ps: Stack[Point]): Bool ->
     ps.fold(True,{acc, p -> acc .and  ( t.position == p .not) });
 
   .moveIfFree(t: Tank, occupied: Stack[Point]): Tank -> this.notIn(t.move, occupied).if{
@@ -210,8 +210,8 @@ NextState: F[Stack[Tank],Stack[Tank]]{
     .let[Stack[Tank]] survivors = { tanks.filter{t -> this.notIn(t,danger)} }
     .let[Stack[Point]] occupied  = { (survivors.map{::.position}) ++ (survivors.map{::.move.position}) }
     .return { survivors.map{t -> this.moveIfFree(t,occupied)} };
- 
-  .notIn(t: Tank, ps: Stack[Point]): Bool -> 
+
+  .notIn(t: Tank, ps: Stack[Point]): Bool ->
     ps.fold(True,{acc, p -> acc .and  ( t.position == p .not) });
 
 //OMIT_END
@@ -234,17 +234,17 @@ NextState: F[Stack[Tank],Stack[Tank]]{
     .let[Stack[Tank]] survivors = { tanks.filter{t -> this.notIn(t,danger)} }
     .let[Stack[Point]] occupied  = { (survivors.map{::.position}) ++ (survivors.map{::.move.position}) }
     .return { survivors.map{t -> this.moveIfFree(t,occupied)} };
- 
- .notIn(t: Tank, ps: Stack[Point]): Bool -> 
+
+ .notIn(t: Tank, ps: Stack[Point]): Bool ->
     ps.fold(True,{acc, p -> acc .and  ( t.position == p .not) });
 
 //OMIT_END
-  .moveIfFree(t: Tank, occupied: Stack[Point]): Tank -> 
+  .moveIfFree(t: Tank, occupied: Stack[Point]): Tank ->
     this.countHits(t,occupied) == 1
       .match { .true -> t.move; .false -> t; }; //alternative to if/then/else
 
   .countHits(t: Tank, occupied: Stack[Point]): Nat -> occupied.fold(0, {acc, p ->
-    t.move.position == p .if{ .then -> 1; .else -> 0} + acc 
+    t.move.position == p .if{ .then -> 1; .else -> 0} + acc
     });
 //OMIT_START
   }
@@ -261,15 +261,15 @@ NextState: F[Stack[Tank],Stack[Tank]]{
     .let[Stack[Tank]] survivors = { tanks.filter{t -> this.notIn(t,danger)} }
     .let[Stack[Point]] occupied  = { (survivors.map{::.position}) ++ (survivors.map{::.move.position}) }
     .return { survivors.map{t -> this.moveIfFree(t,occupied)} };
- 
- .notIn(t: Tank, ps: Stack[Point]): Bool -> 
+
+ .notIn(t: Tank, ps: Stack[Point]): Bool ->
     ps.fold(True,{acc, p -> acc .and  ( t.position == p .not) });
 
 //OMIT_END
   .moveIfFree(t: Tank, occupied: Stack[Point]): Tank -> occupied
     .filter{ :: == (t.move.position) }
     .size
-    == 1 
+    == 1
     .if{ .then -> t.move; .else -> t };
 //OMIT_START
   }

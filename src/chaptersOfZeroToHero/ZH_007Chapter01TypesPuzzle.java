@@ -10,7 +10,7 @@ class ZH_007Chapter01TypesPuzzle {
 
 ### Types as fitting puzzle pieces
 
-In the world of programming, methods can be envisioned as the puzzle pieces of software design, each equipped with connectors: ears and corresponding holes. These connectors are represented by types, which define how pieces fit together. Each method has specific "holes" (input parameters) and "ears" (output types) that determine how it can combine with other methods. 
+In the world of programming, methods can be envisioned as the puzzle pieces of software design, each equipped with connectors: ears and corresponding holes. These connectors are represented by types, which define how pieces fit together. Each method has specific "holes" (input parameters) and "ears" (output types) that determine how it can combine with other methods.
 
 This selective compatibility is essential: it reduces errors and streamlines the construction process, just as puzzle connectors guide you towards the intended final image.
 
@@ -39,7 +39,7 @@ Several mechanisms can block our program even before the code starts reducing.
 The first line of defence is syntax.
 A syntax error, like unbalanced parentheses, signals that Fearless does not understand our instructions.
 
-A type error, however, indicates that our instructions, though understood, do not make logical sense within the defined system. 
+A type error, however, indicates that our instructions, though understood, do not make logical sense within the defined system.
 We need two directions to create a `Tank`, and the code is trying to smuggle two `Int` values as `Directions`.
 Creating a `Tank` requires two `Direction` values, not two `Int` values. The type system detects and blocks such discrepancies.
 
@@ -66,7 +66,7 @@ use base.Int as Int;
 //OMIT_END
 Rectangle: { .x1: Int; .y1: Int; .x2: Int; .y2: Int }
 
-Rectangles: {#(x1: Int, y1: Int, x2: Int, y2: Int): Rectangle -> 
+Rectangles: {#(x1: Int, y1: Int, x2: Int, y2: Int): Rectangle ->
   { .x1 -> x1; .y1 -> y1; .x2 -> x2; .y2 -> y2 }
   }
 """); }/*--------------------------------------------
@@ -214,7 +214,7 @@ use base.Int as Int;
 //OMIT_END
 Point: {
   .x: Int; .y: Int;
-  +(other: Point): Point -> 
+  +(other: Point): Point ->
     Points#(other.x + (this.x), other.y + (this.y));
   .move(d: Direction): Point -> this + ( d.point );
   }
@@ -237,7 +237,7 @@ We can now add a position to our `Tank`s, and make them move in the direction in
 use base.Int as Int;
 Point: {
   .x: Int; .y: Int;
-  +(other: Point): Point -> 
+  +(other: Point): Point ->
     Points#(other.x + (this.x), other.y + (this.y));
   .move(d: Direction): Point -> this + ( d.point );
   }
@@ -276,7 +276,7 @@ use base.Int as Int;
 //OMIT_END
 Point: {
   .x: Int; .y: Int;
-  +(other: Point): Point -> 
+  +(other: Point): Point ->
     Points#(other.x + (this.x), other.y + (this.y));
   .move(d: Direction): Point -> this + ( d.point );
   }
