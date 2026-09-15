@@ -101,13 +101,14 @@ However, actions that do no actions when called are misleading, so the code abov
 Action[R:**]: {
   mut .run[RR:**](mut ActionMatch[R,RR]): RR;
   ..
-  mut .context(msg: read F[Str]): mut Action[R] -> {m -> this.run{
+  mut .context(msg: read LazyInfo): mut Action[R] -> {m -> this.run{
     .ok x   -> m.ok(x);
-    .info i -> m.info(Infos.msg(msg#) + i);
+    .info i -> m.info(msg#.info + i);
     }};
   }
 ```
 Method `.context` is a convenience method to add contextual information to actions.
+Its parameter `msg: read LazyInfo` is a lazy `F[read ToInfo]`: any lazy value that can become an `Info` is accepted, so a lazy `Str`, as used below, works because `Str` implements `ToInfo`.
 Internally, it uses method `Info+`, that we have not seen yet:
 The method `Info+` makes it easy to compose information together.
 Two `Info` messages are concatenated, two `Info` lists are concatenated and two `Info` maps are merged:

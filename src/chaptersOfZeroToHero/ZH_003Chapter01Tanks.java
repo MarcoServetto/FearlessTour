@@ -367,7 +367,7 @@ letter and any number of letters and numbers, and
 
 The full list of operator symbols is:
 ```
-  ! ~ # & ^ + - * / < > =
+  ! ~ # & ^ + - * / < > = % ? | \
 ```
 
 That is, the following is a list of valid and invalid method names:

@@ -101,7 +101,7 @@ can isolate the strange looking ending space as follows:
 `` "Hello" + " " + "world" ``
 
 ### All humans alive as a string
-The number of humans currently alive is 8 billion, or `` " inRW" ``.
+The number of humans currently alive is 8 billion, or `` " inRw" ``.
 A more precise estimate is 8,122,862,820; corresponding to 
 ... hmm... 
 `` "<newLine>Zb2A" ``? maybe?

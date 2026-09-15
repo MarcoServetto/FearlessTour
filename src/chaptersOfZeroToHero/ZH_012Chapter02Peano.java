@@ -64,7 +64,7 @@ Zero:Number {
  }
 """); }/*--------------------------------------------
 As you can see, this is very similar to the way we encoded those operations for finite number sets, like `Nat`.
-The fearless standard library does not support Peano numbers. As we have shown you, it is very easy to implement them if you need.
+The fearless standard library does not support Peano numbers. As we have shown you, it is very easy to implement them if you need to.
 
 However, the fearless standard library supports the `Num` type.
 A value of type `Num` represents an arbitrary large fractional number.

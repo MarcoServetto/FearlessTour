@@ -58,7 +58,7 @@ Boolean, numbers, strings and many other widely used types from the standard lib
 
 ### Bool, as actually declared
 
-Here you can see the full code of Bool, as it is in the actual Fearless standard library.
+Here you can see the core code of Bool, as it is in the actual Fearless standard library.
 First, two matcher types:
 ````
 ThenElse[R:**]: { mut .then: R; mut .else: R; }
@@ -159,9 +159,9 @@ False:Bool{
 Finally, the declaration for `True` and `False` is exactly what we have seen before.
 Note how we can implement the `read .imm: imm Bool` method by just returning `True` or `False`. An object literal summoned by name can be of any RC, of course including `imm`.
 
-### Full code for `Opt[T]`
+### Core code for `Opt[T]`
 
-Below we show the full standard library code for optionals.
+Below we show the core standard library code for optionals.
 
 `Opts` is the factory for `Opt[T]`. This is exactly what we have seen before. Note how `Opts#` returns a `mut Opt[T]`.
 This is what gives the most flexibility to the user.
@@ -231,7 +231,7 @@ However, this behaviour can be overridden using
 The two methods `Opt[E].orValue` and `Opt[E].orLazy` both return the value stored in the optional, or a default when the optional is empty:
 
 - `Opt[E].orValue` takes the default value directly.
-- `Opt[E].orLazy` takes a lazy default: a `F[E]` only called if the optional is empty.
+- `Opt[E].orLazy` takes a lazy default: a `MF[E]` only called if the optional is empty.
 
 Method `.flow` returns a `Flow[E]`. Flows are a very important data type in the fearless standard libraries and we will discuss them later.
 
@@ -372,7 +372,6 @@ use base.Infos as Infos;
 use base.Error as Error;
 use base.Flow as Flow;
 use base.Flows as Flows;
-//use base._AssertEmpty as _AssertEmpty;
 
 F[R:**]: {read #: R}
 F[A:**,R:**]: {read #(a: A): R}
@@ -526,8 +525,8 @@ Order[T,E:*]:{ /*explained later; like order but for generics *|/ }
 OrderHash[T]:Order[T],ToStr{ /*explained later; Order plus mappings*|/ }
 OrderHash[T,E:*]:Order[T,E],ToStr[E]{ /*explained later; like OrderHash but for generics *|/ }
 
-DataType[T,T0]:ToInfo,ToImm[T0],WidenTo[T],OrderHash[T],Extensible[T]{ read .close(t: read T): read DataType[T,T0]; }
-DataType[T,T0,E:*,E0]:ToInfo[E],ToImm[E,E0,T0],WidenTo[T],OrderHash[T,E],Extensible[T]{ read .close(t: read T): read DataType[T,T0,E,E0]; /*...*|/ }
+DataType[T,T0]:ToInfo,ToImm[T0],WidenTo[T],OrderHash[T],Pipe[T]{ read .close(t: read T): read DataType[T,T0]; }
+DataType[T,T0,E:*,E0]:ToInfo[E],ToImm[E,E0,T0],WidenTo[T],OrderHash[T,E],Pipe[T]{ read .close(t: read T): read DataType[T,T0,E,E0]; /*...*|/ }
 DataTypeBy[E,K,K0]:ToInfoBy[E],ToImmBy[E,K0],OrderHashBy[E,K]{ #(e: read E): read DataType[K,K0]; /*...*|/ }
 ````
 
