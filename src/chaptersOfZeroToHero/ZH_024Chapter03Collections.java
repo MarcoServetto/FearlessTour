@@ -575,7 +575,7 @@ Again, needed in the error messages to turn a `T` into an `OrderHash[T]` that po
 
 ````
 //usage
-Persons: { #(age: Num, name: Str): Person -> Person: OrderHash[Person]{'self
+Persons: { #(age: Nat, name: Str): Person -> Person: OrderHash[Person]{'self
   read .age:  Nat   -> age;
   read .name: Str   -> name;
   .cmp p1,p2,m -> p1.age <=> (p2.age, m && { p1.name <=> (p2.name,m) });
@@ -609,7 +609,7 @@ If the key is not present in the map, `.get` will cause an error.
 We can instead use `.opt` to extract an optional `Opt[E]` result. For example
 ```
 myMap.get(Persons#(`Neil Armstrong`,38)) // error
-myMap.opt(Persons#(`Neil Armstrong`,38)).or `Moon` // alternative default value.
+myMap.opt(Persons#(`Neil Armstrong`,38)).orValue `Moon` // alternative default value.
 ```
 
 Maps can have `mut`, `imm` or `read` elements; but only immutable keys. This is because the implementation of `Map[K,E]` needs to assume that the result of `.hash` and `==` is consistent over time.

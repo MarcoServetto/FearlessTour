@@ -135,7 +135,7 @@ Note that the computation required to format this extra information will only be
 ```
 MF[R:**]: { mut #: R } //mutable function, seen before
 Action[R:**]: {
-  mut .run[RR:**](mut ActionMatch[R,RR]): RR,
+  mut .run[RR:**](mut ActionMatch[R,RR]): RR;
   mut .map[RR:**](f: mut MF[R,RR]): mut Action[RR] -> {m -> this.run{
     .ok x   -> m.ok(f#x);
     .info i -> m.info(i);
@@ -221,11 +221,11 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
     .do { x.checkInRange(0,10) }
     .do { y.checkInRange(0,10) }
     .return{ Point: DataType[Point,Point]{'self
-      .x: Nat -> x,
-      .y: Nat -> y,
-      +(other: Point): Point -> Points#(other.x + x, other.y + y),
-      .move(d: Direction): Point -> self + ( d.point ),
-      .cmp {.x,.y}1, {.x,.y}2, m -> x1 <=> (x1,m && { y1 <=>(y2,m) };
+      .x: Nat -> x;
+      .y: Nat -> y;
+      +(other: Point): Point -> Points#(other.x + x, other.y + y);
+      .move(d: Direction): Point -> self + ( d.point );
+      .cmp {.x,.y}1, {.x,.y}2, m -> x1 <=> (x2, m && { y1 <=> (y2,m) });
       .hash -> x.hash.hashWith(y.hash);
       .info -> Infos.map(`x`,x,  `y`,y);
       .str -> `[` + x + `, ` + y + `]`;

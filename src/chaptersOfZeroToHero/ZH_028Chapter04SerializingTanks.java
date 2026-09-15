@@ -27,7 +27,7 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
   .fromInfo {map} -> Tanks#(
     Directions.fromInfo(map.get(`heading`)),
     Directions.fromInfo(map.get(`aiming`)),
-    Points.fromInfo(map.get(`point`)),
+    Points.fromInfo(map.get(`point`))
     );
   }
 ```
@@ -50,11 +50,11 @@ Where we did not discuss how to write `ReadGame`.
 Now we can show such code!
 ```
 ReadGame: {
-  mut .in: mut InputCursorNode,
+  mut .in: mut InputCursorNode;
   mut .read : List[Tank] -> Block#
     .let[Str] text= {this.in.text!}
     .let[Info] info= {Infos.fromStr(text)}
-    .return {info.list.flow.map{i->Tanks.fromInfo(i)}.list};
+    .return {info.getList.flow.map{i->Tanks.fromInfo(i)}.list};
   }
 ```
 

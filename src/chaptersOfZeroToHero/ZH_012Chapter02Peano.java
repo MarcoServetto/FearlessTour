@@ -55,7 +55,7 @@ Number:{
   .pred: Number;
   .succ:Number->{ this };
   +(other: Number): Number -> this.pred + (other.succ);
-  *(other: Number): Number -> this + (this.pred * other);
+  *(other: Number): Number -> (this.pred * other) + other;
   }
 Zero:Number {
   .pred   -> this.pred;
