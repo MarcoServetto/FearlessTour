@@ -237,7 +237,7 @@ Method `.flow` returns a `Flow[E]`. Flows are a very important data type in the 
 
 The method `.mapSome` is used to change the type of the optional, taking a function to map the content to a new type.
 
-Finally, methods  `.ifSome` and `.ifEmpty` execute some `Void` returning computation in case the optional has a value or not.
+Finally, methods `.ifSome` and `.ifEmpty` execute some `Void` returning computation in case the optional has a value or not.
 
 
 

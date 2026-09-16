@@ -215,7 +215,7 @@ Tank: ToStr {
 We think this code is very clear, declarative and self explanatory.
 It does have quite a few lines, but most lines are very short and do specific very well defined tasks.
 We could get this code to be shorter by inlining `AimingRepr1-3` in the code of `Tank`, but we think this would make the resulting code much harder to read.
-Note how `AimingRepr2` requires knowing the  central character, and we can pass it to the operation by implementing the abstract method `.centre` in the call site.
+Note how `AimingRepr2` requires knowing the central character, and we can pass it to the operation by implementing the abstract method `.centre` in the call site.
 We could have alternatively made a factory capturing the missing information in the lambda:
 
 ```

@@ -499,7 +499,7 @@ Much.code .and (Slow.code .and (ATonOf.code) ) // version 2
 both versions would always run all the three computations.
 
 Note how `{Slow.code}` is an object literal of type `F[Bool]`.
-The full version would be  :
+The full version would be:
 ```
 Anon1[]:F[Bool] { #[](): Bool[] -> Anon2[]:Slow[]{}.code[](); }
 ```

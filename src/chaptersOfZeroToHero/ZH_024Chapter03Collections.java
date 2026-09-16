@@ -52,7 +52,7 @@ Cat: { .name: Str }
 AllCats: {  #(ps: List[Person]): List[Cat] -> ps.flow.flatMap{::.cats.flow }.list  }
 ```
 Here we extract all the cats owned by the persons in the list.
-Note how we use  `{::.cats.flow}` and not just `{::.cats}`. Method `.flatMap` requires a lambda returning a flow.
+Note how we use `{::.cats.flow}` and not just `{::.cats}`. Method `.flatMap` requires a lambda returning a flow.
 In this example we also see how we change the type of our list: we take a `List[Person]` in input and we produce a `List[Cat]` in output.
 While `.flatMap` is often used to add elements, it may also remove them. For example, if all the persons in the input list have no cats, the output will be the empty list.
 
@@ -548,7 +548,7 @@ The `OrderHash[T].hash` method plays this role by computing a numeric summary of
 Two objects that are equal via `==` must have the same hash value. This consistency is required for the map to work correctly.
 Implementing the `.hash` method by returning zero is inefficient but technically correct: since all objects will have the same hash code, all equal objects will also trivially have the same hash code.
 The map attempts to use the hash code as a fast screening test to quickly differentiate objects, and uses the slower `==` only when needed.
-The zero `.hash` method de facto disables this crucial optimisation. Instead, a good hash function spreads out objects evenly across the Nat numbers  to maximise the efficiency of the map operations.
+The zero `.hash` method de facto disables this crucial optimisation. Instead, a good hash function spreads out objects evenly across the Nat numbers to maximise the efficiency of the map operations.
 Having the `.hash` method within the `OrderHash[T]` type helps maintain alignment between the behaviours of hashing and equality. By encapsulating both within the same type, it simplifies the enforcement of the principle that equal objects must have identical hash codes, thereby supporting more predictable and reliable map behaviour.
 
 Ideally, we would just need this

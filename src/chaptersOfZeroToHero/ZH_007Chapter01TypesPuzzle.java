@@ -205,7 +205,7 @@ We can use more precise terminology:
 - Intrinsic Meaning/Intrinsic Semantics: the meaning derived purely from the structure and connections within the code itself, independent of human interpretation.
 - Extrinsic Meaning/Contextual Semantics: the meaning that arises when the code is interpreted with the background knowledge and context that humans bring to it.
 
-However, by adding more and  more connections between our units of code, the meaning starts to emerge.
+However, by adding more and more connections between our units of code, the meaning starts to emerge.
 
 For example, we can make it so that points can be moved according to directions:
 -------------------------*/@Test void pointC () { run("""
