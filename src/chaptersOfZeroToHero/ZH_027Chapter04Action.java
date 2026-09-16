@@ -74,10 +74,10 @@ Action[R:**]: {
 Method `Action!` returns the `R` value, or throws an error with the provided info.
 That is, `!` is actually the opposite of `Try#`.
 For example, 
-- ``Try#{ Direction.map.get(`Nope`) }!``
+- ``Try#{ Directions.map.get(`Nope`) }!``
 
 is equivalent to
-- ``Direction.map.get(`Nope`)``
+- ``Directions.map.get(`Nope`)``
 
 In the same way, 
 - ``Try#{ myAction! }``
