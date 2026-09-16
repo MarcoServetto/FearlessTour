@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 public class DocumentProcessor {
   private final List<Chapter> chapters = new ArrayList<>();
   static List<Path> walk(Path root,String extension){
-    try (var s = Files.walk(root)){ return s.filter(ends(extension)).toList(); }
+    try (var s = Files.walk(root)){ return s.filter(ends(extension)).sorted().toList(); }
     catch (IOException e){ throw new UncheckedIOException(e); }
   }
   static Predicate<Path> ends(String extension){ return p -> (p+"").endsWith(extension); }
