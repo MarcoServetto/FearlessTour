@@ -157,7 +157,7 @@ Bot: {
   .message(s: Str): Str ->
     // Outer Check: Is the message `hello`?
     s == `hello` .if { //here R = Str
-      .then -> `Hi, I'm Bot; how can I help you?`; 
+      .then -> `Hi, I'm Bot; how can I help you?`;
       .else -> // Logic for when s is NOT "hello"
         // Inner Check: Is the message "bye"?
         s == `bye` .if { //writing .if[Str] would be the same
@@ -198,7 +198,7 @@ This nesting allows us to create more complex decision trees.
      .else -> ...;
      }
    ````
-   
+
 4. ````
    {
      .then -> `hi...`;
@@ -301,7 +301,7 @@ This nesting allows us to create more complex decision trees.
      .else -> `I don't understand`;
      }
    ````
-   
+
 5. ````
    False.if{
      .then -> `goodbye!`;
@@ -323,7 +323,7 @@ Note how the generics are explicitly needed when **defining** the `.if` method b
 This is where our journey of learning Fearless programming starts to intersect with concepts common to most other programming languages.
 I still vividly remember the moment it struck me: every possible computation can be represented as just an enormous pile of ifs invoking each other. Mind blowing!
 
-But just because something can be done, doesn't mean it's the best approach. Solving problems by throwing a massive heap of binary decisions at them (like firing wildly with a machine gun) rarely leads to elegant, maintainable code. A program built this way quickly becomes brittle and hard to evolve. Soon, we'll explore specialised decision-making constructs, each tailored to different scenarios, and we'll learn to select the right tool for each job. 
+But just because something can be done, doesn't mean it's the best approach. Solving problems by throwing a massive heap of binary decisions at them (like firing wildly with a machine gun) rarely leads to elegant, maintainable code. A program built this way quickly becomes brittle and hard to evolve. Soon, we'll explore specialised decision-making constructs, each tailored to different scenarios, and we'll learn to select the right tool for each job.
 
 But for now, let's pause to appreciate what we've accomplished. Understanding the `.if` is a big achievement.
 
@@ -365,7 +365,7 @@ Tanks: { #(heading: Direction, aiming: Direction): Tank->
   { .heading ->heading; .aiming ->aiming }
   }
 """); }/*--------------------------------------------
-could be rewritten as 
+could be rewritten as
 -------------------------*/@Test void f3 () { run("""
 //OMIT_START
 use base.Str as Str;
@@ -380,7 +380,7 @@ Tanks: F[Direction,Direction,Tank] { h,a -> { .heading -> h; .aiming -> a } }
 """); }/*--------------------------------------------
 This code is not just slightly shorter, but now `Tanks` is a valid element that can be passed to any method taking a generic `F[A,B,R]`.
 
-This is what is usually called the abstract factory pattern: 
+This is what is usually called the abstract factory pattern:
 A factory object is an object whose main goal is to create other objects.
 `Tanks` is a factory object.
 We can have various ways to create objects and we can pass those factory objects to code that needs to create objects internally.
@@ -391,7 +391,7 @@ In particular `F[R]` is often used to represent delayed computation. By turning 
 
 ### Delayed computations for Booleans
 
-As an example: 
+As an example:
 We have seen how the `.and` and `.or` methods compute the overall result from two boolean expressions and then produce a cumulative result.
 However, in the case of `False .and ...` we do not need to compute the second expression. The result will be False anyway.
 Same for `True .or ...`. The result will be True anyway.
@@ -523,7 +523,7 @@ Finally, consider again
 ```
 Much.code && { Slow.code } && {ATonOf.code} // lazy
 Much.code .and (Slow.code) .and (ATonOf.code)  // eager
-```  
+```
 Are those two lines of code equivalent, except for speed?
 Not really.
 In Fearless, as in most programming languages, it is possible to

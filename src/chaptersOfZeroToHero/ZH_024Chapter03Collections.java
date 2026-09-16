@@ -127,7 +127,7 @@ Nat:Sealed,DataType[Nat,Nat],SumNumber[Nat]{
   .sumNumber xs -> xs.fold( {this}, {acc,e -> acc + e} );
   }
 ````
-As you can see, to call `Flow[E].sum`, we need an argument implementing 
+As you can see, to call `Flow[E].sum`, we need an argument implementing
 `SumNumber[E]`.
 All the numeric types implement `SumNumber[_]`, so we can use any numeric value as a starting point for our sum.
 This pattern allows us to limit what parameter types we can pass to a generic entity.
@@ -165,7 +165,7 @@ This zero-based indexing system has beneficial mathematical properties. For exam
  x,y                          -->  index mapping
  0,0 | 1,0 | 2,0 | 3,0 | 4,0  -->   0 |  1 |  2 |  3 |  4
  0,1 | 1,1 | 2,1 | 3,1 | 4,1  -->   5 |  6 |  7 |  8 |  9
- 0,2 | 1,2 | 2,2 | 3,2 | 4,2  -->  10 | 11 | 12 | 13 | 14 
+ 0,2 | 1,2 | 2,2 | 3,2 | 4,2  -->  10 | 11 | 12 | 13 | 14
 ```
 This grid shows how a two-dimensional coordinate system `x, y` can be flattened into a single list index. For example, `3, 1` maps to index `8`, since it's the 4th element in the 2nd row of a 5-column grid.
 
@@ -221,7 +221,7 @@ the capability of the list and the capability of the elements. This gives us a r
 - `List[Num]` is an immutable list of immutable numbers. It can also be written as `imm List[imm Num]` since `imm` is the default.
   You can think of it as a hard container of hard elements. For example a wooden plank with coins permanently glued into it.
 
-- `mut List[mut Animal]` is a list of mutable animals. 
+- `mut List[mut Animal]` is a list of mutable animals.
 Since reference capabilities impact the whole reachable object graph, an object storing mutable objects needs to be mutable too.
 Thus, we need to use `mut` twice.
 Using `.get` we can obtain `mut` references to the contained animals and mutate them.
@@ -265,7 +265,7 @@ Since `+` is a method of list, the following code does not work:
 We need to instead wrap the `1` in a singleton list, as shown above, or use
 
 ```
-Lists#(2,3,4) <+ 1 
+Lists#(2,3,4) <+ 1
 ```
 where `<+` appends to the left and `+>` appends to the right.
 
@@ -344,7 +344,7 @@ Can you spot why?
 
 **Solution coming soon**
 
-**Solution:** 
+**Solution:**
 In the code `this.cmp(this,other,{...});` we use `this` twice: the first time as `Order[T]` to call `.cmp`, but the second time we use it as a `T`.
 And the type system does not see any connection between `T` and `Order[T]`.
 The code used to work in `Point` because `Point` implements `Order[Point]`; thus in the context of `Point`, `self` was both a `Point` and an `Order[Point]`.
@@ -385,7 +385,7 @@ Order[T]:{
   //and 6 more methods <,>,<=,>=,.inRange etc implemented using .cmp
   }
 Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
-  read .x: Nat -> x; 
+  read .x: Nat -> x;
   read .y: Nat -> y;
   .cmp t0, t1, m -> t0.x.cmp(t0.x,t1.x,{.lt->m.lt; .gt->m.gt; .eq->t0.y.cmp(t0.y,t1.y,m)});
   .close->self;
@@ -400,7 +400,7 @@ OrderMatch[R:**]: {
   mut &&(onEq: mut MF[R]): mut OrderMatch[R]-> {
     .lt->this.lt;
     .eq->onEq#;
-    .gt->this.gt; 
+    .gt->this.gt;
     }
   }
 Order[T]:{
@@ -466,11 +466,11 @@ And now we can use `ByCats` to compare two persons based on who own more cats, b
 OrderBy[T,K]:{
   #(read T): read Order[K];
 
-  .then[K0](next: OrderBy[T,K0]): OrderBy[T] -> 
+  .then[K0](next: OrderBy[T,K0]): OrderBy[T] ->
     {t0,t1,m -> this#t0 <=> ( this#t1, m &&{ next#t0<=>(next#t1,m)}) };
 
   .view[A](f: F[read A,read T]): OrderBy[A] ->
-    {a0,a1,m-> this#(f#a0)<=>(this#(f#a1),m)};    
+    {a0,a1,m-> this#(f#a0)<=>(this#(f#a1),m)};
   }
 ````
 - Method `.then` lexicographically composes the `OrderBy` with another one.
@@ -541,7 +541,7 @@ They both represent the idea of connecting one kind of value with another kind.
 The `.map` method transforms a value representing the input of one stage of a computation into a value representing the output of such computation.
 In a similar way, the `Map[K,E]` type holds a mapping between keys and elements, connecting distinct pieces of data.
 
-As mentioned, `Map[K,E]` needs a hash function for the key `K`. 
+As mentioned, `Map[K,E]` needs a hash function for the key `K`.
 Since ordering and hashing has to live together, the standard library defines
 `OrderHash[T]` implementing `Order[T]`.
 The `OrderHash[T].hash` method plays this role by computing a numeric summary of an object. Although it's impossible for a hash function to uniquely identify each distinct object due to the infinite number of possible objects and the finite number of `Nat` values, a well-designed hash function approximates this by minimising situations where distinct objects have the same hash value. Objects are considered distinct if the `==` operation returns `False`.
@@ -569,7 +569,7 @@ OrderHash[T]:Order[T],ToStr{
 ````
 By adding `ToStr` we are able to automatically derive 12 assert methods helping to check expectations over `T`; the conversion to string is needed for decent error message.
 Moreover this allows maps to be much more consistent with lists when it comes to printing: both need to just take a way to print the element; all the functionalities about map keys are provided once and for all at map initialisation time.
-Note how we also add `.close` in the other direction: before we have seen 
+Note how we also add `.close` in the other direction: before we have seen
 `.close:T` allowing to turn `Order[T]` into `T`. This one allows to turn a `T` parameter into an `OrderHash[T]`. With this we can convert in both directions.
 Again, needed in the error messages to turn a `T` into an `OrderHash[T]` that possess a `.str` method.
 
@@ -644,7 +644,7 @@ Sets#(StrSizeOrder,`a`,`aa`,`aaaaa`)//good
 StrSizeOrder:OrderHashBy[Str]{
   t0,t1,m-> t0.imm.size<=>(t1.imm.size,m);
   .hash s->s.imm.size.hash;
-  .str s->s.imm; 
+  .str s->s.imm;
   }//Here we manually define an ordering for strings using their size.
 ```
 Note how our first attempt for a set with custom ordering does not compile.
@@ -742,7 +742,7 @@ Opt[E:*]: _Opt[E]{
 `OrderHash[T,E:*]` implements `ToStr[E]`, guiding us to implement `.str by`
 using the `by` argument to turn the optional content into a `ToStr`.
 - Similarly, we can not conceptually define `.hash` on an optional without arguments.
-`OrderHash[T,E:*]` 
+`OrderHash[T,E:*]`
 guides us to implement `read .hash[K](by: OrderHashBy[imm E,K]): Nat`
 using the `by` argument to turn the optional content into an `OrderHash`, so that we can call `.hash` on it.
 - Finally, to enable all of this support we need to allow the needed type conversions.
@@ -895,7 +895,7 @@ Data:{
     Cars2#(2, Persons#(40,`Alice`,List[Cat])),
     Cars2#(3, Persons#(40,`Zoe`,List[Cat])),
     Cars2#(4, Persons#(20,`Young`,List[Cat]))
-    );  
+    );
   .carsCase: List[Car] -> Lists#(
     Cars#(1, Persons#(30,`bob`,List[Cat])),
     Cars#(2, Persons#(40,`BOB`,List[Cat])),

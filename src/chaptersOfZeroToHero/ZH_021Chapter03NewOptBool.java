@@ -125,7 +125,7 @@ Assert methods are very useful to add additional checks and to trigger additiona
 Many times in the code we have conditions that we expect to hold, and by using those methods we can verify them.
 For example
 `customer.age >= 18 .assertTrue`
-would stop the execution with a readable message if the age is under 18.  
+would stop the execution with a readable message if the age is under 18.
   `drink.hasAlcohol ==> {customer.age >= 18} .assertTrue`
 would stop the execution if a customer under 18 tries to buy an alcoholic drink.
 How does this work?
@@ -193,8 +193,8 @@ In addition to `.match`, the full `Opt[E]` supports other useful methods.
 Opt[E:*]: _Opt[E]{
   .match m    -> m.empty;
   .isEmpty    -> this.match{.some _ -> False; .empty -> True};
-  .isSome     -> this.match{.some _ -> True; .empty -> False};  
-  !           -> this.match{.some x -> x; .empty -> Error.msg `Opt was empty`};  
+  .isSome     -> this.match{.some _ -> True; .empty -> False};
+  !           -> this.match{.some x -> x; .empty -> Error.msg `Opt was empty`};
 
   .orValue default -> this.match{.some x -> x; .empty -> default};
 
@@ -203,7 +203,7 @@ Opt[E:*]: _Opt[E]{
   .flow       -> this.match{.empty -> Flows#; .some x -> Flows#(x)};
 
   .mapSome[R:*] f -> this.match{.some x->Opts#(f#x); .empty->{}};
-  
+
   .ifSome  f  -> this.match{.some x -> f#x; .empty -> {}};
   .ifEmpty f  -> this.match{.some _ -> {}; .empty -> f#};
 ````
@@ -223,7 +223,7 @@ Errors are not part of the basic semantic of Fearless, and they can be thrown us
 For example, the method `Error.msg(Str)` will throw an error using that string as an error message.
 When a method throws an error the computation stops and the error is reported outside of the program. That is, the whole Fearless application stops and burns.
 This is often the desired behaviour, especially when debugging.
-However, this behaviour can be overridden using 
+However, this behaviour can be overridden using
 `Try#{ ../*code that can fail*|/.. }`. We will discuss the details of `Try` later, and for now we will assume all errors to simply obliterate the running code.
 
 
@@ -259,7 +259,7 @@ String concatenation operations like `+` take a `ToStr` and call `.str` internal
 
 For example
 `myOptNat.str{::}` will convert the optional `Nat` into a `Str`.
-Similarly, 
+Similarly,
 `myOptPerson.str{::}` will convert the optional person into a string,
 assuming the person implements `ToStr`.
 Indeed, resolving sugar and inference we get the following code:
@@ -336,7 +336,7 @@ _Opt[E:*]:BaseContainer[E],DataType[Opt[E],Opt[imm E],E,imm E]{
 ````
 
 As you can see, this is where the major difference lies with respect to the optional seen in Chapter 2: Here most methods come in two or three variants, one for `E`, one for `read/imm E` and one for `imm E`.
-The core idea is that when we implement `.match` in `Opt[E]` we are using the same implementation to satisfy all 3 type signatures. 
+The core idea is that when we implement `.match` in `Opt[E]` we are using the same implementation to satisfy all 3 type signatures.
 
 
 `Opt[E]` is an example of a generic container type: a type whose main goal is to contain any kind of `E`, where `E` can be `read,imm,mut`.
@@ -438,8 +438,8 @@ OptMatch[E:*, R:**]:{
 Opt[E:*]: _Opt[E]{
   .match m    -> m.empty;
   .isEmpty    -> this.match{.some _ -> False; .empty -> True};
-  .isSome     -> this.match{.some _ -> True; .empty -> False};  
-  !           -> this.match{.some x -> x; .empty -> Error.msg `Opt was empty`};  
+  .isSome     -> this.match{.some _ -> True; .empty -> False};
+  !           -> this.match{.some x -> x; .empty -> Error.msg `Opt was empty`};
 
   .orValue default -> this.match{.some x -> x; .empty -> default};
 
@@ -448,7 +448,7 @@ Opt[E:*]: _Opt[E]{
   .flow       -> this.match{.empty -> Flows#; .some x -> Flows#(x)};
 
   .mapSome[R:*] f -> this.match{.some x->Opts#(f#x); .empty->{}};
-  
+
   .ifSome  f  -> this.match{.some x -> f#x; .empty -> {}};
   .ifEmpty f  -> this.match{.some _ -> {}; .empty -> f#};
   .str  by  -> this.match{
