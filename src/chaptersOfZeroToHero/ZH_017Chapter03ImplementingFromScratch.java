@@ -62,7 +62,7 @@ Crucially, the type system tracks those types and provides extensive guarantees 
 Then we define two variants of the method `.get`, one for `mut` and one for `read` receivers. You can think of those two variants as two different methods that just so happen to have the same name.
 They will both return the current value, but with different types:
 - If we have a `mut` receiver we produce the value with type `E`.
-- If we have a `read` receiver, we produce the value with a  weakened type `read/imm E`.
+- If we have a `read` receiver, we produce the value with a weakened type `read/imm E`.
 
 Finally `Vars` is a factory type making new `Var[E]` objects, originally containing the value provided by the user.
 The syntax `.get -> var;` implements both .get methods with the same exact body.
@@ -92,7 +92,7 @@ Animals: {
 As you can see, the code above defines `Point` and `Points` using features we understand well, and then defines `Animal` and `Animals`.
 Method `Animals#` uses `Block`.
 `Block` is a type in the standard library supporting fluent programming and the `=` sugar pretty much like our `Let`, but with many more features and utilities.
-In particular, `Block` offers a `.let` method working exactly like `Let.let` and a `.var` method that instead wraps the value  into a `mut Var[E]`.
+In particular, `Block` offers a `.let` method working exactly like `Let.let` and a `.var` method that instead wraps the value into a `mut Var[E]`.
 That is, in this case the local parameter `loc` is of type `mut Var[Point]`.
 In this way, it is easy to create either local parameters or local variables. Local variables are just local parameters of type `mut Var[..]`.
 

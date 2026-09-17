@@ -201,7 +201,7 @@ Inside it, `this` refers to the first `Rotation` (`Turn90` in `Turn90 +(Turn180)
 `r` refers to the second rotation (`Turn180`).
 The object literal `{ d -> this#( r#(d) ) }` creates a new `Rotation` object. When this new object's `#` method is called later, it will use the `this` and `r` that were captured when it was created.
 
-Thanks to our syntactic sugar and inference, the body  of method `Rotation+` is very compact.
+Thanks to our syntactic sugar and inference, the body of method `Rotation+` is very compact.
 The expression `{ d-> this#(r#(d)) }` is equivalent to
 `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }`.
 Before we discussed how `North` is a literal.
@@ -234,7 +234,7 @@ Turn270: Rotation{::.turn.turn.turn}
 """); }/*--------------------------------------------
 
 is to assume that the method `Rotation#` will have the behavior that we can see in `Rotation`.
-Here `Rotation#` is abstract. Thus, there is no way that the calls  `this#` or `r#` would ever resolve into the non-existent code of `Rotation#`; they will always resolve to some concrete implementation of it.
+Here `Rotation#` is abstract. Thus, there is no way that the calls `this#` or `r#` would ever resolve into the non-existent code of `Rotation#`; they will always resolve to some concrete implementation of it.
 
 While this is self evident in `Rotation#`, since there is no body, this holds also when a body is present; since methods can be overridden in other literals.
 

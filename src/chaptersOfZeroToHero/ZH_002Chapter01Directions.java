@@ -217,7 +217,7 @@ West : Direction { .turn -> North; .reverse -> West.turn.turn;  }
 However, the code is now more regular, the four bodies of `.reverse` are all almost identical.
 They are all of the form `.reverse->???.turn.turn;` where `???` is the current direction.
 
-We are able to reuse the  `.reverse->???.turn.turn;` part by putting it into our definition of `Direction`.
+We are able to reuse the `.reverse->???.turn.turn;` part by putting it into our definition of `Direction`.
 
 `````
 Direction: {
@@ -255,7 +255,7 @@ West : Direction {.turn -> North;}
 """); }/*--------------------------------------------
 That is, when the `.reverse` method is called,
 the **parameter** `this` will refer to the current object.
-For example, even though the method `North.reverse` is `this.turn.turn`, in that context `this` is `North`, so when the method is called we would replace `this` with `North` and get  `North.turn.turn`.
+For example, even though the method `North.reverse` is `this.turn.turn`, in that context `this` is `North`, so when the method is called we would replace `this` with `North` and get `North.turn.turn`.
 
 Here is an example showing this execution / replacement process where
 the first step correctly jumps from `North.reverse` into `North.turn.turn`:
@@ -289,7 +289,7 @@ the first step correctly jumps from `North.reverse` into `North.turn.turn`:
 Note: `North`, `East`, `South`, and `West` can be used directly as
 objects because they have no abstract methods.
 Since `Direction` has at least one abstract method (`.turn`),
-it  can not be used directly as a valid object literal.
+it can not be used directly as a valid object literal.
 We will call types with abstract methods **abstract types**.
 
 

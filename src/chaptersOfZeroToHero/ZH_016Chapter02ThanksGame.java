@@ -295,7 +295,7 @@ We defined our own representations of booleans, numbers, stacks, and optionals, 
 The little tank game we have just built is not trivial. It demonstrates how complexity emerges naturally and cleanly from minimal building blocks.
 By mastering this foundational thinking, you've already gained the ability to envision and construct software in ways many programmers never deeply experience.
 
-This chapter marks a milestone: You have begun to see the beauty in the minimalistic design of Fearless. As we continue, you will find these insights becoming not just a guide to coding, but a  lens through which all programming becomes clearer.
+This chapter marks a milestone: You have begun to see the beauty in the minimalistic design of Fearless. As we continue, you will find these insights becoming not just a guide to coding, but a lens through which all programming becomes clearer.
 
 Let's keep going.
 

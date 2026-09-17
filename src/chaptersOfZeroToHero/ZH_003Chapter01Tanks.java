@@ -9,9 +9,9 @@ class ZH_003Chapter01Tanks {
 --SECTION-- Basic code reuse
 
 ### How to Avoid Repetitive Code in Fearless
-You may already have noticed  that even relatively simple programs
+You may already have noticed that even relatively simple programs
 have the potential to be very long.
-Programs which  you may use daily (such as Steam, Zoom, TikTok, and Instagram)
+Programs which you may use daily (such as Steam, Zoom, TikTok, and Instagram)
 are composed of millions of lines of code. Some programming languages
 force the user to write very repetitive code; either by literally
 repeating the same text over and over again, or by repeating similar but
@@ -75,7 +75,7 @@ same type declaration.
  5. `East` is an example of an object literal expression.
  6. `North.turn` is an example of a method call expression.
  7. `this` is an example of a parameter.
- 8.  `North` and `East` are valid object literals because they have
+ 8. `North` and `East` are valid object literals because they have
 no abstract methods.
 
 We will later see that both method calls and object literals
@@ -255,7 +255,7 @@ inside the method body.
 You may think that declaring a new type inside of the method body
 contradicts the general idea that method bodies must be expressions.
 However, an object literal expression is just a special kind of type declaration.
-Before we have directly used type names, like `North`, as a object literals.
+Before we have directly used type names, like `North`, as object literals.
 As we discussed, the object literal `North` is desugared into `SomeName147: North {}`.
 All object literals are type declarations. Some object literals do not look like
 type declarations because of the sugar allowing to omit `SomeName147:` and 
@@ -335,7 +335,7 @@ We have now seen more examples for the three kinds of expressions:
 
 Method bodies are expressions, so any method body will be exactly one expression. Expressions can have sub expressions:
 `Tanks.of(North,East.reverse)` has sub expressions
-`Tanks`, `North` and `East.reverse`.  In turn `East.reverse` has sub-expression `East`.
+`Tanks`, `North` and `East.reverse`. In turn `East.reverse` has sub-expression `East`.
 
 Object literal expressions are also type declarations, and
 they can internally contain method declarations.

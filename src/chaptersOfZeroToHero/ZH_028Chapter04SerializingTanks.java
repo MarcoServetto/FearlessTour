@@ -127,11 +127,11 @@ The errors in 2 and 3 leak out when using `.map` and are captured when using `.a
 
 
 Note that `ReadGame.read` body is `this.read(List.of("StartConfiguration.txt"))!`,
-thus the errors that we carefully separated in the second implementation end up together again when we call the method `!` on the result of  `.read(fileName)`.
+thus the errors that we carefully separated in the second implementation end up together again when we call the method `!` on the result of `.read(fileName)`.
 This causes all the errors to become observed bugs and to stop our application.
 
-This is not always the desired behaviour. When writing larger applications it becomes important to distinguish which errors are recoverable situations (so that we can capture them into the action `Info`) and which  errors are observed bugs.
-Using  `.map` or `.andThen` + `Try#` we can choose how to classify such details.
+This is not always the desired behaviour. When writing larger applications it becomes important to distinguish which errors are recoverable situations (so that we can capture them into the action `Info`) and which errors are observed bugs.
+Using `.map` or `.andThen` + `Try#` we can choose how to classify such details.
 
 We can also add information to the error messages using code as below
 ```

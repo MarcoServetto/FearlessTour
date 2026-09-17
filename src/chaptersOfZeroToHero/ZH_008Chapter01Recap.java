@@ -16,7 +16,7 @@ class ZH_008Chapter01Recap {
 - Supertype: Types are connected by supertypes relations allowing to generalise concepts.
 This is also used for code reuse.
   - Example: `North` and `South` are types of `Direction` so `Direction` is a supertype of `North` and `South`.
-- Implement(s): By implementing a supertype a type reuses the code of the supertype and is required to satisfy the logical contracts of the super type. Satisfaction of those (informal) contracts is the responsibility of the programmer, but the type system can catch some common violations. Supertypes and Implements help code reuse and enable  dynamic dispatch.
+- Implement(s): By implementing a supertype a type reuses the code of the supertype and is required to satisfy the logical contracts of the super type. Satisfaction of those (informal) contracts is the responsibility of the programmer, but the type system can catch some common violations. Supertypes and Implements help code reuse and enable dynamic dispatch.
   - Example: `North` implements `Direction`
 
 - Inherited: a method that comes from an implemented supertype.
@@ -50,7 +50,7 @@ This is also used for code reuse.
 - Argument:
   - Relevance: passing expressions to method calls allows to provide a value to the parameter. This value is then used during the method execution in order to compute the method result.
   - Syntax: any expression
-  - Examples: `1+2` or `foo` in `this.baz(1+2)`, or in  `this.baz(foo)`
+  - Examples: `1+2` or `foo` in `this.baz(1+2)`, or in `this.baz(foo)`
   
 - Method:
   - Relevance: methods contain expressions (instructions/behaviour) and allow us to run/execute/start those instructions.
@@ -67,7 +67,7 @@ This is also used for code reuse.
   - Relevance: Expressions are the way we instruct the system to perform actions or calculate results.
 
 - Parameter
-  - Examples: `this`, `foo`, `bob`, `alice`, `x`, `x'`,   `_foo`,  `_12`
+  - Examples: `this`, `foo`, `bob`, `alice`, `x`, `x'`, `_foo`, `_12`
 - Method call
   - Examples: `this.bar(foo.baz)`, `foo+`, `foo+(bar)`, `foo!`
 
@@ -84,7 +84,7 @@ This is also used for code reuse.
 (the last one will have the type name inferred by the type system)
 
 - Lambda: this is the common name given to an object literal with exactly one method implemented. Syntactic sugar is present to make this case easier.
-  - Examples: `{a,b->a+b}`,  `{ a -> a.foo }`, `{ 1 + 2 }`, `{::foo}`, `{::foo.bar }`, `{::+3 }`
+  - Examples: `{a,b->a+b}`, `{ a -> a.foo }`, `{ 1 + 2 }`, `{::foo}`, `{::foo.bar }`, `{::+3 }`
 
 - Instance: used to focus on types and subtypes relationships
   - Example1: `Tank: { .heading-> North; .aiming-> North;}`

@@ -20,7 +20,7 @@ For all practical coding purposes, what matters is that we have a way to represe
 ### Numbers with base bigger than 10
 
 We have seen numbers represented with digits 0-9.
-In this representation, 23 is the number  resulting from 'two times ten plus three'.
+In this representation, 23 is the number resulting from 'two times ten plus three'.
 The number 345 is the number resulting from '(three times ten plus four) times ten plus five'.
 That is, the first 10 numbers (starting from zero) are assigned a single symbol:
 `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`
@@ -54,7 +54,7 @@ It is very compact to represent very large numbers in this notation. For example
 If we did not use the double quote character (`` " ``) it would be very hard to spot trailing spaces in our base-96 numbers.
 
 As you can see, strings are useful to represent text.
-However, there are logically just very large numbers, and we have learned before how to represent numbers from zero to eleven.
+However, there are logically just very large numbers, and we have learned before how to represent numbers from zero to twelve.
 From that, it is quite obvious how to encode numbers up to any amount.
 In the same way numbers 0,1,2,... are defined in the Fearless standard library, all possible strings are also defined. And can be used out of the box.
 
@@ -62,7 +62,7 @@ Note again how the standard library can define an amount of types that is out of
 However, those types do exist and we can code in Fearless using them.
 Note that strings in Fearless are still a finite number.
 
-While there are  2<sup>64</sup> instances of `Nat`,
+While there are 2<sup>64</sup> instances of `Nat`,
 there are just a little more than 10<sup>4,256,895,041</sup> instances of Str.
 The number 10<sup>4,256,895,041</sup> is incomprehensibly large, far exceeding the number of atoms in the observable universe 10<sup>80</sup> and a googol 10<sup>100</sup>. However, it is still smaller than a googolplex 10<sup>googol</sup>.
 

@@ -361,7 +361,7 @@ not be defined by regular Fearless programmers.
 *(A quick warning before we start: for the next few paragraphs we describe `Nat` and `Int` exactly as if they always silently wrapped around like a clock. This is a simplification, in the same spirit as saying `1 + 1` is `2` without dwelling on every way a computation could instead fail. We come back to this, and to what actually happens, at the end of this section.)*
 
 Crucially, `Nat` and `Int` work exactly like our `Number` example, using **modulo arithmetic**. The key difference is the size of the "clock face". Instead of wrapping around after `11`, they wrap around after reaching an enormously large value.
-`Nat` behaves like a massive clock counting from `0` up to this  huge maximum.
+`Nat` behaves like a massive clock counting from `0` up to this huge maximum.
 Adding `1` to this maximum `Nat` wraps around back to `0`.
 Subtracting `1` from `0` wraps around to the maximum `Nat`.
 

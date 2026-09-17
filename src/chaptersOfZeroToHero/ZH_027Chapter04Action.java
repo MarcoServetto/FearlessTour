@@ -74,10 +74,10 @@ Action[R:**]: {
 Method `Action!` returns the `R` value, or throws an error with the provided info.
 That is, `!` is actually the opposite of `Try#`.
 For example, 
-- ``Try#{ Direction.map.get(`Nope`) }!``
+- ``Try#{ Directions.map.get(`Nope`) }!``
 
 is equivalent to
-- ``Direction.map.get(`Nope`)``
+- ``Directions.map.get(`Nope`)``
 
 In the same way, 
 - ``Try#{ myAction! }``
@@ -207,7 +207,7 @@ Code with less responsibility can simply throw errors, while code with higher re
 
 For example, consider `Point`: before we chose to visualise only tanks in locations from 0-10; but the `Point` objects can have any kind of coordinates.
 We could use errors to enforce that whenever a `Point` is observed, the `.x` and `.y` coordinates are in the 0-10 range.
-> Note: we do not show     .assert { x.inRange(0,10) } since it would make a bad error message.
+> Note: we do not show .assert { x.inRange(0,10) } since it would make a bad error message.
 > should we have a general Bool.orMsg(`...`) ?
 > if we want disableable assertions, we could have .assert taking a void like do.
 > then we get to write .assert{ x.checkInRange(0,10) } taking an read F[Void]
