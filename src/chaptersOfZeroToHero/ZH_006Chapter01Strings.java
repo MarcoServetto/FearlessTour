@@ -53,8 +53,12 @@ It is very compact to represent very large numbers in this notation. For example
 1,000,030 in base-96 has a representation of `` "1cM " ``. Note the space after the character ` "M" `.
 If we did not use the double quote character (`` " ``) it would be very hard to spot trailing spaces in our base-96 numbers.
 
+
+//OMIT_START
+NOTE for editors: eleven, not twelve; 0-11 is 12 numbers
+//OMIT_END
 As you can see, strings are useful to represent text.
-However, there are logically just very large numbers, and we have learned before how to represent numbers from zero to twelve.
+However, there are logically just very large numbers, and we have learned before how to represent numbers from zero to eleven.
 From that, it is quite obvious how to encode numbers up to any amount.
 In the same way numbers 0,1,2,... are defined in the Fearless standard library, all possible strings are also defined. And can be used out of the box.
 
