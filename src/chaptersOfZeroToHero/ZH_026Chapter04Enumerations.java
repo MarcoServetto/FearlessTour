@@ -180,8 +180,8 @@ Most possible key values will not have any associated element.
 In the case of ``Map#(`North`,North,  `East`,East,  `South`,South,  `West`,West)`` only four specific strings have an associated `Direction`.
 So, how to extract an element from a map if we have a string that may or may not be a valid key?
 
-The `Map[K,E]` type from the standard library offers three different methods:
-`.get`, `.opt`, and `.tryGet`.
+The `Map[K,E]` type from the standard library offers two different methods:
+`.get` and `.opt`.
 
 > Note: .tryGet should be added to both Map/List/Set
 
