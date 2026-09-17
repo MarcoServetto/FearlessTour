@@ -43,7 +43,7 @@ So... what if we include all of the following symbols?
 0123456789
 abcdefghijklmnopqrstuvwxyz
 ABCDEFGHIJKLMNOPQRSTUVWXYZ
-+-*/=<>,.;:()[]{}`'"!?@#$%^&_|~\
++-*|/=<>,.;:()[]{}`'"!?@#$%^&_|~\
 space and new line
 ```
 It is now 96 symbols. Those are all the symbols we can easily type on most keyboards.

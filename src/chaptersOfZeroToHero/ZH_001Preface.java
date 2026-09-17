@@ -90,6 +90,19 @@ Any text enclosed by the delimiters `/*...*|/` is called a multi-line comment.
 Fearless ignores everything between these two delimiters, even if it spans multiple lines.
 Comments spaces and newlines have no impact on the execution; but can be precious to insert human-readable explanations in the code; facilitating the understanding of code.
 
+//OMIT_START
+NOTE for editors: every chapter file is itself one big /*START...END*|/
+comment. Anywhere in the prose, an asterisk immediately followed by a
+slash would close that comment early and break the build, so write it as
+`*|/` instead (including inside nested asides like `/*explained later*|/`).
+MarkDownTest.lineToCode replaces `*|/` with the real asterisk-slash before
+the guide is rendered, so readers still see the real thing. Do not "fix"
+a `*|/` back into a real asterisk-slash on sight: it is not a stray
+duplicate character, it is required. This note does not apply inside an
+OMIT_START/OMIT_END block that intentionally closes this comment for real,
+to hold actual compiled code.
+//OMIT_END
+
 Comments are the first crucial abstraction step we are seeing. Comments are not unique to Fearless and you can use them in any kind of text.
 Consider the following text, where someone may be planning to apply for their dream Job:
 ```
