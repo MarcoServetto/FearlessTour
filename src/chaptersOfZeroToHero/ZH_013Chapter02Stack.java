@@ -140,7 +140,7 @@ With this representation problem sorted out, we can now reduce
 19. ...
 20. `6`
 
-This again, is long and verbose. When we have methods like `.match`, or methods with well understood behaviour, like `Num+`, we can simply skip some intermediate steps and get the following:
+This again, is long and verbose. When we have methods like `.match`, or methods with well understood behaviour, like `Nat+`, we can simply skip some intermediate steps and get the following:
 
 01. `Example.sum([3,2,1])`
 02. `3+( Example.sum([2,1]) )`

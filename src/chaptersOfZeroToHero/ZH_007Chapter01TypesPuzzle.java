@@ -199,7 +199,7 @@ N: G {I}
 """); }/*--------------------------------------------
 What does the code above mean? For us humans, it now looks incomprehensible, but for a machine it looks exactly the same as the code before.
 
-That is, there is nothing in the code that makes `I` more "norty" than L, or `.b` more "vertical" than `.c`.
+That is, there is nothing in the code that makes `I` more "northy" than L, or `.b` more "vertical" than `.c`.
 
 We can use more precise terminology:
 - Intrinsic Meaning/Intrinsic Semantics: the meaning derived purely from the structure and connections within the code itself, independent of human interpretation.
