@@ -183,8 +183,6 @@ So, how to extract an element from a map if we have a string that may or may not
 The `Map[K,E]` type from the standard library offers two different methods:
 `.get` and `.opt`.
 
-> Note: .tryGet should be added to both Map/List/Set
-
 Calling ``Map#(`North`,North,  `East`,East,  `South`,South,  `West`,West).opt(`North`)``
 will result in `Opts#(North)`: an `Opt[Direction]` containing the `North` direction.
 Calling ``Map#(`North`,North,  `East`,East,  `South`,South,  `West`,West).opt(`Nope`)``
