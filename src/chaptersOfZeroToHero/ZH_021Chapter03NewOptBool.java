@@ -86,6 +86,8 @@ Bool:Sealed,DataType[Bool,Bool]{
   .if[R:**](f: mut ThenElse[R]): R;
   ?[R:**](f: mut ThenElse[R]): R -> this.if(f);
   .match[R:**](m: mut BoolMatch[R]): R -> this?{.then->m.true; .else->m.false};
+  .thenDo(f: mut MF[Void]): Void -> this?{.then->f#; .else->Void};
+  .toOpt[R:*](mut MF[R]): mut Opt[R];
 
   .not: Bool;
   ==> (b: mut MF[Bool]): Bool -> this.not || b;
@@ -94,6 +96,8 @@ We then proceed with the methods we have seen before, implemented exactly as bef
 - `.and`, `&` (alias for `.and`), `&&` (computing other only when needed)
 - `.or`, `|` (alias for `.or`), `||` (computing other only when needed)
 - `.if`, `?` (alias for `.if`), `.match` (taking the other matcher for more regular naming)
+- `.thenDo`, running a `Void` computation only when `True`, doing nothing on `False`
+- `.toOpt`, turning a `Bool` into an `Opt`: `.some` of the computation when `True`, `.empty` when `False`
 - `.not`, returning the other boolean
 - `==>`, logical implication; defined with `.not` and `||`.
 
@@ -144,6 +148,7 @@ True:Bool{
   ||   b -> this;
   .not   -> False;
   .if m  -> m.then;
+  .toOpt f -> Opts#(f#);
   .imm   -> True;
 }
 False:Bool{
@@ -153,6 +158,7 @@ False:Bool{
   ||   b -> b#;
   .not   -> True;
   .if  m -> m.else;
+  .toOpt _ -> {};
   .imm   -> False;
 }
 ````
@@ -300,7 +306,8 @@ Here below you can see the other `Opt[E]` methods. Note how `.info`, `.imm` and 
   }
 ````
 
-Finally, here we can see in the type `_Opt[E:*]` all the gory type signatures. You might find them quite surprising.
+Finally, here we can see in the type `_Opt[E:*]` a good sample of the gory type signatures. You might find them quite surprising.
+The real `_Opt[E]` keeps growing over time, with more combinator methods (like `.and`, `.or` and `.andThen`, mirroring the `Bool` operators) and assertion helpers (`.assertSome`, `.assertEmpty`); we only show a representative subset here.
 
 ````
 _Opt[E:*]:BaseContainer[E],DataType[Opt[E],Opt[imm E],E,imm E]{
@@ -394,6 +401,8 @@ Bool:Sealed,DataType[Bool,Bool]{
   .if[R:**](f: mut ThenElse[R]): R;
   ?[R:**](f: mut ThenElse[R]): R -> this.if(f);
   .match[R:**](m: mut BoolMatch[R]): R -> this?{.then->m.true; .else->m.false};
+  .thenDo(f: mut MF[Void]): Void -> this?{.then->f#; .else->Void};
+  .toOpt[R:*](mut MF[R]): mut Opt[R];
 
   .not: Bool;
   ==> (b: mut MF[Bool]): Bool -> this.not || b;
@@ -417,6 +426,7 @@ True:Bool{
   ||(b) -> this;
   .not -> False;
   .if(f) -> f.then;
+  .toOpt(f) -> Opts#(f#);
   .imm -> True;
 }
 False:Bool{
@@ -426,6 +436,7 @@ False:Bool{
   ||(b) -> b#;
   .not -> True;
   .if(f) -> f.else;
+  .toOpt(_) -> {};
   .imm -> False;
 }
 Opts:{

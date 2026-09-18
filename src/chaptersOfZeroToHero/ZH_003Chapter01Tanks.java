@@ -361,8 +361,8 @@ for example in `North.turn` or `Tanks.of` it is clear where the type
 name finishes and the method name starts.
 Fearless has two kinds of method names:
 
-- names starting with exactly one `.` symbol and continuing with a lowercase
-letter and any number of letters and numbers, and
+- names starting with exactly one `.` symbol, then zero or more `_`, then a lowercase
+letter, and any number of further letters, numbers and underscores, and
 - names composed exclusively of a non empty sequence of operator symbols.
 
 The full list of operator symbols is:
@@ -373,7 +373,7 @@ The full list of operator symbols is:
 That is, the following is a list of valid and invalid method names:
 
 ```
-.foo  #  ==  ++  <=  .bar23  <#--  <+  //valid
+.foo  #  ==  ++  <=  .bar23  ._bar  <#--  <+  //valid
 .foo+  +bar  a=b  zoo  <hello>  .+>  : = //invalid
 ```
 > Yes, symbol `=` is a little special and it is invalid as an operator on its own.

@@ -427,11 +427,12 @@ or even stored on your hard drive.
 However, those types do exist and we can code in Fearless using them.
 This also means that the type names `0`, `1`, `2` and so on are already taken,
 and thus we can not actually define our numbers called `0`-`11` as we did before.
-Crucially, even though the implementation is optimized, the behavior perfectly matches
-the conceptual model of that massive, wrap-around clock face.
+Crucially, even though the implementation is optimized, the conceptual model of that
+massive, wrap-around clock face still holds: every number has a well defined predecessor
+and successor, wrapping from the highest value back to `0`.
 
 In addition to `Nat` we have `Int`.
-`Int` implements another kind of modulo arithmetic, where we can have negative values, and instead of rolling back to zero when we overflow, we roll back to the smallest possible negative value.
+`Int` follows another kind of modulo arithmetic, where we can have negative values, and instead of wrapping back to zero at the top of the range, the schema wraps back to the smallest possible negative value.
 That is, `Int` follows the schema below:
 ```
 Int:{
@@ -457,13 +458,13 @@ We will discuss them later.
 
 ### Staring into the Abyss: Overflow and Murphy's Law
 
-Because `Nat` and `Int` use this fixed-size, wrap-around (modulo) arithmetic,
+Because `Nat` and `Int` are built on this fixed-size, wrap-around (modulo) arithmetic,
 they are subject to overflow (going past the max) and underflow (going below the min).
-Just like `11.getSucc` became `0` on our small clock, adding `1` to the maximum `Nat`
-silently produces `0`. Adding two large positive `Int`s
+If nothing stepped in, then just like `11.getSucc` became `0` on our small clock, adding `1`
+to the maximum `Nat` would silently produce `0`, and adding two large positive `Int`s
 might silently result in a negative `Int`.
 
-There is no warning bell, no error message. It just happens.
+Without a safeguard, there would be no warning bell, no error message. It would just happen.
 
 Murphy's Law ("Anything that can go wrong, will go wrong") practically guarantees that
 if your program runs long enough or handles large enough inputs,
