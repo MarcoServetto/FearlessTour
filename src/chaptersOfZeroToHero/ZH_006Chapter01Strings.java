@@ -88,7 +88,7 @@ If we use those gigantic numbers to represent text,
 we better define some ways to concatenate text.
 We have seen how we can merge numbers of type `Nat` with `+` and `*`
 `10 + 5` is `15`, and if I wanted to concatenate them,
-I could do `10 + (5*10)` and get `105`.
+I could do `(10*10) + 5` and get `105`.
 Can we do the same thing with text?
 In the same way `10` is an object literal extending the standard library type `Nat`,
 `` "bob" `` is an object literal extending the standard library type `Str` (string).

@@ -24,10 +24,10 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     //can we get the above instead?
     .hash -> heading.hash.hashWith(aiming.hash).hashWith(point.hash);
     };
-  .fromInfo {map} -> Tanks#(
-    Directions.fromInfo(map.get(`heading`)),
-    Directions.fromInfo(map.get(`aiming`)),
-    Points.fromInfo(map.get(`point`))
+  .fromInfo(i) -> Tanks#(
+    Directions.fromInfo(i.getMap.get(`heading`)),
+    Directions.fromInfo(i.getMap.get(`aiming`)),
+    Points.fromInfo(i.getMap.get(`point`))
     );
   }
 ```
@@ -125,7 +125,7 @@ The errors in 2 and 3 leak out when using `.map` and are captured when using `.a
 > An interesting corner of design would be to offer some way to go from `Flow[Action[T]]` into `Action[List[T]]` ? or `Action[R]` with a transformation function on the flow?
 
 
-Note that `ReadGame.read` body is `this.read(List.of("StartConfiguration.txt"))!`,
+Note that `ReadGame.read` body is `` this.read(Lists#(`StartConfiguration.txt`))! ``,
 thus the errors that we carefully separated in the second implementation end up together again when we call the method `!` on the result of `.read(fileName)`.
 This causes all the errors to become observed bugs and to stop our application.
 

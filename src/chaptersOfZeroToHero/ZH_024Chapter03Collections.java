@@ -66,7 +66,7 @@ Person: { .name: Str }
 ...
 AllNames: { #(ps: List[Person]): Str -> ps.flow.map{::.name }.join `, ` }
 ```
-The code above first uses `.map` to extra the names of all the persons, and then joins all the names together; separated by the "comma and space" characters.
+The code above first uses `.map` to extract the names of all the persons, and then joins all the names together; separated by the "comma and space" characters.
 
 We can also compute the sum of the size of all the names as follows:
 ```
@@ -479,7 +479,7 @@ would compare a `Car` by the total cats weight of its `.driver`.
 
 Here some more boring examples:
 ```
-Persons:{#(name:Str, age:Nat):Person -> Person:{read .name: Str -> name; read .age: Nat -> age }}
+Persons:{#(age:Nat, name:Str):Person -> Person:{read .age: Nat -> age; read .name: Str -> name }}
 Older:OrderBy[Person]{ p1,p2,m -> p1.age <=> (p2.age, m) }
 OlderLonger:OrderBy[Person]{p1,p2,m-> p1.age <=> (p2.age, m&&{p1.name.size <=> (p2.name.size,m)}) }
 ```
@@ -633,7 +633,7 @@ myPersons.flow
 Here we pass two parameters: a `OrderHashBy`, that as usual can be the identity if our keys implement `OrderHash[K]`, and a literal specifying how to create the key and the element from the objects inside the flow.
 
 Finally, sets of type `Set[K]` are another application of hashing. Instead of mapping keys to elements, it simply remembers if a key is present or not. That is, `Set[K]` most important methods are `.size`, `.isEmpty` and `.contains`.
-Sets also support `.flow`, working exactly as for lists. Again, the order of the flow is the same as the insertion order.
+Sets also support `.flow`, but unlike lists and maps, a set's flow order follows the sorted order given by its `OrderHash`, not the insertion order.
 See below some examples of using sets.
 ```
 Sets#({::},1,2,3,4,5)//set of 5 numbers
