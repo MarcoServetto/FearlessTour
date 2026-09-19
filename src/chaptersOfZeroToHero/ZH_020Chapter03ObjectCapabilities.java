@@ -57,10 +57,10 @@ Try to write a different message instead of `Hello World!` and re run the projec
 Any type implementing `base.Main` can be the starting point for the execution.
 `Main` is declared in `base` as follows:
 ```
-Main:{ .main(s: mut System): Void }
+Main:{ .main(sys: mut System): Void }
 ```
 
-This parameter refers to an **object capability**: an object able to do external side effects.
+The parameter of type `mut System` refers to an **object capability**: an object able to do external side effects.
 `sys.out` is a method creating a restricted object capability from the system capability.
 The result of `sys.out` is an object of type `mut base.Output`: an object that can print text out.
 
