@@ -460,10 +460,10 @@ We will discuss them later.
 
 Because `Nat` and `Int` are built on this fixed-size, wrap-around (modulo) arithmetic,
 they are subject to overflow (going past the max) and underflow (going below the min).
-If nothing stepped in, then just like `11.getSucc` became `0` on our small clock, adding `1`
-to the maximum `Nat` would silently produce `0`, and adding two large positive `Int`s
-might silently result in a negative `Int`.
 
+Just like `11.getSucc` became `0` on our small clock, adding `1` to the maximum `Nat`
+would silently produces `0`. Adding two large positive `Int`s
+might silently result in a negative `Int`.
 Without a safeguard, there would be no warning bell, no error message. It would just happen.
 
 Murphy's Law ("Anything that can go wrong, will go wrong") practically guarantees that
