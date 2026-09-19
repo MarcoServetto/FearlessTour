@@ -462,7 +462,7 @@ Because `Nat` and `Int` are built on this fixed-size, wrap-around (modulo) arith
 they are subject to overflow (going past the max) and underflow (going below the min).
 
 Just like `11.getSucc` became `0` on our small clock, adding `1` to the maximum `Nat`
-would silently produces `0`. Adding two large positive `Int`s
+would silently produce `0`. Adding two large positive `Int`s
 might silently result in a negative `Int`.
 Without a safeguard, there would be no warning bell, no error message. It would just happen.
 
