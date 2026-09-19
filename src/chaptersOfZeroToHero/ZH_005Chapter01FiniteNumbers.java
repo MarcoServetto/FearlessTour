@@ -486,7 +486,7 @@ units of medicine the second after.
 
 The creators of the Fearless standard library did not like this outcome.
 The solution was to add a layer of checks on top of the behavior of `Int`, `Nat` and many other types.
-In this way, with the base behavior of the standard library, Overflows, Underflows and other
+In this way, with the default behavior of the standard library, Overflows, Underflows and other
 dangerous numeric operations with odd unpredictable results are going to stop the
 whole execution instead of performing probably nonsensical operations.
 We will discuss the details on how those checks can be tuned later in the guide.
