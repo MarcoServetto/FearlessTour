@@ -74,7 +74,6 @@ InputCursor: ToIso[InputCursor], WidenTo[InputCursor]{
 InputCursorNode: ToIso[InputCursorNode], WidenTo[InputCursorNode]{
   mut .label: Str; /// best effort portable name to help debugging
   mut .text: Opt[Str]; /// fresh read+decode each call; throws on I/O failure
-  mut .image: Opt[Image];
   ...//many more methods for other kinds of files.
   }
 ````

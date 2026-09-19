@@ -367,9 +367,7 @@ Now we can implement `==` on `Order[T]` and `Point` will automatically get an `=
 Right now it does not look like a great result, we implement one method `.cmp` to get one method `==`.
 But.... there are many more convenience operators we can define on top of `.cmp`.
 `==` equal, `!=` different, `<` less than, `<=` less or equal, `>` greater than, `>=` greater or equal.
-There is more! We can check if our point is in a range between two other points.
-Ranges can be open or closed on either end, but this does not need four separate methods: a single `.inRange(range):Bool` handles all four combinations, since the range argument itself (built with `=~~=`, `=~~`, `~~=` or `~~`) already knows which ends are inclusive.
-As you can see, this is already 7 methods.
+As you can see, this is already 6 methods.
 
 Still, the implementation of `.cmp` is much longer than we would like.
 Can we build some abstraction to make it more direct?
@@ -382,7 +380,7 @@ Order[T]:{
   read .cmp[R:**](t0: read T, t1: read T, m: mut OrderMatch[R]): R;
   read .close: read T; /// convert 'this' from type 'Order[T]' to type 'T'
   read ==(other: read T): Bool -> this.cmp(this.close,other,{.lt->False; .eq->True; .gt->False;});
-  //and 6 more methods <,>,<=,>=,.inRange etc implemented using .cmp
+  //and 5 more methods !=,<,>,<=,>= implemented using .cmp
   }
 Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
   read .x: Nat -> x;
@@ -409,7 +407,7 @@ Order[T]:{
   read <=>[R:**](other: read Order[T], m: mut OrderMatch[R]): R ->
     this.cmp(this.close, other.close, m);
   read ==(other: read T): Bool -> this.cmp(this.close,other,{.lt->False; .eq->True; .gt->False;});
-  //and 6 more methods <,>,<=,>=,.inRange etc implemented using .cmp
+  //and 5 more methods !=,<,>,<=,>= implemented using .cmp
   }
 Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
   read .x: Nat -> x;
@@ -651,8 +649,6 @@ Note how our first attempt for a set with custom ordering does not compile.
 We need to use `OrderHashBy` and not just `OrderBy`.
 Note how `.cmp`, `.hash` and `.str` receive a `read` version of the parameters, thus we may have to call `.imm` to access the `imm` methods.
 
-We can create a set from a flow by calling `.set{::}`, or passing a specific order.
-
 In the same way there is an `EList[E]` type that is an editable variant of `List[E]`, there are types `EMap[K,E]` and `ESet[E]`. As for `EList[E]`, they are rarely used so we will discuss them (much) later.
 
 ### List, Opt and ordering.
@@ -794,7 +790,7 @@ use base.List as List;
 use base.Lists as Lists;
 
 use base.Maps as Maps;
-//use base.Sets as Sets;
+use base.Sets as Sets;
 use base.Opt as Opt;
 use base.OrderByCaseInsensitive as OrderByCaseInsensitive;
 
@@ -1025,13 +1021,14 @@ TestListOps:F[Tests,Tests]{::
   }
 
 TestOrderBasics:F[Tests,Tests]{::
-  // Order[T] via cmp/close gives == and other comparison operators (plus range helpers)
+  // Order[T] via cmp/close gives == and other comparison operators
   .test(Points#(1,2) == (Points#(1,2)).assertTrue)
   .test(Points#(1,2) != (Points#(1,3)).assertTrue)
   .test(Points#(1,2) <  (Points#(1,3)).assertTrue)
   .test(Points#(1,9) >  (Points#(0,99)).assertTrue)
 
-  // range helpers (on ordered numbers): =~~= is inclusive-inclusive, ~~ is
+  // range helpers (each numeric type has its own .inRange, not from Order[T]):
+  // =~~= is inclusive-inclusive, ~~ is
   // open-open, =~~ excludes only the high end, ~~= excludes only the low end.
   .test(5.inRange(0=~~=10).assertTrue)
   .test(5.inRange(0~~10).assertTrue)
@@ -1147,14 +1144,11 @@ TestMapsAndSets:F[Tests,Tests]{::
     )
 
   // Sets: size/isEmpty/contains, insertion order in flow
-  //.test(Sets#({::},1,2,3,4,5).size.assertEq 5)
-  //.test(Sets#({::},1,2,3,4,5).contains(3).assertEq True)
-  //.test(Sets#({::},1,2,3,4,5).contains(6).assertEq False)
-  //.test(Sets#({::},1,2,3,4,5).flow.list.get(0).assertEq 1)
-  //.test(Sets#({::},1,2,3,4,5).flow.list.get(4).assertEq 5)
-
-  // set from flow
-  //.test(Lists#(1,2,2,3).flow.set{::}.size.assertEq 3)
+  .test(Sets#({::},1,2,3,4,5).size.assertEq 5)
+  .test(Sets#({::},1,2,3,4,5).contains(3).assertEq True)
+  .test(Sets#({::},1,2,3,4,5).contains(6).assertEq False)
+  .test(Sets#({::},1,2,3,4,5).flow.list.get(0).assertEq 1)
+  .test(Sets#({::},1,2,3,4,5).flow.list.get(4).assertEq 5)
 
   // custom OrderHashBy: strings by size (dedup by size)
   //.test(Sets#(StrSizeOrder, `a`, `bb`, `cc`, `ddd`).size.assertEq 3)

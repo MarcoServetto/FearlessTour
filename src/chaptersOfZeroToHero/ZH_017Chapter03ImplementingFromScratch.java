@@ -34,11 +34,11 @@ We call **Magic methods** the methods from the standard library giving direct ac
 The following code introduces updatable local variables, and uses a few new features.
 -------------------------*/@Test void var1 () { run("""
 //OMIT_START
-use base._Magic as Magic;
+_Magic: { ![R:**]: R -> base.Error.msg`magic`; }
 //OMIT_END
 Void:{}
 Var[E: imm,mut,read]:{
-  mut  .set(v: E): Void -> Magic!;
+  mut  .set(v: E): Void -> _Magic!;
   mut  .get: E;
   read .get: read/imm E;
   }
@@ -48,6 +48,10 @@ Vars: {
     }
   }
 """); }/*--------------------------------------------
+
+First: `_Magic` is not something we can use in our code to make any of our wishes come true.
+It is a marker used internally by the compiler to annotate certain method bodies whose behaviour can not be encoded in plain Fearless code.
+All such methods are already part of the standard library, so no user program would ever write `_Magic!`.
 
 The description below explains how the code above works, but will only mention `mut`, `imm`, `read` and `read/imm` without explaining how they work in the details yet.
 First we define a type `Void:{}`. Nothing special here, just a type that does nothing. `Void` is often used to represent an operation that has no meaningful result, and simply performs side effects, and to do so it will have to use magic methods internally.

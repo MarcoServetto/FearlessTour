@@ -40,7 +40,7 @@ This is also used for code reuse.
 - Method name:
   - Relevance: giving names to methods (aka operations) allows to mnemonically connect behaviour with names.
   - Syntax: dot `.` followed by lowercase identifier, including letters, numbers, underscore but no spaces; or operator symbols.
-  - Examples: `.foo`, `._bar`, `._12`, `.baz`, `+`, `++`, `+>`, `<=`, `*|/-`
+  - Examples: `.foo`, `._bar`, `._b12`, `.baz`, `+`, `++`, `+>`, `<=`, `*|/-`
   
 - Parameter name:
   - Relevance: parameter names describe the role the parameter value will exercise inside the method execution. A parameter that is intended to be unused can be called `_`.
@@ -67,7 +67,7 @@ This is also used for code reuse.
   - Relevance: Expressions are the way we instruct the system to perform actions or calculate results.
 
 - Parameter
-  - Examples: `this`, `foo`, `bob`, `alice`, `x`, `x'`, `_foo`, `_12`
+  - Examples: `this`, `foo`, `bob`, `alice`, `x`, `x'`, `_foo`, `_b12`
 - Method call
   - Examples: `this.bar(foo.baz)`, `foo+`, `foo+(bar)`, `foo!`
 
