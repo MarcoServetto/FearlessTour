@@ -15,8 +15,8 @@ As discussed, errors are not part of the basic semantics of Fearless, and they c
 That is, any code anywhere can write `Error!(someInfo)` and throw that `Info` object as a structured error message.
 
 
-Before we discussed the convenience method `Error.msg` that takes a simple string, converts it into an `Info` object mapping that
-string to the `` `msg` `` key.
+Before we discussed the convenience method `Error.msg` that takes a simple string and converts it into an `Info` object holding
+that string as its `` `.msg` `` variant.
 The method `Map.get` either returns the mapped value or uses `Error.msg(..)` to report the lookup failure.
 
 When a method throws an error the computation stops and the error is reported outside of the program.
@@ -28,7 +28,10 @@ Let's make this more concrete.
 
 - Code 1: ``Directions.map.get(`Nope`)`` raises an error with a readable error message.
 - Code 2: ``Try#{Directions.map.get(`Nope`)}`` returns an object of type `Action[Direction]`.
-- Code 3: ``Directions.map.tryGet(`Nope`)`` behaves identically to Code 2, but could be faster.
+- Code 3: ``Directions.map.tryGet(`Nope`)`` would behave identically to Code 2, but could be faster.
+
+>Note: `.tryGet` is not a real method of the standard library yet; it is used through the rest of this
+>chapter as a proposed shorthand for ``Try#{..get(..)}``, to keep the examples about `Action` focused.
 
 We can use code 1 when we trust that the error will not be raised, or because if the error condition happens, then what we want is for the program to terminate with a good error message.
 When we want to consciously extract an element that may or may not be there, with the intention that the element being missing does not represent an error, we can use the method `.opt`, as in ``Directions.map.opt(`Nope`)``, returning an `Opt[Direction]`.
@@ -252,7 +255,7 @@ In a complex program we can have a few layers of responsibility like this, where
 ### Try, CapTry and exact shape of error messages.
 
 We have seen that `Try#{...}` creates an `Action[R]` and that `myAction!` can do
-`Error#(info)`.
+`Error!(info)`.
 But.. what happen next? 
 Another `Try#{...}` can turn the leaked error into another `Action[R]`, or the whole program could fail. How does this failure looks?
 It will look something like this:
@@ -273,7 +276,7 @@ For example
 ````
 Stuff:{
   .foo (myList)->myList.get(5);
-  .bar -> try{this.foo};
+  .bar -> Try#{this.foo};
   .beer1 -> this.bar!
   .beer2 -> this.bar.context `InBeer2`!
   }

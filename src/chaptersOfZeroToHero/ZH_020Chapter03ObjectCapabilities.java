@@ -38,7 +38,7 @@ That is the fearless compiler. Congrats, now you have it on your machine.
 
 Then, click on the executable called `fearlessw` or `fearlessw.exe`.
 
-You will see a window asking to create an empty project in a location of your choice. Choose anywhere you like, for example a new folder on your Desktop.
+You will see a window asking to create a demo project in a location of your choice. Choose anywhere you like, for example a new folder on your Desktop.
 This new folder will contain the following files:
 - `start.fearless`
 - `_demo`
@@ -60,8 +60,8 @@ Any type implementing `base.Main` can be the starting point for the execution.
 Main:{ .main(sys: mut System): Void }
 ```
 
-The parameter `sys` refers to an **object capability**: an object able to do external side effects.
-`base.Output` is a function creating a restricted object capability from the system capability.
+The parameter of type `mut System` refers to an **object capability**: an object able to do external side effects.
+`sys.out` is a method creating a restricted object capability from the system capability.
 The result of `sys.out` is an object of type `mut base.Output`: an object that can print text out.
 
 That is, Object capabilities and Reference capabilities are two different concepts.
