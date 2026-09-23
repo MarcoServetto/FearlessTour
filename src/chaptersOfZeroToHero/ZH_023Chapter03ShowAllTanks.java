@@ -90,9 +90,9 @@ Tank: ToStr {
   }
 HeadingChar: DirectionMatch[Str]{
   .north -> `A`;
-  .east  -> `<`;
+  .east  -> `>`;
   .south -> `V`;
-  .west  -> `>`;
+  .west  -> `<`;
   }
 AimingRepr1: DirectionMatch[Str]{
   .north -> ` / | \\ `;
@@ -103,9 +103,9 @@ AimingRepr1: DirectionMatch[Str]{
 AimingRepr2: DirectionMatch[Str]{
   mut .centre: Str;
   .north -> ` | ` + (this.centre) + ` | `;
-  .east  -> ` - ` + (this.centre) + ` | `;
+  .east  -> ` | ` + (this.centre) + ` - `;
   .south -> ` | ` + (this.centre) + ` | `;
-  .west  -> ` | ` + (this.centre) + ` - `;
+  .west  -> ` - ` + (this.centre) + ` | `;
   }
 AimingRepr3: DirectionMatch[Str]{
   .north -> ` \\ _ / `;
@@ -143,9 +143,9 @@ TanksToS: F[List[Tank],Str]{ ts -> Block#
     .let y= { t.position.y }
     .if {x.inRange(0=~~10).not} .done
     .if {y.inRange(0=~~10).not} .done
-    .do{ res.get(y * 3)    .get(x).set(t.repr1) }
-    .do{ res.get(y * 3 + 1).get(x).set(t.repr2) }
-    .do{ res.get(y * 3 + 2).get(x).set(t.repr3) }
+    .do{ res.get(x * 3)    .get(y).set(t.repr1) }
+    .do{ res.get(x * 3 + 1).get(y).set(t.repr2) }
+    .do{ res.get(x * 3 + 2).get(y).set(t.repr3) }
     .done
     }}
   .return { res.flow.map{::.flow.map{::.get}.join(``)}.join(``|) };
@@ -181,66 +181,76 @@ As you can see, we omitted the code reading the initial game state.
 This is because in order to read data from files there is still quite some content that we need to learn. We will handle that in Chapter 4.
 Assuming a properly implemented `ReadGame`, this code could print something like the following:
 <pre class="code-50"><code>
-Step 5
-------------------------------------------------------------
- / - \       / - \
- | > |       - V |
- \ | /       \ _ /
+Step 0
 
-
-
-       / - \
-       | V |
-       \ | /
-                                     / - \
-                                     | < |
-                                     \ | /
-             / | \
-             | > |
-             \ _ /
-
-
-
- / - \       / - \
- | > |       - V |
- \ | /       \ _ /
-
-
-
-                                     / - \
-                                     | < |
-                                     \ | /
 ------------------------------------------------------------
 
-Step 6
+ / - \         / - \
+ | > |         - V |
+ \ | /         \ _ /
+
+
+
+        / - \
+        | V |
+        \ | /
+                                    / - \
+                                    | < |
+                                    \ | /
+               / - \
+               | A -
+               \ _ /
+
+
+
+ / | \
+ | > |
+ \ _ /
+                                    / - \
+                                    - A |
+                                    \ _ /
+
+
+
+
+
+
 ------------------------------------------------------------
-       / - \
-       | > |
-       \ | /
-             / - \
-             - V |
-             \ _ /
+
+Step 1
+
+------------------------------------------------------------
+
+        / - \
+        | > |
+        \ | /
+               / - \
+               - V |
+               \ _ /
 
 
 
-       / - \                   / - \
-       | V |                   | < |
-       \ | /                   \ | /
-                   / | \
-                   | > |
-                   \ _ /
+        / - \  / - \         / - \
+        | V |  | A -         | < |
+        \ | /  \ _ /         \ | /
 
 
 
-       / - \
-       | > |
-       \ | /
-             / - \
-             - V |
-             \ _ /
-                               / - \
-                               | < |
-                               \ | /
+
+
+
+        / | \                       / - \
+        | > |                       - A |
+        \ _ /                       \ _ /
+
+
+
+
+
+
+
+
+
 ------------------------------------------------------------
 </code></pre>
 Where tanks can be displayed on the screen, showing the various steps of the game.
@@ -269,9 +279,9 @@ The code shown below uses `res` to represent a grid of information, that can be 
     .let y= { t.position.y }
     .if {x.inRange(0=~~10).not} .done
     .if {y.inRange(0=~~10).not} .done
-    .do{ res.get(y * 3)    .get(x).set(t.repr1) }
-    .do{ res.get(y * 3 + 1).get(x).set(t.repr2) }
-    .do{ res.get(y * 3 + 2).get(x).set(t.repr3) }
+    .do{ res.get(x * 3)    .get(y).set(t.repr1) }
+    .do{ res.get(x * 3 + 1).get(y).set(t.repr2) }
+    .do{ res.get(x * 3 + 2).get(y).set(t.repr3) }
 ````
 This code runs for each tank `t` in `ts`.
 `x/y` are just short names for the coordinates of `t`.

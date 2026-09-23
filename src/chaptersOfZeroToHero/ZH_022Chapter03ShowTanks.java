@@ -16,7 +16,7 @@ Below is the representation of a tank heading `East` and aiming `North`, and ano
 
 ```
 / | \  / - \
-| < |  | A -
+| > |  - A |
 \ _ /  \ _ /
 ```
 
@@ -191,15 +191,15 @@ AimingRepr3: DirectionMatch[Str]{
 AimingRepr2: DirectionMatch[Str]{
   mut .centre: Str;
   .north -> ` | ` + (this.centre) + ` | `;
-  .east  -> ` - ` + (this.centre) + ` | `;
+  .east  -> ` | ` + (this.centre) + ` - `;
   .south -> ` | ` + (this.centre) + ` | `;
-  .west  -> ` | ` + (this.centre) + ` - `;
+  .west  -> ` - ` + (this.centre) + ` | `;
   }
 HeadingChar: DirectionMatch[Str]{
   .north -> `A`;
-  .east  -> `<`;
+  .east  -> `>`;
   .south -> `V`;
-  .west  -> `>`;
+  .west  -> `<`;
   }
 Tank: ToStr {
   .heading:  Direction;
@@ -224,9 +224,9 @@ We could have alternatively made a factory capturing the missing information in 
 ...
 AimingRepr2: F[Str, mut DirectionMatch[Str]]{ centre->{
   .north -> ` | ` + centre + ` | `;
-  .east  -> ` - ` + centre + ` | `;
+  .east  -> ` | ` + centre + ` - `;
   .south -> ` | ` + centre + ` | `;
-  .west  -> ` | ` + centre + ` - `;
+  .west  -> ` - ` + centre + ` | `;
   }}
 
 ```
@@ -241,7 +241,7 @@ This code will print
 
 ```
  / - \
- | A -
+ - A |
  \ _ /
 ```
 
@@ -348,15 +348,15 @@ AimingRepr3: DirectionMatch[Str]{
 AimingRepr2: DirectionMatch[Str]{
   mut .centre: Str;
   .north -> ` | ` + (this.centre) + ` | `;
-  .east  -> ` - ` + (this.centre) + ` | `;
+  .east  -> ` | ` + (this.centre) + ` - `;
   .south -> ` | ` + (this.centre) + ` | `;
-  .west  -> ` | ` + (this.centre) + ` - `;
+  .west  -> ` - ` + (this.centre) + ` | `;
   }
 HeadingChar: DirectionMatch[Str]{
   .north -> `A`;
-  .east  -> `<`;
+  .east  -> `>`;
   .south -> `V`;
-  .west  -> `>`;
+  .west  -> `<`;
   }
 Tank: ToStr {
   .heading:  Direction;
@@ -389,7 +389,7 @@ NextState:{
 Test:Main {sys -> sys.out.println(  Tanks#(North, West, Points#(1, 2))  )}
 //PRINT|
 //PRINT| / - \\ \n\
-//PRINT| | A - \n\
+//PRINT| - A | \n\
 //PRINT| \\ _ / \n\
 //PRINT|
 """); }/*--------------------------------------------
