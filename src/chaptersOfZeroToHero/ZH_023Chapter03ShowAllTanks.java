@@ -124,7 +124,7 @@ NextState:{
     .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
 
   read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
-    .filter{::==(t.position)}
+    .filter{::==(t.move.position)}
     .size == 1 .if{
       .then -> t.move;
       .else -> t;
@@ -253,7 +253,7 @@ Step 1
 
 ------------------------------------------------------------
 </code></pre>
-Where tanks can be displayed on the screen, showing the various steps of the game.
+Here the tanks are displayed on the screen, showing the various steps of the game.
 
 We now focus on those two lines:
 ```
@@ -285,14 +285,14 @@ The code shown below uses `res` to represent a grid of information, that can be 
 ````
 This code runs for each tank `t` in `ts`.
 `x/y` are just short names for the coordinates of `t`.
-If `x` or `y` are `.not` in the visualized range, we do not represent tank `t` on our board `res`.
+If `x` or `y` is not in the visualised range, we do not represent tank `t` on our board `res`.
 Otherwise, we write the three lines representing `t` on the appropriate position on `res`.
 Note how we call `.get(..).get(..).set(..)`
 to access two layers of `List` and then set a new value in our variable.
 
 What we are creating now is basically a 'text art' based game.
 Those were popular in the (far) past. Of course Fearless supports proper graphics, and we will see how to render nice looking images of tanks later on; but this way of printing the 'current screen' line by line is how those fancier graphic systems work too under the hood.
-Here we use characters as graphical symbols, they use (much smaller) coloured pixels as graphical symbols.
+Here we use characters as graphical symbols; modern screens use (much smaller) coloured pixels as graphical symbols.
 
 But the idea of doing graphics by using a grid of graphical symbols is the same,
 and the struggle to decide what symbol to place in each location is very similar too.

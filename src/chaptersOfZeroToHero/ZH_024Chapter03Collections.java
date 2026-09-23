@@ -230,7 +230,7 @@ You can think of it as a hard container of soft elements, for example a table wi
 
 **Unclear and confusing options:**
 
-In addition to the two options above, there are a few other permutations. Those should not be used in actual programs, since better more clear types are available.
+In addition to the two options above, there are a few other permutations. Those should not be used in actual programs, since better, clearer types are available.
 
 - `mut List[Num]` is a list of immutable numbers. Here the fact that the list is mutable does not have any effect, since the contained numbers are immutable anyway. Types like this may emerge when using generics:
 Consider the following code:
@@ -450,7 +450,8 @@ Those two types are designed to cooperate well with the type inference and synta
 If we have our iconic `Person:Order[Person]` with a `read .age:Nat`, we can write
 `{::}` to get an `OrderBy[Person,Person]` and
 `{::.age}` to get an `OrderBy[Person,Nat]`.
-On the other hand, if we want to give a top level name for a specific way to order persons, we can do it by using `OrderBy[Person]`:
+On the other hand, if we want to give a top level name for a specific way to order persons, we can do it by using `OrderBy[Person]`.
+Assuming `Cat` also has a `.weight: Nat` method, we can write:
 ```
 ByCats:OrderBy[Person]{
   p1,p2,m -> p1.cats.flow.map{::.weight}.sum 0 <=> (p2.cats.flow.map{::.weight}.sum 0, m);
@@ -486,7 +487,7 @@ OlderLonger:OrderBy[Person]{p1,p2,m-> p1.age <=> (p2.age, m&&{p1.name.size <=> (
 
 ### Comparators and Flows: `.max`, `.min`, `.sort` and `.distinct`
 
-`Flow[E]` offers methods `.max`, and `.min` to find the biggest and smallest element `E`.
+`Flow[E]` offers methods `.max` and `.min` to find the biggest and smallest element `E`.
 Finding the max from some elements is not as obvious as it looks; there are two main corner cases:
 
 - The flow may be empty. In this case, there is no such thing as a biggest/smallest element.
@@ -523,7 +524,7 @@ myCars.flow
 Flows offer method `.sort` to sort the elements.
 It takes the same parameters as `.max`/`.min`.
 
-Flows also offer method `.distinct` to remove duplicates, and `.sortDistinct` to sort while removing duplicates.
+Flows also offer method `.distinct` (taking an `OrderHashBy`) to remove duplicates, and `.sortDistinct` to sort while removing duplicates.
 
 Note how all of those methods take some ordering criteria.
 Those `Flow[E]` methods are not enforcing a unique kind of ordering, they ask the user to provide the ordering.
@@ -586,9 +587,9 @@ Persons: { #(age: Nat, name: Str): Person -> Person: OrderHash[Person]{'self
 With such a `Person` type, we can define a map from persons to addresses:
 
 ```
-Maps#({::},   // this {::} is expanded as OrderHashBy[Person]{x->x}
+Maps#({::},   // this {::} is expanded as OrderHashBy[Person,Person]{x->x}
   Persons#(25,`Bob`),`Toronto 34b Warden St.`,
-  Persons#(34,`Alice`),`Wellington 134 Kelburn parade`,
+  Persons#(34,`Alice`),`Wellington 134 Kelburn Parade`,
   ...
   )
 ```
@@ -599,9 +600,9 @@ However, `.get` does not take an index of type `Nat` but a key of type `K`.
 For example, with the map declared above
 
 ```
-myMap.isEmpty //false
+myMap.isEmpty //False
 myMap.size //2
-myMap.get(Persons#(34,`Alice`)) // `Wellington 134 Kelburn parade`
+myMap.get(Persons#(34,`Alice`)) // `Wellington 134 Kelburn Parade`
 ```
 If the key is not present in the map, `.get` will cause an error.
 We can instead use `.opt` to extract an optional `Opt[E]` result. For example
@@ -616,7 +617,7 @@ We can flow on a map, but since both keys and elements are present, the flow met
 For example
 ```myMap.flow{k,e-> k.name + e }.list```
 will return
-```Lists#(`BobToronto 34b Warden St.`,`AliceWellington 134 Kelburn parade`)```
+```Lists#(`BobToronto 34b Warden St.`,`AliceWellington 134 Kelburn Parade`)```
 
 Note how the order of the flow is the same as the insertion order.
 
@@ -649,11 +650,11 @@ Note how our first attempt for a set with custom ordering does not compile.
 We need to use `OrderHashBy` and not just `OrderBy`.
 Note how `.cmp`, `.hash` and `.str` receive a `read` version of the parameters, thus we may have to call `.imm` to access the `imm` methods.
 
-In the same way there is an `EList[E]` type that is an editable variant of `List[E]`, there are types `EMap[K,E]` and `ESet[E]`. As for `EList[E]`, they are rarely used so we will discuss them (much) later.
+In the same way there is an `EList[E]` type that is an editable variant of `List[E]`, there is a type `ESet[E]`. As for `EList[E]`, it is rarely used so we will discuss it (much) later.
 
 ### List, Opt and ordering.
 
-Finally, `List[E]` and `Opt[E]` do not implement `Order[E]` or `OrderHash[E]`.
+Finally, `List[E]` and `Opt[E]` do not implement `Order[List[E]]`/`Order[Opt[E]]` or `OrderHash[List[E]]`/`OrderHash[Opt[E]]`.
 They do not need to and they may not contain ordered elements.
 If we want to sort a list of ordered elements we can do
 ````

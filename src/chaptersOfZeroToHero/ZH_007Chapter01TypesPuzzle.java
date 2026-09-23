@@ -73,7 +73,7 @@ Rectangles: {#(x1: Int, y1: Int, x2: Int, y2: Int): Rectangle ->
 
 But this is quite error prone: what if we accidentally wrote
 `.y2 -> y1;` instead?
-This is also error prone for the user: they would have to write something like `Rectangles#(+1,+3,+10,+25)`
+This is also error prone for the user: they would have to write something like `Rectangles#(+1,+3,+10,+25)`.
 Can they remember the role of each of the four numbers?
 What if they accidentally swap two numbers? The type system will not be able to help: this version of `Rectangle` is simply made of four `Int`s.
 

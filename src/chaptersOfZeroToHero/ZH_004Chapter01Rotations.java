@@ -63,7 +63,7 @@ We show 4 ways to declare `Turn90`, from the most verbose to the most compact:
 ```
 - The first way repeats the type declaration of `#`. As we discussed, this is not needed.
 Note how the code is naming the parameter `dir` instead of `d`.
-This is ok, when implementing a method the name of the parameters is irrelevant and can be chosen anew every time the method is implemented.
+This is ok: when implementing a method, the name of the parameters is irrelevant and can be chosen anew every time the method is implemented.
 - The second explicitly implements `#`.
 - The third relies on the fact that the `#` method is the only abstract method of `Rotation`, thus we can avoid mentioning the method name. We still need to mention the parameter name and the `->` symbol.
 - The last uses a new form of syntactic sugar, designed to simplify writing literals

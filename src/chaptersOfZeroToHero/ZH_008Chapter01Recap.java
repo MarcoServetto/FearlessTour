@@ -44,7 +44,7 @@ This is also used for code reuse.
   
 - Parameter name:
   - Relevance: parameter names describe the role the parameter value will exercise inside the method execution. A parameter that is intended to be unused can be called `_`.
-  - Syntax: lowercase identifier; can also have `'` at the end
+  - Syntax: lowercase identifier, optionally preceded by `_`; can also have `'` at the end
   - Examples: `foo` in `.baz(foo:Bar)`, `.baz(foo)` or `{foo->..}`
   
 - Argument:
@@ -59,8 +59,8 @@ This is also used for code reuse.
   `mut .foo(a: A): B;` (abstract method),<BR/>
   `mut .foo(a: A): B -> a.toB;` (concrete method full form),<BR/>
   `mut .foo(a)-> a.toB;` (concrete method inferred types),<BR/>
-  `a->a.foo` or `a.foo` inside `{a->a.foo}` and `{a.foo}` 
-  (concrete method inferred name and types),
+  `a->a.foo` or `::.foo` inside `{a->a.foo}` and `{::.foo}` 
+  (concrete method inferred name and types).
 
 - Expression:
   There are three kinds of expression: parameters, method calls, and object literals.
@@ -94,7 +94,7 @@ This is also used for code reuse.
 
 #### `North` as an instance / `North` as a type
 
-Note how in the sentence before, the first `North` is the expression `North`, equivalent via desugaring to `Anon[]:North[]{}`, while the 
+Note how in the sentence before, the first `North` is the expression `North`, equivalent via desugaring to `SomeName147:North{}`, while the 
   second `North` is the type `North`.
 To get the `North` value/constant as an expression, we can just mention the `North` type.
 

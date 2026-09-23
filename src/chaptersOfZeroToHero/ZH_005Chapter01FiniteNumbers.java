@@ -344,7 +344,7 @@ A few kinds of numbers are part of the Fearless standard library:
 `Nat` (Natural Numbers): These represent non-negative whole numbers (`0`, `1`, `2`, `3`, and so on). You write them just like you'd expect: `1`, `0`, `34`, `45235`.
 They have familiar methods like `+`, `-`, `*`, `.getSucc`, `.getPred`, similar to our `Number` example. For example: `5 + 3` results in `8`.
 
-`Int` (Integers): These represent positive and negative whole numbers (..., `-2`, `-1`, `+0`, `+1`, `+2`, ...). To distinguish them, you must include the sign before the number. Note that `+0` is the only way to write zero as an `Int`.
+`Int` (Integers): These represent positive and negative whole numbers (..., `-2`, `-1`, `+0`, `+1`, `+2`, ...). To distinguish them, you must include the sign before the number. Note that zero as an `Int` is written `+0` (`-0` is also accepted, and denotes the same number).
 Some `Int`s: `+10`, `-25`, `+0`, `+12345`, `-987`.
 
 Crucially, `+10` or `-25` are treated as single tokens by the Fearless compiler. `Int` also provides methods like `+`, `-`, `*`, etc. For example: `+10 + -3` results in `+7`.
@@ -383,7 +383,7 @@ Nat:{
 ```
 The schemas look just like our clock's.
 The only difference? The scale is mind-boggling. The max value isn't `11`;
-It is ( 2<sup>64</sup> ) - 1, that is 18,446,744,073,709,551,615.
+it is ( 2<sup>64</sup> ) - 1, that is 18,446,744,073,709,551,615.
 More than 18 followed by 18 zeros!
 
 >Eighteen quintillion, four hundred forty-six quadrillion,
@@ -460,7 +460,7 @@ We will discuss them later.
 Because `Nat` and `Int` are built on this fixed-size, wrap-around (modulo) arithmetic,
 they are subject to overflow (going past the max) and underflow (going below the min).
 
-Just like `11.getSucc` became `0` on our small clock, adding `1` to the maximum `Nat`
+Just like `11.succ` became `0` on our small clock, adding `1` to the maximum `Nat`
 would silently produce `0`. Adding two large positive `Int`s
 might silently result in a negative `Int`.
 Without a safeguard, there would be no warning bell, no error message. It would just happen.

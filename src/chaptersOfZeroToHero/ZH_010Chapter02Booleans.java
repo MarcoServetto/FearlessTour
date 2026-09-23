@@ -158,8 +158,8 @@ Bot: {
     // Outer Check: Is the message `hello`?
     s == `hello` .if { //here R = Str
       .then -> `Hi, I'm Bot; how can I help you?`;
-      .else -> // Logic for when s is NOT "hello"
-        // Inner Check: Is the message "bye"?
+      .else -> // Logic for when s is NOT `hello`
+        // Inner Check: Is the message `bye`?
         s == `bye` .if { //writing .if[Str] would be the same
           .then -> `goodbye!`; //Response if inner condition is True
           .else -> `I don't understand`; // Response if inner condition is False
@@ -339,7 +339,7 @@ F[A,R]: { #(a: A): R }
 F[A,B,R]: { #(a: A, b: B): R }
 F[A,B,C,R]: { #(a: A, b: B, c: C): R }
 """); }/*--------------------------------------------
-Those types represent functions with zero, one, two, three arguments.
+Those types represent functions with zero, one, two and three arguments.
 Of course we can define more if more arguments are needed.
 As you can see, thanks to the way generic types work, we can call them all `F` because
 the presence of different numbers of generic arguments disambiguates their names.
@@ -487,7 +487,7 @@ Much.code && { Slow.code  && {ATonOf.code}} // version 2
 }
 //OMIT_END
 """); }/*--------------------------------------------
-In this version, if `Much.code` reduces to `False`, we will not execute `Slow.code` and `ATonOf.code`.
+In both versions, if `Much.code` reduces to `False`, we will not execute `Slow.code` or `ATonOf.code`.
 If `Much.code` reduces to `True`, and `Slow.code` reduces to `False`, we will not execute `ATonOf.code`.
 Both versions (note the different parentheses) are equivalent, and reduce in pretty much the same amount of time.
 
@@ -517,7 +517,7 @@ implements the method `F[Direction,Direction,Tank]#`.
 
 Note the presence of `->` in `h,a ->`.
 The arrow `->` is needed here since we have two parameters: `h,a`.
-Instead, since method `F[Bool]#` takes zero arguments, we implement it with just `{Slow.code}` instead of having to awkwardly write `{-> Slow.code}`
+Instead, since method `F[Bool]#` takes zero arguments, we implement it with just `{Slow.code}` instead of having to awkwardly write `{-> Slow.code}`.
 
 Finally, consider again
 ```

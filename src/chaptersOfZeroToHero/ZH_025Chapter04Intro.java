@@ -18,11 +18,11 @@ When data moves between representations, errors are possible and need to be mana
 
 While data transmission is the source of many errors and a great example to introduce error management, we will also see how errors are pervasive in many other aspects of programming.
 
-Many activities, from sending an email to saving a document involve the transmission and storage of data. However, the underlying systems—whether networks or storage devices—do not handle Fearless objects and types directly. Instead, they operate using the most basic units of digital data: bits.
+Many activities, from sending an email to saving a document, involve the transmission and storage of data. However, the underlying systems—whether networks or storage devices—do not handle Fearless objects and types directly. Instead, they operate using the most basic units of digital data: bits.
 
 ### Understanding Bits and Bytes
 A bit is the smallest unit of data in computing, with a possible value of either `0` or `1`.
-Eight bits form a byte, which can represent values from `0` to `255`. This range is sufficient to encode single characters of our simple string, plus a few other special symbols.
+Eight bits form a byte, which can represent values from `0` to `255`. This range is sufficient to encode single characters of our simple strings, plus a few other special symbols.
 In this way, we can interpret a large sequence of bytes as a string of any length.
 That is, it is easy to convert a string of text into a sequence of bits to store or transmit and vice versa, and the Fearless standard library offers easy ways to do this.
 
@@ -111,7 +111,7 @@ With that, we can represent our tank as follows:
 Infos.map(`heading`,`North`,  `aiming`,`East`,  `point`,Infos.map(`x`,`10`,  `y`,`5`))
 ```
 We could do ``Infos.map(`heading`,`North`,   `aiming`,`East`,   `x`,`10`,   `y`,`5`)``, but the corresponding mindset can cause issues.
-The `x` and `y` coordinates come from the separate `Point` object, but are now flattened into the `Tank` representation.
+This would again flatten the `Point` into the `Tank`.
 
 ### Serialisation and Deserialisation: Simple with Info
 In this section we discuss how to use `Info` in practice. While directly transforming text into complex objects like a list of tanks is possible, this approach can lead to unreadable and non-scalable code. This complexity arises because a tank object comprises various components like directions and points, and handling these in a single function would hinder code reusability for other data types.

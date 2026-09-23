@@ -35,8 +35,8 @@ MF[R:**]: {mut #: R}
 MF[A:**,R:**]: {mut #(a: A): R}
 MF[A:**,B:**,R:**]: {mut #(a: A, b: B): R} //and a few more overloads
 ```
-Note the use of `T:**`. We can use `*` and `**` as shortcuts for large generic bounds:
-`*` is equivalent to `imm,mut,read`; `**` is equivalent to all of the reference capabilities; including some more unusual ones that we have not discussed yet.
+Note the use of `R:**`, `A:**` and `B:**`. We can use `*` and `**` as shortcuts for large generic bounds:
+`*` is equivalent to `imm,mut,read`; `**` is equivalent to all of the reference capabilities, including some more unusual ones that we have not discussed yet.
 
 `F#` sees the world as `read` and supports generics with any RC. In particular, this means that a
 `read F[X]` can capture `mut` references as `read`. `MF` (mutable function) sees the world as `mut`. This
@@ -67,12 +67,12 @@ BoolMatch[R:**]:{ mut .true: R; mut .false: R; }
 We have seen `ThenElse[R]` before; `BoolMatch[R]` is the same but with names for the two cases. They work in the same way, but sometimes one of the two is more readable than the other.
 Note how we take any kind of `R` by using `R:**` and the methods require a `mut` receiver.
 We are not requiring the boolean to be `mut`. This is about the `ThenElse` object that is usually created in order to call the `.if` (or `?`) method.
-With `mut .then` and `mut .else`, the operation inside the `.match` is able to mutate external state if need be.
-We also add a more standard `BoolMatch` allowing to see `.true` and `.false` as the two cases of `Bool`. It is just like the `.if`, but uses different terminology.
+With `mut .then` and `mut .else`, the operation inside the `.if` is able to mutate external state if need be.
+`BoolMatch` is used by `.match`: it is just like `.if`, but names the two cases `.true` and `.false`.
 
 Then we can see the Bool type declaration itself.
 It is implementing `Sealed` and `DataType[Bool,Bool]`.
-We discussed `Sealed` before: it just means that user code can not define new kinds of booleans like `MayBe` `NotToday` etc.
+We discussed `Sealed` before: it just means that user code can not define new kinds of booleans like `MayBe`, `NotToday`, etc.
 ````
 Bool:Sealed,DataType[Bool,Bool]{
   .and(b: Bool): Bool;
@@ -162,14 +162,14 @@ False:Bool{
   .imm   -> False;
 }
 ````
-Finally, the declaration for `True` and `False` is exactly what we have seen before.
+Finally, the declarations for `True` and `False` are what we have seen before, plus `.toOpt` and `.imm`.
 Note how we can implement the `read .imm: imm Bool` method by just returning `True` or `False`. An object literal summoned by name can be of any RC, of course including `imm`.
 
 ### Core code for `Opt[T]`
 
 Below we show the core standard library code for optionals.
 
-`Opts` is the factory for `Opt[T]`. This is exactly what we have seen before. Note how `Opts#` returns a `mut Opt[T]`.
+`Opts` is the factory for `Opt[E]`. This is exactly what we have seen before. Note how `Opts#` returns a `mut Opt[T]`.
 This is what gives the most flexibility to the user.
 If the user needs an `imm Opt[T]`, promotion can be transparently used.
 
@@ -287,7 +287,7 @@ This structure is really important and we have many occurrences of this same pat
 - A generic version of that type, with a generic parameter (`ToStr[E]`)
 - A **by** type able to turn any `read T` into the basic type (`read ToStr`)
 
-Here below you can see the other `Opt[E]` methods. Note how `.info`, `.imm` and `.hash` are using the same exact construction of `.str`, with `.cmp` also taking a `by` argument for the same reason and using it in the same way.
+Here below you can see the other `Opt[E]` methods. Note how `.info`, `.imm` and `.hash` are using the same exact construction as `.str`, with `.cmp` also taking a `by` argument for the same reason and using it in the same way.
 ````
   .info by  -> this.match{ .some x -> Infos.list(by#x); .empty -> {} };
   .imm by     -> this.match{.some x -> Opts#(by#x.imm); .empty->{} };
@@ -342,7 +342,7 @@ _Opt[E:*]:BaseContainer[E],DataType[Opt[E],Opt[imm E],E,imm E]{
 }
 ````
 
-As you can see, this is where the major difference lies with respect to the optional seen in Chapter 2: Here most methods come in two or three variants, one for `E`, one for `read/imm E` and one for `imm E`.
+As you can see, this is where the major difference lies with respect to the optional seen in Chapter 2: here most methods come in two or three variants, one for `E`, one for `read/imm E` and one for `imm E`.
 The core idea is that when we implement `.match` in `Opt[E]` we are using the same implementation to satisfy all 3 type signatures.
 
 
@@ -532,8 +532,8 @@ ToImmBy[E,E0]:{#(t: read E):read ToImm[E0]}
 ToImm[E:*,E0,T0]:{ read .imm(by: ToImmBy[imm E,E0]): T0 }
 
 Order[T]:{ /*explained later; provides methods ==, !=, <=, >= etc*|/ }
-Order[T,E:*]:{ /*explained later; like order but for generics *|/ }
-OrderHash[T]:Order[T],ToStr{ /*explained later; Order plus mappings*|/ }
+Order[T,E:*]:{ /*explained later; like Order but for generics *|/ }
+OrderHash[T]:Order[T],ToStr{ /*explained later; Order plus hashing and ToStr*|/ }
 OrderHash[T,E:*]:Order[T,E],ToStr[E]{ /*explained later; like OrderHash but for generics *|/ }
 
 DataType[T,T0]:ToInfo,ToImm[T0],WidenTo[T],OrderHash[T],Pipe[T]{ read .close(t: read T): read DataType[T,T0]; }
@@ -546,7 +546,7 @@ Method `ToInfo.info` represents an object in a structured data format (similar t
 Type `OrderHash[T]` provides hashing and comparison methods to a type `T` extending it. Objects extending `OrderHash[T]` can easily be organised in efficient data structures.
 Method `ToImm[T].imm` converts an object of any reference capability into an immutable version of the same object. For objects that can only ever be immutable, this method simply returns the object itself.
 
-Note how many of those types have a generic variant, like `ToStr` and `ToStr[T]`. As we will see later, this is because for generic containers we need a way to convert the contained objects to be able to convert the container itself.
+Note how many of those types have a generic variant, like `ToStr` and `ToStr[E]`. As we will see later, this is because for generic containers we need a way to convert the contained objects to be able to convert the container itself.
 
 END*/
 }

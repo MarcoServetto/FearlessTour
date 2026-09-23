@@ -43,7 +43,7 @@ We will not start with the easy scripts that feel like magic but crumble under c
 We are focusing on the monkey. This is why this guide starts with the hard stuff—Types, Abstractions, and Inductive Reasoning—front and centre.
 
 
-### Expect confusion: everything is circularly dependent concepts
+### Expect confusion: all concepts depend circularly on each other
 
 If you ever learned a foreign language, you will have started by trying to connect each word in the foreign language to a definition in your native language. We do not have this luck when it comes to programming. Programming is a universe on its own.
 
@@ -129,7 +129,7 @@ Bob Snoozeman
 
 As you can see, even comments can have their little language inside: `TODO:` is a short 5 symbol annotation meaning that there is an open task.
 
-In the next page we will see our first example of code.
+On the next page we will see our first example of code.
 
 
 OMIT_START

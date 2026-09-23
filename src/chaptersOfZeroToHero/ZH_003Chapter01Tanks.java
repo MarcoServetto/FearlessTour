@@ -382,7 +382,7 @@ In turn, this means that the code below is syntactically valid
 ```
 Bar#(Add|-)
 ```
-Adding spaces around all tokens this would look as follows:
+Adding spaces around all tokens, this would look as follows:
 ```
 Bar # ( Add |- )
 ```
@@ -394,7 +394,7 @@ type names mostly start with an upper-case letter.
 The rules for valid type names are a little more involved,
 and we will discuss them in detail later.
 
-While the code above works fine, we think that using `.of` in this way is
+While the `Tanks` code works fine, we think that using `.of` in this way is
 verbose and distracting: is `.of` the right method name?
 Conceptually we just want to do `Tanks`, go!!! do your thing! be!
 

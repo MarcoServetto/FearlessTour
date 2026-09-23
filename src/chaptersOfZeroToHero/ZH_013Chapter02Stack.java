@@ -225,7 +225,7 @@ As you can see, instead of creating a large expression this version accumulates 
 This represents more closely what a person could do if they had to merge two stacks of chairs and if they were weak enough that they could only lift a single chair at any time.
 Note how this version produces a different ordering in the result.
 
-This is known in computer science as a `tail recursive algorithm`.
+This is known in computer science as a **tail recursive** algorithm.
 Some older languages require tail recursive algorithms for optimization reasons. This is usually not a concern in Fearless. It is still early to discuss **why and how** this is not a problem. Now we just clarify that we can avoid worrying about those ideas in a modern language like Fearless.
 
 Note how if we explicitly pass the empty stack as the second argument, we can use it as an empty initial accumulator, and we get a reverse:
@@ -264,10 +264,10 @@ For the same reason, also this following other body variation would not terminat
 We have one last variation to consider:
 `other + e ++ this`
 This also does not terminate:
-Termination of `Stack[T]++` is only possible if the left element is an empty stack, but the result of `Stack[T]+` is never empty.
+Termination of `Stack[T]++` is only possible if the left operand is an empty stack, but the result of `Stack[T]+` is never empty.
 That is, this implementation of `Stack[T]++` calls `Stack[T]++` in a way that is guaranteed to call back the same `Stack[T]++` implementation over and over.
 
-As you can see, there are many ways to permute the `++` and the `+` call on `this`, `other` and `e`.
+As you can see, there are many ways to permute the `++` and `+` calls on `this`, `other` and `e`.
 In order to learn to code, you need to learn to visualise the results of those calls.
 
 We will soon see how **Testing** can be used to supplement the miserable visualisation skills of most humans.

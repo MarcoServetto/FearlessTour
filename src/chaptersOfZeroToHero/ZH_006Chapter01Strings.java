@@ -49,7 +49,7 @@ space and new line
 It is now 96 symbols. Those are all the symbols we can easily type on most keyboards.
 With this, we could express any text!
 We call numbers expressed in this form (simple) strings.
-It is very compact to represent very large numbers in this notation. For example number 5,000 would be just `` "Q8" ``
+It is very compact to represent very large numbers in this notation. For example number 5,000 would be just `` "Q8" ``.
 1,000,030 in base-96 has a representation of `` "1cM " ``. Note the space after the character ` "M" `.
 If we did not use the double quote character (`` " ``) it would be very hard to spot trailing spaces in our base-96 numbers.
 
@@ -60,7 +60,7 @@ NOTE for editors: eleven, not twelve; 0-11 is 12 numbers
 As you can see, strings are useful to represent text.
 However, they are logically just very large numbers, and we have learned before how to represent numbers from zero to eleven.
 From that, it is quite obvious how to encode numbers up to any amount.
-In the same way numbers 0,1,2,... are defined in the Fearless standard library, all possible strings are also defined. And can be used out of the box.
+In the same way numbers 0,1,2,... are defined in the Fearless standard library, all possible strings are also defined, and can be used out of the box.
 
 Note again how the standard library can define a number of types that is out of the reach of what can realistically be coded by hand.
 However, those types do exist and we can code in Fearless using them.
@@ -116,7 +116,7 @@ base 96 number. And we really need to select some characters to be used to show 
 How can we handle this issue?
 This is an instance of a more general problem: how to embed text inside text.
 
-We have seen the `+` concatenation operator, and how it can be used to make some strings more readable. `Str` also offers other kinds of concatenation operators, allowing to create and represent strings with new lines and backticks too.
+We have seen the `+` concatenation operator, and how it can be used to make some strings more readable. `Str` also offers other kinds of concatenation operators, allowing us to create and represent strings with new lines and double quotes too.
 
 In Fearless, ``` "" | "Zb2A" ``` is the representation of `` "Zb2A" `` with a newline at the start.
 In the details, ``` "" ``` is the empty string,

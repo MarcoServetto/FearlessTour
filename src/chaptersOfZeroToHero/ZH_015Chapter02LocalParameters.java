@@ -19,7 +19,7 @@ A `get` method promises a precise, correct answer, but only for the cases where 
 Instead of making up an arbitrary answer, `get` methods stop the whole execution.
 A `soft` method takes the opposite approach: it never stops the execution, and instead gives back the closest reasonable answer it
 can, even when an exact one is not possible.
-For example, we show below a difficult to read method computing the distance between two points;
+Going back to repetitive code, we show below a difficult to read method computing the distance between two points;
 using the square root function (`.softSqrt`) present on `Nat`. Most numbers (like `2`)
 do not have a whole-number, or even a neat fractional, square root, so `.softSqrt` gives back the closest `Float` it can find.
 Then `.softNat` turns that `Float` back into a `Nat`, again taking the closest reasonable value: it truncates towards `0`, and clamps negative numbers to `0`.
@@ -67,7 +67,7 @@ We think this is mostly because
 3. This version is only working for two new parameters defined at the same time. What if we wanted to give a name to the result before `.softSqrt`?
 
 We first show how to solve those 3 issues in the core language, then we show a new form of syntactic sugar making this approach more readable.
-We can define a standard `Let` type allowing to define local parameters by generalising the idea of the code above:
+We can define a standard `Let` type allowing us to define local parameters by generalising the idea of the code above:
 ```
 Let:{ #[T,R](x: T, f: F[T,R]): R -> f#x }
 ```

@@ -52,7 +52,7 @@ If a type extends the special type `base.Sealed`, then such a type is **sealed**
 A sealed type can only be extended by types declared in its own package.
 Many of the types we have seen in this guide are sealed.
 All kinds of numbers and strings are sealed, optionals and booleans are sealed. The type `Void` is also sealed.
-Sealed types can still be extended if the type name is directly used as a literal, so
+Sealed types can still be instantiated from other packages if the type name is directly used as a literal, so
 `True` 
 is valid, but
 `True{.not->True}`

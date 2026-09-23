@@ -130,10 +130,10 @@ We can use `'anyName` at the beginning of an object literal to name the current 
 Indeed, the absence of `'xxxx` at the top level is just another layer of syntactic sugar!
 All the top level object literals implicitly use `'this`.
 
-> In this new version of `Point` we could write any of those three equivalent versions for `==`
-> `==(other:Point): Bool -> self.x == (other.x)  .and (self.y == (other.y) );`
-> `==(other:Point): Bool -> x == (other.x)  .and (y == (other.y) );`
-> `==(other:Point): Bool -> other.x == x  .and (other.y == y);`
+> In this new version of `Point` we could write any of those three equivalent versions for `==`:
+> - `==(other:Point): Bool -> self.x == (other.x)  .and (self.y == (other.y) );`
+> - `==(other:Point): Bool -> x == (other.x)  .and (y == (other.y) );`
+> - `==(other:Point): Bool -> other.x == x  .and (other.y == y);`
 
 The state of the game will be represented by a `Stack[Tank]`.
 The game is implemented by a `NextState` function.
@@ -193,9 +193,9 @@ In the code above, there is a subtle logical bug. Can you find it?
 
 **Solution coming soon**
 
-**Solution:** By checking if our specific `Tank` wants to move in an occupied position, we also check against the position this very tank wants to move into.
-With the code as written, every `Tank` will want to move in an occupied position, since we count the position they want to move in as an occupied position.
-If some other tank wants to also go in the same position, then there would be two points in the occupied Stack that are in conflict with the point our current tank wants to go in.
+**Solution:** By checking if our specific `Tank` wants to move into an occupied position, we also check against the position this very tank wants to move into.
+With the code as written, every `Tank` will want to move into an occupied position, since we count the position they want to move into as an occupied position.
+If some other tank also wants to go into the same position, then there would be two points in the occupied Stack that are in conflict with the point our current tank wants to go into.
 Thus, we can fix the bug by counting the number of points present in our desired next location.
 
 Note how we used the word "our" there. By doing so, we are imagining ourselves to be the tank that is moving. This is a useful psychological technique we can use as programmers to better visualise code execution.
@@ -277,7 +277,7 @@ NextState: F[Stack[Tank],Stack[Tank]]{
 """); }/*--------------------------------------------
 
 This last way is more common in practical Fearless, but practising with `.fold` is very educational.
-Alternatively, we can look at those two ways to implement `.moveIfFree` and realize that `.size` is actually a very good abstraction, since
+Moreover, we can look at those two ways to implement `.moveIfFree` and realize that `.size` is actually a very good abstraction, since
 - it has a clear name with an obvious behaviour
 - it is useful independently
 - it allows us to simplify the method `.moveIfFree` quite a lot.

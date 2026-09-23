@@ -58,7 +58,7 @@ West : {.turn-> North;}
 In the example above,
 - `North: { .turn -> East; }` is a type declaration.
 Within this declaration
-- `North` is the typeName.
+- `North` is the type name.
 - `.turn` is a **method name**. The text `.turn` is a single token and includes the `.`
 - `.turn -> East;` is a **method declaration** and in this case
   the method body is just `East`.
@@ -101,7 +101,7 @@ In other words, `North.turn` is an expression which is equivalent to the object 
 In the same way, `South.turn.turn` is an expression which is equivalent to the object `North`. This process of discovering the meaning of an expression is called evaluation.
 
 The example we are discussing is still incomplete, and it
-would cause an error if we try to compile it.
+would cause an error if we tried to compile it.
 Note how we are using comments to show the error together with the code.
 -------------------------*/@Test void error2() { run("""
 North: {.turn-> East; }
@@ -272,7 +272,7 @@ the first step correctly jumps from `North.reverse` into `North.turn.turn`:
  | Reduces to         |  `East.turn`            |
  | Reduces to         |  `South`                |
 
-`this` is an example of the third and last kind of expression: parameters.
+`this` is an example of the last kind of expression we had not seen yet: parameters.
 
 ### The three kinds of Fearless expressions
 

@@ -43,7 +43,7 @@ Zero  //0
 Zero.succ  //1 == {Zero}
 Zero.succ.succ //2 ==  {{Zero}}
 ```
-By continuing this sequence, we can represent any kind of number.
+By continuing this sequence, we can represent any natural number.
 With `Nat`, there was a type representing zero, a type representing one, a type representing two and so on.
 Note how this is not the case for Peano numbers. There is not a type representing the number one, two and so on.
 Numbers are created as needed using the `Number.succ` method.

@@ -27,7 +27,7 @@ Forall `this` and `other`, subtraction returns `other._rightSub(this)`.
 We will now see **Generics**. While methods abstract over values,
 generics abstract over types, and are specified in square brackets `[..]`.
 
-Generics allow to encode decisions on arbitrary data. For example, consider the concept of `Fork`s in the road, where the road can choose to go either `Left` or `Right`.
+Generics allow us to encode decisions on arbitrary data. For example, consider the concept of `Fork`s in the road, where the road can choose to go either `Left` or `Right`.
 We could have a method `.choose` that took two parameters and returned either the one on the left or the one on the right.
 
 -------------------------*/@Test void fork1 () { run("""
@@ -57,7 +57,7 @@ where `firstChoice` and `secondChoice` are `Fork`s that we obtained somewhere.
 Note how we need the generic type `Val` so that our `Fork` can work on any type:
 We can write ``someFork.choose(`Hello`,`Hi`)`` but also ``someFork.choose(1,5)``.
 However, ``someFork.choose(`Hello`,5)`` would be ill typed: there needs to be a type that can be used to instantiate `Val`.
-The type inference is usually taking care of finding the types that instantiate a generic method call.
+Type inference usually takes care of finding the types that instantiate a generic method call.
 However, we can pass the type argument ourselves if we want, using syntax ``someFork.choose[Str](`Hello`,`Hi`)``.
 As you can see, we can add `[..]` after the method name and before the list of parameters,
 following this syntax:
@@ -71,7 +71,7 @@ On the other hand, when we declare a generic method, as in
 .choose[Val](leftVal: Val, rightVal: Val): Val;
 ```
 we need to specify all the generic types that we are introducing.
-If we omit the `[..]` in the method declaration, then the conventional sugar allowing to omit any empty parentheses triggers. Thus, when we declared
+If we omit the `[..]` in the method declaration, then the conventional sugar allowing us to omit any empty parentheses applies. Thus, when we declared
 `.turn: Direction` at the start of our journey, we actually declared
 `.turn[](): Direction`: a method called `.turn` that takes zero generic types and zero parameters.
 
@@ -173,7 +173,7 @@ Before we have seen generic methods, as methods taking both type parameters and 
 Generic type declarations are a different concept, and they denote families of types:
 One for each possible type instantiation.
 
-In this case there is `LeftRight[Str]`, `LeftRight[Int]` and so on.
+In this case there are `LeftRight[Str]`, `LeftRight[Int]` and so on.
 Even `LeftRight[LeftRight[Str]]` is a valid member of the `LeftRight` family.
 As you can see, a single generic type declaration actually declares an infinite number of types!
 
@@ -213,7 +213,7 @@ someFork.choose( SomeLeftRight[]:LeftRight[Str]{
 //OMIT_END
 """); }/*--------------------------------------------
 
-That is, the argument of `Fork.choose` is a literal of some anonymous type that implements `LeftRight[Str]`, since that is the expected type for the argument of `Fork.choose`.
+That is, the argument of `Fork.choose` is a literal of a fresh type (here called `SomeLeftRight`) that implements `LeftRight[Str]`, since that is the expected type for the argument of `Fork.choose`.
 In order to implement a `LeftRight[Str]`, we need to specify an implementation for the two abstract methods, `.left` and `.right`.
 Another advantage of this new way is that we can now write complex and time consuming computations inside the body of methods `.left` and `.right`, and only one of those computations is going to be triggered.
 
@@ -247,7 +247,7 @@ In the same way,
 The `Left.choose` implementation chooses the `.left` option, while the
 `Right.choose` implementation chooses the `.right` option.
 
-In Fearless, there are many types that look like `Fork`, we will see them next.
+In Fearless, there are many types that look like `Fork`; we will see them next.
 Overall, `Fork` itself is not really used in Fearless, but it is a really interesting type, and it should open your mind to the next big topic: Booleans.
 
 END*/

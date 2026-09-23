@@ -22,7 +22,7 @@ Below is the representation of a tank heading `East` and aiming `North`, and ano
 
 The idea is that we can use `<`,`>`,`V` and `A` to represent the heading direction, and `|` or `-` to represent the aiming direction.
 Of course, many different options exist.
-The general idea is that we will create a grid of tanks to represent all of the tanks in any given moment, and we will repeat that grid over and over to show the passage of time.
+The general idea is that we will create a grid of tanks to represent all of the tanks at any given moment, and we will repeat that grid over and over to show the passage of time.
 Since a tank is represented on 3 lines, we will write 3 methods, `.repr1`, `.repr2` and `.repr3`.
 Then, we could just write a `.str` method simply calling those 3 methods. However, having to convert objects into strings is a common task in programming, and we are now trying to rely on the standard library instead of implementing everything from scratch.
 
@@ -124,11 +124,11 @@ may fail to compile:
 the inference would see `.north -> East;` and may conclude that the method `.north` is returning `East` of type `East`, thus this match should return an `East` instead of a direction.
 
 We define `DirectionMatch[R]` to be mutable. This is because we want to allow the execution of `.match` to mutate the state of objects captured by the running operation. In some cases we will want our matchers to be more restrictive and to only support operations that do not perform mutations, but in most cases we will use the shown signature.
-Note how assuming the intention of defining an enumeration, the three lines
+Note how, assuming the intention of defining an enumeration, the three lines
 ```
 DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
 Direction: {
-  .match[R: **](mut DirectionMatch[R]): R;
+  read .match[R: **](mut DirectionMatch[R]): R;
 ```
 are completely determined given the declaration for the four directions. Experienced Fearless programmers find writing those 3 lines trivial but boring. However, writing those three lines over and over again has a great educational value for new programmers, since they require using the match pattern, reference capabilities, generic types and generic methods.
 
@@ -213,7 +213,7 @@ Tank: ToStr {
 ```
 
 We think this code is very clear, declarative and self-explanatory.
-It does have quite a few lines, but most lines are very short and do specific very well defined tasks.
+It does have quite a few lines, but most lines are very short and do very specific, well-defined tasks.
 We could get this code to be shorter by inlining `AimingRepr1-3` in the code of `Tank`, but we think this would make the resulting code much harder to read.
 Note how `AimingRepr2` requires knowing the central character, and we can pass it to the operation by implementing the abstract method `.centre` at the call site.
 We could have alternatively made a factory capturing the missing information in the lambda:
@@ -258,7 +258,7 @@ NextState:{
     .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
 
   read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
-    .filter{::==(t.position)}
+    .filter{::==(t.move.position)}
     .size == 1 .if{
       .then -> t.move;
       .else -> t;
@@ -269,11 +269,11 @@ The main difference is that we are now using `List` instead of `Stack`.
 A `List` is not very different from a `Stack`. It has many more useful methods and the implementation is more efficient.
 Note how we are not using `.map` directly on the list but we call the `.flow` method before.
 
-The idea is that the standard library does not define those useful `.map`/`.filter`/`.fold` methods independently on each kind of sequence.
+The idea is that the standard library does not define those useful `.map`/`.filter`/`.fold` methods independently for each kind of sequence.
 Instead, there is a unified concept of `Flow`. Many different data types can be converted into flows, the elements can be manipulated using a very expressive set of `Flow` methods, then the result can be converted back into some supported data type.
 
-In the code above, the `List[E].flow` method returns a `Flow[E]` and the methods `Flow[E].map`/`.filter` return another `Flow[E]`.
-`Flow[E].isEmpty` is true if the flow is empty, `Flow[E].size` returns the size of the flow, and `Flow[E].list` returns a `List[E]` with the same elements of the flow.
+In the code above, the `List[E].flow` method returns a `Flow[E]` and `Flow[E].filter` returns another `Flow[E]`, while `Flow[E].map` returns a `Flow[R]` (for example, `tanks.flow.map{..}` above turns a `Flow[Tank]` into a `Flow[Point]`).
+`Flow[E].isEmpty` is true if the flow is empty, `Flow[E].size` returns the size of the flow, and `Flow[E].list` returns a `List[E]` with the same elements as the flow.
 We will see many operations on flows by example in the next few pages.
 
 Here you can see all the code of this section packed together.
@@ -378,7 +378,7 @@ NextState:{
     .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
 
   read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
-    .filter{::==(t.position)}
+    .filter{::==(t.move.position)}
     .size == 1 .if{
       .then -> t.move;
       .else -> t;

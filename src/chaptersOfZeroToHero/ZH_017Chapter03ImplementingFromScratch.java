@@ -101,7 +101,7 @@ That is, in this case the local parameter `loc` is of type `mut Var[Point]`.
 In this way, it is easy to create either local parameters or local variables. Local variables are just local parameters of type `mut Var[..]`.
 
 An `Animal` is created `mut`: it can change state by updating `loc` using `loc.set` inside the method `.run`.
-In this simple example, when an `Animal` runs, it moves across the `x` coordinate.
+In this simple example, when an `Animal` runs, it moves along the `x` axis.
 Note how to access the value inside of `loc` we need to use `.get`.
 
 While `loc` is a `mut Var[Point]`, the `Point` itself is immutable.

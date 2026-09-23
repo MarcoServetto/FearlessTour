@@ -107,9 +107,9 @@ Opt[Person] //(2) no one is here
 //OMIT_END
 """); }/*--------------------------------------------
 
-- We can turn `.match(m)->m.some(t)` into just `::.some t`
+- We can turn `.match(m)->m.some(t)` into just `::.some t`.
   The method `.match` is the only method we could be overriding there!
-- We can turn `.empty->0;` into just `0;` and `.some p'->p'.age;` into just `::.age;`
+- We can turn `.empty->0;` into just `0;` and `.some p'->p'.age;` into just `::.age;`.
   Since those methods take a different number of parameters (zero and one), there is no ambiguity 
   of which body satisfies which method.
 

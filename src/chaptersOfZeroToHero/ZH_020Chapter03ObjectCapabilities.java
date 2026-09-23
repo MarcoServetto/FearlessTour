@@ -45,12 +45,12 @@ This new folder will contain the following files:
 - `_demo/_rank_app.fear`
 You should right click on `start.fearless` and associate files with extension `*.fearless` with 
 that same executable.
-That is it, you are sorted to use Fearless on your machine.
+That is it, you are all set to use Fearless on your machine.
 
 Double click on `start.fearless` and the program will start.
 (The first run may take a while since the project is warming up).
 
-Then, open `_demo/_rank_app.fear` with any kind of text editor (not a word processor; use something like notepad, gedit, kate, or notepad++)
+Then, open `_demo/_rank_app.fear` with any kind of text editor (not a word processor; use something like notepad, gedit, kate, or notepad++).
 You can now see and edit the Fearless code.
 Try to write a different message instead of `Hello World!` and rerun the project, by double clicking again on `start.fearless`.
 

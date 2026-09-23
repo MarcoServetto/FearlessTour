@@ -92,6 +92,8 @@ ExampleSum5: {   #(ns: Stack[Nat]): Stack[Nat] -> ns.map { n -> n + 5 }  }
 ExampleTimes2: { #(ns: Stack[Nat]): Stack[Nat] -> ns.map { n -> n * 2 }  }
 """); }/*--------------------------------------------
 
+Note how we also swapped the order of the arguments of the `.fold` function: now the accumulator comes first, as in `F[R,T,R]`.
+
 By adding fold and map to stacks, we have now unlocked a surprising amount of expressive power.
 Do you want to add 10 to all the numbers, multiply the result by 3 and then get the sum of all of them?
 Easy!
@@ -140,7 +142,7 @@ While the idea of defining your own types supporting useful/flexible methods may
 #### Exercise: filter
 Now as an exercise, we try to define a method `.filter` that removes elements from the stack.
 
-But again, operations like this one are going to be very common, so we had better define generic support for it in the `Stack` type:
+Since operations like this one are also going to be very common, we define generic support for it directly in the `Stack` type:
 ```
 Stack[T]: {
   .match[R](m: StackMatch[T,R]): R -> m.empty;

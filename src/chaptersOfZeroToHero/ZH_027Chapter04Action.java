@@ -33,7 +33,7 @@ Let's make this more concrete.
 >Note: `.tryGet` is not a real method of the standard library yet; it is used through the rest of this
 >chapter as a proposed shorthand for ``Try#{..get(..)}``, to keep the examples about `Action` focused.
 
-We can use code 1 when we trust that the error will not be raised, or because if the error condition happens, then what we want is for the program to terminate with a good error message.
+We can use code 1 when we trust that the error will not be raised, or when, if the error condition happens, we want the program to terminate with a good error message.
 When we want to consciously extract an element that may or may not be there, with the intention that the element being missing does not represent an error, we can use the method `.opt`, as in ``Directions.map.opt(`Nope`)``, returning an `Opt[Direction]`.
 
 Using `Try#` or `.tryGet` means that we suspect that the value may not be there because of some buggy logic or input.
@@ -114,7 +114,7 @@ Method `.context` is a convenience method to add contextual information to actio
 Its parameter `msg: read LazyInfo` is a lazy `F[read ToInfo]`: any lazy value that can become an `Info` is accepted, so a lazy `Str`, as used below, works because `Str` implements `ToInfo`.
 Internally, it uses method `Info+`, that we have not seen yet:
 The method `Info+` makes it easy to compose information together.
-Two `Info` messages are concatenated, two `Info` lists are concatenated and two `Info` maps are merged:
+Two `Info` messages are joined with a newline, two `Info` lists are concatenated and two `Info` maps are merged:
 - If a key is present in only one of the two sources, the key -> element mapping will be present in the resulting information.
 - If the key is present in both sources, the resulting information will map that key to the sum of the two elements using `Info+` recursively.
 
@@ -125,7 +125,7 @@ Finally, if the two infos are not of the same kind, they are lifted to maps with
 Often we use `.context` to add context to our actions.
 Consider the code below where `persons` is a `List[Person]`:
 ``` 
-persons.tryGet(5).context{`The list persons was too small when\n`}
+persons.tryGet(5).context{`The list persons was too small when`}
 ```
 This code would add the information that we were looking into the list of persons, and the error would look like
   
@@ -156,7 +156,7 @@ persons.tryGet(3).map{::.name}
 ```
 would return an `Action[Str]` containing the name of the person in position 3.
 
-Note that if the map operation would fail by calling `Error.msg`; 
+Note that if the map operation would fail by calling `Error.msg`, 
 that error would not turn the action into a failed action with the `.info` containing the error; it would just leak out when we attempt to `.run` our action.
 >TODO: should we design this alternative behaviour too and see how it looks?
 
@@ -192,7 +192,7 @@ does two different actions: extracts person `3` and connects their name with the
 Finally it uses the job `j` and the person `p` to produce an `Action[Str]`. Note how this is only needed if we want to get a detailed error message in case of failure. We can encode the same idea with optionals with the more conventional flow code below:
 ```
 persons.opt(3).flow.flatMap{p->
-  jobs.opt(p.name).flow.map{ j->`Person ` + p + ` works as a ` + j } }.opt
+  jobs.opt(p.name).flow.map{ j->`Person ` + p + ` works as a ` + j } }.getOpt
 ```
 Here, if the person or the job is not present, we would simply get an empty optional.
 Note: if we expect the person and the job to be there, and it should be an observed bug if this is not the case, then we should write the simpler code
@@ -208,8 +208,8 @@ In Fearless, Actions and errors can be used together to handle computation that 
 The idea is that the code will have layers of responsibility:
 Code with less responsibility can simply throw errors, while code with higher responsibility will use actions.
 
-For example, consider `Point`: before we chose to visualise only tanks in locations from 0-10; but the `Point` objects can have any kind of coordinates.
-We could use errors to enforce that whenever a `Point` is observed, the `.x` and `.y` coordinates are in the 0-10 range.
+For example, consider `Point`: before we chose to visualise only tanks in locations from 0 to 9; but the `Point` objects can have any kind of coordinates.
+We could use errors to enforce that whenever a `Point` is observed, the `.x` and `.y` coordinates are in the 0 to 9 range.
 > Note: we do not show .assert { x.inRange(0,10) } since it would make a bad error message.
 > should we have a general Bool.orMsg(`...`) ?
 > if we want disableable assertions, we could have .assert taking a void like do.
@@ -228,7 +228,12 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
       .x: Nat -> x;
       .y: Nat -> y;
       +(other: Point): Point -> Points#(other.x + x, other.y + y);
-      .move(d: Direction): Point -> self + ( d.point );
+      .move(d: Direction): Point -> d.match{
+        .north -> Points#(x - 1, y    );
+        .east  -> Points#(x,     y + 1);
+        .south -> Points#(x + 1, y    );
+        .west  -> Points#(x,     y - 1);
+        };
       .cmp {.x,.y}1, {.x,.y}2, m -> x1 <=> (x2, m && { y1 <=> (y2,m) });
       .hash -> x.hash.hashWith(y.hash);
       .info -> Infos.map(`x`,x,  `y`,y);
@@ -275,7 +280,7 @@ It is about the set of active calls when the error leaked.
 For example
 ````
 Stuff:{
-  .foo (myList)->myList.get(5);
+  .foo -> Lists#(1,2,3).get(5);
   .bar -> Try#{this.foo};
   .beer1 -> this.bar!;
   .beer2 -> this.bar.context{`InBeer2`}!;
@@ -355,7 +360,7 @@ he can produce code working correctly in most real situations, while failing wit
 The whole idea of offensive programming is that code should fail immediately when an unexpected situation is detected.
 This does have a cost: the programmer must take an active role and write checks to detect unexpected situations.
 
-The standard library helps: methods like ...... all fail early.
+The standard library helps: methods like `List.get`, `Map.get` and `Opt!` all fail early.
 But, in a real program 90% of the code is new abstractions written by the programmer; those abstractions will have their own unexpected situations to check for.
 
 When programmers learn about offensive programming, they are usually scared about two issues:
@@ -425,7 +430,7 @@ An assert without a recovery is equivalent to an assert where the recovery is th
 
 Under this, disabled is kind of ambiguous and we may want more names.
 
-The idea is that we want to have a Software produce line:
+The idea is that we want to have a software product line:
 Many different kinds of software are produced depending on the assertion profile, and some of those are better for testing instead of deployment.
 
 >TODO: API: we need a matcher form of the int to float etc methods, where if the number can not be represented cleanly in the other format we get some info (delta?) to a dedicated method to provide alternative behaviour
