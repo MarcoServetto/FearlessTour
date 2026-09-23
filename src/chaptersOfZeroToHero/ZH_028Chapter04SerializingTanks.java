@@ -36,7 +36,7 @@ As you can see, `Tank` is quite similar to `Point`.
 #### Reading a `List[Tank]` from a file
 
 Now that we have serialisable and deserialisable tanks, we can implement the type reading from file.
-In chapter 3 we showed code
+In Chapter 3 we showed this code
 ````
 //File _tank_game/_rank_app.fear
 Test: Main {sys -> Block#
@@ -74,20 +74,19 @@ InputCursor: ToIso[InputCursor], WidenTo[InputCursor]{
 InputCursorNode: ToIso[InputCursorNode], WidenTo[InputCursorNode]{
   mut .label: Str; /// best effort portable name to help debugging
   mut .text: Opt[Str]; /// fresh read+decode each call; throws on I/O failure
-  ...//many more methods for other kinds of files.
   }
 ````
 - `sys.inputCursor` is the capability to observe the files intended as input.
 - `sys.inputCursor#` gets the first input node.
-- `sys.inputCursor# !` extracts the actual `InputCursorNode`, throwing error if no input has been provided yet.
+- `sys.inputCursor# !` extracts the actual `InputCursorNode`, throwing an error if no input has been provided yet.
 - `this.in.text` then calls the text method. If the file has text, the optional will not be empty.
-- `this.in.text!` we extract the content from the optional with `!`.
+- With `this.in.text!` we extract the content from the optional with `!`.
 
 Note how this code simply leaks any kind of error anywhere it may raise.
 There are three main kinds of error here:
 - 1 Reading the string from file
-- 2 Deserializing the string into an `Info`
-- 3 Deserializing the info into a `List[Tank]`
+- 2 Deserialising the string into an `Info`
+- 3 Deserialising the info into a `List[Tank]`
 
 We may want to provide alternative behaviour ...
 > not sure this would make for a good example.
@@ -112,8 +111,8 @@ Instead of `.map` we now use `.andThen` + `Try#`.
 The type is the same, but the error management is now very different.
 There are three main points of error:
 - 1 Reading the string from file
-- 2 Deserializing the string into an `Info`
-- 3 Deserializing the info into a `List[Tank]`
+- 2 Deserialising the string into an `Info`
+- 3 Deserialising the info into a `List[Tank]`
 
 Those three kinds of errors are handled differently when calling `.read(fileName).run{..}`.
 What errors are captured inside the `Info` of the `Action[List[Tank]]` returned by the `.read(fileName)` method?
@@ -139,11 +138,11 @@ We can also add information to the error messages using code as below
     .andThen{i -> Try#{i.getList.flow.map{i->Tanks.fromInfo(i)}.list}
       .context{`While deserializing tanks from Info`}}
 ```
-Note how the indentation helps seeing the context text becoming part of the action.
+Note how the indentation helps us see the context text becoming part of the action.
 
 #### Graduation
-This is the end of chapter 4.
-In those 4 chapters we used the tank game as an example on how to build simple behaviour.
+This is the end of Chapter 4.
+In those 4 chapters we used the tank game as an example of how to build simple behaviour.
 
 We are now going to move forward, toward other interesting examples.
 

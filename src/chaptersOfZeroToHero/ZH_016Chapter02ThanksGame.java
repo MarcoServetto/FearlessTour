@@ -74,7 +74,7 @@ Let: { #[R]: Let[R] -> {} }
 
 ### Tanks game
 
-Now we have enough understanding about Fearless that we can implement a simple game in fearless.
+Now we have enough understanding about Fearless that we can implement a simple game in Fearless.
 
 We start by repeating and improving some of the code we discussed above:
 
@@ -130,18 +130,18 @@ We can use `'anyName` at the beginning of an object literal to name the current 
 Indeed, the absence of `'xxxx` at the top level is just another layer of syntactic sugar!
 All the top level object literals implicitly use `'this`.
 
-> In this new version of `Point` we could write any of those three equivalent version for `==`
+> In this new version of `Point` we could write any of those three equivalent versions for `==`
 > `==(other:Point): Bool -> self.x == (other.x)  .and (self.y == (other.y) );`
 > `==(other:Point): Bool -> x == (other.x)  .and (y == (other.y) );`
-> `==(other:Point): Bool -> other.x == x  .and (other.y == y) );`
+> `==(other:Point): Bool -> other.x == x  .and (other.y == y);`
 
 The state of the game will be represented by a `Stack[Tank]`.
 The game is implemented by a `NextState` function.
 `NextState#` is implemented with a `Let`, and uses some sub methods for readability.
 
 The idea is that first all the tanks shoot, and all of the tanks one step in the direction of fire are eliminated.
-Then, all the surviving tanks move in their heading position, but only if that position is free.
-A position is free if it is neither the current position or the destination of another tank.
+Then, all the surviving tanks move in their heading direction, but only if that position is free.
+A position is free if it is neither the current position nor the destination of another tank.
 
 -------------------------*/@Test void newCode1 () { run("""
 //OMIT_START
@@ -169,7 +169,7 @@ In the code above we implement `NextState#` with a let. We define all the danger
 We filter only the tanks not in a dangerous location using method `.notIn`.
 We collect the space occupied by the survivor tanks: this is the union of the space occupied by the survivors in their current position and the space occupied by the survivors after they move in their heading direction.
 Finally we move our tanks if the space they want to go into is free using the method `.moveIfFree`.
-We conclude returning the new Stack of moved tanks.
+We conclude by returning the new `Stack` of moved tanks.
 
 Method `.notIn` uses a `.fold`:
 Starting with `True`, we accumulate with `.and`, checking that our tank is not in any of the positions `p` inside `ps`.
@@ -180,7 +180,7 @@ Method `.moveIfFree` uses a `.notIn` and `.if`:
 if the moved tank would not be in an occupied position, we return the moved tank; otherwise we return the original tank.
 
 In the code above, there is a subtle logical bug. Can you find it?
-- Hint 1: This bug makes so that no tank will ever move.
+- Hint 1: This bug makes it so that no tank will ever move.
 - Hint 2: We collect the occupied positions for all Tanks.
 
 **Solution coming soon**
@@ -198,7 +198,7 @@ With the code as written, every `Tank` will want to move in an occupied position
 If some other tank wants to also go in the same position, then there would be two points in the occupied Stack that are in conflict with the point our current tank wants to go in.
 Thus, we can fix the bug by counting the number of points present in our desired next location.
 
-Note how we used the word "our" there. By doing so, we are imagining us to be the tank that is moving. This is a useful psychological technique we can use as programmers to better visualise code execution.
+Note how we used the word "our" there. By doing so, we are imagining ourselves to be the tank that is moving. This is a useful psychological technique we can use as programmers to better visualise code execution.
 
 To fix this bug we can simply edit the `.moveIfFree` method as follows:
 -------------------------*/@Test void newCode2 () { run("""
@@ -251,7 +251,7 @@ NextState: F[Stack[Tank],Stack[Tank]]{
 //OMIT_END
 """); }/*--------------------------------------------
 
-There are many other ways to check this, and if the stack had a 'size' method, we could just do
+There are many other ways to check this, and if the stack has a `.size` method, we can just do
 -------------------------*/@Test void newCode4 () { run("""
 //OMIT_START
 """+fullPreface+"""
@@ -276,7 +276,7 @@ NextState: F[Stack[Tank],Stack[Tank]]{
 //OMIT_END
 """); }/*--------------------------------------------
 
-This second way is more common in practical Fearless, but exercising on using .fold is very educational.
+This last way is more common in practical Fearless, but practising with `.fold` is very educational.
 Alternatively, we can look at those two ways to implement `.moveIfFree` and realize that `.size` is actually a very good abstraction, since
 - it has a clear name with an obvious behaviour
 - it is useful independently

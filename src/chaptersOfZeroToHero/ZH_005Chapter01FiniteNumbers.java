@@ -35,7 +35,7 @@ The code above is very similar to the code of `Direction`.
 Method `.succ` works like the method `.turn` and method `.pred` is just turning in the other way. Thus, the predecessor of `0` is `11` and the successor of `11` is `0`.
 That is, `10.succ` is `11` and `10.succ.succ.succ` is `1`.
 Note how we are using numbers as type names.
-Yea... let's take a breath here.
+Yeah... let's take a breath here.
 
 Those numbers just have `.succ` and `.pred` methods.
 We usually expect more operations on numbers. Can we define an operation `+` doing addition?
@@ -66,7 +66,7 @@ Number:{
    }
  /*... all other numbers as before*|/
 ```
-Where we simply call `.succ` a large amount of times.
+Where we simply call `.succ` a large number of times.
 
 This works, and for just 12 numbers, it's barely feasible. But imagine doing this for thousands or millions of numbers.
 Imagine writing a chain of `.succ` thousands or millions of calls long! It would be incredibly repetitive and impractical. We need a more general approach.
@@ -170,8 +170,8 @@ We now show with multiplication:
 ```
 Number: { 
   .pred: Number; .succ: Number;
-  +(other: Number): Number -> this.pred + (other.succ)
-  *(other: Number): Number -> (this.pred * other) + other
+  +(other: Number): Number -> this.pred + (other.succ);
+  *(other: Number): Number -> (this.pred * other) + other;
   }
 0: Number {
   .pred-> 11; .succ->  1;
@@ -186,7 +186,7 @@ Number: {
 Here the inductive logic is as follows:
 ```
 0 * other = 0                          //base case
-this * b = (this.pred * other) + other //inductive case
+this * other = (this.pred * other) + other //inductive case
 ```
 
 Logically, how do we multiply a non-zero number `this` by another number `other`?
@@ -199,7 +199,7 @@ and then adding `other` to that result. This reduces the multiplication problem
 
 #### Reduction examples and operator precedence
 
-As an exercise, we can look to the reduction of some arithmetic operations:
+As an exercise, we can look at the reduction of some arithmetic operations:
 01. `2 * 3 + 1`
 02. `2.pred * 3 + 3 + 1`
 03. `1 * 3 + 3 + 1`
@@ -229,13 +229,12 @@ However, look what happens when we reduce
 09. `(1 * 3) + 3 + 3`
 10. `(1.pred * 3) + 3 + 3 + 3`
 11. `(0 * 3) + 3 + 3 + 3`
-12. `0 * 3 + 3 + 3 + 3`
-13. `0 + 3 + 3 + 3`
-14. `3 + 3 + 3`
-15. ....
-16. `6 + 3`
-17. ....
-18. `9`
+12. `0 + 3 + 3 + 3`
+13. `3 + 3 + 3`
+14. ...
+15. `6 + 3`
+16. ...
+17. `9`
 
 Eventually, we get `9`.
 That is, if we want to get `7` we need to use 
@@ -249,8 +248,8 @@ That is, if we want to get `7` we need to use
 07. `1 + (3 + 3)`
 08. ...
 09. `1 + 6`
-10. `1.pred + 6.succ`
-11. `0 + 6.succ`
+10. `1.pred + (6.succ)`
+11. `0 + (6.succ)`
 12. `0 + 7`
 13. `7`
 
@@ -260,7 +259,7 @@ and when parentheses are omitted,
 the method will eagerly capture the first piece of code that looks like a parameter.
 This behavior is called **left associativity**.
 Thus, when coding in Fearless we need to ignore the usual operator precedence
-that they tried to hammer in our head at school, and we just follow this simpler rule
+that they tried to hammer into our heads at school, and we just follow this simpler rule
 of eager application.
 
 >In other words: Fearless method calls (including operators like `+`,`*`, etc.)
@@ -270,8 +269,8 @@ of eager application.
 
 
 Note how this applies also for named methods.
-For example we used parenthesis in `this.pred + (other.succ)`.
-This is needed. Without those parenthesis, the code would be interpreted as
+For example we used parentheses in `this.pred + (other.succ)`.
+This is needed. Without those parentheses, the code would be interpreted as
  `(this.pred + other).succ`
 
 
@@ -326,7 +325,7 @@ through `11`, complete with `.succ`, `.pred`, and arithmetic operations.
 We saw how operations like `11.succ` wrapped around back to `0`,
 and `0.pred` wrapped to `11` - this is modulo arithmetic, just like a clock face.
 
-While building `Number` was insightful, doing this for very large range of numbers would be impractical.
+While building `Number` was insightful, doing this for a very large range of numbers would be impractical.
 
 Numbers are a very useful abstraction to have, and it would be absurd to have to reimplement them in every Fearless program.
 Programming languages have the concept of **libraries**: useful code that has been written by someone some time in the past
@@ -422,7 +421,7 @@ in a small, fixed amount of memory. This allows mathematical operations on `Nat`
 to be incredibly fast.
 The Fearless standard library is internally optimized in ways that a library written
 by a regular programmer could not. In particular, the standard library can define
-an amount of types that is out of the reach of what can realistically be coded by hand,
+a number of types that is out of the reach of what can realistically be coded by hand,
 or even stored on your hard drive.
 However, those types do exist and we can code in Fearless using them.
 This also means that the type names `0`, `1`, `2` and so on are already taken,
@@ -474,14 +473,14 @@ relying on `Nat` or `Int` without careful checks.
 Overflows and Underflows are a fundamental trade-off for the speed
 gained by optimized integers in most programming languages.
 This isn't a Fearless-specific issue; it's a real issue in most languages and the
-cause of a large amount of bugs.
+cause of a large number of bugs.
 The big issue is that Overflows and Underflows do not make the code fail, they make
 it misbehave in dangerous ways: consider using a `Nat` to represent the dose of medicine
 to inject in a patient every second, where the doctor can press a `+1` and `-1` button
-to regulate the flux.
-What would happen if a doctor wanting to stop the flux accidentally presses `-1`
+to regulate the flow.
+What would happen if a doctor wanting to stop the flow accidentally presses `-1`
 one too many times?
-If the programmer has not been careful, the patient may receive Eighteen quintillion
+If the programmer has not been careful, the patient may receive eighteen quintillion
 units of medicine the second after.
 
 The creators of the Fearless standard library did not like this outcome.
@@ -491,7 +490,7 @@ dangerous numeric operations with odd unpredictable results are going to stop th
 whole execution instead of performing probably nonsensical operations.
 We will discuss the details on how those checks can be tuned later in the guide.
 For now, it is important that you realize that those problems do exist.
-Ignoring it is building on shaky ground.
+Ignoring them is building on shaky ground.
 Accepting this reality is step one to writing robust code.
 
  

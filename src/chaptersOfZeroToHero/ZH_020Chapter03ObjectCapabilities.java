@@ -34,9 +34,9 @@ Go to <a href="https://github.com/FearlessLang/StandardLibrary/tree/main/fearles
 
 Download the file appropriate to your Operating System,
 put it in some folder and unzip it.
-That is the fearless compiler. Congrats, now you have it on your machine.
+That is the Fearless compiler. Congrats, now you have it on your machine.
 
-Then, click on the executable called `fearlessw` or `fearlessw.exe`.
+Then, click on the executable whose name starts with `fearless` and ends with `w`, like `fearlessBin0_001w` or `fearlessBin0_001w.exe` (the exact name depends on the version).
 
 You will see a window asking to create a demo project in a location of your choice. Choose anywhere you like, for example a new folder on your Desktop.
 This new folder will contain the following files:
@@ -44,15 +44,15 @@ This new folder will contain the following files:
 - `_demo`
 - `_demo/_rank_app.fear`
 You should right click on `start.fearless` and associate files with extension `*.fearless` with 
-the executable `fearlessw`.
+that same executable.
 That is it, you are sorted to use Fearless on your machine.
 
 Double click on `start.fearless` and the program will start.
 (The first run may take a while since the project is warming up).
 
 Then, open `_demo/_rank_app.fear` with any kind of text editor (not a word processor; use something like notepad, gedit, kate, or notepad++)
-You can now see and edit the fearless code.
-Try to write a different message instead of `Hello World!` and re run the project, by double clicking again on `start.fearless`.
+You can now see and edit the Fearless code.
+Try to write a different message instead of `Hello World!` and rerun the project, by double clicking again on `start.fearless`.
 
 Any type implementing `base.Main` can be the starting point for the execution.
 `Main` is declared in `base` as follows:
@@ -64,7 +64,7 @@ The parameter of type `mut System` refers to an **object capability**: an object
 `sys.out` is a method creating a restricted object capability from the system capability.
 The result of `sys.out` is an object of type `mut base.Output`: an object that can print text out.
 
-That is, Object capabilities and Reference capabilities are two different concepts.
+That is, object capabilities and reference capabilities are two different concepts.
 - **Reference capabilities** are a type system feature, while
 - **Object capabilities** are just a programming style that is embraced by the standard library.
 

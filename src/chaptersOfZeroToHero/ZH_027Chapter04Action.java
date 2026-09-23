@@ -45,12 +45,12 @@ Using `Try#` or `.tryGet` means that we suspect that the value may not be there 
 
 The code of `Action[R]` is not very long and it uses Fearless in interesting ways, thus we will read and explain the implementation of `Action[R]` as present in the standard library:
 ```
-ActionMatch[R:**,RR:**]: {//NOTE: should be R:* or R:**? actually unobvious
+ActionMatch[R:*,RR:*]: {
   mut .ok(R): RR;
   mut .info(Info): RR;
   }
-Action[R:**]: {
-  mut .run[RR:**](mut ActionMatch[R,RR]): RR;
+Action[R:*]: {
+  mut .run[RR:*](mut ActionMatch[R,RR]): RR;
   }
 ```
 The `ActionMatch[R,RR]` type is unsurprising. Very similar to `OptMatch[T,R]` or `StackMatch[T,R]`.
@@ -59,17 +59,17 @@ At its core, Action has a very simple implementation.
 We call the generic parameters `R` and `RR` to suggest that `R` is the result of the action, while `RR` is the result of processing either the action result or the `Info`.
 
 `Action[R]` has a single abstract `.run` method that takes an `ActionMatch[R,RR]`.
-Note how everything is either `mut` or `**`. This is because actions are often used together with side effects and mutations.
-The actual implementation of `Action[R]` also offers some convenience methods (`.map`,`.mapInfo`, `.andThen`, `!` and `.context`).
-Methods `!` and `.context` are widely used and beginner friendly, while methods `.map` and `.andThen` are used more rarely.
+Note how all the methods are `mut` and all the generic parameters accept `imm`, `mut` and `read`. This is because actions are often used together with side effects and mutations.
+The actual implementation of `Action[R]` also offers some convenience methods (`.map`, `.mapInfo`, `.andThen`, `!`, `.context`, `.recover`, `.catch` and a few more).
+Methods `!` and `.context` are widely used and beginner-friendly, while methods `.map` and `.andThen` are used more rarely.
 Here we examine those methods one by one:
 
 >Note: Action.mapInfo is also present, but we do not discuss it in the guide
 
 #### Method `Action[R]!`
 ```
-Action[R:**]: {
-  mut .run[RR:**](mut ActionMatch[R,RR]): RR;
+Action[R:*]: {
+  mut .run[RR:*](mut ActionMatch[R,RR]): RR;
   ..
   mut !: R -> this.run{.ok x -> x; .info i -> Error!i};
   }
@@ -101,8 +101,8 @@ However, actions that do no actions when called are misleading, so the code abov
 #### Method `Action[R].context`
 
 ```
-Action[R:**]: {
-  mut .run[RR:**](mut ActionMatch[R,RR]): RR;
+Action[R:*]: {
+  mut .run[RR:*](mut ActionMatch[R,RR]): RR;
   ..
   mut .context(msg: read LazyInfo): mut Action[R] -> {m -> this.run{
     .ok x   -> m.ok(x);
@@ -137,22 +137,22 @@ Note that the computation required to format this extra information will only be
 
 #### Method `Action[R].map`
 ```
-MF[R:**]: { mut #: R } //mutable function, seen before
-Action[R:**]: {
-  mut .run[RR:**](mut ActionMatch[R,RR]): RR;
-  mut .map[RR:**](f: mut MF[R,RR]): mut Action[RR] -> {m -> this.run{
+MF[A:**,R:**]: { mut #(a: A): R } //mutable function, seen before
+Action[R:*]: {
+  mut .run[RR:*](mut ActionMatch[R,RR]): RR;
+  mut .map[RR:*](f: mut MF[R,RR]): mut Action[RR] -> {m -> this.run{
     .ok x   -> m.ok(f#x);
     .info i -> m.info(i);
     }};
   ...
   }
 ```
-Method `.map` takes another mutating function `f` and returns a `mut Action[RR]` object that when a matcher 'm' is provided, calls the `.run` method on the outer `Action[R]` and delegates the behaviour of `.ok` and `.info` to `m.ok` and `m.info`.
-- `m.ok` will take in input not the original value `x`, but the result of applying `f` to `x`.
+Method `.map` takes another mutating function `f` and returns a `mut Action[RR]` object that, when a matcher `m` is provided, calls the `.run` method on the outer `Action[R]` and delegates the behaviour of `.ok` and `.info` to `m.ok` and `m.info`.
+- `m.ok` will take as input not the original value `x`, but the result of applying `f` to `x`.
 Method `.map` is useful to transform the type of actions without actually executing any code at that moment.
 For example 
 ```
-persons.tryGet(3).map{::name}
+persons.tryGet(3).map{::.name}
 ```
 would return an `Action[Str]` containing the name of the person in position 3.
 
@@ -162,10 +162,10 @@ that error would not turn the action into a failed action with the `.info` conta
 
 #### Method `Action[R].andThen`
 ```
-MF[R:**]: { mut #: R } //mutable function, seen before
-Action[R:**]: {
-  mut .run[RR:**](mut ActionMatch[R,RR]): RR;
-  mut .andThen[RR:**](f: mut MF[R,mut Action[RR]]): mut Action[RR] -> {m -> this.run{
+MF[A:**,R:**]: { mut #(a: A): R } //mutable function, seen before
+Action[R:*]: {
+  mut .run[RR:*](mut ActionMatch[R,RR]): RR;
+  mut .andThen[RR:*](f: mut MF[R,mut Action[RR]]): mut Action[RR] -> {m -> this.run{
     .ok x   -> f#x.run(m);
     .info i -> m.info(i);
     }};
@@ -222,8 +222,8 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
   .fromInfo(i) -> Points#(i.getMap.get(`x`).getMsg.getNat, i.getMap.get(`y`).getMsg.getNat);
 
   # x, y ->Block#
-    .do { x.checkInRange(0,10) }
-    .do { y.checkInRange(0,10) }
+    .do { x.assertInRange(0=~~10) }
+    .do { y.assertInRange(0=~~10) }
     .return{ Point: DataType[Point,Point]{'self
       .x: Nat -> x;
       .y: Nat -> y;
@@ -236,10 +236,10 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
       }}}
 ```
 
-Here Points has a `.fromInfo` method creating a point using the `.x` and `.y` coordinate stored in an `Info` object.
+Here Points has a `.fromInfo` method creating a point using the `.x` and `.y` coordinates stored in an `Info` object.
 Then, method `Points#` takes the `x` and `y` `Nat` coordinates and creates the resulting `Point`.
-However, before the point is created, we use `Nat.checkInRange` to check that `x` and `y` are in the desired range.
-`Nat.checkInRange` will use `Error!` if the condition is false.
+However, before the point is created, we use `Nat.assertInRange` to check that `x` and `y` are in the desired range.
+`Nat.assertInRange` will throw an error if the condition is false.
 
 > TODO: we need to decide if those are deterministic or non deterministic errors.
 > Same for most errors in the std library right now.
@@ -256,8 +256,8 @@ In a complex program we can have a few layers of responsibility like this, where
 
 We have seen that `Try#{...}` creates an `Action[R]` and that `myAction!` can do
 `Error!(info)`.
-But.. what happen next? 
-Another `Try#{...}` can turn the leaked error into another `Action[R]`, or the whole program could fail. How does this failure looks?
+But.. what happens next? 
+Another `Try#{...}` can turn the leaked error into another `Action[R]`, or the whole program could fail. How does this failure look?
 It will look something like this:
 ````
 Error info: {.msg:`....`}
@@ -277,8 +277,8 @@ For example
 Stuff:{
   .foo (myList)->myList.get(5);
   .bar -> Try#{this.foo};
-  .beer1 -> this.bar!
-  .beer2 -> this.bar.context `InBeer2`!
+  .beer1 -> this.bar!;
+  .beer2 -> this.bar.context{`InBeer2`}!;
   }
 ````
 
@@ -305,8 +305,8 @@ Code `capTry#{...}` creates an `Action[R]` whose `Info` is going to be the sum o
 normal `Info` and the info containing the stack trace.
 > How? list of string or structured?
 
-Moreover, `System.try` allows to capture some sneaky errors, known as **non deterministic errors**.
-Non deterministic errors are errors that may change depending on the specific system limitations and set up.
+Moreover, `System.try` allows us to capture some sneaky errors, known as **non-deterministic errors**.
+Non-deterministic errors are errors that may change depending on the specific system limitations and set up.
 They include:
 - Memory overflow: discuss
 - Stack overflow: discuss
@@ -322,15 +322,15 @@ They include:
 > catch(NonDeterministic d){ return m.mut$info$1(d.i); }
 
 
-As you can imagine, it is quite rare to have to capture non deterministic errors; but there are many reasonable examples:
-- Testing framework: this is code that runs and supervision tests.
+As you can imagine, it is quite rare to have to capture non-deterministic errors; but there are many reasonable examples:
+- Testing framework: this is code that runs and supervises tests.
   Any kind of failure should be captured and handled/recorded/logged in some way.
-- Web server: It must run many different code serving web pages, and a page error, no matter how severe, should not terminate the whole web server.
-- Try different strategies from a database of options to solve a problem. Then record statistical data about what option solved the problem better and faster to produce self improving programs.
+- Web server: It must run many different pieces of code serving web pages, and a page error, no matter how severe, should not terminate the whole web server.
+- Try different strategies from a database of options to solve a problem. Then record statistical data about what option solved the problem better and faster to produce self-improving programs.
 - Airplane or nuclear plant supervision system: you probably do not want it to terminate, no matter the error.
 - Videogame where users can somehow forge code either directly or by combining magic objects with standard effects.
 
-> need a Cap that give you current line number and file name!
+> need a Cap that gives you current line number and file name!
 
 # Offensive programming
 > should be a section of the guide 
@@ -347,7 +347,7 @@ We will later see other techniques supporting offensive programming when working
 
 Some programmers think the code should simply never fail by construction; basically it should encode the proof of its own correctness inside its structure.
 While amazing in theory, this mindset causes issues in the real world, where programmers are negotiating their code quality with time and skill constraints.
-Bob, the stressed programmer would probably choose to somehow twist the intended behaviour in subtle ways so that the code compiles and he does not get fired.
+Bob, the stressed programmer, would probably choose to somehow twist the intended behaviour in subtle ways so that the code compiles and he does not get fired.
 The offensive programming philosophy instead gives plenty of escape hatches to Bob:
 he can produce code working correctly in most real situations, while failing with observed bugs when needed. This explicitly and sincerely communicates what is going on.
 
@@ -390,7 +390,7 @@ Another form of assertions is useful when we want to provide alternative behavio
 ````
 //in file _foo/bar.fear
 Block# //many options for the actual API
-  .let content= {AssertSys.or({..readFile `foo.txt` ..},{..ask user for existing file with file choser..} }
+  .let content= {AssertSys.or({..readFile `foo.txt` ..},{..ask user for existing file with file chooser..} }
   .let foo= AssertPre#(foo.bar(),{::.inRange(3,25)},{_->10})
   .do{...}
   ..

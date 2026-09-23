@@ -10,7 +10,7 @@ class ZH_004Chapter01Rotations {
 
 ### Directions and rotations.
 In the example before, the turret could only rotate one step at a time.
-How to rotate the turret a variable amount of times?
+How can we rotate the turret a variable number of times?
 Conceptually there are a few more options: we can turn zero, one, two or three times.
 A simple way to encode this idea would be to simply add those methods:
 -------------------------*/@Test void badDirection() { run("""
@@ -27,7 +27,7 @@ A simple way to encode this idea would be to simply add those methods:
 """); }/*--------------------------------------------
 This code allows us to rotate any direction any number of times.
 Note how `.turn1` is the only abstract method in `Direction`.
-The syntactic sugar can help us make this code more compact: since it is clear that we want to implement the method `.turn1`, because it is the only abstract method. Thus as discussed before we can write just `East` in `North` instead of the more verbose (but equivalent) `.turn1->East`.
+The syntactic sugar helps us make this code more compact: it is clear that we want to implement the method `.turn1`, because it is the only abstract method. Thus as discussed before we can write just `East` in `North` instead of the more verbose (but equivalent) `.turn1->East`.
 
 Having names like `.turn0`, `.turn1`, `.turn2`, etc., often signals that we're missing some abstraction.
 These aren't fundamentally different actions, they are different degrees of the same action: `Rotation`.
@@ -48,11 +48,11 @@ We can define the concept of rotations as follows:
   /* ... various kinds of rotation will be shown later*/
 """); }/*--------------------------------------------
 Now `Direction` is back to the minimal form, with only a single `.turn` method,
-and we have a new concept, called `Rotation`, with an `#` method.
+and we have a new concept, called `Rotation`, with a `#` method.
 A `Rotation` is an object with a method `#` that can take a `Direction` called `d` and rotate it in a certain way.
 Now we can have a single `.turnTurret` method and pass a parameter of type `Rotation` describing how much to turn.
 The syntax `d: Direction` defines `d` as a parameter of method `#`.
-We now show how to define the various kinds of `Rotation`. We will call them `Turn0`, `Turn90`, `Turn180`, and `Turn270` to indicate the amount of degrees of rotation.
+We now show how to define the various kinds of `Rotation`. We will call them `Turn0`, `Turn90`, `Turn180`, and `Turn270` to indicate the number of degrees of rotation.
 Since the syntax of Fearless is quite flexible, there are a few ways to declare those.
 We show 4 ways to declare `Turn90`, from the most verbose to the most compact:
 ```
@@ -71,7 +71,7 @@ This is ok, when implementing a method the name of the parameters is irrelevant 
   At your stage of learning, you may be surprised that syntactic sugar
   supports this specific case in particular, but with more experience you will see that
   this apparently oddly specific case is actually very common in Fearless code.
-Using this compact syntax, here it is how we would define all the Rotations:
+Using this compact syntax, here is how we would define all the Rotations:
 -------------------------*/@Test void colonColon1() { run("""
   //OMIT_START
   Direction:{ /*..as before..*/ .turn: Direction}
@@ -85,7 +85,7 @@ Using this compact syntax, here it is how we would define all the Rotations:
 As you can see, we just call `.turn` the appropriate number of times.
 The case of `Turn0` looks quite mysterious at first: that compact syntax is desugared into
 `Turn0: Rotation{ #(d)-> d }`.
-**desugaring** is the act of removing the sugar, to show the code in its more primitive form.
+**Desugaring** is the act of removing the sugar, to show the code in its more primitive form.
 
 With those type declarations, we can write code like the following:
 
@@ -127,7 +127,7 @@ We have now seen two kinds of abstractions:
 - Subtyping allows us to abstract types into categories: when mentioning `Direction` as a type we mean any of the values implementing `Direction`.
 We will see other forms of abstraction later on.
 
-Note how `Tanks` and `Rotation` are kind of similar: they are both top level types with an `#` method. We call types like those **functions**.
+Note how `Tanks` and `Rotation` are kind of similar: they are both top level types with a `#` method. We call types like those **functions**.
 In the common mathematical notation, a function can be directly applied to the arguments doing `f(x,y)`. In Fearless we need to add the extra `#` symbol, and we get `f#(x,y)`.
 
 ### Composing rotations
@@ -241,8 +241,8 @@ While this is self evident in `Rotation#`, since there is no body, this holds al
 The code of `Rotation+` is similar to the code of `Tanks#`: it is creating a new kind of object by capturing the method parameters inside of the returned literal.
 With the `+` method we are able to create all kinds of `Rotation`s by using only `Turn90`:
 For example, `Turn90+(Turn90)` behaves exactly like `Turn180` but is conceptually a different object.
-To obtain `Turn0` we could just write `Turn90+(Turn90)+(Turn90)+(Turn90)`
-While writing parenthesis after the `#` method feels natural, we are all used to writing mathematical operations without parentheses. This is possible also in Fearless: every method with zero or one argument can be called without parentheses.
+To obtain `Turn0` we could just write `Turn90+(Turn90)+(Turn90)+(Turn90)`.
+While writing parentheses after the `#` method feels natural, we are all used to writing mathematical operations without parentheses. This is possible also in Fearless: every method with zero or one argument can be called without parentheses.
 Thus, we can write `Turn90 + Turn90 + Turn90 + Turn90` to obtain the same result as before.
 We will discuss Fearless operator precedence, or the Fearless lack thereof, when we introduce numbers in the next section.
 

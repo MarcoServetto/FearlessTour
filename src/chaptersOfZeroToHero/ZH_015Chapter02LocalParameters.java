@@ -15,14 +15,14 @@ This can encourage us to write repetitive and hard to read code.
 
 A quick note on two naming conventions you will keep running into: methods starting with `get` and methods starting with `soft`.
 A `get` method promises a precise, correct answer, but only for the cases where one actually exists; the name warns that such a precise answer may not exist.
-`3.3 .getNat` can not return `3.3` as a `Nat`. There is no `Nat` precisely representing `3.3`.
+`3.5 .getNat` can not return `3.5` as a `Nat`. There is no `Nat` precisely representing `3.5`.
 Instead of making up an arbitrary answer, `get` methods stop the whole execution.
 A `soft` method takes the opposite approach: it never stops the execution, and instead gives back the closest reasonable answer it
 can, even when an exact one is not possible.
 For example, we show below a difficult to read method computing the distance between two points;
 using the square root function (`.softSqrt`) present on `Nat`. Most numbers (like `2`)
 do not have a whole-number, or even a neat fractional, square root, so `.softSqrt` gives back the closest `Float` it can find.
-Then `.softNat` turns that `Float` back into a `Nat`, again taking the closest reasonable value: it rounds down, and clamps negative numbers to `0`.
+Then `.softNat` turns that `Float` back into a `Nat`, again taking the closest reasonable value: it truncates towards `0`, and clamps negative numbers to `0`.
 -------------------------*/@Test void distance1 () { run("""
 //OMIT_START
 use base.Nat as Nat;
@@ -36,7 +36,7 @@ A:{
 //OMIT_END
 """); }/*--------------------------------------------
 
-Note that those are the needed parenthesis:
+Note that those are the needed parentheses:
      `p1.x - p2.x` would be interpreted as `(p1.x - p2).x`
 This method uses the Pythagorean theorem, but it is not ideal:
   - we duplicate code for `p1.x - (p2.x)` and `p1.y - (p2.y)`
@@ -93,8 +93,8 @@ A:{
 //OMIT_END
 """); }/*--------------------------------------------
 
-Now we can use any amount of lets to declare local bindings and use them in the rest of the code.
-However, the code is now kind of noisy: every `Let` introduces a new layer of object literals, and thus we end up with a lot of closed parenthesis at the end.
+Now we can use any number of lets to declare local bindings and use them in the rest of the code.
+However, the code is now kind of noisy: every `Let` introduces a new layer of object literals, and thus we end up with a lot of closing parentheses at the end.
 
 Also, this code does not follow the 'fluent' pattern we discussed before.
 In particular, while most lines start by telling you what that line is doing (`Let#`) the last one just computes an expression.
@@ -130,13 +130,13 @@ A:{
 
 I guess you are now very confused about the code above, and you may be thinking this is not much of an improvement.
 You may be thinking this is actually much worse!
-However, this new form is very regular. Every line is kind of self similar, and everything is expressed via method calls.
+However, this new form is very regular. Every line is kind of self-similar, and everything is expressed via method calls.
 Regular code expressed via method calls is fertile ground for both code reuse and syntactic sugar.
 
 ### The = sugar.
 
 We are now going to show one crucial form of syntactic sugar in Fearless. 
-Any method with two parameters (three counting also the receiver) can be called using this sugar. In particular this includes the '.let' method defined above.
+Any method with two parameters (three counting also the receiver) can be called using this sugar. In particular this includes the `.let` method defined above.
 
 Consider the call
 `Let#.let({p1.x - (p2.x)}, {diffX, self0 -> self0 ...})`
@@ -174,7 +174,7 @@ A:{
 
 That is, the `=` takes the binding name on its left and uses it to forge an object literal implementing a single method with two arguments.
 The body of such a method is whatever method chain follows. 
-By using a two argument method, the `Let` library can specify the receiver for the continuation of the call chain.
+By using a two-argument method, the `Let` library can specify the receiver for the continuation of the call chain.
 In the case of the `Let[R]`, it is just the same `Let[R]` object; we will see later cases where it is useful to change the receiver to a different value or type.
 
 Let's see again this code, comparing line by line to see what changes thanks to this sugar
@@ -184,7 +184,7 @@ Let's see again this code, comparing line by line to see what changes thanks to 
   .let diffX= {p1.x - (p2.x)}           | .let({p1.x - (p2.x)}, {diffX, self0 -> self0
   .let diffY= {p1.y - (p2.y)}           | .let({p1.y - (p2.y)}, {diffY, self1 -> self1
   .let res={(diffX*diffX)+(diffY*diffY)}| .let({(diffX*diffX)+(diffY*diffY)},{res,self2->self2
-  .return {res.softSqrt.softNat}          | .return {res.softSqrt.softNat}
+  .return {res.softSqrt.softNat}        | .return {res.softSqrt.softNat}
                                         | })})}) 
 ```
 

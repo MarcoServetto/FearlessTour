@@ -12,13 +12,13 @@ class ZH_013Chapter02Stack {
 
 We have seen many kinds of single values: strings, numbers, directions, tanks.
 `Opt` is kind of a different thing: it represents zero or one value.
-Can we represent sequences of any amount of values?
+Can we represent sequences of any number of values?
 
 In the world, we often organise books on shelves or line up to buy tickets.
 Data too needs to be arranged in specific ways to be useful. This arrangement is handled by various structures we broadly call sequences.
 
 Various kinds of sequences are possible.
-Humans have categorised and named many of those, using names like Stack, List, Queues, Vectors or Arrays.
+Humans have categorised and named many of those, using names like Stacks, Lists, Queues, Vectors or Arrays.
 Each type of sequence manages and utilises data differently.
 
 For example, consider neatly stacking chairs one atop another after a gathering.
@@ -39,11 +39,11 @@ StackMatch[T,R]: {
   .elem(top:T, tail: Stack[T]): R;
   }
 """); }/*--------------------------------------------
-As you can see, this code is similar to both peano numbers and optionals. It is kind of a hybrid.
+As you can see, this code is similar to both Peano numbers and optionals. It is kind of a hybrid.
 The `.match` method and the `StackMatch` type are very similar to `.match` and `OptMatch` in optional.
 
-The method `+` is similar to the method `.succ` on peano numbers, and the implementation is similar to the method `Opts#`.
-Look again to the code of `Opt` and `Number` from before to see the similarities:
+The method `+` is similar to the method `.succ` on Peano numbers, and the implementation is similar to the method `Opts#`.
+Look again at the code of `Opt` and `Number` from before to see the similarities:
 -------------------------*/@Test void optPeano () { run("""
 Opt[T]: {
   .match[R](m: OptMatch[T,R]): R -> m.empty
@@ -69,7 +69,7 @@ Zero: Number{
 """); }/*--------------------------------------------
 We can use the stack in many different ways. Some usage examples below:
 - `Stack[Nat] + 1 + 2 + 3` is a stack of `Nat`. It contains `3`,`2`,`1`. Yes, in this order. `3` is the last element we inserted in the stack so it is the first element.
-- `Stack[Opt[Nat]] + {} + {} + ( Opt#(3) )` is a stack of `Opt[Nat]`. It contains the optional containing `3`, and then two empty optionals.
+- `Stack[Opt[Nat]] + {} + {} + ( Opts#(3) )` is a stack of `Opt[Nat]`. It contains the optional containing `3`, and then two empty optionals.
 - `Stack[Stack[Nat]] + {} + {} + ( Stack[Nat] + 3 )` is a stack of `Stack[Nat]`. It contains a stack with just the element `3`, and then two empty stacks.
 Note how we can use `{}` both for the empty stack and the empty optional. The inference recognizes that the method `Stack[T]+` takes an optional in one case and a stack in another. Thus it infers that `{}` is an empty optional or an empty stack depending on the surrounding code.
 
@@ -110,8 +110,8 @@ So, let's start reducing it.
 4. `Stack[Nat]{.match(m) -> m.elem(3,Stack[Nat]{.match(m) -> m.elem(2,Stack[Nat]{.match(m) -> m.elem(1,Stack[Nat])})})}`
 
 As you can see, this is **quite hard to read**.
-Arguably, `Stack[Nat] + 1 + 2 + 3` was much more clear.
-Visualizing reductions is great if it helps us to understand the semantic of the code. Getting stuck in the mud of redundant verbose value syntax would make visualizing reductions less useful.
+Arguably, `Stack[Nat] + 1 + 2 + 3` was much clearer.
+Visualizing reductions is great if it helps us to understand the semantics of the code. Getting stuck in the mud of redundant verbose value syntax would make visualizing reductions less useful.
 To better visualize this method execution we will use a symbolic representation for stacks.
 
 We will represent the result of `Stack[Nat] + 1 + 2 + 3` as `[3,2,1]`.
@@ -176,15 +176,15 @@ Note how in the same way `+` adds the element at the top of the stack,
 `++` adds all the elements at the top of the stack too.
 
 This code shows an interesting use of `this`.
-Inside method `Stack[T]+` we define a stack composed by the outer stack `this` and the top element `e`.
+Inside method `Stack[T]+` we define a stack composed of the outer stack `this` and the top element `e`.
 This means that the `this` binding in the body of `Stack[T]+` refers to the tail of the stack we are returning.
-Thus, as for before, we write `.match(m) -> m.elem(e, this),` to implement the match method.
+Thus, as for before, we write `.match(m) -> m.elem(e, this);` to implement the match method.
 However, we use `e` and `this` also to implement the `Stack[T]++` method.
 
 Consider the method body `this ++ other  + e`.
 This code first calls `Stack[T]++`  with code `this ++ other`.
 Then, `Stack[T]+` is called on the result of `this ++ other`. This adds `e` at the top of the result of `this ++ other`.
-That is, the ultimate result will contain `e` as the first element. Remember that `e` was the first element of current stack.
+That is, the ultimate result will contain `e` as the first element. Remember that `e` was the first element of the current stack.
 
 With our compact stack representation, we can see the following reduction with body `this ++ other + e`.
 1. `[1,2,3] ++ [4,5,6]`
@@ -211,7 +211,7 @@ inside the expression `[2,3] ++ [4,5,6] + 1`.
 Note that there are many alternative ways to write that body.
 All of those ways would compile, but they do conceptually different operations. Some produce different ordering in the result, and some do not even terminate.
 
-One obvious variant is to add parenthesis: `this ++ (other  + e)`.
+One obvious variant is to add parentheses: `this ++ (other  + e)`.
 1. `[1,2,3] ++ [4,5,6]`
 2. `[2,3] ++ ([4,5,6] + 1)`
 3. `[2,3] ++ [1,4,5,6]`
@@ -248,7 +248,7 @@ Consider this other alternative body: `other ++ this + e`
 14. `[1,4,2,5,3,6]`
 
 Oh, wow, what a mess! This version basically alternates the content of the two stacks.
-What happens if we add the parenthesis here?
+What happens if we add the parentheses here?
 Consider this other alternative body: `other ++ (this + e)`
 1. `[1,2,3] ++ [4,5,6]`
 2. `[4,5,6] ++ ([2,3] + 1)`
@@ -264,7 +264,7 @@ For the same reason, also this following other body variation would not terminat
 We have one last variation to consider:
 `other + e ++ this`
 This also does not terminate:
-Termination of `Stack[T]++` is only possible if the left element is an empty stack, but the result of `Stack[T]+` is always not empty.
+Termination of `Stack[T]++` is only possible if the left element is an empty stack, but the result of `Stack[T]+` is never empty.
 That is, this implementation of `Stack[T]++` calls `Stack[T]++` in a way that is guaranteed to call back the same `Stack[T]++` implementation over and over.
 
 As you can see, there are many ways to permute the `++` and the `+` call on `this`, `other` and `e`.
@@ -273,7 +273,7 @@ In order to learn to code, you need to learn to visualise the results of those c
 We will soon see how **Testing** can be used to supplement the miserable visualisation skills of most humans.
 
 
-Conceptually, `Stack[T]++` is similar to the peano `Number+` operation, and the whole stack concept can be seen as a peano number where some information is stored near each successor call.
+Conceptually, `Stack[T]++` is similar to the Peano `Number+` operation, and the whole stack concept can be seen as a Peano number where some information is stored near each successor call.
 
 END*/
 }

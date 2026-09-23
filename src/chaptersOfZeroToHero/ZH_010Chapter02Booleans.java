@@ -42,7 +42,7 @@ False:Bool{
 In this example `Bool` has three methods, and they all return another `Bool`.
 Methods `.and` and `.or` take an `other: Bool` parameter.
 Method `.not` takes zero parameters.
-In this sense, `Bool` is very similar to numbers, where the operations on numbers (`+`,`-`,`*`, etc) takes numbers and returns numbers. In the same way, `Bool` operations take `Bool`s and return `Bool`s.
+In this sense, `Bool` is very similar to numbers, where the operations on numbers (`+`,`-`,`*`, etc) take numbers and return numbers. In the same way, `Bool` operations take `Bool`s and return `Bool`s.
 
 Then, `True` and `False` are kinds of `Bool`, where
 `True.and` returns the parameter and `False.and` returns `False`
@@ -173,7 +173,7 @@ The `.message` method uses an `.if` checking whether the input `s` is equal to `
 The call is conceptually
 ``(s ==(`hello`)).if[Str]({..})``
 but we can just write ``s == `hello` .if {..}``
-by removing parenthesis and relying on generic type inference.
+by removing parentheses and relying on generic type inference.
 The `[Str]` indicates that both the `.then` and `.else` branches must produce a `Str` result.
 The first `.then` branch is simple: it just returns the greeting string.
 The first `.else` branch contains another `.if` call, nested inside. This inner check sees if `s` is equal to `bye`.
@@ -332,7 +332,7 @@ But for now, let's pause to appreciate what we've accomplished. Understanding th
 
 Generics are very common in Fearless.
 
-Possibly the most important generic types in the Fearless standard library are the function types, that looks similar to the following:
+Possibly the most important generic types in the Fearless standard library are the function types, which look similar to the following:
 -------------------------*/@Test void fun1 () { run("""
 F[R]: { #: R }
 F[A,R]: { #(a: A): R }
@@ -342,9 +342,9 @@ F[A,B,C,R]: { #(a: A, b: B, c: C): R }
 Those types represent functions with zero, one, two, three arguments.
 Of course we can define more if more arguments are needed.
 As you can see, thanks to the way generic types work, we can call them all `F` because
-the presence of different numbers of generic arguments disambiguate their names.
+the presence of different numbers of generic arguments disambiguates their names.
 
-Fearless allows to simply omit the names of parameters that are not used; and since those are abstract methods those are all unused since there is no body at all.
+Fearless allows us to simply omit the names of parameters that are not used; since those are abstract methods, their parameters are all unused: there is no body at all.
 Thus we can also just write:
 -------------------------*/@Test void fun1b () { run("""
 F[R]: { #: R }
@@ -386,7 +386,7 @@ A factory object is an object whose main goal is to create other objects.
 We can have various ways to create objects and we can pass those factory objects to code that needs to create objects internally.
 
 
-The factory pattern is just a sub pattern of the more general idea of lifting behaviour into objects.
+The factory pattern is just a sub-pattern of the more general idea of lifting behaviour into objects.
 In particular `F[R]` is often used to represent delayed computation. By turning the behaviour producing an `R` into an object of type `F[R]` we can now pass this object around.
 
 ### Delayed computations for Booleans
@@ -489,9 +489,9 @@ Much.code && { Slow.code  && {ATonOf.code}} // version 2
 """); }/*--------------------------------------------
 In this version, if `Much.code` reduces to `False`, we will not execute `Slow.code` and `ATonOf.code`.
 If `Much.code` reduces to `True`, and `Slow.code` reduces to `False`, we will not execute `ATonOf.code`.
-Both versions (note the different parenthesis) are equivalent, and reduce in pretty much the same amount of time.
+Both versions (note the different parentheses) are equivalent, and reduce in pretty much the same amount of time.
 
-On the other side, if we used the `Bool.and` method
+On the other hand, if we used the `Bool.and` method
 ```
 Much.code .and (Slow.code) .and (ATonOf.code)  // version 1
 Much.code .and (Slow.code .and (ATonOf.code) ) // version 2
@@ -527,7 +527,7 @@ Much.code .and (Slow.code) .and (ATonOf.code)  // eager
 Are those two lines of code equivalent, except for speed?
 Not really.
 In Fearless, as in most programming languages, it is possible to
-encode non terminating computations.
+encode non-terminating computations.
 For example, what if `Slow` were defined as follows:
 ```
 Slow:{.code: Bool -> this.code; }
@@ -535,12 +535,12 @@ Slow:{.code: Bool -> this.code; }
 The method call `Slow.code` reduces in one step to `Slow.code`, that reduces in itself again, and again, and again. This reduction never stops!
 Executing `Slow.code` would either never terminate or produce some kind of error.
 In that case, if `Much.code` reduces to `False`, the first line simply reduces to `False`, while the second line would either never terminate or produce an error.
-That is, while `Slow.code` never terminates, `{Slow.code}` is a value of type `F[Bool]`. Non termination only happens when and if method `#` is called on that value.
+That is, while `Slow.code` never terminates, `{Slow.code}` is a value of type `F[Bool]`. Non-termination only happens when and if method `#` is called on that value.
 
 In the rest of the guide we will see other situations where lazy and eager operations can have radically different behaviours. Overall, thinking that they are equivalent can be useful in first approximation, but can hurt us down the line.
 
-When programming we often need to **keep in mind multiple levels of abstractions and multiple levels of precision**.
-At a more coarse level of precision, `.and` and `&&` are equivalent; at a more fine level of precision, we can see differences. Occasionally, fine behavioural details can bubble up the ladder of abstractions and become relevant.
+When programming we often need to **keep in mind multiple levels of abstraction and multiple levels of precision**.
+At a coarser level of precision, `.and` and `&&` are equivalent; at a finer level of precision, we can see differences. Occasionally, fine behavioural details can bubble up the ladder of abstractions and become relevant.
 
 END*/
 }

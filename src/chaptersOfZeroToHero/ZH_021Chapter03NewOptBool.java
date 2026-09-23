@@ -35,7 +35,7 @@ MF[R:**]: {mut #: R}
 MF[A:**,R:**]: {mut #(a: A): R}
 MF[A:**,B:**,R:**]: {mut #(a: A, b: B): R} //and a few more overloads
 ```
-Note the use of `T:**`. We can use `*` and `**` as shortcut for large generic bounds:
+Note the use of `T:**`. We can use `*` and `**` as shortcuts for large generic bounds:
 `*` is equivalent to `imm,mut,read`; `**` is equivalent to all of the reference capabilities; including some more unusual ones that we have not discussed yet.
 
 `F#` sees the world as `read` and supports generics with any RC. In particular, this means that a
@@ -53,8 +53,8 @@ of `mut MF[X]` can actively mutate captured references.
 
 ### DataType, later!
 
-Boolean, numbers, strings and many other widely used types from the standard library implement `DataType`.
-`DataType` contains a lot of useful functionalities, and we will see them in the details later. For now you just need to know that this interface exists and that we need to implement a few method from it.
+Booleans, numbers, strings and many other widely used types from the standard library implement `DataType`.
+`DataType` contains a lot of useful functionalities, and we will see them in detail later. For now you just need to know that this interface exists and that we need to implement a few methods from it.
 
 ### Bool, as actually declared
 
@@ -138,7 +138,7 @@ How does this work?
 
   Methods `.assertTrue`/`.assertFalse` are implemented on top of `DataType.assertEq`.
 
-- `.info`, `.close`, `.hash` and `.cmp` are methods from DataType to represent the boolean in a serialisable format and to allow booleans to be compared and organized into data structures.
+- `.info`, `.close`, `.hash` and `.cmp` are methods from `DataType` to represent the boolean in a serialisable format and to allow booleans to be compared and organized into data structures.
 
 ````
 True:Bool{
@@ -219,13 +219,13 @@ Methods `.isEmpty` and `.isSome` simply return a boolean stating if the optional
 Method `!` is a convenience method that returns the optional content or produces an error.
 Calling this method is equivalent to claiming
 
-> I, the programmer, know that in this case the optional will definitively have a value inside.
+> I, the programmer, know that in this case the optional will definitely have a value inside.
 > If not, this is an observed bug.
 
 Note how this is conceptually similar to the `.assertTrue` method we have seen before. Indeed, the internal call ``Error.msg `..` `` is pretty much what the body of `.assertEq` from `DataType` does.
 
 A Fearless method can indicate failure by throwing an error.
-Errors are not part of the basic semantic of Fearless, and they can be thrown using magic methods or convenience methods using magic methods internally.
+Errors are not part of the basic semantics of Fearless, and they can be thrown using magic methods or convenience methods using magic methods internally.
 For example, the method `Error.msg(Str)` will throw an error using that string as an error message.
 When a method throws an error the computation stops and the error is reported outside of the program. That is, the whole Fearless application stops and burns.
 This is often the desired behaviour, especially when debugging.
@@ -239,7 +239,7 @@ The two methods `Opt[E].orValue` and `Opt[E].orLazy` both return the value store
 - `Opt[E].orValue` takes the default value directly.
 - `Opt[E].orLazy` takes a lazy default: a `MF[E]` only called if the optional is empty.
 
-Method `.flow` returns a `Flow[E]`. Flows are a very important data type in the fearless standard libraries and we will discuss them later.
+Method `.flow` returns a `Flow[E]`. Flows are a very important data type in the Fearless standard library and we will discuss them later.
 
 The method `.mapSome` is used to change the type of the optional, taking a function to map the content to a new type.
 
@@ -274,7 +274,7 @@ myOptPerson.str(ToStrBy[Person]{#(p: read Person): read ToStr -> p})
 ```
 As you can see, the `{::}` sugar is very useful in those cases.
 But, what if we have a `data: Opt[Opt[Person]]`?
-No problem, we can just do `data.str{::str{::}}` and get our string.
+No problem, we can just do `data.str{::.str{::}}` and get our string.
 This pattern of using nested `{::}` is quite common as we will see more and more.
 Here are the three types used by this mechanism:
 ```
@@ -347,7 +347,7 @@ The core idea is that when we implement `.match` in `Opt[E]` we are using the sa
 
 
 `Opt[E]` is an example of a generic container type: a type whose main goal is to contain any kind of `E`, where `E` can be `read,imm,mut`.
-As you can see, designing generic container types supporting a range of reference capabilities is not a beginner friendly task. However, this pattern is quite consistent, and many generic containers follow this same structure, with many methods offering exactly those type variants.
+As you can see, designing generic container types supporting a range of reference capabilities is not a beginner-friendly task. However, this pattern is quite consistent, and many generic containers follow this same structure, with many methods offering exactly those type variants.
 
 
 ### The Reality of Production Code
@@ -357,7 +357,7 @@ You may have noticed a shift in tone. The code for `_Opt[E]` looks significantly
 We are crossing the bridge from **conceptual logic** to **production engineering**.
 The logic remains identical: an Optional is still just "something or nothing." However, a production-grade library seamlessly handles `mut`,`imm` and `read` data.
 
-Up to now we pushed to make sure to explain every single detail when first used. We will eventually provide all the details and teach you the ins and outs of every corner; but there is no more a clear linear path to follow.
+Up to now we pushed to make sure to explain every single detail when first used. We will eventually provide all the details and teach you the ins and outs of every corner; but there is no longer a clear linear path to follow.
 Here we are showing you the real implementation of those very useful types, and by their nature of being used in all contexts of the language, they are interconnected with every aspect of the language.
 
 We could have hidden this complexity from you. Alternatively, we could have kept showing you more and more layers of simplified toy versions of the standard library.
@@ -514,8 +514,8 @@ _Opt[E:*]:DataType[Opt[E],Opt[imm E],E,imm E]{
 """); }/*--------------------------------------------
 OMIT_END
 
-We are going to explain those in the details later, but we shall summarise them here.
-Do not worry, we are going to discuss all those types in details later!
+Here we summarise the other types mentioned above.
+Do not worry, we are going to discuss all those types in detail later!
 
 ````
 ToStr:{ read .str: Str }
@@ -543,8 +543,8 @@ DataTypeBy[E,K,K0]:ToInfoBy[E],ToImmBy[E,K0],OrderHashBy[E,K]{ #(e: read E): rea
 
 Method `ToStr.str` represents an object as a string.
 Method `ToInfo.info` represents an object in a structured data format (similar to JSON) useful for communication across programs.
-Type `OrderHash[T]` provides hashing and comparisons methods to a type `T` extending it. Objects extending `OrderHash[T]` can easily be organised in efficient data structures.
-Method `ToImm[T].imm` converts an object of any reference capabilities into an immutable version of the same object. For objects that can only ever be immutable, this method simply returns the object itself.
+Type `OrderHash[T]` provides hashing and comparison methods to a type `T` extending it. Objects extending `OrderHash[T]` can easily be organised in efficient data structures.
+Method `ToImm[T].imm` converts an object of any reference capability into an immutable version of the same object. For objects that can only ever be immutable, this method simply returns the object itself.
 
 Note how many of those types have a generic variant, like `ToStr` and `ToStr[T]`. As we will see later, this is because for generic containers we need a way to convert the contained objects to be able to convert the container itself.
 

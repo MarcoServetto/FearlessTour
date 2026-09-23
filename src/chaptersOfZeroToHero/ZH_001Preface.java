@@ -79,7 +79,7 @@ Code works similarly, but everything is just a "token". Fearless would just see 
 From the point of view of Fearless newlines and spaces are irrelevant; any amount of spacing is equally effective at separating pieces of code, and sometimes no spacing is needed, as for the comma after `Pizza`.
 This means that we can freely use more or less spacing to make the code more understandable for humans.
 
-Additionally, parenthesis are kinds of tokens that work in pairs: we use parenthesis `(..)`, `[..]` and `{..}` to group concepts together.
+Additionally, brackets are kinds of tokens that work in pairs: we use round brackets `(..)`, square brackets `[..]` and curly brackets `{..}` to group concepts together.
 
 ### Comments
 
@@ -88,7 +88,7 @@ A `//` starts a single-line comment.
 Fearless ignores everything from `//` to the end of the line.
 Any text enclosed by the delimiters `/*...*|/` is called a multi-line comment.
 Fearless ignores everything between these two delimiters, even if it spans multiple lines.
-Comments spaces and newlines have no impact on the execution; but can be precious to insert human-readable explanations in the code; facilitating the understanding of code.
+Comments, spaces and newlines have no impact on the execution, but comments can be precious to insert human-readable explanations in the code, facilitating the understanding of code.
 
 //OMIT_START
 NOTE for editors: every chapter file is itself one big /*START...END*|/

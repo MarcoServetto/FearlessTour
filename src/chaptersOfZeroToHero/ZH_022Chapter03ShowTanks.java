@@ -12,7 +12,7 @@ class ZH_022Chapter03ShowTanks {
 
 Now that we know how to write a full Fearless program, we can write a program reading tanks from a file and running the Tank game on the console.
 ASCII art is a well known way to visualise simple games. We will use this to visualise the state of a Tank.
-Below the representation of a tank heading `East` and aiming `North`, and another one heading `North` and aiming `West`
+Below is the representation of a tank heading `East` and aiming `North`, and another one heading `North` and aiming `West`
 
 ```
 / | \  / - \
@@ -72,11 +72,11 @@ Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{ 'self
   }}
 
 ```
-Note how in this version `Point.x/.y` are `Nat`, thus `.move` has to directly match on the direction instead of summing with another `Point` with positive OR negative `x/y`. By using `Nat` `x/y` will be always positive.
+Note how in this version `Point.x/.y` are `Nat`, thus `.move` has to directly match on the direction instead of summing with another `Point` with positive OR negative `x/y`. By using `Nat`, `x/y` will never be negative.
 
 We now define `Direction`.
 Instead of dispersing the implementation of `.point` and `.turn` inside all the directions, we define a `.match` and use it as a way to define generic extensible operations.
-This is the standard way to define those kinds of data types in fearless.
+This is the standard way to define those kinds of data types in Fearless.
 We call **enumerations** any type whose subtypes are all constants.
 ```
 //File _tank_game/direction.fear
@@ -107,7 +107,7 @@ Type `WidenTo[S]` is defined in the standard library and is similar to `Sealed`.
 - `Sealed` means that code in other packages would not be able to define new kinds of `Direction`. Implementing `Sealed` makes the type system check this extra condition.
 - `WidenTo[Direction]` means that the type inference will always
 infer `Direction` instead of any type implementing `Direction`.
-Basically, `WidenTo[Direction]` makes so that the inference would never infer `North`.
+Basically, `WidenTo[Direction]` makes it so that the inference would never infer `North`.
 >`DataType` does use `WidenTo[S]` internally, and this is why
 > the inference will always infer `Bool` instead of `True`/`False` and `Nat` instead of `42`.
 
@@ -120,7 +120,7 @@ Here, if we were to omit `WidenTo[Direction]`, the code
     .west  -> North;
     };
 ````
-May fail to compile:
+may fail to compile:
 the inference would see `.north -> East;` and may conclude that the method `.north` is returning `East` of type `East`, thus this match should return an `East` instead of a direction.
 
 We define `DirectionMatch[R]` to be mutable. This is because we want to allow the execution of `.match` to mutate the state of objects captured by the running operation. In some cases we will want our matchers to be more restrictive and to only support operations that do not perform mutations, but in most cases we will use the shown signature.
@@ -172,7 +172,7 @@ Here `self` is always immutable since it is created as an `imm Tank`.
 Now we need to implement the repr methods.
 The challenge is that we need to synthesise the right character `<`,`>`,`V`,`A`,`-`,`|` for the various cases.
 We can do it using `DirectionMatch`.
-The first and the last line (`AimingRepr1`/`AimingRepr3`) simply depend on the direction we are going.
+The first and the last line (`AimingRepr1`/`AimingRepr3`) simply depend on the aiming direction.
 The centre line (`AimingRepr2`) is a little harder since it also depends on the heading direction.
 ```
 //File _tank_game/tank.fear
@@ -212,17 +212,17 @@ Tank: ToStr {
   }
 ```
 
-We think this code is very clear, declarative and self explanatory.
+We think this code is very clear, declarative and self-explanatory.
 It does have quite a few lines, but most lines are very short and do specific very well defined tasks.
 We could get this code to be shorter by inlining `AimingRepr1-3` in the code of `Tank`, but we think this would make the resulting code much harder to read.
-Note how `AimingRepr2` requires knowing the central character, and we can pass it to the operation by implementing the abstract method `.centre` in the call site.
+Note how `AimingRepr2` requires knowing the central character, and we can pass it to the operation by implementing the abstract method `.centre` at the call site.
 We could have alternatively made a factory capturing the missing information in the lambda:
 
 ```
 ...
   .repr2: Str -> this.aiming .match (AimingRepr2#(this.heading .match HeadingChar));
 ...
-AimingRepr2: Function[Str, mut DirectionMatch[Str]]:{ centre->{
+AimingRepr2: F[Str, mut DirectionMatch[Str]]{ centre->{
   .north -> ` | ` + centre + ` | `;
   .east  -> ` - ` + centre + ` | `;
   .south -> ` | ` + centre + ` | `;
@@ -245,7 +245,7 @@ This code will print
  \ _ /
 ```
 
-We can now rewrite state change using features from the standard library instead of our poor man `Stack[E]`.
+We can now rewrite state change using features from the standard library instead of our poor man's `Stack[E]`.
 
 ```
 //File _tank_game/next_state.fear
@@ -269,12 +269,12 @@ The main difference is that we are now using `List` instead of `Stack`.
 A `List` is not very different from a `Stack`. It has many more useful methods and the implementation is more efficient.
 Note how we are not using `.map` directly on the list but we call the `.flow` method before.
 
-The idea is that the standard library does not define those useful `.map`/`.filter`/`.fold` methods independently on all sequences.
+The idea is that the standard library does not define those useful `.map`/`.filter`/`.fold` methods independently on each kind of sequence.
 Instead, there is a unified concept of `Flow`. Many different data types can be converted into flows, the elements can be manipulated using a very expressive set of `Flow` methods, then the result can be converted back into some supported data type.
 
 In the code above, the `List[E].flow` method returns a `Flow[E]` and the methods `Flow[E].map`/`.filter` return another `Flow[E]`.
 `Flow[E].isEmpty` is true if the flow is empty, `Flow[E].size` returns the size of the flow, and `Flow[E].list` returns a `List[E]` with the same elements of the flow.
-We will see many operations on flow by examples in the next few pages.
+We will see many operations on flows by example in the next few pages.
 
 Here you can see all the code of this section packed together.
 

@@ -38,8 +38,8 @@ For example a `Tank` heading `North`, aiming `East`, located at coordinates `(10
 While using strings simplifies the process of converting data to bytes, it introduces two interconnected challenges:
 
 - Ambiguity: The string `` `North, East, 10, 5` `` does not inherently explain what each part represents. Is `North` the direction the tank is heading or aiming?
-- Deserialization complexity: While converting a tank into a string is easy, converting the string back into a tank object requires code to interpret each part correctly. 
-This code would be specific for tanks and will have to be rewritten for other kinds of data.
+- Deserialisation complexity: While converting a tank into a string is easy, converting the string back into a tank object requires code to interpret each part correctly. 
+This code would be specific to tanks and will have to be rewritten for other kinds of data.
 
 The solution is often to introduce an additional layer of abstraction that structures data before it is transformed into strings. This layer would act as a structured intermediary, organising data in a way that preserves the separation of each element while supporting a unified conversion process to and from strings.
 First, complex objects are converted into this structured information format, that is then converted into strings, which in turn are converted into bits for storage or transmission.
@@ -56,14 +56,14 @@ What could a unified representation format be? We need a type that is flexible e
 
 - `Bool` is a very rigid type, it only contains two values; `True` and `False`.
 - `Void` is even more rigid, it only contains the `Void` value.
-- `Num` is more flexible, it contains a large amount of values.
+- `Num` is more flexible, it contains a large number of values.
 
-However, those values are all numbers. Same for `Str`: it contains a mind bogglingly large amount of values, but they are all strings. As we discussed, interpreting a piece of a string as another kind of data is possible but error prone. Manually encoding and decoding data from strings is usually a bad idea.
+However, those values are all numbers. Same for `Str`: it contains a mind-bogglingly large number of values, but they are all strings. As we discussed, interpreting a piece of a string as another kind of data is possible but error prone. Manually encoding and decoding data from strings is usually a bad idea.
 
 - `Opt[E]` is the first truly flexible type we have seen: it can contain zero or one element of any fixed type `E`.
-- `List[E]` is a little more flexible: it can contain any amount of elements of any fixed type `E`.
-Using a `List[Str]`, a `Tank` could be represented as ``List#(`North`, `East`, `10`, `5`)``
-This is much better than using strings! However, still unsatisfactory: The x and y coordinates come from the separate `Point` object, but are now flushed inside the `Tank` representation. That is, in this mindset every object needs to be represented as a flat set of attributes, while data is often composed of smaller units of existing data.
+- `List[E]` is a little more flexible: it can contain any number of elements of any fixed type `E`.
+Using a `List[Str]`, a `Tank` could be represented as ``Lists#(`North`, `East`, `10`, `5`)``.
+This is much better than using strings! However, still unsatisfactory: The x and y coordinates come from the separate `Point` object, but are now flattened into the `Tank` representation. That is, in this mindset every object needs to be represented as a flat set of attributes, while data is often composed of smaller units of existing data.
 What if instead of using a `List[Str]` we used a list of something that contains itself?
 For example
 ```
@@ -75,16 +75,16 @@ Info: {
 Now an `Info` can contain both some message of type string and a list of more information.
 We could then represent our tank as follows:
 ```
-Info{ .list -> List#({.msg->`North`}, {.msg->`East`}, {.list->List#({.msg->`10`}, {.msg->`5`} )} )}
+Info{ .list -> Lists#({.msg->`North`}, {.msg->`East`}, {.list->Lists#({.msg->`10`}, {.msg->`5`} )} )}
 ```
 
 As usual, we can add factories to make objects easier to instantiate:
 ```
-ToInfo: { .info: Info }//Strings and numbers implements ToInfo
+ToInfo: { .info: Info }//Strings and numbers implement ToInfo
 Infos: {
   .msg(str: Str): Info -> {.msg -> str};
-  .list(i1: ToInfo): Info -> {.list -> List#(i1.info)};
-  .list(i1: ToInfo, i2: ToInfo): Info -> {.list -> List#(i1.info, i2.info)};
+  .list(i1: ToInfo): Info -> {.list -> Lists#(i1.info)};
+  .list(i1: ToInfo, i2: ToInfo): Info -> {.list -> Lists#(i1.info, i2.info)};
   ...//same for 3, 4 .. etc parameters
   }
 ```
@@ -111,9 +111,9 @@ With that, we can represent our tank as follows:
 Infos.map(`heading`,`North`,  `aiming`,`East`,  `point`,Infos.map(`x`,`10`,  `y`,`5`))
 ```
 We could do ``Infos.map(`heading`,`North`,   `aiming`,`East`,   `x`,`10`,   `y`,`5`)``, but the corresponding mindset can cause issues.
-The `x` and `y` coordinates come from the separate `Point` object, but are now flushed inside the `Tank` representation.
+The `x` and `y` coordinates come from the separate `Point` object, but are now flattened into the `Tank` representation.
 
-### Serialisation and Deserialization: Simple with Info
+### Serialisation and Deserialisation: Simple with Info
 In this section we discuss how to use `Info` in practice. While directly transforming text into complex objects like a list of tanks is possible, this approach can lead to unreadable and non-scalable code. This complexity arises because a tank object comprises various components like directions and points, and handling these in a single function would hinder code reusability for other data types.
 That is, if we handle all those subcases internally in a single function, we would not be able to reuse that code if we have to read other kinds of data containing points, directions and tanks.
 
@@ -136,12 +136,13 @@ With an `Info` object named `myInfo`, the real `.msg`/`.list`/`.map` accessors e
 - `myInfo.map: Opt[Map[Str,Info]]` holds a map of keys to `Info` values if `myInfo` is that variant.
 
 Notably, strings, lists and maps are three kinds of objects that can conceptually be empty.
-Since `Info` can represent either a string, a list, or a map, only one of these properties can be not empty and hold data at any given time, reflecting the contained type.
+Since `Info` can represent either a string, a list, or a map, only one of these properties can be non-empty and hold data at any given time, reflecting the contained type.
 There's also an empty `Info`. For the common cases where the variant is assumed to be there, or a default is acceptable instead of an `Opt`, `Info` also offers `.getMsg`/`.getList`/`.getMap` (throwing if `myInfo` is not that variant) and `.softMsg`/`.softList`/`.softMap` (returning the empty string/list/map instead of throwing).
 This structured approach to serialisation using `Info` not only simplifies data handling but also enhances the clarity and flexibility of your codebase, making it easier to manage and extend.
 
-Similarly, we can use the type `Infos` to programmatically create `Info` objects using methods `Infos.msg(Str)`, `Infos.list(/*..elements..*|/)` and `Infos.map(/*..keys and values..*|/)` .
-The empty `Info` object can be obtained writing `Info` or just `{}`.
+Similarly, we can use the type `Infos` to programmatically create `Info` objects using methods `Infos.msg(Str)`, `Infos.list(/*..elements..*|/)` and `Infos.map(/*..keys and values..*|/)`.
+In the standard library `Infos.list` takes one or two elements; a longer list `myList` can be turned into an `Info` with `myList.info{::}`.
+The empty `Info` object can be obtained by writing `Info` or just `{}`.
 
 >Note: tests that the 4 kinds of info works, and that empty list and empty map and empty string return the empty info, and that the other kind is returned otherwise.
 >Add examples showing this behaviour
