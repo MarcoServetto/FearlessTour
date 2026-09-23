@@ -80,7 +80,8 @@ This is now a good time to summarise how to write numbers in Fearless:
 Basically, if we use the fraction symbol `/` on natural numbers or integers we get those arbitrarily large fractional numbers.
 It is very common to write numbers followed by `/1` as a way to specify that we mean arbitrary size numbers.
 For example `(18446744073709551615/1) * (18446744073709551615/1)` is a very large instance of `Num`; much bigger than what can be represented with `Nat` or `Int`.
-
+//TODO for next re reading round: this came frome a past where we had Num literal, the sentence above should talk about the current new way to do it: 
+//amethod with a String literal and converting into num; a method with no args doing it over and over could have it auto cached without us having to explain caching.
 OMIT_START
 -------------------------*/@Test void num1 () { run("""
 use base.Void as Void;
