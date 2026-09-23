@@ -49,7 +49,7 @@ Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{ 'self
     .west  -> Points#(x,     y - 1);
     };
   ==(other:Point): Bool -> other.x == x  .and (other.y == y );
-  .str -> `[x=` + x + `, y=` + y + `]`;
+  .str -> "[x=" + x + ", y=" + y + "]";
   }}
 // ----------------------------------
 //File _tank_game/direction.fear
@@ -67,17 +67,17 @@ Direction: ToStr, Sealed, WidenTo[Direction] {
     .west  -> North;
     };
   .str -> this.match{
-    .north -> `North`;
-    .east  -> `East`;
-    .south -> `South`;
-    .west  -> `West`;
+    .north -> "North";
+    .east  -> "East";
+    .south -> "South";
+    .west  -> "West";
     };
   }
 // ----------------------------------
 //File _tank_game/tank.fear
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank -> {'self
   .heading -> heading; .aiming -> aiming; .position -> position;
-  .str -> ``| (self.repr1) | (self.repr2) | (self.repr3) |;
+  .str -> ""| (self.repr1) | (self.repr2) | (self.repr3) |;
   }}
 Tank: ToStr {
   .heading:  Direction;
@@ -89,29 +89,29 @@ Tank: ToStr {
   .repr3:    Str  -> this.aiming .match AimingRepr3;
   }
 HeadingChar: DirectionMatch[Str]{
-  .north -> `A`;
-  .east  -> `>`;
-  .south -> `V`;
-  .west  -> `<`;
+  .north -> "A";
+  .east  -> ">";
+  .south -> "V";
+  .west  -> "<";
   }
 AimingRepr1: DirectionMatch[Str]{
-  .north -> ` / | \\ `;
-  .east  -> ` / - \\ `;
-  .south -> ` / - \\ `;
-  .west  -> ` / - \\ `;
+  .north -> " / | \\ ";
+  .east  -> " / - \\ ";
+  .south -> " / - \\ ";
+  .west  -> " / - \\ ";
   }
 AimingRepr2: DirectionMatch[Str]{
   mut .centre: Str;
-  .north -> ` | ` + (this.centre) + ` | `;
-  .east  -> ` | ` + (this.centre) + ` - `;
-  .south -> ` | ` + (this.centre) + ` | `;
-  .west  -> ` - ` + (this.centre) + ` | `;
+  .north -> " | " + (this.centre) + " | ";
+  .east  -> " | " + (this.centre) + " - ";
+  .south -> " | " + (this.centre) + " | ";
+  .west  -> " - " + (this.centre) + " | ";
   }
 AimingRepr3: DirectionMatch[Str]{
-  .north -> ` \\ _ / `;
-  .east  -> ` \\ _ / `;
-  .south -> ` \\ | / `;
-  .west  -> ` \\ _ / `;
+  .north -> " \\ _ / ";
+  .east  -> " \\ _ / ";
+  .south -> " \\ | / ";
+  .west  -> " \\ _ / ";
   }
 // ----------------------------------
 //File _tank_game/next_state.fear
@@ -148,8 +148,8 @@ TanksToS: F[List[Tank],Str]{ ts -> Block#
     .do{ res.get(x * 3 + 2).get(y).set(t.repr3) }
     .done
     }}
-  .return { res.flow.map{::.flow.map{::.get}.join(``)}.join(``|) };
-  read .newLine: mut List[mut Var[Str]] -> 0 =~~ 10 .flow.map{ _ -> Vars#(`       `)}.list;
+  .return { res.flow.map{::.flow.map{::.get}.join("")}.join(""|) };
+  read .newLine: mut List[mut Var[Str]] -> 0 =~~ 10 .flow.map{ _ -> Vars#("       ")}.list;
   }
 PrintGame: {
   mut .out: mut Output;
@@ -157,10 +157,10 @@ PrintGame: {
   mut .lines(rounds: Nat, ts: List[Tank]): Void -> Block#
     .var current= {ts}
     .return{ 0 =~~ rounds .flow.forEach{step -> Block#(
-      this.out.println(`Step `+step|),
-      this.out.println(`------------------------------------------------------------`|),
+      this.out.println("Step "+step|),
+      this.out.println("------------------------------------------------------------"|),
       this.singleLine(current.get),
-      this.out.println(`------------------------------------------------------------`|),
+      this.out.println("------------------------------------------------------------"|),
       current.set(NextState#(current.get))
       )}}
   }
@@ -259,7 +259,7 @@ We now focus on those two lines:
 ```
   .let res = {0 =~~ 30 .flow.map{_->this.newLine}.list }
   ...
-  read .newLine: mut List[mut Var[Str]] -> 0 =~~ 10 .flow.map{ _ -> Vars#(`       `)}.list;
+  read .newLine: mut List[mut Var[Str]] -> 0 =~~ 10 .flow.map{ _ -> Vars#("       ")}.list;
 ```
 
 - Here we use `=~~` to create a range containing the numbers 0..29 (inclusive of `0`, exclusive of `30`), then `.flow` to turn it into a flow.

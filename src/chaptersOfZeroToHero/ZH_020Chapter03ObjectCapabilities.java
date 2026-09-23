@@ -17,7 +17,7 @@ Finally, we have discussed all of the knowledge needed to make our first Fearles
 use base.Main as Main;
 use base.Output as Output;
 
-Test:Main {sys -> sys.out.println(`Hello, World!`)}
+Test:Main {sys -> sys.out.println("Hello, World!")}
 //PRINT|Hello, World!
 """); }/*--------------------------------------------
 

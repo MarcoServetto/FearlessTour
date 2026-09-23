@@ -68,14 +68,14 @@ What if instead of using a `List[Str]` we used a list of something that contains
 For example
 ```
 Info: {
-  .msg: Str -> ``;
+  .msg: Str -> "";
   .list: List[Info] -> {};
   }
 ```
 Now an `Info` can contain both some message of type string and a list of more information.
 We could then represent our tank as follows:
 ```
-Info{ .list -> Lists#({.msg->`North`}, {.msg->`East`}, {.list->Lists#({.msg->`10`}, {.msg->`5`} )} )}
+Info{ .list -> Lists#({.msg->"North"}, {.msg->"East"}, {.list->Lists#({.msg->"10"}, {.msg->"5"} )} )}
 ```
 
 As usual, we can add factories to make objects easier to instantiate:
@@ -92,7 +92,7 @@ Infos: {
 Now we could represent our `Tank` as follows:
 
 ```
-Infos.list(`North`,`East`,Infos.list(`10`,`5`))
+Infos.list("North","East",Infos.list("10","5"))
 ```
 
 However, we still do not know at a glance if the first element of the list represents the aiming direction.
@@ -101,14 +101,14 @@ That is a `Map[Str,Info]`.
 If we add such a map component to `Info` we get the following.
 ```
 Info:{
-  .msg:Str->``;
+  .msg:Str->"";
   .list:List[Info]->{};
   .map:Map[Str,Info]->Maps#{::};//empty map Str->Info
   }
 ```
 With that, we can represent our tank as follows:
 ```
-Infos.map(`heading`,`North`,  `aiming`,`East`,  `point`,Infos.map(`x`,`10`,  `y`,`5`))
+Infos.map("heading","North",  "aiming","East",  "point",Infos.map("x","10",  "y","5"))
 ```
 We could do ``Infos.map(`heading`,`North`,   `aiming`,`East`,   `x`,`10`,   `y`,`5`)``, but the corresponding mindset can cause issues.
 This would again flatten the `Point` into the `Tank`.

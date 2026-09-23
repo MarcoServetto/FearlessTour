@@ -135,7 +135,7 @@ On the next page we will see our first example of code.
 OMIT_START
 -------------------------*/@Test void helloWorldPreface() { run("""
       use base.Main as Main;
-      Test:Main {sys -> base.Debug#(`Hello, World!`)}//OK
+      Test:Main {sys -> base.Debug#("Hello, World!")}//OK
       //PRINT|Hello, World!
       """); }/*--------------------------------------------
 OMIT_END

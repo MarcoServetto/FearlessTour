@@ -132,11 +132,11 @@ Alternatively, Fearless allows strings to be delimited by backticks `` ` ``; all
 
 //OMIT_START
 -------------------------*/@Test void exampleStrings () { run("""
-Test:base.Main {sys -> base.Debug#(`Hello ` + `world`)}//OK
+Test:base.Main {sys -> base.Debug#("Hello " + "world")}//OK
 //PRINT|Hello world
 """); }/*--------------------------------------------
 -------------------------*/@Test void exampleStringsEscape () { run("""
-Test:base.Main {sys -> base.Debug#(`He`^`ll`^`o ` + `wor\\ld`)}//OK
+Test:base.Main {sys -> base.Debug#("He"^"ll"^"o " + "wor\\ld")}//OK
 //PRINT|He"ll"o wor\\ld
 """); }/*--------------------------------------------
 

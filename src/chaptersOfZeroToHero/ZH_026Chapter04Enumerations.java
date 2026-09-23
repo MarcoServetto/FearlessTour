@@ -24,10 +24,10 @@ Direction: Enum[Direction]{
   .enums->Directions;
   .close->this; .close->::;
   }
-North: Direction{.imm->North; `North`}
-East:  Direction{.imm->East;  `East` }
-South: Direction{.imm->South; `South`}
-West:  Direction{.imm->West;  `West` }
+North: Direction{.imm->North; "North"}
+East:  Direction{.imm->East;  "East" }
+South: Direction{.imm->South; "South"}
+West:  Direction{.imm->West;  "West" }
 ```
 
 With this alone, `Directions.list` is the four directions in declaration order, `North.index` is `0`
@@ -49,7 +49,7 @@ Test: Main{s-> Block#(
     Debug#(North.index),
     Debug#(West.index),
     Debug#(North < East),
-    Debug#(Directions.map.get(`North`))
+    Debug#(Directions.map.get("North"))
     ),
   Debug#(Directions.fromInfo(North.info)),
   Void
@@ -63,10 +63,10 @@ Direction: Enum[Direction]{
   .enums->Directions;
   .close->this; .close->::;
   }
-North: Direction{.imm->North; `North`}
-East:  Direction{.imm->East;  `East` }
-South: Direction{.imm->South; `South`}
-West:  Direction{.imm->West;  `West` }
+North: Direction{.imm->North; "North"}
+East:  Direction{.imm->East;  "East" }
+South: Direction{.imm->South; "South"}
+West:  Direction{.imm->West;  "West" }
 //PRINT|4
 //PRINT|0
 //PRINT|3
@@ -85,10 +85,10 @@ Direction: Enum[Direction]{
   read .match[R:**](m: mut DirectionMatch[R]): R;
   .close->this; .close->::;
   }
-North: Direction{::.north; .imm->North; `North`}
-East:  Direction{::.east;  .imm->East;  `East` }
-South: Direction{::.south; .imm->South; `South`}
-West:  Direction{::.west;  .imm->West;  `West` }
+North: Direction{::.north; .imm->North; "North"}
+East:  Direction{::.east;  .imm->East;  "East" }
+South: Direction{::.south; .imm->South; "South"}
+West:  Direction{::.west;  .imm->West;  "West" }
 ```
 
 Now ``North.match(DirectionMatch[Str]{ .north->`n`; .east->`e`; .south->`s`; .west->`w`; })`` is `` `n` ``;
@@ -106,7 +106,7 @@ use base.Debug as Debug;
 use base.Enums as Enums;
 use base.Enum as Enum;
 Test: Main{s-> Block#(
-  Debug#(North.match(DirectionMatch[Str]{ .north->`n`; .east->`e`; .south->`s`; .west->`w`; })),
+  Debug#(North.match(DirectionMatch[Str]{ .north->"n"; .east->"e"; .south->"s"; .west->"w"; })),
   Void
   )}
 
@@ -120,10 +120,10 @@ Direction: Enum[Direction]{
   read .match[R:**](m: mut DirectionMatch[R]): R;
   .close->this; .close->::;
   }
-North: Direction{::.north; .imm->North; `North`}
-East:  Direction{::.east;  .imm->East;  `East` }
-South: Direction{::.south; .imm->South; `South`}
-West:  Direction{::.west;  .imm->West;  `West` }
+North: Direction{::.north; .imm->North; "North"}
+East:  Direction{::.east;  .imm->East;  "East" }
+South: Direction{::.south; .imm->South; "South"}
+West:  Direction{::.west;  .imm->West;  "West" }
 //PRINT|n
 """); }/*--------------------------------------------
 OMIT_END

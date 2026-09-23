@@ -17,7 +17,7 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     .heading: Direction -> heading;
     .aiming: Direction -> aiming;
     .position: Point -> position;
-    .info -> Infos.map(`heading`, heading, `aiming`, aiming,   `position`, position);
+    .info -> Infos.map("heading", heading, "aiming", aiming,   "position", position);
     .str  -> ...;//includes repr1...repr3
     .cmp t1,t2,m -> t1.heading <=> (t2.heading,//This looks atrocious
       m&&{t1.aiming <=> (t2.aiming, m&&{t1.position <=> (t2.position,m)})});
@@ -26,9 +26,9 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     .hash -> heading.hash.hashWith(aiming.hash).hashWith(position.hash);
     };
   .fromInfo(i) -> Tanks#(
-    Directions.fromInfo(i.getMap.get(`heading`)),
-    Directions.fromInfo(i.getMap.get(`aiming`)),
-    Points.fromInfo(i.getMap.get(`position`))
+    Directions.fromInfo(i.getMap.get("heading")),
+    Directions.fromInfo(i.getMap.get("aiming")),
+    Points.fromInfo(i.getMap.get("position"))
     );
   }
 ```
@@ -135,9 +135,9 @@ Using `.map` or `.andThen` + `Try#` we can choose how to classify such details.
 We can also add information to the error messages using code as below
 ```
     .andThen{s -> Try#{Infos.fromStr(s)}
-      .context{`While deserializing Info from string`}}
+      .context{"While deserializing Info from string"}}
     .andThen{i -> Try#{i.getList.flow.map{i->Tanks.fromInfo(i)}.list}
-      .context{`While deserializing tanks from Info`}}
+      .context{"While deserializing tanks from Info"}}
 ```
 Note how the indentation helps us see the context text becoming part of the action.
 
