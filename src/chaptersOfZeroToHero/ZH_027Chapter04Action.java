@@ -31,7 +31,7 @@ Let's make this more concrete.
 - Code 3: ``Directions.map.tryGet(`Nope`)`` behaves like Code 2, but it is faster: no error is thrown and caught.
 
 Every `.getXX` method of the standard library that can fail has a `.tryGetXX` version returning an `Action`.
-The `.tryGetXX` method is the primitive: `.getXX` is defined as ``this.tryGetXX!``.
+Conceptually `.tryGetXX` is the primitive: `.getXX` behaves as ``this.tryGetXX!``.
 
 We can use code 1 when we trust that the error will not be raised, or because if the error condition happens, then what we want is for the program to terminate with a good error message.
 When we want to consciously extract an element that may or may not be there, with the intention that the element being missing does not represent an error, we can use the method `.opt`, as in ``Directions.map.opt(`Nope`)``, returning an `Opt[Direction]`.
