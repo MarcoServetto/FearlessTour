@@ -35,8 +35,8 @@ MF[R:**]: {mut #: R}
 MF[A:**,R:**]: {mut #(a: A): R}
 MF[A:**,B:**,R:**]: {mut #(a: A, b: B): R} //and a few more overloads
 ```
-Note the use of `T:**`. We can use `*` and `**` as shortcut for large generic bounds:
-`*` is equivalent to `imm,mut,read`; `**` is equivalent to all of the reference capabilities; including some more unusual ones that we have not discussed yet.
+Note the use of `R:**`, `A:**` and `B:**`. We can use `*` and `**` as shortcuts for large generic bounds:
+`*` is equivalent to `imm,mut,read`; `**` is equivalent to all of the reference capabilities, including some more unusual ones that we have not discussed yet.
 
 `F#` sees the world as `read` and supports generics with any RC. In particular, this means that a
 `read F[X]` can capture `mut` references as `read`. `MF` (mutable function) sees the world as `mut`. This
@@ -53,8 +53,8 @@ of `mut MF[X]` can actively mutate captured references.
 
 ### DataType, later!
 
-Boolean, numbers, strings and many other widely used types from the standard library implement `DataType`.
-`DataType` contains a lot of useful functionalities, and we will see them in the details later. For now you just need to know that this interface exists and that we need to implement a few method from it.
+Booleans, numbers, strings and many other widely used types from the standard library implement `DataType`.
+`DataType` contains a lot of useful functionalities, and we will see them in detail later. For now you just need to know that this interface exists and that we need to implement a few methods from it.
 
 ### Bool, as actually declared
 
@@ -67,12 +67,12 @@ BoolMatch[R:**]:{ mut .true: R; mut .false: R; }
 We have seen `ThenElse[R]` before; `BoolMatch[R]` is the same but with names for the two cases. They work in the same way, but sometimes one of the two is more readable than the other.
 Note how we take any kind of `R` by using `R:**` and the methods require a `mut` receiver.
 We are not requiring the boolean to be `mut`. This is about the `ThenElse` object that is usually created in order to call the `.if` (or `?`) method.
-With `mut .then` and `mut .else`, the operation inside the `.match` is able to mutate external state if need be.
-We also add a more standard `BoolMatch` allowing to see `.true` and `.false` as the two cases of `Bool`. It is just like the `.if`, but uses different terminology.
+With `mut .then` and `mut .else`, the operation inside the `.if` is able to mutate external state if need be.
+`BoolMatch` is used by `.match`: it is just like `.if`, but names the two cases `.true` and `.false`.
 
 Then we can see the Bool type declaration itself.
 It is implementing `Sealed` and `DataType[Bool,Bool]`.
-We discussed `Sealed` before: it just means that user code can not define new kinds of booleans like `MayBe` `NotToday` etc.
+We discussed `Sealed` before: it just means that user code can not define new kinds of booleans like `MayBe`, `NotToday`, etc.
 ````
 Bool:Sealed,DataType[Bool,Bool]{
   .and(b: Bool): Bool;
@@ -138,7 +138,7 @@ How does this work?
 
   Methods `.assertTrue`/`.assertFalse` are implemented on top of `DataType.assertEq`.
 
-- `.info`, `.close`, `.hash` and `.cmp` are methods from DataType to represent the boolean in a serialisable format and to allow booleans to be compared and organized into data structures.
+- `.info`, `.close`, `.hash` and `.cmp` are methods from `DataType` to represent the boolean in a serialisable format and to allow booleans to be compared and organized into data structures.
 
 ````
 True:Bool{
@@ -162,14 +162,14 @@ False:Bool{
   .imm   -> False;
 }
 ````
-Finally, the declaration for `True` and `False` is exactly what we have seen before.
+Finally, the declarations for `True` and `False` are what we have seen before, plus `.toOpt` and `.imm`.
 Note how we can implement the `read .imm: imm Bool` method by just returning `True` or `False`. An object literal summoned by name can be of any RC, of course including `imm`.
 
 ### Core code for `Opt[T]`
 
 Below we show the core standard library code for optionals.
 
-`Opts` is the factory for `Opt[T]`. This is exactly what we have seen before. Note how `Opts#` returns a `mut Opt[T]`.
+`Opts` is the factory for `Opt[E]`. This is exactly what we have seen before. Note how `Opts#` returns a `mut Opt[T]`.
 This is what gives the most flexibility to the user.
 If the user needs an `imm Opt[T]`, promotion can be transparently used.
 
@@ -219,13 +219,13 @@ Methods `.isEmpty` and `.isSome` simply return a boolean stating if the optional
 Method `!` is a convenience method that returns the optional content or produces an error.
 Calling this method is equivalent to claiming
 
-> I, the programmer, know that in this case the optional will definitively have a value inside.
+> I, the programmer, know that in this case the optional will definitely have a value inside.
 > If not, this is an observed bug.
 
 Note how this is conceptually similar to the `.assertTrue` method we have seen before. Indeed, the internal call ``Error.msg `..` `` is pretty much what the body of `.assertEq` from `DataType` does.
 
 A Fearless method can indicate failure by throwing an error.
-Errors are not part of the basic semantic of Fearless, and they can be thrown using magic methods or convenience methods using magic methods internally.
+Errors are not part of the basic semantics of Fearless, and they can be thrown using magic methods or convenience methods using magic methods internally.
 For example, the method `Error.msg(Str)` will throw an error using that string as an error message.
 When a method throws an error the computation stops and the error is reported outside of the program. That is, the whole Fearless application stops and burns.
 This is often the desired behaviour, especially when debugging.
@@ -239,7 +239,7 @@ The two methods `Opt[E].orValue` and `Opt[E].orLazy` both return the value store
 - `Opt[E].orValue` takes the default value directly.
 - `Opt[E].orLazy` takes a lazy default: a `MF[E]` only called if the optional is empty.
 
-Method `.flow` returns a `Flow[E]`. Flows are a very important data type in the fearless standard libraries and we will discuss them later.
+Method `.flow` returns a `Flow[E]`. Flows are a very important data type in the Fearless standard library and we will discuss them later.
 
 The method `.mapSome` is used to change the type of the optional, taking a function to map the content to a new type.
 
@@ -274,7 +274,7 @@ myOptPerson.str(ToStrBy[Person]{#(p: read Person): read ToStr -> p})
 ```
 As you can see, the `{::}` sugar is very useful in those cases.
 But, what if we have a `data: Opt[Opt[Person]]`?
-No problem, we can just do `data.str{::str{::}}` and get our string.
+No problem, we can just do `data.str{::.str{::}}` and get our string.
 This pattern of using nested `{::}` is quite common as we will see more and more.
 Here are the three types used by this mechanism:
 ```
@@ -287,7 +287,7 @@ This structure is really important and we have many occurrences of this same pat
 - A generic version of that type, with a generic parameter (`ToStr[E]`)
 - A **by** type able to turn any `read T` into the basic type (`read ToStr`)
 
-Here below you can see the other `Opt[E]` methods. Note how `.info`, `.imm` and `.hash` are using the same exact construction of `.str`, with `.cmp` also taking a `by` argument for the same reason and using it in the same way.
+Here below you can see the other `Opt[E]` methods. Note how `.info`, `.imm` and `.hash` are using the same exact construction as `.str`, with `.cmp` also taking a `by` argument for the same reason and using it in the same way.
 ````
   .info by  -> this.match{ .some x -> Infos.list(by#x); .empty -> {} };
   .imm by     -> this.match{.some x -> Opts#(by#x.imm); .empty->{} };
@@ -342,12 +342,12 @@ _Opt[E:*]:BaseContainer[E],DataType[Opt[E],Opt[imm E],E,imm E]{
 }
 ````
 
-As you can see, this is where the major difference lies with respect to the optional seen in Chapter 2: Here most methods come in two or three variants, one for `E`, one for `read/imm E` and one for `imm E`.
+As you can see, this is where the major difference lies with respect to the optional seen in Chapter 2: here most methods come in two or three variants, one for `E`, one for `read/imm E` and one for `imm E`.
 The core idea is that when we implement `.match` in `Opt[E]` we are using the same implementation to satisfy all 3 type signatures.
 
 
 `Opt[E]` is an example of a generic container type: a type whose main goal is to contain any kind of `E`, where `E` can be `read,imm,mut`.
-As you can see, designing generic container types supporting a range of reference capabilities is not a beginner friendly task. However, this pattern is quite consistent, and many generic containers follow this same structure, with many methods offering exactly those type variants.
+As you can see, designing generic container types supporting a range of reference capabilities is not a beginner-friendly task. However, this pattern is quite consistent, and many generic containers follow this same structure, with many methods offering exactly those type variants.
 
 
 ### The Reality of Production Code
@@ -357,7 +357,7 @@ You may have noticed a shift in tone. The code for `_Opt[E]` looks significantly
 We are crossing the bridge from **conceptual logic** to **production engineering**.
 The logic remains identical: an Optional is still just "something or nothing." However, a production-grade library seamlessly handles `mut`,`imm` and `read` data.
 
-Up to now we pushed to make sure to explain every single detail when first used. We will eventually provide all the details and teach you the ins and outs of every corner; but there is no more a clear linear path to follow.
+Up to now we pushed to make sure to explain every single detail when first used. We will eventually provide all the details and teach you the ins and outs of every corner; but there is no longer a clear linear path to follow.
 Here we are showing you the real implementation of those very useful types, and by their nature of being used in all contexts of the language, they are interconnected with every aspect of the language.
 
 We could have hidden this complexity from you. Alternatively, we could have kept showing you more and more layers of simplified toy versions of the standard library.
@@ -514,8 +514,8 @@ _Opt[E:*]:DataType[Opt[E],Opt[imm E],E,imm E]{
 """); }/*--------------------------------------------
 OMIT_END
 
-We are going to explain those in the details later, but we shall summarise them here.
-Do not worry, we are going to discuss all those types in details later!
+Here we summarise the other types mentioned above.
+Do not worry, we are going to discuss all those types in detail later!
 
 ````
 ToStr:{ read .str: Str }
@@ -532,8 +532,8 @@ ToImmBy[E,E0]:{#(t: read E):read ToImm[E0]}
 ToImm[E:*,E0,T0]:{ read .imm(by: ToImmBy[imm E,E0]): T0 }
 
 Order[T]:{ /*explained later; provides methods ==, !=, <=, >= etc*|/ }
-Order[T,E:*]:{ /*explained later; like order but for generics *|/ }
-OrderHash[T]:Order[T],ToStr{ /*explained later; Order plus mappings*|/ }
+Order[T,E:*]:{ /*explained later; like Order but for generics *|/ }
+OrderHash[T]:Order[T],ToStr{ /*explained later; Order plus hashing and ToStr*|/ }
 OrderHash[T,E:*]:Order[T,E],ToStr[E]{ /*explained later; like OrderHash but for generics *|/ }
 
 DataType[T,T0]:ToInfo,ToImm[T0],WidenTo[T],OrderHash[T],Pipe[T]{ read .close(t: read T): read DataType[T,T0]; }
@@ -543,10 +543,10 @@ DataTypeBy[E,K,K0]:ToInfoBy[E],ToImmBy[E,K0],OrderHashBy[E,K]{ #(e: read E): rea
 
 Method `ToStr.str` represents an object as a string.
 Method `ToInfo.info` represents an object in a structured data format (similar to JSON) useful for communication across programs.
-Type `OrderHash[T]` provides hashing and comparisons methods to a type `T` extending it. Objects extending `OrderHash[T]` can easily be organised in efficient data structures.
-Method `ToImm[T].imm` converts an object of any reference capabilities into an immutable version of the same object. For objects that can only ever be immutable, this method simply returns the object itself.
+Type `OrderHash[T]` provides hashing and comparison methods to a type `T` extending it. Objects extending `OrderHash[T]` can easily be organised in efficient data structures.
+Method `ToImm[T].imm` converts an object of any reference capability into an immutable version of the same object. For objects that can only ever be immutable, this method simply returns the object itself.
 
-Note how many of those types have a generic variant, like `ToStr` and `ToStr[T]`. As we will see later, this is because for generic containers we need a way to convert the contained objects to be able to convert the container itself.
+Note how many of those types have a generic variant, like `ToStr` and `ToStr[E]`. As we will see later, this is because for generic containers we need a way to convert the contained objects to be able to convert the container itself.
 
 END*/
 }

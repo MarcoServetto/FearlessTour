@@ -33,9 +33,9 @@ So, what if we select some more symbols to use for ten, eleven and twelve?
 We could select `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `A`, `B`, `C`.
 Now we have 13 symbols, so we can use those symbols to represent numbers in base 13:
   `C` is twelve,
-  `AC` is `ten times thirteen plus twelve`; equivalent to 140 in base 10.
-As you can see, we used only two symbols `AC` instead of three `140`.
-Using higher bases we can represent higher numbers with less symbols.
+  `AC` is `ten times thirteen plus twelve`; equivalent to 142 in base 10.
+As you can see, we used only two symbols `AC` instead of three `142`.
+Using higher bases we can represent higher numbers with fewer symbols.
 Moreover, `CAB` is both a number in base 13 and an English word. Basically, when we grow the base, we start being able to express not just numbers, but text.
 
 So... what if we include all of the following symbols?
@@ -49,7 +49,7 @@ space and new line
 It is now 96 symbols. Those are all the symbols we can easily type on most keyboards.
 With this, we could express any text!
 We call numbers expressed in this form (simple) strings.
-It is very compact to represent very large numbers in this notation. For example number 5,000 would be just `` "Q8" ``
+It is very compact to represent very large numbers in this notation. For example number 5,000 would be just `` "Q8" ``.
 1,000,030 in base-96 has a representation of `` "1cM " ``. Note the space after the character ` "M" `.
 If we did not use the double quote character (`` " ``) it would be very hard to spot trailing spaces in our base-96 numbers.
 
@@ -58,13 +58,13 @@ If we did not use the double quote character (`` " ``) it would be very hard to 
 NOTE for editors: eleven, not twelve; 0-11 is 12 numbers
 //OMIT_END
 As you can see, strings are useful to represent text.
-However, there are logically just very large numbers, and we have learned before how to represent numbers from zero to eleven.
+However, they are logically just very large numbers, and we have learned before how to represent numbers from zero to eleven.
 From that, it is quite obvious how to encode numbers up to any amount.
-In the same way numbers 0,1,2,... are defined in the Fearless standard library, all possible strings are also defined. And can be used out of the box.
+In the same way numbers 0,1,2,... are defined in the Fearless standard library, all possible strings are also defined, and can be used out of the box.
 
-Note again how the standard library can define an amount of types that is out of the reach of what can realistically be coded by hand.
+Note again how the standard library can define a number of types that is out of the reach of what can realistically be coded by hand.
 However, those types do exist and we can code in Fearless using them.
-Note that strings in Fearless are still a finite number.
+Note that there is still a finite number of strings in Fearless.
 
 While there are 2<sup>64</sup> instances of `Nat`,
 there are just a little more than 10<sup>4,256,895,041</sup> instances of Str.
@@ -79,14 +79,14 @@ That is, when working with text, there is absolutely no reason to think about th
 For example we can write `` "Hello".size`` to get `5`.
 We will discuss those methods when they become relevant in the rest of the guide.
 
-Strings and comments can contain any character, thus they can contain unbalanced parenthesis. For example, the following is a valid string: `` "A(B" ``.
+Strings and comments can contain any character, thus they can contain unbalanced parentheses. For example, the following is a valid string: `` "A(B" ``.
 If we ignore parentheses in strings and comments, a Fearless program always has balanced parentheses.
 For example: ``A:{ .foo:Str->"B}"}``
-is a valid type declaration, with balanced parenthesis. The `}` inside of the string literal does not matter.
+is a valid type declaration, with balanced parentheses. The `}` inside of the string literal does not matter.
 
 If we use those gigantic numbers to represent text,
-we better define some ways to concatenate text.
-We have seen how we can merge numbers of type `Nat` with `+` and `*`
+we had better define some ways to concatenate text.
+We have seen how we can merge numbers of type `Nat` with `+` and `*`:
 `10 + 5` is `15`, and if I wanted to concatenate them,
 I could do `(10*10) + 5` and get `105`.
 Can we do the same thing with text?
@@ -98,7 +98,7 @@ In the same way `10` is an object literal extending the standard library type `N
 Similarly, `` "Hello " + "world" `` will reduce to `` "Hello world" ``.
 Note the space after the `"o"` in `` "Hello " ``.
 
-That is, the `+` method does not sum the two strings as numbers but just concatenate them.
+That is, the `+` method does not sum the two strings as numbers but just concatenates them.
 
 If you find the space at the end of `Hello` hard to see, you
 can isolate the strange looking ending space as follows:
@@ -110,13 +110,13 @@ A more precise estimate is 8,122,862,820; corresponding to
 ... hmm... 
 `` "<newLine>Zb2A" ``? maybe?
 
-As you can see, when the new line character ends up in the number representation it becomes unobvious how to write it down when embedded in other text.
+As you can see, when the new line character ends up in the number representation it becomes not obvious how to write it down when embedded in other text.
 The same problem would emerge if the double quote character (`` " ``) was present; since we used double quote to delimit the border of our 
 base 96 number. And we really need to select some characters to be used to show the start and end of our base-96 numbers to avoid confusion.
 How can we handle this issue?
 This is an instance of a more general problem: how to embed text inside text.
 
-We have seen the `+` concatenation operator, and how it can be used to make some strings more readable. `Str` also offers other kinds of concatenation operators, allowing to create and represent strings with new lines and backticks too.
+We have seen the `+` concatenation operator, and how it can be used to make some strings more readable. `Str` also offers other kinds of concatenation operators, allowing us to create and represent strings with new lines and double quotes too.
 
 In Fearless, ``` "" | "Zb2A" ``` is the representation of `` "Zb2A" `` with a newline at the start.
 In the details, ``` "" ``` is the empty string,
@@ -126,7 +126,7 @@ and `` "Zb2A" `` is the rest of the string.
 Similarly, `^` is the concatenation operator with double quote.
 `^` works exactly like `+`, but also jams a `` " `` in the middle.
  
-Thus `` "Hi, "^"John"^", are you really John?" `` is containing `John` in double quotes.
+Thus `` "Hi, "^"John"^", are you really John?" `` contains `John` in double quotes.
 Alternatively, Fearless allows strings to be delimited by backticks `` ` ``; allowing to write the string above as
 `` `Hi, "John", are you really John?` ``.
 

@@ -10,7 +10,7 @@ class ZH_023Chapter03ShowAllTanks {
 
 ### Visualising a full tank game.
 
-How to visualise a full tank game? Those tanks can be in any position; it would be impractical to display a grid able to contain any x/y number coordinates. For simplicity, we will just display the grid with x,y ranging from zero to nine inclusive.
+How can we visualise a full tank game? Those tanks can be in any position; it would be impractical to display a grid able to contain any x/y number coordinates. For simplicity, we will just display the grid with x,y ranging from zero to nine inclusive.
 To do this, we will use mutation:
 
 - We will first create a list of lists of variable strings, initially representing an empty grid.
@@ -90,9 +90,9 @@ Tank: ToStr {
   }
 HeadingChar: DirectionMatch[Str]{
   .north -> `A`;
-  .east  -> `<`;
+  .east  -> `>`;
   .south -> `V`;
-  .west  -> `>`;
+  .west  -> `<`;
   }
 AimingRepr1: DirectionMatch[Str]{
   .north -> ` / | \\ `;
@@ -103,9 +103,9 @@ AimingRepr1: DirectionMatch[Str]{
 AimingRepr2: DirectionMatch[Str]{
   mut .centre: Str;
   .north -> ` | ` + (this.centre) + ` | `;
-  .east  -> ` - ` + (this.centre) + ` | `;
+  .east  -> ` | ` + (this.centre) + ` - `;
   .south -> ` | ` + (this.centre) + ` | `;
-  .west  -> ` | ` + (this.centre) + ` - `;
+  .west  -> ` - ` + (this.centre) + ` | `;
   }
 AimingRepr3: DirectionMatch[Str]{
   .north -> ` \\ _ / `;
@@ -124,7 +124,7 @@ NextState:{
     .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
 
   read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
-    .filter{::==(t.position)}
+    .filter{::==(t.move.position)}
     .size == 1 .if{
       .then -> t.move;
       .else -> t;
@@ -143,9 +143,9 @@ TanksToS: F[List[Tank],Str]{ ts -> Block#
     .let y= { t.position.y }
     .if {x.inRange(0=~~10).not} .done
     .if {y.inRange(0=~~10).not} .done
-    .do{ res.get(y * 3)    .get(x).set(t.repr1) }
-    .do{ res.get(y * 3 + 1).get(x).set(t.repr2) }
-    .do{ res.get(y * 3 + 2).get(x).set(t.repr3) }
+    .do{ res.get(x * 3)    .get(y).set(t.repr1) }
+    .do{ res.get(x * 3 + 1).get(y).set(t.repr2) }
+    .do{ res.get(x * 3 + 2).get(y).set(t.repr3) }
     .done
     }}
   .return { res.flow.map{::.flow.map{::.get}.join(``)}.join(``|) };
@@ -181,69 +181,79 @@ As you can see, we omitted the code reading the initial game state.
 This is because in order to read data from files there is still quite some content that we need to learn. We will handle that in Chapter 4.
 Assuming a properly implemented `ReadGame`, this code could print something like the following:
 <pre class="code-50"><code>
-Step 5
-------------------------------------------------------------
- / - \       / - \
- | > |       - V |
- \ | /       \ _ /
+Step 0
 
-
-
-       / - \
-       | V |
-       \ | /
-                                     / - \
-                                     | < |
-                                     \ | /
-             / | \
-             | > |
-             \ _ /
-
-
-
- / - \       / - \
- | > |       - V |
- \ | /       \ _ /
-
-
-
-                                     / - \
-                                     | < |
-                                     \ | /
 ------------------------------------------------------------
 
-Step 6
+ / - \         / - \
+ | > |         - V |
+ \ | /         \ _ /
+
+
+
+        / - \
+        | V |
+        \ | /
+                                    / - \
+                                    | < |
+                                    \ | /
+               / - \
+               | A -
+               \ _ /
+
+
+
+ / | \
+ | > |
+ \ _ /
+                                    / - \
+                                    - A |
+                                    \ _ /
+
+
+
+
+
+
 ------------------------------------------------------------
-       / - \
-       | > |
-       \ | /
-             / - \
-             - V |
-             \ _ /
+
+Step 1
+
+------------------------------------------------------------
+
+        / - \
+        | > |
+        \ | /
+               / - \
+               - V |
+               \ _ /
 
 
 
-       / - \                   / - \
-       | V |                   | < |
-       \ | /                   \ | /
-                   / | \
-                   | > |
-                   \ _ /
+        / - \  / - \         / - \
+        | V |  | A -         | < |
+        \ | /  \ _ /         \ | /
 
 
 
-       / - \
-       | > |
-       \ | /
-             / - \
-             - V |
-             \ _ /
-                               / - \
-                               | < |
-                               \ | /
+
+
+
+        / | \                       / - \
+        | > |                       - A |
+        \ _ /                       \ _ /
+
+
+
+
+
+
+
+
+
 ------------------------------------------------------------
 </code></pre>
-Where tanks can be displayed on the screen, showing the various steps of the game
+Here the tanks are displayed on the screen, showing the various steps of the game.
 
 We now focus on those two lines:
 ```
@@ -256,11 +266,11 @@ We now focus on those two lines:
 - Then we use `.map` to call `this.newLine` 30 times.
   Note how we use the `_` to show that we do not need the current element of the flow (a number in 0..29).
 - Finally, we use `.list` to turn the flow into a list.
-- `.newLine` internally does a very similar work:
+- `.newLine` internally does very similar work:
   We range from 0..9 and for each of those we create a `Var` initialised with seven spaces.
 That is, the type of `res` is `mut List[mut List[mut Var[Str]]]`.
-This is a large and intricate type, representing a list of list of variable strings.
-The next section will discuss `List`s and `Flow`s in the detail.
+This is a large and intricate type, representing a list of lists of variable strings.
+The next section will discuss `List`s and `Flow`s in detail.
 
 The code shown below uses `res` to represent a grid of information, that can be updated as needed.
 
@@ -269,20 +279,20 @@ The code shown below uses `res` to represent a grid of information, that can be 
     .let y= { t.position.y }
     .if {x.inRange(0=~~10).not} .done
     .if {y.inRange(0=~~10).not} .done
-    .do{ res.get(y * 3)    .get(x).set(t.repr1) }
-    .do{ res.get(y * 3 + 1).get(x).set(t.repr2) }
-    .do{ res.get(y * 3 + 2).get(x).set(t.repr3) }
+    .do{ res.get(x * 3)    .get(y).set(t.repr1) }
+    .do{ res.get(x * 3 + 1).get(y).set(t.repr2) }
+    .do{ res.get(x * 3 + 2).get(y).set(t.repr3) }
 ````
-This code runs `.forEach` of the tanks `t` in `ts`
+This code runs for each tank `t` in `ts`.
 `x/y` are just short names for the coordinates of `t`.
-If `x` or `y` are `.not` in the visualized range, we do not represent tank `t` on our board `res`.
+If `x` or `y` is not in the visualised range, we do not represent tank `t` on our board `res`.
 Otherwise, we write the three lines representing `t` on the appropriate position on `res`.
 Note how we call `.get(..).get(..).set(..)`
 to access two layers of `List` and then set a new value in our variable.
 
 What we are creating now is basically a 'text art' based game.
-Those were popular in the (far) past. Of course Fearless supports proper graphics, and we will see how to render nice looking images of tanks later on; but this way of printing the 'current screen' line by line is how those more fancy graphic systems work too under the hood.
-Here we use characters as graphical symbols, they use (much smaller) coloured pixels as graphical symbols.
+Those were popular in the (far) past. Of course Fearless supports proper graphics, and we will see how to render nice looking images of tanks later on; but this way of printing the 'current screen' line by line is how those fancier graphic systems work too under the hood.
+Here we use characters as graphical symbols; modern screens use (much smaller) coloured pixels as graphical symbols.
 
 But the idea of doing graphics by using a grid of graphical symbols is the same,
 and the struggle to decide what symbol to place in each location is very similar too.
@@ -291,7 +301,7 @@ That is, the techniques and mindset shown here do scale to full modern 2-D, or e
 The computer screen is conceptually accessed as a large `mut List[mut List[mut Var[Color]]]`
 and the computer is simply insanely fast at switching those colours around creating the illusion of movement.
 
-When wanting to display shapes on the screen, the logic will look a lot like what we had for our tanks: forall shapes to display, display the shape.
+When wanting to display shapes on the screen, the logic will look a lot like what we had for our tanks: for all shapes to display, display the shape.
 To display an individual shape: for all the parts of the shape: display the individual part (the three lines of the tank in our example).
 The act of displaying a shape part is the act of setting new colours in specific places in the large `mut List[mut List[mut Var[Color]]]` screen.
 

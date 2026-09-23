@@ -18,7 +18,7 @@ repeating the same text over and over again, or by repeating similar but
 slightly different code. Repetitive code is bad and Fearless has ways to
 avoid repeated code and promote **code reuse**.
 
-We have already seen three ways fearless avoids repetitive and redundant code.
+We have already seen three ways Fearless avoids repetitive and redundant code.
 
 - One way is simply defining and calling methods: by calling methods we can
 avoid repeating their body over and over again. Since methods can call other
@@ -29,14 +29,14 @@ mentioning them one by one.
 In the `Direction` example, `.reverse` is implicitly and automatically
 inherited by all of the directions.
 - We have also seen inference; where we can omit type information that
-are clear from the context. For example, when implementing method `Direction.turn` in 
+is clear from the context. For example, when implementing method `Direction.turn` in 
 `North` we could write `.turn -> East` instead of `.turn: Direction -> East`.
 The return type `Direction` is clear from the context.
 
 We now introduce the concept of 
 **syntactic sugar**.
-As for method calls, method inheritance and
-type inference, also syntactic sugar is designed to avoid redundant code.
+Like method calls, method inheritance and
+type inference, syntactic sugar is also designed to avoid redundant code.
 
 Syntactic sugar allows representing specific well known coding patterns using more concise and more readable syntax.
 
@@ -45,7 +45,7 @@ Syntactic Sugar does not change the meaning, it just provides a shorter way to w
 We will now see how a combination of syntactic sugar and inference can make the
 code for `Direction` even more compact.
 The only abstract method in `Direction` is `.turn`,
-so when implementing direction it is obvious that we want to implement `.turn`.
+so when implementing `Direction` it is obvious that we want to implement `.turn`.
 In this way, the syntactic sugar allows us to write the following, shorter version of the code we have seen before.
 That is, to implement `Direction` we must implement `.turn`.
 Fearless knows this, thus in this case we can omit `.turn->`.
@@ -158,7 +158,7 @@ This declares parameters for the `.of` method. Parameters are how we pass inform
 You've already seen the implicit `this` parameter. Parameters listed in parentheses like this are explicit parameters - we give them names and types directly.
 
 The `.of` method expects two inputs: a `Direction` for the `heading` and a `Direction` for the `aiming`.
-Directly after the parenthesis and before the arrow `->` we can see `: Tank`.
+Directly after the closing parenthesis and before the arrow `->` we can see `: Tank`.
 This is the **return type** and it tells us the result must be a `Tank` object.
 
 #### The method body: Creating the tank
@@ -202,7 +202,7 @@ Syntactically, explicit method parameters are defined inside
 of round brackets.
 When there are no explicit parameters, 
 these brackets can be optionally omitted / left out.
-For example, the methods `.turn` and `.reverse` take no explicit parameters, so earlier we omitted the parenthesis.
+For example, the methods `.turn` and `.reverse` take no explicit parameters, so earlier we omitted the parentheses.
 These same methods could equivalently be declared as `.turn()` and `.reverse()`.
 To call the method `.turn` twice we showed the syntax `North.turn.turn`
 but we could have equivalently called it with syntax 
@@ -213,7 +213,7 @@ empty brackets.
 This newly shown method can be called with syntax:
 `Tanks.of(North, East)`
 Here `Tanks` is the first implicit parameter and it is called **the receiver**.
-The others are provided after the method name in parenthesis.
+The others are provided after the method name in parentheses.
 
 The syntax `.of(heading: Direction, aiming: Direction): Tank`
 defines a method called `.of` with parameters `heading` and `aiming`.
@@ -229,7 +229,7 @@ That is, a receiver can be any expression, not just an object literal.
 
 - What is the first parameter of the method call `Tanks.of(North.reverse,East)`? It is `North.reverse`.
 
-That is, also method parameters can be any expressions.
+That is, method arguments can also be any expression.
 
 #### English to Fearless Conversion
 Fearless code can be understood by aligning over it some natural language.
@@ -255,11 +255,11 @@ inside the method body.
 You may think that declaring a new type inside of the method body
 contradicts the general idea that method bodies must be expressions.
 However, an object literal expression is just a special kind of type declaration.
-Before we have directly used type names, like `North`, as object literals.
+Before, we directly used type names, like `North`, as object literals.
 As we discussed, the object literal `North` is desugared into `SomeName147: North {}`.
 All object literals are type declarations. Some object literals do not look like
 type declarations because of the sugar allowing to omit `SomeName147:` and 
-because of the general rule that empty parenthesis like `{}` can be omitted.
+because of the general rule that empty brackets like `{}` can be omitted.
 
 This use of type declarations as objects is interesting because we
 can create a new kind of object, an object able to see / capture the method parameters.
@@ -317,12 +317,12 @@ That is, there are three different kinds of object literals:
 - **Typed object literal**
   `North` is an example of a typed object literal. The type `North` is used to (directly) build the literal.
 - **Bare object literal**
-  `{.heading -> heading; .aiming -> aiming}` as we just seen is a bare object literal.
+  `{.heading -> heading; .aiming -> aiming}` as we have just seen is a bare object literal.
   It is bare because it requires the inference to infer its type from the context.
 - **Named object literal**
   `MadeTank: Tank { .heading -> heading; .aiming -> aiming;}`<br/> 
   and `Tank: { .heading: Direction -> heading; .aiming: Direction -> aiming }`, as we have seen before
-  are named object literals: we do explicitly chose the name for this new type we are declaring.
+  are named object literals: we do explicitly choose the name for this new type we are declaring.
   It is the most complete form of literal; it is a top level declaration that doubles as an object creation. 
  
 #### The three kinds of expressions, revisited.
@@ -354,7 +354,7 @@ That is, we are implicitly using the type `East` as a part of an anonymous type 
 As you can see, the two contexts are interleaved inside each other.
 
 #### Method names
-At this point you must have noticed that all the method names we have show
+At this point you must have noticed that all the method names we have shown
 start with `.`; and you may be wondering why the odd choice.
 The `.` allows the computer to separate method names from other kinds of names;
 for example in `North.turn` or `Tanks.of` it is clear where the type
@@ -362,7 +362,7 @@ name finishes and the method name starts.
 Fearless has two kinds of method names:
 
 - names starting with exactly one `.` symbol, then zero or more `_`, then a lowercase
-letter, and any number of further letters, numbers and underscores, and
+letter, any number of further letters, numbers and underscores, and optionally some trailing `'`, and
 - names composed exclusively of a non empty sequence of operator symbols.
 
 The full list of operator symbols is:
@@ -382,19 +382,19 @@ In turn, this means that the code below is syntactically valid
 ```
 Bar#(Add|-)
 ```
-Adding spaces around all tokens this would look as follows:
+Adding spaces around all tokens, this would look as follows:
 ```
 Bar # ( Add |- )
 ```
 This is a call of the method called `#` on the receiver `Bar`, and the single parameter is a call of the method called `|-` on the receiver `Add`.
 Method `|-` takes zero parameters.
 
-On the other side, parameter names start with a lower-case letter, and
+On the other hand, parameter names start with a lower-case letter, and
 type names mostly start with an upper-case letter.
 The rules for valid type names are a little more involved,
 and we will discuss them in detail later.
 
-While the code above works fine, we think that using `.of` in this way is
+While the `Tanks` code works fine, we think that using `.of` in this way is
 verbose and distracting: is `.of` the right method name?
 Conceptually we just want to do `Tanks`, go!!! do your thing! be!
 
@@ -424,10 +424,10 @@ Tanks: { #(heading: Direction, aiming: Direction): Tank ->
 Note how pretty much nothing has changed.
 We just declared the method to be called `#` instead of `.of`.
 
-We could have renamed into `#` also the method `Direction.turn`,
+We could have also renamed the method `Direction.turn` into `#`,
 but we chose not to: 
 in our mental model we do not think that turning is the main thing we do with directions.
-When coding it is important to distinguish the intended/ideal state of the code from the current incomplete version that we are working with, and to name concepts in function of such ideal state and not the current sorry version of it.
+When coding it is important to distinguish the intended/ideal state of the code from the current incomplete version that we are working with, and to name concepts according to such ideal state and not the current sorry version of it.
 
 We can now consider adding some methods to `Tank`:
 for example the capacity of turning the turret!
@@ -520,7 +520,7 @@ Tanks#(
 It is important to learn to visualise how the code reduces in your mind, so that you can predict code behaviour.
 Note how we wrote `Tank{.heading -> North; .aiming -> South }`.
 - Should we just write `{.heading ->North; .aiming ->South }` and rely more on the inference?
-- Should we write `Anon27: Tank{.heading -> North; .aiming -> South }` and put all the object literal explicitly?
+- Should we write `Anon27: Tank{.heading -> North; .aiming -> South }` and write the whole object literal explicitly?
 
 Inference works on source code: the code we write.
 Code under reduction is not source code, but just a tool for us to understand the code behaviour. Since it is just a tool,

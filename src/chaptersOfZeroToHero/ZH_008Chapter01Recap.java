@@ -13,10 +13,10 @@ class ZH_008Chapter01Recap {
 #### Language Concepts
 - Evaluation: An expression evaluates to a result by slowly progressing into a more and more reduced form
   - Example: `North.turn.turn --> East.turn --> South`
-- Supertype: Types are connected by supertypes relations allowing to generalise concepts.
+- Supertype: Types are connected by supertype relations allowing to generalise concepts.
 This is also used for code reuse.
-  - Example: `North` and `South` are types of `Direction` so `Direction` is a supertype of `North` and `South`.
-- Implement(s): By implementing a supertype a type reuses the code of the supertype and is required to satisfy the logical contracts of the super type. Satisfaction of those (informal) contracts is the responsibility of the programmer, but the type system can catch some common violations. Supertypes and Implements help code reuse and enable dynamic dispatch.
+  - Example: `North` and `South` are kinds of `Direction` so `Direction` is a supertype of `North` and `South`.
+- Implement(s): By implementing a supertype a type reuses the code of the supertype and is required to satisfy the logical contracts of the supertype. Satisfaction of those (informal) contracts is the responsibility of the programmer, but the type system can catch some common violations. Supertypes and Implements help code reuse and enable dynamic dispatch.
   - Example: `North` implements `Direction`
 
 - Inherited: a method that comes from an implemented supertype.
@@ -39,12 +39,12 @@ This is also used for code reuse.
   
 - Method name:
   - Relevance: giving names to methods (aka operations) allows to mnemonically connect behaviour with names.
-  - Syntax: dot `.` followed by lowercase identifier, including letters, numbers, underscore but no spaces; or operator symbols.
-  - Examples: `.foo`, `._bar`, `._b12`, `.baz`, `+`, `++`, `+>`, `<=`, `*|/-`
+  - Syntax: dot `.` followed by lowercase identifier, including letters, numbers, underscore but no spaces, that can also have `'` at the end; or operator symbols.
+  - Examples: `.foo`, `._bar`, `._b12`, `.baz'`, `+`, `++`, `+>`, `<=`, `<#--`
   
 - Parameter name:
   - Relevance: parameter names describe the role the parameter value will exercise inside the method execution. A parameter that is intended to be unused can be called `_`.
-  - Syntax: lowercase identifier; can also have `'` at the end
+  - Syntax: lowercase identifier, optionally preceded by `_`; can also have `'` at the end
   - Examples: `foo` in `.baz(foo:Bar)`, `.baz(foo)` or `{foo->..}`
   
 - Argument:
@@ -59,8 +59,8 @@ This is also used for code reuse.
   `mut .foo(a: A): B;` (abstract method),<BR/>
   `mut .foo(a: A): B -> a.toB;` (concrete method full form),<BR/>
   `mut .foo(a)-> a.toB;` (concrete method inferred types),<BR/>
-  `a->a.foo` or `a.foo` inside `{a->a.foo}` and `{a.foo}` 
-  (concrete method inferred name and types),
+  `a->a.foo` or `::.foo` inside `{a->a.foo}` and `{::.foo}` 
+  (concrete method inferred name and types).
 
 - Expression:
   There are three kinds of expression: parameters, method calls, and object literals.
@@ -71,30 +71,30 @@ This is also used for code reuse.
 - Method call
   - Examples: `this.bar(foo.baz)`, `foo+`, `foo+(bar)`, `foo!`
 
-- Object literal: We use many different names for object literals, to focus the attention of some aspects. But they are all just aliases for the same concept. Common aliases: Object, Value, Constant, Lambda, Instance.
+- Object literal: We use many different names for object literals, to focus the attention on some aspects. But they are all just aliases for the same concept. Common aliases: Object, Value, Constant, Lambda, Instance.
 
 - Object: used to focus on the idea that the literal has behaviour and captures state
   - Example:  `Point{ .x: Int-> x; .y: Int-> y; }`, `{ .foo->myFoo; }`
 
 - Value: used to focus on the idea that the literal is produced by a computation
-  - Example: `Points#(4,5)` returns a value.
+  - Example: `Points#(+4,+5)` returns a value.
 
 - Constant: used when type names are used directly to make instances. Constants can not capture state, so all the instances of `North` are conceptually identical; they are conceptually all the same `North`.
   - Examples: `North`, `12`, `45`, `+34`, `-13`, `` `Foo` ``, `` `foo dd` ``, `{}`
 (the last one will have the type name inferred by the type system)
 
 - Lambda: this is the common name given to an object literal with exactly one method implemented. Syntactic sugar is present to make this case easier.
-  - Examples: `{a,b->a+b}`, `{ a -> a.foo }`, `{ 1 + 2 }`, `{::foo}`, `{::foo.bar }`, `{::+3 }`
+  - Examples: `{a,b->a+b}`, `{ a -> a.foo }`, `{ 1 + 2 }`, `{::.foo}`, `{::.foo.bar }`, `{::+3 }`
 
-- Instance: used to focus on types and subtypes relationships
-  - Example1: `Tank: { .heading-> North; .aiming-> North;}`
+- Instance: used to focus on type and subtype relationships
+  - Example1: `TankNN: Tank{ .heading-> North; .aiming-> North;}`
    is an instance of `Tank`.
   - Example2: `North`
    is an instance of `North` and also an instance of `Direction`, via subtyping.
 
 #### `North` as an instance / `North` as a type
 
-Note how in the sentence before, the first `North` is the expression `North`, equivalent via desugaring to `Anon[]:North[]{}`, while the 
+Note how in the sentence before, the first `North` is the expression `North`, equivalent via desugaring to `SomeName147:North{}`, while the 
   second `North` is the type `North`.
 To get the `North` value/constant as an expression, we can just mention the `North` type.
 

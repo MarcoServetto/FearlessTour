@@ -29,7 +29,7 @@ Opts: {
   }
 """); }/*--------------------------------------------
 
-The code below can be used as follows:
+The code above can be used as follows:
 -------------------------*/@Test void opt2 () { run("""
 //OMIT_START
 use base.Nat as Nat;
@@ -75,7 +75,7 @@ There are a few minor differences because of some language features that we have
 Later, we will show you the exact implementation as in the Fearless standard library, but 
 the implementation we have just seen is a very good mental model to conceptualise those two types.
 
-To get more comfortable with the various shortcuts Fearless offer, consider the code below, that works identically to the code shown above but uses shortcuts and less indentation to be more compact:
+To get more comfortable with the various shortcuts Fearless offers, consider the code below, that works identically to the code shown above but uses shortcuts and less indentation to be more compact:
 
 -------------------------*/@Test void opt3 () { run("""
 //OMIT_START
@@ -107,10 +107,10 @@ Opt[Person] //(2) no one is here
 //OMIT_END
 """); }/*--------------------------------------------
 
-- We can turn `.match(m)->m.some(t)` into just `::.some t`
+- We can turn `.match(m)->m.some(t)` into just `::.some t`.
   The method `.match` is the only method we could be overriding there!
-- We can turn `.empty->0;` into just `0;` and `.some p'->p'.age;` into just `::.age;`
-  Since those methods take different number of parameters (zero and one), there is no ambiguity 
+- We can turn `.empty->0;` into just `0;` and `.some p'->p'.age;` into just `::.age;`.
+  Since those methods take a different number of parameters (zero and one), there is no ambiguity 
   of which body satisfies which method.
 
 

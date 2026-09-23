@@ -73,7 +73,7 @@ Rectangles: {#(x1: Int, y1: Int, x2: Int, y2: Int): Rectangle ->
 
 But this is quite error prone: what if we accidentally wrote
 `.y2 -> y1;` instead?
-This is also error prone for the user: they would have to write something like `Rectangles#(+1,+3,+10,+25)`
+This is also error prone for the user: they would have to write something like `Rectangles#(+1,+3,+10,+25)`.
 Can they remember the role of each of the four numbers?
 What if they accidentally swap two numbers? The type system will not be able to help: this version of `Rectangle` is simply made of four `Int`s.
 
@@ -111,7 +111,7 @@ Point: { .x: X; .y: Y }
 Points: {#(x: X, y: Y): Point -> { .x -> x; .y -> y } }
 """); }/*--------------------------------------------
 Now to create a point the user has to either do
-`Points#(Xs#+2,Ys#+5)` or otherwise use values of types `X` and `Y`.
+`Points#(Xs#(+2),Ys#(+5))` or otherwise use values of types `X` and `Y`.
 We can imagine long chains of method calls passing arguments with various names, sometimes `x`, `y` sometimes `row`, `col` and sometimes just `a`, `b`, `c`.
 It could be hard to track the role of those numbers without relying on the type system.
 On the other hand, the type system can trivially check those chains for us.
@@ -157,10 +157,10 @@ Rectangles:{#(topLeft: Point, bottomRight: Point): Rectangle -> Rectangle:{
 """); }/*--------------------------------------------
 
 As you can see, there is overall more code, and we need to explicitly wrap and unwrap those extra types.
-Is this extra verbosity worth it? It depends on the specific situation we are in. In particular, for short programs and simple code examples relying on less types is appropriate. Thus, most examples of this guide will use strings and numbers directly instead of wrapping them into types encoding their role.
+Is this extra verbosity worth it? It depends on the specific situation we are in. In particular, for short programs and simple code examples relying on fewer types is appropriate. Thus, most examples of this guide will use strings and numbers directly instead of wrapping them into types encoding their role.
 
 Now, for the other issue: the user can confuse the meaning of the two points.
-How to fix that? The two points are not top-left and bottom-right in an absolute sense, but just in relation to each other.
+How can we fix that? The two points are not top-left and bottom-right in an absolute sense, but just in relation to each other.
 Fearless offers good ways to handle this other case, but we will see them later in the guide. The main idea is that we can check that the property we want holds just before creating the rectangle.
 
 ### Types and the source of meaning
@@ -199,7 +199,7 @@ N: G {I}
 """); }/*--------------------------------------------
 What does the code above mean? For us humans, it now looks incomprehensible, but for a machine it looks exactly the same as the code before.
 
-That is, there is nothing in the code that makes `I` more "northy" than L, or `.b` more "vertical" than `.c`.
+That is, there is nothing in the code that makes `I` more "northy" than `L`, or `.b` more "vertical" than `.c`.
 
 We can use more precise terminology:
 - Intrinsic Meaning/Intrinsic Semantics: the meaning derived purely from the structure and connections within the code itself, independent of human interpretation.
@@ -262,11 +262,11 @@ Tanks: { #(h: Direction, a: Direction, p: Point): Tank->
 
 Again, by connecting `Direction`, `Point` and `Tank`, the whole group of interconnected types gains more meaning.
 
-The extrinsic meaning is **supposed** to be a super set of the intrinsic meaning.
-The program is capturing a part of the full semantic of the names.
-A Bug is a situation where the intrinsic meaning expresses behaviour outside of the extrinsic behaviour.
+The extrinsic meaning is **supposed** to be a superset of the intrinsic meaning.
+The program is capturing a part of the full semantics of the names.
+A bug is a situation where the intrinsic meaning expresses behaviour outside of the extrinsic meaning.
 
-For example, if `North.turn` was returning `North`, this would be a situation where the intrinsic semantic is different from the expected behaviour.
+For example, if `North.turn` was returning `North`, this would be a situation where the intrinsic semantics is different from the expected behaviour.
 
 By the way, using the syntactic sugar to the maximum, this is the most compact version of the code we just discussed:
 
@@ -297,7 +297,7 @@ Tanks: { #(h: Direction, a: Direction, p: Point): Tank->{ h; .aiming->a; .positi
 """); }/*--------------------------------------------
 
 Depending on the reader, this code could be more or less readable than the one before.
-The difference is that we have consistently avoided the method name for one of the methods we are defining.
+The difference is that we have consistently omitted the method name for one of the methods we are defining.
 This is unambiguous since that would be the only remaining abstract method that we need to implement; thus the conventional sugar applies.
 
 END*/

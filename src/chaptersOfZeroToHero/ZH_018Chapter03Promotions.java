@@ -11,19 +11,19 @@ class ZH_018Chapter03Promotions {
 ### Introduction to Reference Capabilities, ROG and MROG.
 
 In Fearless, objects can form complex networks of dependencies by referring to each other. The **Reachable Object Graph** (ROG) of a given object is the graph of all objects reachable from it, including itself. An object is mutated whenever its ROG changes. That is,
-mutation is grounded in the definition of ROG. This definition of mutation captures that objects can represent their state deep inside other objects in their ROG. There are three ways objects are mutated: 
+mutation is grounded in the definition of ROG. This definition of mutation captures that objects can represent their state deep inside other objects in their ROG. There are three possible mutation histories for an object: 
 
 1. An object can be born with a specific ROG that will never mutate.
-2. An object can be mutated across all its life time.
+2. An object can be mutated across all its lifetime.
 3. An object can be mutated for an initial phase of its life, and then never again.
 
 Clearly this last way subsumes the other two, simply by varying the length of the initial phase. We call an object inside this initial phase mutable, and one outside immutable.
 By definition an immutable object will never be mutated and will never become mutable again.
 
-The **Mutable Reachable Object Graph** (MROG) of a given object is the graph of all mutable objects reachable from it, including itself. Thus, the MROG of an immutable object is empty. Since we define mutability as a change in the whole ROG, the kind of immutability we discuss here is deep: if an object is immutable, the whole ROG of that object is immutable.
+The **Mutable Reachable Object Graph** (MROG) of a given object is the graph of all mutable objects reachable from it, including itself. Thus, the MROG of an immutable object is empty. Since we define mutation as a change in the whole ROG, the kind of immutability we discuss here is deep: if an object is immutable, the whole ROG of that object is immutable.
 
-**Reference Capabilities** (RC) are a type systems technique to track mutable and immutable objects.
-As for most type systems, RCs are a conservative approximation, where some objects that are already in the immutable state are still seen as potentially mutable. That is, there can be a large time gap from the moment the last mutation happens and the moment the object is recognised as immutable. It may also happen that an immutable object is never recognised as such by the type system. RCs are purely an additional type system layer attempting to recognise immutable objects. They do not impact the semantics, they simply restrict the set of allowed programs.
+**Reference Capabilities** (RC) are a type system technique to track mutable and immutable objects.
+As for most type systems, RCs are a conservative approximation, where some objects that are already in the immutable state are still seen as potentially mutable. That is, there can be a large time gap between the moment the last mutation happens and the moment the object is recognised as immutable. It may also happen that an immutable object is never recognised as such by the type system. RCs are purely an additional type system layer attempting to recognise immutable objects. They do not impact the semantics, they simply restrict the set of allowed programs.
 
 Reference capabilities do not directly track mutable and immutable objects, but track the parameters/references to such objects.
 We will call a parameter with an `imm` type an `imm` parameter. Same for the other reference capabilities.
@@ -38,7 +38,7 @@ In addition to `imm`, `mut` and `read`, there are more kinds of reference capabi
 As we discussed before, a mutable object can become immutable, and the type system can recognise it.
 This happens through a process called promotion.
 There are many kinds of promotion; we will now see the simplest and most useful form of promotion:
-The result of any method returning a mut but taking in input no `mut` or `read` parameters can be promoted to `imm`.
+The result of any method returning a `mut` but taking as input no `mut` or `read` parameters can be promoted to `imm`.
 
 One easy detail to miss the first time around: the receiver is parameter number zero, so "no `mut` or `read` parameters" includes it.
 A method with no explicit parameters at all can still fail this rule, if its own receiver (parameter zero) is `mut` or `read`.

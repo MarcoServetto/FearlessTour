@@ -43,7 +43,7 @@ We will not start with the easy scripts that feel like magic but crumble under c
 We are focusing on the monkey. This is why this guide starts with the hard stuff—Types, Abstractions, and Inductive Reasoning—front and centre.
 
 
-### Expect confusion: everything is circularly dependent concepts
+### Expect confusion: all concepts depend circularly on each other
 
 If you ever learned a foreign language, you will have started by trying to connect each word in the foreign language to a definition in your native language. We do not have this luck when it comes to programming. Programming is a universe on its own.
 
@@ -79,7 +79,7 @@ Code works similarly, but everything is just a "token". Fearless would just see 
 From the point of view of Fearless newlines and spaces are irrelevant; any amount of spacing is equally effective at separating pieces of code, and sometimes no spacing is needed, as for the comma after `Pizza`.
 This means that we can freely use more or less spacing to make the code more understandable for humans.
 
-Additionally, parenthesis are kinds of tokens that work in pairs: we use parenthesis `(..)`, `[..]` and `{..}` to group concepts together.
+Additionally, brackets are kinds of tokens that work in pairs: we use round brackets `(..)`, square brackets `[..]` and curly brackets `{..}` to group concepts together.
 
 ### Comments
 
@@ -88,7 +88,7 @@ A `//` starts a single-line comment.
 Fearless ignores everything from `//` to the end of the line.
 Any text enclosed by the delimiters `/*...*|/` is called a multi-line comment.
 Fearless ignores everything between these two delimiters, even if it spans multiple lines.
-Comments spaces and newlines have no impact on the execution; but can be precious to insert human-readable explanations in the code; facilitating the understanding of code.
+Comments, spaces and newlines have no impact on the execution, but comments can be precious to insert human-readable explanations in the code, facilitating the understanding of code.
 
 //OMIT_START
 NOTE for editors: every chapter file is itself one big /*START...END*|/
@@ -129,7 +129,7 @@ Bob Snoozeman
 
 As you can see, even comments can have their little language inside: `TODO:` is a short 5 symbol annotation meaning that there is an open task.
 
-In the next page we will see our first example of code.
+On the next page we will see our first example of code.
 
 
 OMIT_START

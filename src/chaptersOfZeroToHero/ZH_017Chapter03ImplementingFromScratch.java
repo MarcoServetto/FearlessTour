@@ -13,7 +13,7 @@ class ZH_017Chapter03ImplementingFromScratch {
 ### Implementing all from scratch versus just using standard library code
 
 Up to now we tried to show you nearly all the implementation of all the concepts we introduced.
-We think this a very good way to learn to code, and hopefully you have learned a lot.
+We think this is a very good way to learn to code, and hopefully you have learned a lot.
 
 However, this was possible since all of those concepts could be expressed with just a few lines of code.
 We will keep showing you the full code of concepts that can be expressed concisely, but as we discussed before, many useful programs and libraries are composed of millions of lines.
@@ -53,7 +53,7 @@ First: `_Magic` is not something we can use in our code to make any of our wishe
 It is a marker used internally by the compiler to annotate certain method bodies whose behaviour can not be encoded in plain Fearless code.
 All such methods are already part of the standard library, so no user program would ever write `_Magic!`.
 
-The description below explains how the code above works, but will only mention `mut`, `imm`, `read` and `read/imm` without explaining how they work in the details yet.
+The description below explains how the code above works, but will only mention `mut`, `imm`, `read` and `read/imm` without explaining how they work in detail yet.
 First we define a type `Void:{}`. Nothing special here, just a type that does nothing. `Void` is often used to represent an operation that has no meaningful result, and simply performs side effects, and to do so it will have to use magic methods internally.
 Then we define `Var[E]` as a generic type.
 The type `E` has a constraint: it can only be `imm`,`mut` or `read`.
@@ -69,7 +69,7 @@ They will both return the current value, but with different types:
 - If we have a `read` receiver, we produce the value with a weakened type `read/imm E`.
 
 Finally `Vars` is a factory type making new `Var[E]` objects, originally containing the value provided by the user.
-The syntax `.get -> var;` implements both .get methods with the same exact body.
+The syntax `.get -> var;` implements both `.get` methods with the same exact body.
 In this case, both methods will simply return the value of `var` provided while calling `Vars#`.
 However, the magic `.set` will impact those methods: when `.set` is called, the implementations of `.get` will change to return the new result instead.
 
@@ -101,12 +101,12 @@ That is, in this case the local parameter `loc` is of type `mut Var[Point]`.
 In this way, it is easy to create either local parameters or local variables. Local variables are just local parameters of type `mut Var[..]`.
 
 An `Animal` is created `mut`: it can change state by updating `loc` using `loc.set` inside the method `.run`.
-In this simple example, when an `Animal` runs, it moves across the `x` coordinate.
+In this simple example, when an `Animal` runs, it moves along the `x` axis.
 Note how to access the value inside of `loc` we need to use `.get`.
 
-While location is a `mut Var[Point]`, the `Point` itself is immutable.
-As a sugar, any typename without a modifier in front is implicitly `imm`.
-To clarify this, here is the code from above with all the imm keywords explicitly added:
+While `loc` is a `mut Var[Point]`, the `Point` itself is immutable.
+As a sugar, any type name without a modifier in front is implicitly `imm`.
+To clarify this, here is the code from above with all the `imm` keywords explicitly added:
 
 -------------------------*/@Test void mdfsExplicit () { run("""
 //OMIT_START
@@ -143,7 +143,7 @@ Aliasing is like a nuclear power plant:
 Using aliasing in the appropriate way can make our code much more efficient, and in some conditions even easier to read and understand.
 However, when aliasing and mutation are misused or run outside of our control, the code will behave in ways that most humans find very hard to predict.
 
-Consider the code below, showing a simple example of Aliasing.
+Consider the code below, showing a simple example of aliasing.
 -------------------------*/@Test void aliasing1 () { run("""
 //OMIT_START
 use base.Nat as Nat;
@@ -176,7 +176,7 @@ Mutating `bunny` will affect `mammal` and vice versa.
 Then we use `.do` to run code returning `Void`.
 Finally, we return the `x` coordinate of `mammal`.
 Here, calling `AliasingExample#` will return `25`.
-That is, only one `Animal` has been created by that code, and by making the two bindings refer to the same animal object, we can observe mutation happened over `bunny` by looking at the state of `mammal`.
+That is, only one `Animal` has been created by that code, and by making the two bindings refer to the same animal object, we can observe that a mutation happened over `bunny` by looking at the state of `mammal`.
 
 Note how we use `.let` and not `.var`.
 `bunny` and `mammal` are not variables. They are local parameters referring to objects that (indirectly) contain a variable inside.
