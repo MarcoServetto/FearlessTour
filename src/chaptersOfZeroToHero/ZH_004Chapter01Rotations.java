@@ -33,7 +33,7 @@ Having names like `.turn0`, `.turn1`, `.turn2`, etc., often signals that we're m
 These aren't fundamentally different actions, they are different degrees of the same action: `Rotation`.
 In the same way `North`, `East`, `South` and `West` are all `Direction`, those methods are all kinds of `Rotation`.
 
-We can define Rotation as a type that represents **something that knows how to rotate a `Direction`**.
+We can define `Rotation` as a type that represents **something that knows how to rotate a `Direction`**.
 
 We can define the concept of rotations as follows:
 
@@ -71,7 +71,7 @@ This is ok: when implementing a method, the name of the parameters is irrelevant
   At your stage of learning, you may be surprised that syntactic sugar
   supports this specific case in particular, but with more experience you will see that
   this apparently oddly specific case is actually very common in Fearless code.
-Using this compact syntax, here is how we would define all the Rotations:
+Using this compact syntax, here is how we would define all the rotations:
 -------------------------*/@Test void colonColon1() { run("""
   //OMIT_START
   Direction:{ /*..as before..*/ .turn: Direction}
@@ -132,7 +132,7 @@ In the common mathematical notation, a function can be directly applied to the a
 
 ### Composing rotations
 
-A natural feature to add to Rotations is to make them composable. Can we add two rotations together to get a rotation that rotates as much as the sum of the two individual rotations?
+A natural feature to add to rotations is to make them composable. Can we add two rotations together to get a rotation that rotates as much as the sum of the two individual rotations?
 Consider the code below:
 ```
 RotateTwice: { #(r1: Rotation, r2: Rotation, d: Direction): Direction->
@@ -142,7 +142,7 @@ RotateTwice: { #(r1: Rotation, r2: Rotation, d: Direction): Direction->
 The type `RotateTwice` has a single method `#` taking three parameters:
 two `Rotation`s and a `Direction`. It then returns a `Direction`.
 In the method body, we see `r1 # ( r2 # ( d ) )`, where we added some spaces for clarity.
-This code can be read from the inside out: we first call `r2#` on the input direction `d`. This is going to produce some other direction, that is passed in input to method `r1#`.
+This code can be read from the inside out: we first call `r2#` on the input direction `d`. This is going to produce some other direction, that is passed as input to method `r1#`.
 The resulting effect is that we rotate the input by the sum of the rotations `r1` and `r2`.
 
 Function `RotateTwice` takes three parameters.

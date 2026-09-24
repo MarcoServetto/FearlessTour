@@ -59,7 +59,7 @@ We can write `someFork.choose("Hello","Hi")` but also `someFork.choose(1,5)`.
 However, `someFork.choose("Hello",5)` would be ill typed: there needs to be a type that can be used to instantiate `Val`.
 Type inference usually takes care of finding the types that instantiate a generic method call.
 However, we can pass the type argument ourselves if we want, using syntax `someFork.choose[Str]("Hello","Hi")`.
-As you can see, we can add `[..]` after the method name and before the list of parameters,
+As you can see, we can add `[..]` after the method name and before the list of arguments,
 following this syntax:
 ```
 expression methodName [types](expressions)
@@ -168,7 +168,7 @@ Type `LeftRight[Val]` is a generic type.
 
 In the same way, `LeftRight[LR]:{ .left: LR; .right: LR }` is a generic type declaration.
 
-Before we have seen generic methods, as methods taking both type parameters and actual parameters. Alternatively, we can see generic methods as a way to define an infinite number of concrete methods; one for each possible type instantiation.
+Earlier we saw generic methods as methods taking both type parameters and actual parameters. Alternatively, we can see generic methods as a way to define an infinite number of concrete methods; one for each possible type instantiation.
 
 Generic type declarations are a different concept, and they denote families of types:
 One for each possible type instantiation.
@@ -182,7 +182,7 @@ When at the start we declared `Direction:{.turn:Direction;}`
 thanks to the sugar we were actually declaring `Direction[]:{.turn[]():Direction[];}`.
 Again, empty parentheses can be omitted.
 
-We can now understand what is the meaning of 
+We can now understand the meaning of 
 ```
 someFork.choose{
   .left->"Hello";
@@ -241,9 +241,9 @@ In the same way,
 
 ### Recap
 
-- Generic methods and Generic types are ways to declare an infinite number of methods and types.
+- Generic methods and generic types are ways to declare an infinite number of methods and types.
 
-- Dynamic dispatch is used to make decisions. Here `Fork` has an abstract method `.choose`.
+- Dynamic dispatch (the receiver object decides which implementation of the called method runs) is used to make decisions. Here `Fork` has an abstract method `.choose`.
 The `Left.choose` implementation chooses the `.left` option, while the
 `Right.choose` implementation chooses the `.right` option.
 

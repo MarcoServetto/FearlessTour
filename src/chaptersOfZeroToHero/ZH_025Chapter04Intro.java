@@ -39,7 +39,7 @@ While using strings simplifies the process of converting data to bytes, it intro
 
 - Ambiguity: The string `"North, East, 10, 5"` does not inherently explain what each part represents. Is `North` the direction the tank is heading or aiming?
 - Deserialisation complexity: While converting a tank into a string is easy, converting the string back into a tank object requires code to interpret each part correctly. 
-This code would be specific to tanks and will have to be rewritten for other kinds of data.
+This code would be specific to tanks and would have to be rewritten for other kinds of data.
 
 The solution is often to introduce an additional layer of abstraction that structures data before it is transformed into strings. This layer would act as a structured intermediary, organising data in a way that preserves the separation of each element while supporting a unified conversion process to and from strings.
 First, complex objects are converted into this structured information format, that is then converted into strings, which in turn are converted into bits for storage or transmission.
@@ -54,7 +54,7 @@ When the whole infrastructure is completed, we would only need to worry about tr
 
 What could a unified representation format be? We need a type that is flexible enough to represent any kind of information, but structured enough to avoid the drawbacks of strings.
 
-- `Bool` is a very rigid type, it only contains two values; `True` and `False`.
+- `Bool` is a very rigid type, it only contains two values: `True` and `False`.
 - `Void` is even more rigid, it only contains the `Void` value.
 - `Num` is more flexible, it contains a large number of values.
 
@@ -63,7 +63,7 @@ However, those values are all numbers. Same for `Str`: it contains a mind-boggli
 - `Opt[E]` is the first truly flexible type we have seen: it can contain zero or one element of any fixed type `E`.
 - `List[E]` is a little more flexible: it can contain any number of elements of any fixed type `E`.
 Using a `List[Str]`, a `Tank` could be represented as `Lists#("North", "East", "10", "5")`.
-This is much better than using strings! However, still unsatisfactory: The x and y coordinates come from the separate `Point` object, but are now flattened into the `Tank` representation. That is, in this mindset every object needs to be represented as a flat set of attributes, while data is often composed of smaller units of existing data.
+This is much better than using strings! However, it is still unsatisfactory: the x and y coordinates come from the separate `Point` object, but are now flattened into the `Tank` representation. That is, in this mindset every object needs to be represented as a flat set of attributes, while data is often composed of smaller units of existing data.
 What if instead of using a `List[Str]` we used a list of something that contains itself?
 For example
 ```
@@ -125,9 +125,9 @@ An `Info` can be seen as a strict subset of JSON, tailored to be even more strai
 
 An `Info` can be one of the following:
 - A simple string message.
-- A list of Info values.
-- A map from simple string keys to Info elements.
-- An empty Info.
+- A list of `Info` values.
+- A map from simple string keys to `Info` elements.
+- An empty `Info`.
 The operations `Info.str` and `Infos.fromStr` are provided to convert `Info` objects to JSON strings and to parse JSON strings as `Info` objects, respectively.
 
 With an `Info` object named `myInfo`, the real `.msg`/`.list`/`.map` accessors each return an `Opt`, since only one variant is actually present at a time:

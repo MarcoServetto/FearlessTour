@@ -161,7 +161,7 @@ Enum[E]: DataType[E,E]{
 ```
 Thanks to `Enums[Direction]` we get a `.map` method mapping names to directions.
 - Method `.map` returns a `Map[Str,Direction]` linking the string names of directions
- (`North`, `East`, etc.) to their corresponding `Direction` objects. This allows us to look up a Direction by its name. This is computed by using the method `.mapping`; taking a literal with a `.key` method and an `.elem` method, converting the flow elements into the key and element values for the newly created map.
+ (`North`, `East`, etc.) to their corresponding `Direction` objects. This allows us to look up a `Direction` by its name. This is computed by using the method `.mapping`; taking a literal with a `.key` method and an `.elem` method, converting the flow elements into the key and element values for the newly created map.
 `E` is a bare generic parameter, so it carries no methods of its own - not even `.str` - which is why
 `Enums[E]` also needs a `.strBy: ToStrBy[E]` witness: a function turning any value of type `E` into
 something with a `.str`. `Directions.strBy -> {::};` says that witness is just the identity, which is
@@ -169,7 +169,7 @@ valid precisely because every concrete `Direction` value already has its own `.s
 That is, the result of `.map` will be equivalent to the result of `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West)`.
 
 Many enumeration types will have similar utility methods.
-Note how methods `.list` and `.map` are fully deterministic. They take no arguments: the receiver contains no information (since it is a singleton) and there are no other parameters. This means that every time that code is executed, it would produce the same result.
+Note how methods `.list` and `.map` are fully deterministic. They take no arguments: the receiver contains no information (since it is a singleton) and there are no other parameters. This means that every time that code is executed, it produces the same result.
 Fearless will cache the result of such methods, so that the computation runs only one time.
 This means that user code can call `Directions.map` many times without worrying about the performance cost of creating the map over and over again. The map is created only one time and then the system remembers it.
 
@@ -193,7 +193,7 @@ This is a minimum effort approach that works on a small scale, but does not prov
 Either the data is there, or it is not. If the data is not there, we are not giving any hint of why it is not there.
 
 Calling `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).get("North")` will result in the `North` direction, but calling `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).get("Nope")` will fail with an error.
-That is, the code will stop running and the program will report that it failed in a certain code location because the key `Nope` is not in the set `North`, `East`, `South`, `West`.
+That is, the code will stop running and the program will report that it failed in a certain code location because the key `"Nope"` is not in the set `"North"`, `"East"`, `"South"`, `"West"`.
 
 Next we will see how to handle those errors.
 

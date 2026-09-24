@@ -116,7 +116,7 @@ With the code above, we have points, directions and tanks with positions.
 Tanks can move in directions.
 Some changes in `Point`:
 - We now create the `Point` inside of `Points`.
-- We use the new syntax `'self`
+- We use the new syntax `'self`.
 - We added an `==` method, comparing two points using their coordinates.
 - Both `.move` and `==` use `self` instead of `this`.
 
@@ -165,7 +165,7 @@ NextState: F[Stack[Tank],Stack[Tank]]{
   }
 """); }/*--------------------------------------------
 
-In the code above we implement `NextState#` with a let. We define all the danger positions.
+In the code above we implement `NextState#` with a `Let`. We define all the danger positions.
 We filter only the tanks not in a dangerous location using method `.notIn`.
 We collect the space occupied by the survivor tanks: this is the union of the space occupied by the survivors in their current position and the space occupied by the survivors after they move in their heading direction.
 Finally we move our tanks if the space they want to go into is free using the method `.moveIfFree`.
@@ -181,7 +181,7 @@ if the moved tank would not be in an occupied position, we return the moved tank
 
 In the code above, there is a subtle logical bug. Can you find it?
 - Hint 1: This bug makes it so that no tank will ever move.
-- Hint 2: We collect the occupied positions for all Tanks.
+- Hint 2: We collect the occupied positions for all tanks.
 
 **Solution coming soon**
 
@@ -195,7 +195,7 @@ In the code above, there is a subtle logical bug. Can you find it?
 
 **Solution:** By checking if our specific `Tank` wants to move into an occupied position, we also check against the position this very tank wants to move into.
 With the code as written, every `Tank` will want to move into an occupied position, since we count the position they want to move into as an occupied position.
-If some other tank also wants to go into the same position, then there would be two points in the occupied Stack that are in conflict with the point our current tank wants to go into.
+If some other tank also wants to go into the same position, then there would be two points in the occupied stack that are in conflict with the point our current tank wants to go into.
 Thus, we can fix the bug by counting the number of points present in our desired next location.
 
 Note how we used the word "our" there. By doing so, we are imagining ourselves to be the tank that is moving. This is a useful psychological technique we can use as programmers to better visualise code execution.
@@ -289,7 +289,7 @@ Those are iconic features of good abstractions!
 
 Pause for a moment and appreciate the depth of our journey so far.
 
-We started from just the capacity of declaring types and methods, and we have constructed meaningful code from first principles.
+We started from just the ability to declare types and methods, and we have constructed meaningful code from first principles.
 We defined our own representations of booleans, numbers, stacks, and optionals, patiently assembling them from minimal concepts.
 
 The little tank game we have just built is not trivial. It demonstrates how complexity emerges naturally and cleanly from minimal building blocks.

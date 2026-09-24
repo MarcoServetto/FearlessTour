@@ -66,7 +66,7 @@ PromotionExample: {
   }
 """); }/*--------------------------------------------
 
-The code above compiles and produces an immutable Animal.
+The code above compiles and produces an immutable `Animal`.
 The method `Animals#` is declared to return a `mut Animal`.
 However, this call can be promoted to `imm`: `Animals` (the receiver) is an `imm` object literal, and `Points#(10,20)` (the argument) is an `imm` value.
 

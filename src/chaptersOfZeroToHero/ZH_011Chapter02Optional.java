@@ -9,9 +9,9 @@ class ZH_011Chapter02Optional {
 --SECTION-- Optionals
 
 ### Optional
-There are just two kinds of Booleans: `True` and `False`.
+There are just two kinds of booleans: `True` and `False`.
 In programming, there are many cases where there are two kinds of an abstract idea.
-Another very popular case is Optionals:
+Another very popular case is optionals:
 An optional represents the presence or absence of a certain unit of data.
 We can think of optionals as a kind of boolean where `True` holds some extra information.
 
@@ -111,7 +111,7 @@ Opt[Person] //(2) no one is here
   The method `.match` is the only method we could be overriding there!
 - We can turn `.empty->0;` into just `0;` and `.some p'->p'.age;` into just `::.age;`.
   Since those methods take a different number of parameters (zero and one), there is no ambiguity 
-  of which body satisfies which method.
+  about which body satisfies which method.
 
 
 END*/

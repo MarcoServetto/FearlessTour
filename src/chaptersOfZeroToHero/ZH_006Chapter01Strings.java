@@ -50,7 +50,7 @@ It is now 96 symbols. Those are all the symbols we can easily type on most keybo
 With this, we could express any text!
 We call numbers expressed in this form (simple) strings.
 It is very compact to represent very large numbers in this notation. For example number 5,000 would be just `` "Q8" ``.
-1,000,030 in base-96 has a representation of `` "1cM " ``. Note the space after the character ` "M" `.
+1,000,030 in base-96 has a representation of `` "1cM " ``. Note the space after the `M`.
 If we did not use the double quote character (`` " ``) it would be very hard to spot trailing spaces in our base-96 numbers.
 
 
@@ -67,13 +67,13 @@ However, those types do exist and we can code in Fearless using them.
 Note that there is still a finite number of strings in Fearless.
 
 While there are 2<sup>64</sup> instances of `Nat`,
-there are just a little more than 10<sup>4,256,895,041</sup> instances of Str.
+there are just a little more than 10<sup>4,256,895,041</sup> instances of `Str`.
 The number 10<sup>4,256,895,041</sup> is incomprehensibly large, far exceeding the number of atoms in the observable universe 10<sup>80</sup> and a googol 10<sup>100</sup>. However, it is still smaller than a googolplex 10<sup>googol</sup>.
 
 ### Strings
 
 So much about computers and programs is expressed with text. `Str` is the type of the simple strings discussed before.
-The `Str` type has many methods that are unique to strings and does not have methods allowing to treat them as numbers.
+The `Str` type has many methods that are unique to strings and does not have methods allowing us to treat them as numbers.
 That is, when working with text, there is absolutely no reason to think about the corresponding giant numbers in base 96.
 
 For example we can write `` "Hello".size`` to get `5`.
@@ -110,7 +110,7 @@ A more precise estimate is 8,122,862,820; corresponding to
 ... hmm... 
 `` "<newLine>Zb2A" ``? maybe?
 
-As you can see, when the new line character ends up in the number representation it becomes not obvious how to write it down when embedded in other text.
+As you can see, when the new line character ends up in the number representation it is no longer obvious how to write it down when embedded in other text.
 The same problem would emerge if the double quote character (`` " ``) was present; since we used double quote to delimit the border of our 
 base 96 number. And we really need to select some characters to be used to show the start and end of our base-96 numbers to avoid confusion.
 How can we handle this issue?
@@ -127,7 +127,7 @@ Similarly, `^` is the concatenation operator with double quote.
 `^` works exactly like `+`, but also jams a `` " `` in the middle.
  
 Thus `` "Hi, "^"John"^", are you really John?" `` contains `John` in double quotes.
-Alternatively, Fearless allows strings to be delimited by backticks `` ` ``; allowing to write the string above as
+Alternatively, Fearless allows strings to be delimited by backticks `` ` ``, allowing us to write the string above as
 `` `Hi, "John", are you really John?` ``.
 
 //OMIT_START

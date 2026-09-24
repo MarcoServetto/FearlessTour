@@ -17,7 +17,7 @@ Each `Nat` can be stored in exactly eight bytes, where a byte is eight bits.
 Strings use an incremental space consumption; this means that storing small strings would use
 only a small amount of memory (with 34 bytes being the minimum size; still much more than the 8 bytes needed for a `Nat`).
 
-On the other extreme, storing a single element of a string near to the maximum representable size would take about 2 GB (two gigabytes).
+On the other extreme, storing a single string near the maximum representable size would take about 2 GB (two gigabytes).
 2 GB is a large amount of memory, but nowadays we have computers with thousands of times more memory than that.
 Such a string would be very, very long. If we were to print it on conventional A4 paper with the standard 10 points font size and make a book out of it, that book would be more than 30 meters tall; taller than a 10-storey building.
 Big, but still not infinite. I mean, actually quite small,... we have many buildings taller than that!
@@ -25,7 +25,7 @@ Big, but still not infinite. I mean, actually quite small,... we have many build
 Can we represent an actual infinite set of numbers?
 Of course we would not be able to actually store in memory numbers of any size; but we can represent numbers as big as our memory allows.
 Below, you can see an implementation for Peano numbers.
-Peano is a number representation where numbers are represented as a **Zero** or a **Successor** of another number.
+Peano numbers are a number representation where numbers are represented as a **Zero** or a **Successor** of another number.
 We can encode Peano numbers in Fearless as follows:
 
 -------------------------*/@Test void peano1 () { run("""
@@ -37,6 +37,7 @@ Zero:Number { this.pred } // equivalent to .pred->this.pred
 """); }/*--------------------------------------------
 
 As you can see, it is confusingly simple and minimal.
+Note how `Zero.pred` just calls `Zero.pred` again: zero has no predecessor, and asking for it is a computation that never terminates.
 Here are some examples of Peano numbers:
 ```
 Zero  //0
@@ -63,7 +64,7 @@ Zero:Number {
   * other -> this;
  }
 """); }/*--------------------------------------------
-As you can see, this is very similar to the way we encoded those operations for finite number sets, like `Nat`.
+As you can see, this is very similar to the way we encoded those operations for finite number sets, like our clock numbers from `0` to `11`.
 The Fearless standard library does not support Peano numbers. As we have shown you, it is very easy to implement them if you need to.
 
 However, the Fearless standard library supports the `Num` type.

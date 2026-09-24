@@ -6,7 +6,7 @@ import static testHelpers.TourHelper.run;
 class ZH_021Chapter03NewOptBool {
 /*START
 --CHAPTER-- Chapter 3
---SECTION-- NewOptBool
+--SECTION-- Opt and Bool, as Declared
 
 ### Updating F, Opt and matches. Capturing reference capabilities.
 
@@ -54,11 +54,11 @@ of `mut MF[X]` can actively mutate captured references.
 ### DataType, later!
 
 Booleans, numbers, strings and many other widely used types from the standard library implement `DataType`.
-`DataType` contains a lot of useful functionalities, and we will see them in detail later. For now you just need to know that this interface exists and that we need to implement a few methods from it.
+`DataType` contains a lot of useful functionality, and we will see it in detail later. For now you just need to know that this type exists and that we need to implement a few methods from it.
 
 ### Bool, as actually declared
 
-Here you can see the core code of Bool, as it is in the actual Fearless standard library.
+Here you can see the core code of `Bool`, as it is in the actual Fearless standard library.
 First, two matcher types:
 ````
 ThenElse[R:**]: { mut .then: R; mut .else: R; }
@@ -70,7 +70,7 @@ We are not requiring the boolean to be `mut`. This is about the `ThenElse` objec
 With `mut .then` and `mut .else`, the operation inside the `.if` is able to mutate external state if need be.
 `BoolMatch` is used by `.match`: it is just like `.if`, but names the two cases `.true` and `.false`.
 
-Then we can see the Bool type declaration itself.
+Then we can see the `Bool` type declaration itself.
 It is implementing `Sealed` and `DataType[Bool,Bool]`.
 We discussed `Sealed` before: it just means that user code can not define new kinds of booleans like `MayBe`, `NotToday`, etc.
 ````
@@ -104,7 +104,7 @@ We then proceed with the methods we have seen before, implemented exactly as bef
 Overall, as you can see, we are choosing to support many different ways to do the same conceptual thing: see methods `.or` and `|`, `.if`, `?` and `.match`.
 We do this to support different programming styles instead of imposing our preferences.
 
-Next we are going to see some new methods. They all either come from `DataType` or use features coming from `DataType`
+Next we are going to see some new methods. They all either come from `DataType` or use features coming from `DataType`:
 ````
   .str -> this.imm?{ .then->"True"; .else->"False" };//this as Str, from DataType
 
@@ -169,9 +169,9 @@ Note how we can implement the `read .imm: imm Bool` method by just returning `Tr
 
 Below we show the core standard library code for optionals.
 
-`Opts` is the factory for `Opt[E]`. This is exactly what we have seen before. Note how `Opts#` returns a `mut Opt[T]`.
+`Opts` is the factory for `Opt[E]`. This is exactly what we have seen before. Note how `Opts#` returns a `mut Opt[E]`.
 This is what gives the most flexibility to the user.
-If the user needs an `imm Opt[T]`, promotion can be transparently used.
+If the user needs an `imm Opt[E]`, promotion can be transparently used.
 
 ````
 Opts:{
@@ -214,7 +214,7 @@ Opt[E:*]: _Opt[E]{
   .ifEmpty f  -> this.match{.some _ -> {}; .empty -> f#};
 ````
 
-Methods `.isEmpty` and `.isSome` simply return a boolean stating if the optional was empty or not.
+Methods `.isEmpty` and `.isSome` simply return a boolean stating whether the optional is empty or not.
 
 Method `!` is a convenience method that returns the optional content or produces an error.
 Calling this method is equivalent to claiming
@@ -237,18 +237,18 @@ However, this behaviour can be overridden using
 The two methods `Opt[E].orValue` and `Opt[E].orLazy` both return the value stored in the optional, or a default when the optional is empty:
 
 - `Opt[E].orValue` takes the default value directly.
-- `Opt[E].orLazy` takes a lazy default: a `MF[E]` only called if the optional is empty.
+- `Opt[E].orLazy` takes a lazy default: an `MF[E]` only called if the optional is empty.
 
 Method `.flow` returns a `Flow[E]`. Flows are a very important data type in the Fearless standard library and we will discuss them later.
 
 The method `.mapSome` is used to change the type of the optional, taking a function to map the content to a new type.
 
-Finally, methods `.ifSome` and `.ifEmpty` execute some `Void` returning computation in case the optional has a value or not.
+Finally, methods `.ifSome` and `.ifEmpty` execute a `Void` returning computation only when the optional has a value (`.ifSome`) or only when it is empty (`.ifEmpty`).
 
 
 
 The methods below are just to implement `DataType`.
-We have a `.str` method, allowing to easily turn optionals into a string.
+We have a `.str` method, allowing us to easily turn optionals into a string.
 ````
   .str  by  -> this.match{
     .empty -> "Opt[]";
@@ -355,9 +355,9 @@ As you can see, designing generic container types supporting a range of referenc
 You may have noticed a shift in tone. The code for `_Opt[E]` looks significantly more intimidating than the conceptual `Opt[T]` we wrote in Chapter 2.
 
 We are crossing the bridge from **conceptual logic** to **production engineering**.
-The logic remains identical: an Optional is still just "something or nothing." However, a production-grade library seamlessly handles `mut`,`imm` and `read` data.
+The logic remains identical: an optional is still just "something or nothing." However, a production-grade library seamlessly handles `mut`,`imm` and `read` data.
 
-Up to now we pushed to make sure to explain every single detail when first used. We will eventually provide all the details and teach you the ins and outs of every corner; but there is no longer a clear linear path to follow.
+Up to now we made sure to explain every single detail when first used. We will eventually provide all the details and teach you the ins and outs of every corner; but there is no longer a clear linear path to follow.
 Here we are showing you the real implementation of those very useful types, and by their nature of being used in all contexts of the language, they are interconnected with every aspect of the language.
 
 We could have hidden this complexity from you. Alternatively, we could have kept showing you more and more layers of simplified toy versions of the standard library.

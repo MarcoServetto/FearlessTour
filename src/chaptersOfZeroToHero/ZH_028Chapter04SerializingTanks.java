@@ -36,8 +36,8 @@ As you can see, `Tank` is quite similar to `Point`.
 
 #### Reading a `List[Tank]` from a file
 
-Now that we have serialisable and deserialisable tanks, we can implement the type reading from file.
-In Chapter 3 we showed this code
+Now that we have serialisable and deserialisable tanks, we can implement the type reading tanks from a file.
+In Chapter 3 we showed this code:
 ````
 //File _tank_game/_rank_app.fear
 Test: Main {sys -> Block#
@@ -80,10 +80,10 @@ InputCursorNode: ToIso[InputCursorNode], WidenTo[InputCursorNode]{
 - `sys.inputCursor` is the capability to observe the files intended as input.
 - `sys.inputCursor#` gets the first input node.
 - `sys.inputCursor# !` extracts the actual `InputCursorNode`, throwing an error if no input has been provided yet.
-- `this.in.text` then calls the text method. If the file has text, the optional will not be empty.
+- `this.in.text` then calls the `.text` method. If the file has text, the optional will not be empty.
 - With `this.in.text!` we extract the content from the optional with `!`.
 
-Note how this code simply leaks any kind of error anywhere it may raise.
+Note how this code simply leaks any error, wherever it is raised.
 There are three main kinds of error here:
 - 1 Reading the string from file
 - 2 Deserialising the string into an `Info`
@@ -135,15 +135,15 @@ Using `.map` or `.andThen` + `Try#` we can choose how to classify such details.
 We can also add information to the error messages using code as below
 ```
     .andThen{s -> Try#{Infos.fromStr(s)}
-      .context{"While deserializing Info from string"}}
+      .context{"While deserialising Info from string"}}
     .andThen{i -> Try#{i.getList.flow.map{i->Tanks.fromInfo(i)}.list}
-      .context{"While deserializing tanks from Info"}}
+      .context{"While deserialising tanks from Info"}}
 ```
 Note how the indentation helps us see the context text becoming part of the action.
 
 #### Graduation
 This is the end of Chapter 4.
-In those 4 chapters we used the tank game as an example of how to build simple behaviour.
+In these four chapters we used the tank game as an example of how to build simple behaviour.
 
 We are now going to move forward, toward other interesting examples.
 

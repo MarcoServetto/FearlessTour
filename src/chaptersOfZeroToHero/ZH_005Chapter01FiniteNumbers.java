@@ -78,7 +78,7 @@ Imagine writing a chain of `.succ` thousands or millions of calls long! It would
 
 Instead of defining `+` for every single number, we can define it using just two rules that build upon each other. This powerful technique is called an inductive definition.
 
-**Base Case:** The simplest case is adding zero. Adding zero to any number a doesn't change it: `0 + a -> a`.
+**Base Case:** The simplest case is adding zero. Adding zero to any number `a` doesn't change it: `0 + a -> a`.
 
 **Inductive Step:** How do we add a non-zero number (let's call it `this`) to another number `other`?
 - We can think of `this` as being "one more than its predecessor": `this` = `this.pred + 1`.
@@ -115,7 +115,7 @@ Number:{
 We have two implementations of `+`: one in `Number`, that is **inherited** by all the numbers except `0`. Number `0` **overrides** the method `+` with a different implementation.
 That is, types `1` through `11` inherit the `+` method from `Number`.
 
-The Method `+` above directly encodes the intended inductive logic
+The method `+` above directly encodes the intended inductive logic
 ```
 0 + other = other                       //base case
 this + other = this.pred + (other.succ) //inductive case
@@ -256,7 +256,7 @@ That is, if we want to get `7` we need to use
 In order to obtain `7`, those parentheses are needed.
 Fearless does not have operator precedence: operators are just methods,
 and when parentheses are omitted,
-the method will eagerly capture the first piece of code that looks like a parameter.
+the method will eagerly capture the first piece of code that looks like an argument.
 This behavior is called **left associativity**.
 Thus, when coding in Fearless we need to ignore the usual operator precedence
 that they tried to hammer into our heads at school, and we just follow this simpler rule
@@ -311,7 +311,7 @@ this - 0 = this                       //base case
 this - other = this.pred - other.pred //inductive case
 ```
 
-We had to introduce a method `._rightSub` since we can only reason inductively on the receiver. We used `_` at the beginning of the method to express that we do not expect to use that method directly, and that it is just a tool to implement `-`.
+We had to introduce a method `._rightSub` since we can only reason inductively on the receiver. We used `_` at the beginning of the method name to express that we do not expect to use that method directly, and that it is just a tool to implement `-`.
 
 Later we will show ways to actually hide the existence of those auxiliary methods.
 
@@ -329,8 +329,8 @@ While building `Number` was insightful, doing this for a very large range of num
 
 Numbers are a very useful abstraction to have, and it would be absurd to have to reimplement them in every Fearless program.
 Programming languages have the concept of **libraries**: useful code that has been written by someone some time in the past
-and that we can reuse without the need of cut pasting it into our project.
-In general, cut pasting code around is considered a bad practice.
+and that we can reuse without the need of copy-pasting it into our project.
+In general, copy-pasting code around is considered a bad practice.
 
 There are two kinds of libraries:
 
@@ -352,7 +352,7 @@ Crucially, `+10` or `-25` are treated as single tokens by the Fearless compiler.
 Note how those tokens, `10`, `134`, `-987` are just type names.
 Remember how we said that type names *mostly* start with upper case letters?
 Well, this is what we meant: there are some special type names that are used to directly represent numbers.
-Overall, all the type names not starting with an A to Z letter are defined by the Fearless standard library, and as such can
+Overall, all the type names starting with something other than a letter or `_` are defined by the Fearless standard library, and as such can
 not be defined by regular Fearless programmers. 
 
 #### How do they work? Like our clock, just... BIGGER!
@@ -470,11 +470,11 @@ if your program runs long enough or handles large enough inputs,
 something, somewhere, will eventually trigger an unexpected overflow if you're solely
 relying on `Nat` or `Int` without careful checks.
 
-Overflows and Underflows are a fundamental trade-off for the speed
+Overflows and underflows are a fundamental trade-off for the speed
 gained by optimized integers in most programming languages.
 This isn't a Fearless-specific issue; it's a real issue in most languages and the
 cause of a large number of bugs.
-The big issue is that Overflows and Underflows do not make the code fail, they make
+The big issue is that overflows and underflows do not make the code fail, they make
 it misbehave in dangerous ways: consider using a `Nat` to represent the dose of medicine
 to inject in a patient every second, where the doctor can press a `+1` and `-1` button
 to regulate the flow.
@@ -485,7 +485,7 @@ units of medicine the second after.
 
 The creators of the Fearless standard library did not like this outcome.
 The solution was to add a layer of checks on top of the behavior of `Int`, `Nat` and many other types.
-In this way, with the default behavior of the standard library, Overflows, Underflows and other
+In this way, with the default behavior of the standard library, overflows, underflows and other
 dangerous numeric operations with odd unpredictable results are going to stop the
 whole execution instead of performing probably nonsensical operations.
 We will discuss the details on how those checks can be tuned later in the guide.

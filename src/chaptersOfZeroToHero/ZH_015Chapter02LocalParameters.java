@@ -64,14 +64,14 @@ Theoretically, this new code achieves our goals, but most humans find this new v
 We think this is mostly because 
 1. The values for `diffX` and `diffY` are very far in the code from the declaration point of `diffX` and `diffY`.
 2. This new version is just much longer: we have to add the types for `diffX`, `diffY`, and the return type.
-3. This version is only working for two new parameters defined at the same time. What if we wanted to give a name to the result before `.softSqrt`?
+3. This version only works for two new parameters defined at the same time. What if we wanted to give a name to the result before `.softSqrt`?
 
 We first show how to solve those 3 issues in the core language, then we show a new form of syntactic sugar making this approach more readable.
 We can define a standard `Let` type allowing us to define local parameters by generalising the idea of the code above:
 ```
 Let:{ #[T,R](x: T, f: F[T,R]): R -> f#x }
 ```
-With this Let type we can define our .distance method as follows:
+With this `Let` type we can define our `.distance` method as follows:
 
 -------------------------*/@Test void distance3 () { run("""
 //|OMIT_START
@@ -140,8 +140,8 @@ Any method with two parameters (three counting also the receiver) can be called 
 
 Consider the call
 `Let#.let({p1.x - (p2.x)}, {diffX, self0 -> self0 ...})`
-Here the receiver is `Let#`, the first parameter is `{p1.x - (p2.x)}`
-and the second parameter is `{diffX, self0 -> self0 ...}`
+Here the receiver is `Let#`, the first argument is `{p1.x - (p2.x)}`
+and the second argument is `{diffX, self0 -> self0 ...}`
 
 With the `=` sugar we can rewrite that call as follows:
 `Let#.let diffX= {p1.x - (p2.x)} ...`
@@ -172,12 +172,12 @@ A:{
 //OMIT_END
 """); }/*--------------------------------------------
 
-That is, the `=` takes the binding name on its left and uses it to forge an object literal implementing a single method with two arguments.
+That is, the `=` takes the binding name on its left and uses it to forge an object literal implementing a single method with two parameters.
 The body of such a method is whatever method chain follows. 
-By using a two-argument method, the `Let` library can specify the receiver for the continuation of the call chain.
+By using a two-parameter method, the `Let` library can specify the receiver for the continuation of the call chain.
 In the case of the `Let[R]`, it is just the same `Let[R]` object; we will see later cases where it is useful to change the receiver to a different value or type.
 
-Let's see again this code, comparing line by line to see what changes thanks to this sugar
+Let's see again this code, comparing line by line to see what changes thanks to this sugar:
 
 ```
 .distance(p1:Point, p2:Point):Nat->Let#

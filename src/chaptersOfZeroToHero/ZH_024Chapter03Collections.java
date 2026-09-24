@@ -92,7 +92,7 @@ The `.any` checks if any of the elements satisfy the predicate `{::.cats.isEmpty
 That is, the predicate is just a function returning a boolean.
 Here we are searching if there is a person that sadly lacks cats.
 This operation does not mindlessly search all the persons: as soon as the first catless person is found, we have our answer and we can return a result without any more searching.
-Similarly, `.none` is true only if none of the elements respect the predicate.
+Similarly, `.none` returns `True` only if none of the elements respect the predicate.
 Method `.all` instead checks that all of the elements respect the predicate, and it stops when it finds an element that does not.
 
 
@@ -137,7 +137,7 @@ Method `.join` works in the same conceptual way.
 ## Lists
 We have seen that we can call `.list` to produce a list out of our flows.
 We can also use `Lists#(a,b,c,d...)` to create lists directly.
-Lists are similar to the Stacks we discussed before, but they have different functionalities:
+Lists are similar to the stacks we discussed before, but they have different functionalities:
 
 
 ### Limited size and failures:
@@ -175,7 +175,7 @@ The element in position `x, y` can be accessed using the formula
 
 On the other hand, if we have the `index`, we can recover the original `x, y` coordinates as:
 `y = index divided by 5` and `x = remainder of the division between index and 5`
-This bidirectional mapping makes it easy to simulate a 2D grid using a flat array.
+This bidirectional mapping makes it easy to simulate a 2D grid using a flat list.
 
 A type representing the grid could look like this:
 
@@ -187,7 +187,7 @@ Grid:{
   .x(index: Nat): Nat -> index .getRem 5;
   }
 ```
-Note: since `index` is a Nat, the division is rounded down (**integer division**).
+Note: since `index` is a `Nat`, the division is rounded down (**integer division**).
 `.getTruncDiv` is short for "get, truncated division": it divides and then truncates (cuts off) whatever comes after the decimal point.
 For example `13 .getTruncDiv 5 = 2`; and the remainder/`.getRem` operation returns the remainder of the
 integer division: `13 .getRem 5 = 3`
@@ -202,7 +202,7 @@ Instead, `List[E].as` is a zero-cost retyping: the compiler checks that the func
 Animal: { .name: Str; }
 Dog: Animal { .name: Str; .bark: Str -> "Woof"; }
 ```
-all of this works too:
+all of the following works:
 ```
   Lists#(1,2,3).as{::}                                              //List[Nat] to itself
   .greetAll(pets: List[mut Dog]): List[Dog] -> pets.as{::}          //List[mut Dog] to List[Dog]
@@ -225,7 +225,7 @@ the capability of the list and the capability of the elements. This gives us a r
 Since reference capabilities impact the whole reachable object graph, an object storing mutable objects needs to be mutable too.
 Thus, we need to use `mut` twice.
 Using `.get` we can obtain `mut` references to the contained animals and mutate them.
-If we have a parameter `animals` containing `[bunny,bunny]`; that is, the same bunny twice, we can call `animals.get(0).run` and the bunny will mutate; it will now be in a new position. Since the same bunny is contained in the list twice, `animals.get(1).location` will also result in the same updated location.
+If we have a parameter `animals` containing `[bunny,bunny]`; that is, the same bunny twice, we can call `animals.get(0).run(5)` and the bunny will mutate; it will now be in a new position. Since the same bunny is contained in the list twice, `animals.get(1).location` will also result in the same updated location.
 You can think of it as a hard container of soft elements, for example a table with soft and malleable clay sculptures permanently glued into it.
 
 **Unclear and confusing options:**
@@ -278,8 +278,8 @@ The `List[E]` type offers dedicated methods for those kinds of operations.
 To obtain the desired result we can just write `tanks.withAlso(5,newTank)`.
 If we wanted to replace the tank in position 5, we could write `tanks.with(5,newTank)`; and if we wanted to remove the tank in position 5 to get a list of only 9 tanks, we could write `tanks.without(5)`.
 
-Note how those 3 methods do not mutate the current list but create a new List that looks like the old one but with one specific change.
-This is the recommended way to handle lists in Fearless, but in the rare case where either performance or observing mutation via aliasing is crucial, you can use the type `EList[E]` (editable list) allowing to add, remove and update elements in place.
+Note how those 3 methods do not mutate the current list but create a new list that looks like the old one but with one specific change.
+This is the recommended way to handle lists in Fearless, but in the rare case where either performance or observing mutation via aliasing is crucial, you can use the type `EList[E]` (editable list) allowing us to add, remove and update elements in place.
 Sometimes `EList[E]` is used as a builder/accumulator to eventually create a `List[E]`. Since using `EList[E]` is quite rare we do not discuss it here in detail.
 
 ## Comparing objects
@@ -294,7 +294,7 @@ The type `OrderMatch` mediates the outcome of a comparison between two elements.
 OrderMatch[R:**]: { mut .lt: R; mut .eq: R; mut .gt: R; }
 ````
 This looks like a standard matcher with three possible outcomes: either the data is `lt` (less than), `eq` (equal), or `gt` (greater than).
-But.. what is this data? Here we are talking about the result of a comparison operation. There is no need to materialise the data, we can just pass the matcher itself.
+But... what is this data? Here we are talking about the result of a comparison operation. There is no need to materialise the data, we can just pass the matcher itself.
 Consider this code:
 ````
 Order[T]:{
@@ -365,14 +365,14 @@ Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
 ````
 Now we can implement `==` on `Order[T]` and `Point` will automatically get an `==` method.
 Right now it does not look like a great result, we implement one method `.cmp` to get one method `==`.
-But.... there are many more convenience operators we can define on top of `.cmp`.
+But... there are many more convenience operators we can define on top of `.cmp`.
 `==` equal, `!=` different, `<` less than, `<=` less or equal, `>` greater than, `>=` greater or equal.
 As you can see, this is already 6 methods.
 
 Still, the implementation of `.cmp` is much longer than we would like.
 Can we build some abstraction to make it more direct?
 It is very verbose because we are repeating checks `<` and `>` for the components.
-But.. those components implement `Order[T]` too, so we could call `.cmp` directly.
+But... those components implement `Order[T]` too, so we could call `.cmp` directly.
 
 
 ````
@@ -476,7 +476,7 @@ OrderBy[T,K]:{
 Example usage: `{::.age}.then{::.name}` would compare a person by age first and name second. `{::.age}.then ByCats` would compare by age first and by total cats weight second.
 - Method `.view` allows us to compare entities of type `A` if we can convert them into a `T` for which we have an `OrderBy`.
 Example usage: `ByCats.view{::.driver}`
-would compare a `Car` by the total cats weight of its `.driver`.
+would compare cars by the total cats weight of their `.driver`.
 
 Here are some more boring examples:
 ```
@@ -495,7 +495,7 @@ Finding the max from some elements is not as obvious as it looks; there are two 
 
 Given this, the best design for `.max` and `.min` is to work as filters, and just remove all the elements that are not the max or the min.
 In this way, the empty flow would stay empty, and all the biggest/smallest elements would be preserved.
-Assuming a car type with a `Person` driver, here you can see some interesting usage examples.
+Assuming a `Car` type with a `Person` driver, here you can see some interesting usage examples.
 ```
 myCars.flow
   .max{::}//if Car implements Order[Car]
@@ -505,7 +505,7 @@ myCars.flow
   .get //this requires that there is exactly one max
 myCars.flow
   .max({::.driver}.then Older) //here we check using the Older comparator
-  .getOpt//this requires that there is exactly zero or one max
+  .getOpt//this requires that there is at most one max
 myCars.flow
   .max(OrderByCaseInsensitive.view{::.driver.name}.then {::.driver.age}) //here names ignoring case
   .first //this gives us an Opt[Car] and allows for further max cars to be discarded.
@@ -568,8 +568,8 @@ OrderHash[T]:Order[T],ToStr{
 ````
 By adding `ToStr` we are able to automatically derive 12 assert methods helping to check expectations over `T`; the conversion to string is needed for decent error messages.
 Moreover this allows maps to be much more consistent with lists when it comes to printing: both need to just take a way to print the element; all the functionalities about map keys are provided once and for all at map initialisation time.
-Note how we also add `.close` in the other direction: before we have seen
-`.close:T` allowing to turn `Order[T]` into `T`. This one allows us to turn a `T` parameter into an `OrderHash[T]`. With this we can convert in both directions.
+Note how we also add `.close` in the other direction: earlier we saw
+`.close:T` allowing us to turn `Order[T]` into `T`. This one allows us to turn a `T` parameter into an `OrderHash[T]`. With this we can convert in both directions.
 This is again needed in the error messages, to turn a `T` into an `OrderHash[T]` that possesses a `.str` method.
 
 ````
@@ -633,7 +633,7 @@ myPersons.flow
 ```
 Here we pass two parameters: an `OrderHashBy`, that as usual can be the identity if our keys implement `OrderHash[K]`, and a literal specifying how to create the key and the element from the objects inside the flow.
 
-Finally, sets of type `Set[K]` are another application of hashing. Instead of mapping keys to elements, it simply remembers if a key is present or not. That is, `Set[K]`'s most important methods are `.size`, `.isEmpty` and `.contains`.
+Finally, sets of type `Set[K]` are another application of hashing. Instead of mapping keys to elements, they simply remember whether a key is present or not. That is, `Set[K]`'s most important methods are `.size`, `.isEmpty` and `.contains`.
 Sets also support `.flow`, but unlike lists and maps, a set's flow order follows the sorted order given by its `OrderHash`, not the insertion order.
 See below some examples of using sets.
 ```
@@ -655,7 +655,7 @@ In the same way there is an `EList[E]` type that is an editable variant of `List
 ### List, Opt and ordering.
 
 Finally, `List[E]` and `Opt[E]` do not implement `Order[List[E]]`/`Order[Opt[E]]` or `OrderHash[List[E]]`/`OrderHash[Opt[E]]`.
-They do not need to and they may not contain ordered elements.
+They can not, since their elements may not be ordered.
 If we want to sort a list of ordered elements we can do
 ````
 myList.flow
@@ -666,7 +666,7 @@ However, how can we sort a list of lists?
 
 ### Introducing `Order[T,E]` and `OrderHash[T,E]`.
 
-To order a collection we need to reason on two generic types:
+To order a collection we need to reason about two generic types:
 - The type of the current collection `T`.
 - The type of the collection elements `E`.
 The idea is that by providing an `OrderBy` for the elements, we can produce an
