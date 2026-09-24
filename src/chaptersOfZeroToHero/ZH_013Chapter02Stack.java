@@ -27,7 +27,7 @@ If you want to add another chair, you will add it to the top of the stack. If yo
 All kinds of stacks work just like chairs: the last chair added is the first one removed.
 
 Stacks adhere to a last-in, first-out (LIFO) principle, making them ideal for tasks like undo mechanisms.
-We will now see how to define Stacks of any kind of entities.
+We will now see how to define stacks of any kind of entities.
 
 -------------------------*/@Test void stack1 () { run("""
 Stack[T]: {
@@ -140,7 +140,7 @@ With this representation problem sorted out, we can now reduce
 19. ...
 20. `6`
 
-This again, is long and verbose. When we have methods like `.match`, or methods with well understood behaviour, like `Nat+`, we can simply skip some intermediate steps and get the following:
+This, again, is long and verbose. When we have methods like `.match`, or methods with well understood behaviour, like `Nat+`, we can simply skip some intermediate steps and get the following:
 
 01. `Example.sum([3,2,1])`
 02. `3+( Example.sum([2,1]) )`
@@ -173,18 +173,24 @@ StackMatch[T,R]: {
 """); }/*--------------------------------------------
 
 Note how in the same way `+` adds the element at the top of the stack,
-`++` adds all the elements at the top of the stack too.
+`++` adds all the elements of the receiver at the top of the argument stack.
 
 This code shows an interesting use of `this`.
 Inside method `Stack[T]+` we define a stack composed of the outer stack `this` and the top element `e`.
 This means that the `this` binding in the body of `Stack[T]+` refers to the tail of the stack we are returning.
-Thus, as for before, we write `.match(m) -> m.elem(e, this);` to implement the match method.
+Thus, as before, we write `.match(m) -> m.elem(e, this);` to implement the match method.
 However, we use `e` and `this` also to implement the `Stack[T]++` method.
 
 Consider the method body `this ++ other  + e`.
-This code first calls `Stack[T]++`  with code `this ++ other`.
+This code first calls `Stack[T]++` with code `this ++ other`.
 Then, `Stack[T]+` is called on the result of `this ++ other`. This adds `e` at the top of the result of `this ++ other`.
 That is, the ultimate result will contain `e` as the first element. Remember that `e` was the first element of the current stack.
+
+Is `this ++ other` a recursive call?
+If `this` is a non-empty stack, the call runs this very same `++` implementation again;
+if `this` is the empty stack, the call runs the other `++` implementation, the one declared directly in `Stack[T]`.
+Which implementation runs is only decided by the receiver while the code executes.
+This is why the terminology of recursion is not really that well defined.
 
 With our compact stack representation, we can see the following reduction with body `this ++ other + e`.
 1. `[1,2,3] ++ [4,5,6]`

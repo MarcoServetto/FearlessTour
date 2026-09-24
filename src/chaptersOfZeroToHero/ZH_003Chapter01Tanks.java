@@ -40,15 +40,14 @@ type inference, syntactic sugar is also designed to avoid redundant code.
 
 Syntactic sugar allows representing specific well known coding patterns using more concise and more readable syntax.
 
-Syntactic Sugar does not change the meaning, it just provides a shorter way to write the exact same thing. Think of it like a contraction in English: "don't" instead of "do not". It is shorter, but the underlying meaning is identical.
+Syntactic sugar does not change the meaning, it just provides a shorter way to write the exact same thing. Think of it like a contraction in English: "don't" instead of "do not". It is shorter, but the underlying meaning is identical.
 
 We will now see how a combination of syntactic sugar and inference can make the
 code for `Direction` even more compact.
 The only abstract method in `Direction` is `.turn`,
 so when implementing `Direction` it is obvious that we want to implement `.turn`.
-In this way, the syntactic sugar allows us to write the following, shorter version of the code we have seen before.
-That is, to implement `Direction` we must implement `.turn`.
 Fearless knows this, thus in this case we can omit `.turn->`.
+In this way, the syntactic sugar allows us to write the following, shorter version of the code we have seen before.
 Of course this is a more general concept, and there
 are many other situations where we can omit the method name (and sometimes also the arrow)
 when we implement a method.
@@ -95,7 +94,7 @@ In this way, the object literal `North` evaluates into a standard object of type
 
 ### Example: Tank with turret
 Now that we have the abstract type `Direction` we can make a simple
-`Tank` object. This tank will have two Directions;
+`Tank` object. This tank will have two directions:
 - `.heading`: the direction the tank is moving, and
 - `.aiming`: the direction the tank gun is aiming.
 
@@ -227,12 +226,12 @@ In this case, our `Tanks.of` method requires us (the developer) to specify the i
 
 That is, a receiver can be any expression, not just an object literal.
 
-- What is the first parameter of the method call `Tanks.of(North.reverse,East)`? It is `North.reverse`.
+- What is the first argument of the method call `Tanks.of(North.reverse,East)`? It is `North.reverse`.
 
 That is, method arguments can also be any expression.
 
 #### English to Fearless Conversion
-Fearless code can be understood by aligning over it some natural language.
+Fearless code can be understood by aligning some natural language over it.
 Consider the following example where we will describe some desired features of our `Tanks` code in English and then show how they can be
 implemented in Fearless code.
 - **English version**
@@ -258,7 +257,7 @@ However, an object literal expression is just a special kind of type declaration
 Before, we directly used type names, like `North`, as object literals.
 As we discussed, the object literal `North` is desugared into `SomeName147: North {}`.
 All object literals are type declarations. Some object literals do not look like
-type declarations because of the sugar allowing to omit `SomeName147:` and 
+type declarations because of the sugar allowing us to omit `SomeName147:` and 
 because of the general rule that empty brackets like `{}` can be omitted.
 
 This use of type declarations as objects is interesting because we
@@ -386,7 +385,7 @@ Adding spaces around all tokens, this would look as follows:
 ```
 Bar # ( Add |- )
 ```
-This is a call of the method called `#` on the receiver `Bar`, and the single parameter is a call of the method called `|-` on the receiver `Add`.
+This is a call of the method called `#` on the receiver `Bar`, and the single argument is a call of the method called `|-` on the receiver `Add`.
 Method `|-` takes zero parameters.
 
 On the other hand, parameter names start with a lower-case letter, and
@@ -430,7 +429,7 @@ in our mental model we do not think that turning is the main thing we do with di
 When coding it is important to distinguish the intended/ideal state of the code from the current incomplete version that we are working with, and to name concepts according to such ideal state and not the current sorry version of it.
 
 We can now consider adding some methods to `Tank`:
-for example the capacity of turning the turret!
+for example the ability to turn the turret!
 To do so, we only need to update the code of the type declaration for `Tank`:
 -------------------------*/@Test void tanksHashUse() { run("""
 //OMIT_START

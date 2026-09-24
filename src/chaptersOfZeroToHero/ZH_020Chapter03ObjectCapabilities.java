@@ -6,7 +6,7 @@ import static testHelpers.TourHelper.run;
 class ZH_020Chapter03ObjectCapabilities {
 /*START
 --CHAPTER-- Chapter 3
---SECTION-- ObjectCapabilities
+--SECTION-- Object Capabilities
 
 ### Object capabilities and Main
 
@@ -32,7 +32,7 @@ If you are in this second group, you are welcome! This guide is for you. Thank y
 Please, follow along with those steps:
 Go to <a href="https://github.com/FearlessLang/StandardLibrary/tree/main/fearlessStandalone">Fearless Compiler</a>
 
-Download the file appropriate to your Operating System,
+Download the file appropriate to your operating system,
 put it in some folder and unzip it.
 That is the Fearless compiler. Congrats, now you have it on your machine.
 

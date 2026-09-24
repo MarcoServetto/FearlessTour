@@ -40,7 +40,7 @@ The first line of defence is syntax.
 A syntax error, like unbalanced parentheses, signals that Fearless does not understand our instructions.
 
 A type error, however, indicates that our instructions, though understood, do not make logical sense within the defined system.
-We need two directions to create a `Tank`, and the code is trying to smuggle two `Int` values as `Directions`.
+We need two directions to create a `Tank`, and the code is trying to smuggle two `Int` values as `Direction`s.
 Creating a `Tank` requires two `Direction` values, not two `Int` values. The type system detects and blocks such discrepancies.
 
 > Formally, the code using `Tanks` must respect the constraints that the type declaration for `Tanks` requires.
@@ -95,7 +95,7 @@ Now both `Point` and `Rectangle` have two methods each, instead of `Rectangle` h
 Consider now the user code:
 `Rectangles#(Points#(+1,+3),Points#(+10,+25))`
 The code is slightly longer, but it is more structured and more understandable.
-Moreover, it is likely that in many cases the constructor will be able to take points directly, as in `Rectangles#(p1,p2)`, where `p1` and `p2` are parameters in scope.
+Moreover, in many cases the user will already have the two points at hand, and can simply write `Rectangles#(p1,p2)`, where `p1` and `p2` are parameters in scope.
 
 There are still ways the user can get it wrong: they can confuse `x` and `y` coordinates, and they can confuse the meaning of the two points.
 We now address the first issue.
@@ -181,7 +181,7 @@ West : Direction {North }
 """); }/*--------------------------------------------
 
 Is there 'meaning' in this code?
-Sure, as humans we have a lot of knowledge in our head, so we know what `North` and `East` mean, we understand what a `Direction` is supposed to be, especially if in the context of `North` and `East` being directions.
+Sure, as humans we have a lot of knowledge in our head, so we know what `North` and `East` mean, we understand what a `Direction` is supposed to be, especially in the context of `North` and `East` being directions.
 Same for `Point`: we know what a `Point` is and we understand what `x` and `y` mean in this context.
 But, the program does not know anything about this background knowledge.
 The program does not give any external meaning to names. We could have written the code using abstract names and nothing would change for the program. That is, the code below is equivalent to the code above:

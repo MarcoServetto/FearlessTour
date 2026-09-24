@@ -13,7 +13,7 @@ class ZH_010Chapter02Booleans {
 If you have done some logic at school, you will be familiar with the concepts of `True`, `False`, `and`, `or` and `not`.
 
 Anyway, we are going to recall them now:
-In the same way we have only the four cardinal `Direction`s, we only have two fundamental truth values: `True` and `False`. They are called the `Bool`s or the booleans, in memory of George Boole, who laid the groundwork for what is now known as Boolean algebra.
+In the same way we have only the four cardinal `Direction`s, we only have two fundamental truth values: `True` and `False`. They are called the `Bool`s or the booleans, in honour of George Boole, who laid the groundwork for what is now known as Boolean algebra.
 We can easily encode booleans in Fearless as follows:
 -------------------------*/@Test void bool1 () { run("""
 //|OMIT_START
@@ -86,14 +86,14 @@ All of those lines reduce in a single step:
 - <code class="ws">True  .or  False --&gt; True </code>  because `True.or` returns `this`
 - <code class="ws">False .and True  --&gt; False</code> because `False.and` returns `this`
 
-The code above shows that we can combine booleans to get more booleans. This is similar to what we have seen with `Nat` and `Rotation`. But the real power comes when we use them to make decisions: to execute different pieces of code depending on whether something is `True` or `False`. Crucially, Booleans are a better form of `Fork`.
+The code above shows that we can combine booleans to get more booleans. This is similar to what we have seen with `Nat` and `Rotation`. But the real power comes when we use them to make decisions: to execute different pieces of code depending on whether something is `True` or `False`. Crucially, booleans are a better form of `Fork`.
 - There are two kinds of `Bool` in the same way there are two kinds of `Fork`,
 - We can compose `Bool`s with `.and`, `.or` and `.not`.
 - We can obtain `Bool`s from many other data types using `==` and `!=`.
 
 Can we add a concept of choice on our booleans, as we did for `Fork`?
 
-This is where the Generics we saw earlier become essential. We need a way to represent the two possible code paths (what to do if `True`, what to do if `False`) and the result they produce. Remember the `Fork` example where `.choose[Val]` worked with any type `Val`? We need something similar here. Let's define a method `Bool.if`, that can produce a result of any type, let's call that type `R`, for Result.
+This is where the generics we saw earlier become essential. We need a way to represent the two possible code paths (what to do if `True`, what to do if `False`) and the result they produce. Remember the `Fork` example where `.choose[Val]` worked with any type `Val`? We need something similar here. Let's define a method `Bool.if`, that can produce a result of any type, let's call that type `R`, for Result.
 To provide the two code paths we need a container object. We can define a generic type called `ThenElse[R]`. The `[R]` is a type parameter, just like `[Val]` was in `Fork`. It stands for the Result type that both code paths must ultimately produce.
 
 -------------------------*/@Test void bool2 () { run("""
@@ -155,7 +155,7 @@ use base.Void as Void;
 //OMIT_END
 Bot: {
   .message(s: Str): Str ->
-    // Outer Check: Is the message `hello`?
+    // Outer Check: Is the message "hello"?
     s == "hello" .if { //here R = Str
       .then -> "Hi, I'm Bot; how can I help you?";
       .else -> // Logic for when s is NOT "hello"
@@ -169,14 +169,14 @@ Bot: {
 }
 """); }/*--------------------------------------------
 
-The `.message` method uses an `.if` checking whether the input `s` is equal to `hello`.
+The `.message` method uses an `.if` checking whether the input `s` is equal to `"hello"`.
 The call is conceptually
-``(s ==(`hello`)).if[Str]({..})``
-but we can just write ``s == `hello` .if {..}``
+`(s ==("hello")).if[Str]({..})`
+but we can just write `s == "hello" .if {..}`
 by removing parentheses and relying on generic type inference.
 The `[Str]` indicates that both the `.then` and `.else` branches must produce a `Str` result.
 The first `.then` branch is simple: it just returns the greeting string.
-The first `.else` branch contains another `.if` call, nested inside. This inner check sees if `s` is equal to `bye`.
+The first `.else` branch contains another `.if` call, nested inside. This inner check sees if `s` is equal to `"bye"`.
 This nesting allows us to create more complex decision trees.
 
 #### Visualizing reductions
@@ -393,8 +393,8 @@ In particular `F[R]` is often used to represent delayed computation. By turning 
 
 As an example:
 We have seen how the `.and` and `.or` methods compute the overall result from two boolean expressions and then produce a cumulative result.
-However, in the case of `False .and ...` we do not need to compute the second expression. The result will be False anyway.
-Same for `True .or ...`. The result will be True anyway.
+However, in the case of `False .and ...` we do not need to compute the second expression. The result will be `False` anyway.
+Same for `True .or ...`. The result will be `True` anyway.
 If the computation for the second part of the `.and` / `.or` was very intricate this could save a lot of time.
 We can define **short-circuited** versions for `.and` and `.or`, called `&&` and `||` as shown below:
 
@@ -489,21 +489,21 @@ Much.code && { Slow.code  && {ATonOf.code}} // version 2
 """); }/*--------------------------------------------
 In both versions, if `Much.code` reduces to `False`, we will not execute `Slow.code` or `ATonOf.code`.
 If `Much.code` reduces to `True`, and `Slow.code` reduces to `False`, we will not execute `ATonOf.code`.
-Both versions (note the different parentheses) are equivalent, and reduce in pretty much the same amount of time.
+Both versions (note the different placement of the curly brackets) are equivalent, and reduce in pretty much the same amount of time.
 
 On the other hand, if we used the `Bool.and` method
 ```
 Much.code .and (Slow.code) .and (ATonOf.code)  // version 1
 Much.code .and (Slow.code .and (ATonOf.code) ) // version 2
 ```
-both versions would always run all the three computations.
+both versions would always run all three computations.
 
 Note how `{Slow.code}` is an object literal of type `F[Bool]`.
 The full version would be:
 ```
 Anon1[]:F[Bool] { #[](): Bool[] -> Anon2[]:Slow[]{}.code[](); }
 ```
-That is, since the method `F[Bool]#` has exactly zero arguments, we can omit both the method name `#` and the arrow `->` when implementing it.
+That is, since the method `F[Bool]#` has exactly zero parameters, we can omit both the method name `#` and the arrow `->` when implementing it.
 
 We can now compare and contrast the above with the syntax
 ```
@@ -517,7 +517,7 @@ implements the method `F[Direction,Direction,Tank]#`.
 
 Note the presence of `->` in `h,a ->`.
 The arrow `->` is needed here since we have two parameters: `h,a`.
-Instead, since method `F[Bool]#` takes zero arguments, we implement it with just `{Slow.code}` instead of having to awkwardly write `{-> Slow.code}`.
+Instead, since method `F[Bool]#` takes zero parameters, we implement it with just `{Slow.code}` instead of having to awkwardly write `{-> Slow.code}`.
 
 Finally, consider again
 ```
@@ -537,7 +537,7 @@ Executing `Slow.code` would either never terminate or produce some kind of error
 In that case, if `Much.code` reduces to `False`, the first line simply reduces to `False`, while the second line would either never terminate or produce an error.
 That is, while `Slow.code` never terminates, `{Slow.code}` is a value of type `F[Bool]`. Non-termination only happens when and if method `#` is called on that value.
 
-In the rest of the guide we will see other situations where lazy and eager operations can have radically different behaviours. Overall, thinking that they are equivalent can be useful in first approximation, but can hurt us down the line.
+In the rest of the guide we will see other situations where lazy and eager operations can have radically different behaviours. Overall, thinking that they are equivalent can be useful as a first approximation, but can hurt us down the line.
 
 When programming we often need to **keep in mind multiple levels of abstraction and multiple levels of precision**.
 At a coarser level of precision, `.and` and `&&` are equivalent; at a finer level of precision, we can see differences. Occasionally, fine behavioural details can bubble up the ladder of abstractions and become relevant.

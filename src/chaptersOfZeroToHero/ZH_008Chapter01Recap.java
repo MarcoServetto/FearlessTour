@@ -13,7 +13,7 @@ class ZH_008Chapter01Recap {
 #### Language Concepts
 - Evaluation: An expression evaluates to a result by slowly progressing into a more and more reduced form
   - Example: `North.turn.turn --> East.turn --> South`
-- Supertype: Types are connected by supertype relations allowing to generalise concepts.
+- Supertype: Types are connected by supertype relations allowing us to generalise concepts.
 This is also used for code reuse.
   - Example: `North` and `South` are kinds of `Direction` so `Direction` is a supertype of `North` and `South`.
 - Implement(s): By implementing a supertype a type reuses the code of the supertype and is required to satisfy the logical contracts of the supertype. Satisfaction of those (informal) contracts is the responsibility of the programmer, but the type system can catch some common violations. Supertypes and Implements help code reuse and enable dynamic dispatch.
@@ -38,7 +38,7 @@ This is also used for code reuse.
   - Examples: `Direction`, `Rotation`, `Tank`
   
 - Method name:
-  - Relevance: giving names to methods (aka operations) allows to mnemonically connect behaviour with names.
+  - Relevance: giving names to methods (aka operations) allows us to mnemonically connect behaviour with names.
   - Syntax: dot `.` followed by lowercase identifier, including letters, numbers, underscore but no spaces, that can also have `'` at the end; or operator symbols.
   - Examples: `.foo`, `._bar`, `._b12`, `.baz'`, `+`, `++`, `+>`, `<=`, `<#--`
   
@@ -48,7 +48,7 @@ This is also used for code reuse.
   - Examples: `foo` in `.baz(foo:Bar)`, `.baz(foo)` or `{foo->..}`
   
 - Argument:
-  - Relevance: passing expressions to method calls allows to provide a value to the parameter. This value is then used during the method execution in order to compute the method result.
+  - Relevance: passing expressions to method calls allows us to provide a value to the parameter. This value is then used during the method execution in order to compute the method result.
   - Syntax: any expression
   - Examples: `1+2` or `foo` in `this.baz(1+2)`, or in `this.baz(foo)`
   
@@ -56,9 +56,9 @@ This is also used for code reuse.
   - Relevance: methods contain expressions (instructions/behaviour) and allow us to run/execute/start those instructions.
   They can be abstract or concrete.
   - Examples:<BR/>
-  `mut .foo(a: A): B;` (abstract method),<BR/>
-  `mut .foo(a: A): B -> a.toB;` (concrete method full form),<BR/>
-  `mut .foo(a)-> a.toB;` (concrete method inferred types),<BR/>
+  `.foo(a: A): B;` (abstract method),<BR/>
+  `.foo(a: A): B -> a.toB;` (concrete method full form),<BR/>
+  `.foo(a)-> a.toB;` (concrete method inferred types),<BR/>
   `a->a.foo` or `::.foo` inside `{a->a.foo}` and `{::.foo}` 
   (concrete method inferred name and types).
 

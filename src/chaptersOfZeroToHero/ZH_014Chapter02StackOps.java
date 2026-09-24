@@ -8,7 +8,7 @@ class ZH_014Chapter02StackOps {
 --CHAPTER-- Chapter 2
 --SECTION-- Operations on Sequences
 
-###  General operations on sequences
+### General operations on sequences
 
 Above, we have shown how to make an operation over the stack using match
 ```
@@ -122,8 +122,8 @@ ExampleFluent: { #(ns: Stack[Nat]): Nat -> ns
 
 This is the first example we see of fluent programming.
 Fluent programming is a big deal in practical Fearless code.
-The general idea is that some data types (Stack in this case) can have many useful/flexible methods, returning instances of types with many useful/flexible methods.
-Usually, those methods are so useful and flexible because they take as a parameter instructions telling them what to do.
+The general idea is that some data types (`Stack` in this case) can have many useful/flexible methods, returning instances of types with many useful/flexible methods.
+Usually, those methods are so useful and flexible because they take as an argument instructions telling them what to do.
 
 That is, a large amount of Fearless code looks like the following
 ```
@@ -164,7 +164,7 @@ So, what do we write instead of ??? in the code above?
     .filter ???; //Inductive case
 ```
 Well, first we need to figure out the type. Method `Stack[T].filter` does not transform the elements, it just selects which ones to keep. Thus the return type is going to be the same: `Stack[T]`.
-As an argument, we need to take a function that tells `.filter` if the element should be kept or removed.
+As a parameter, we need to take a function that tells `.filter` if the element should be kept or removed.
 We can use a function returning a `Bool`: `True` will mean "keep the element" and `False` will mean "discard the element".
 So, the first filter is going to be
 ```
@@ -179,8 +179,8 @@ What about the second `.filter`? There we have `this` and `e` in scope.
     };
 ```
 Here we can use an `.if` on the result of `f#(e)`.
-In the `.then` case, we propagate the operation on the stack tail and we add the current element.
-In the `.else` case, we just propagate the operation on the stack tail.
+In the `.then` case, we propagate the operation to the stack tail and we add the current element.
+In the `.else` case, we just propagate the operation to the stack tail.
 
 Here is the full code again.
 

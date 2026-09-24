@@ -11,8 +11,8 @@ class ZH_022Chapter03ShowTanks {
 ### Visualising the Tank game
 
 Now that we know how to write a full Fearless program, we can write a program reading tanks from a file and running the Tank game on the console.
-ASCII art is a well known way to visualise simple games. We will use this to visualise the state of a Tank.
-Below is the representation of a tank heading `East` and aiming `North`, and another one heading `North` and aiming `West`
+ASCII art is a well known way to visualise simple games. We will use this to visualise the state of a tank.
+Below is the representation of a tank heading `East` and aiming `North`, and another one heading `North` and aiming `West`:
 
 ```
 / | \  / - \
@@ -245,7 +245,7 @@ This code will print
  \ _ /
 ```
 
-We can now rewrite state change using features from the standard library instead of our poor man's `Stack[E]`.
+We can now rewrite `NextState` using features from the standard library instead of our poor man's `Stack[E]`.
 
 ```
 //File _tank_game/next_state.fear
@@ -267,13 +267,13 @@ NextState:{
 ```
 The main difference is that we are now using `List` instead of `Stack`.
 A `List` is not very different from a `Stack`. It has many more useful methods and the implementation is more efficient.
-Note how we are not using `.map` directly on the list but we call the `.flow` method before.
+Note how we are not using `.map` directly on the list, but we call the `.flow` method first.
 
 The idea is that the standard library does not define those useful `.map`/`.filter`/`.fold` methods independently for each kind of sequence.
 Instead, there is a unified concept of `Flow`. Many different data types can be converted into flows, the elements can be manipulated using a very expressive set of `Flow` methods, then the result can be converted back into some supported data type.
 
 In the code above, the `List[E].flow` method returns a `Flow[E]` and `Flow[E].filter` returns another `Flow[E]`, while `Flow[E].map` returns a `Flow[R]` (for example, `tanks.flow.map{..}` above turns a `Flow[Tank]` into a `Flow[Point]`).
-`Flow[E].isEmpty` is true if the flow is empty, `Flow[E].size` returns the size of the flow, and `Flow[E].list` returns a `List[E]` with the same elements as the flow.
+`Flow[E].isEmpty` returns `True` if the flow is empty, `Flow[E].size` returns the size of the flow, and `Flow[E].list` returns a `List[E]` with the same elements as the flow.
 We will see many operations on flows by example in the next few pages.
 
 Here you can see all the code of this section packed together.

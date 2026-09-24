@@ -19,7 +19,7 @@ Let's start with a cryptic definition:
 
 If you are new to programming, the sentence above was probably incomprehensible. Don't worry - we will unpack these ideas piece by piece and build understanding through examples.
 
-Often programming is taught as a tool to reach a practical goal, like building a website, a video-game, or automating a task.
+Often programming is taught as a tool to reach a practical goal, like building a website, a video game, or automating a task.
 That is, programming is often dressed as a necessary hurdle to "get over with" so you can achieve something else. We aim to move beyond treating programming as an obstacle.
 
 We see programming as an artistic expression demanding abstract thinking, focused concentration, and persistence in problem-solving. These are muscles that grow stronger with practice. Programmers find intrinsic satisfaction in the process of careful logical construction itself.
@@ -88,7 +88,7 @@ A `//` starts a single-line comment.
 Fearless ignores everything from `//` to the end of the line.
 Any text enclosed by the delimiters `/*...*|/` is called a multi-line comment.
 Fearless ignores everything between these two delimiters, even if it spans multiple lines.
-Comments, spaces and newlines have no impact on the execution, but comments can be precious to insert human-readable explanations in the code, facilitating the understanding of code.
+Comments, spaces and newlines have no impact on the execution, but comments are precious for inserting human-readable explanations into the code, making it easier to understand.
 
 //OMIT_START
 NOTE for editors: every chapter file is itself one big /*START...END*|/
@@ -104,7 +104,7 @@ to hold actual compiled code.
 //OMIT_END
 
 Comments are the first crucial abstraction step we are seeing. Comments are not unique to Fearless and you can use them in any kind of text.
-Consider the following text, where someone may be planning to apply for their dream Job:
+Consider the following text, where someone may be planning to apply for their dream job:
 ```
 Dear Hiring Manager //actual name?
 

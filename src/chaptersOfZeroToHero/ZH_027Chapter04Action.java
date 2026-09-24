@@ -15,26 +15,26 @@ As discussed, errors are not part of the basic semantics of Fearless, and they c
 That is, any code anywhere can write `Error!(someInfo)` and throw that `Info` object as a structured error message.
 
 
-Before we discussed the convenience method `Error.msg` that takes a simple string and converts it into an `Info` object holding
-that string as its `` `.msg` `` variant.
+Earlier we discussed the convenience method `Error.msg` that takes a simple string and converts it into an `Info` object holding
+that string as its `.msg` variant.
 The method `Map.get` either returns the mapped value or uses `Error.msg(..)` to report the lookup failure.
 
 When a method throws an error the computation stops and the error is reported outside of the program.
 This behaviour can be overridden using `Try#{ ../*code that can fail*|/.. }`.
-The method `Try#` takes a function returning a result of type `R` and (without executing the function in input) produces an `Action[R]` object.
+The method `Try#` takes a function returning a result of type `R` and (without executing the given function) produces an `Action[R]` object.
 Fearless actions are a way to handle behaviour that can fail while recovering potential errors.
 
 Let's make this more concrete.
 
-- Code 1: ``Directions.map.get(`Nope`)`` raises an error with a readable error message.
-- Code 2: ``Try#{Directions.map.get(`Nope`)}`` returns an object of type `Action[Direction]`.
-- Code 3: ``Directions.map.tryGet(`Nope`)`` behaves like Code 2, but it is faster: no error is thrown and caught.
+- Code 1: `Directions.map.get("Nope")` raises an error with a readable error message.
+- Code 2: `Try#{Directions.map.get("Nope")}` returns an object of type `Action[Direction]`.
+- Code 3: `Directions.map.tryGet("Nope")` behaves like Code 2, but it is faster: no error is thrown and caught.
 
 Every `.getXX` method of the standard library that can fail has a `.tryGetXX` version returning an `Action`.
 Conceptually `.tryGetXX` is the primitive: `.getXX` behaves as ``this.tryGetXX!``.
 
 We can use code 1 when we trust that the error will not be raised, or when, if the error condition happens, we want the program to terminate with a good error message.
-When we want to consciously extract an element that may or may not be there, with the intention that the element being missing does not represent an error, we can use the method `.opt`, as in ``Directions.map.opt(`Nope`)``, returning an `Opt[Direction]`.
+When we want to consciously extract an element that may or may not be there, with the intention that the element being missing does not represent an error, we can use the method `.opt`, as in `Directions.map.opt("Nope")`, returning an `Opt[Direction]`.
 
 Using `Try#` or `.tryGet` means that we suspect that the value may not be there because of some buggy logic or input.
 
@@ -55,7 +55,7 @@ Action[R:*]: {
 ```
 The `ActionMatch[R,RR]` type is unsurprising. Very similar to `OptMatch[T,R]` or `StackMatch[T,R]`.
 As we discussed before, remember that `R:*` stands for `R:imm,mut,read` and `R:**` includes all of the reference capabilities.
-At its core, Action has a very simple implementation.
+At its core, `Action` has a very simple implementation.
 We call the generic parameters `R` and `RR` to suggest that `R` is the result of the action, while `RR` is the result of processing either the action result or the `Info`.
 
 `Action[R]` has a single abstract `.run` method that takes an `ActionMatch[R,RR]`.
@@ -77,10 +77,10 @@ Action[R:*]: {
 Method `Action!` returns the `R` value, or throws an error with the provided info.
 That is, `!` is actually the opposite of `Try#`.
 For example, 
-- ``Try#{ Directions.map.get(`Nope`) }!``
+- `Try#{ Directions.map.get("Nope") }!`
 
 is equivalent to
-- ``Directions.map.get(`Nope`)``
+- `Directions.map.get("Nope")`
 
 In the same way, 
 - ``Try#{ myAction! }``
@@ -114,13 +114,14 @@ Method `.context` is a convenience method to add contextual information to actio
 Its parameter `msg: read LazyInfo` is a lazy `F[read ToInfo]`: any lazy value that can become an `Info` is accepted, so a lazy `Str`, as used below, works because `Str` implements `ToInfo`.
 Internally, it uses method `Info+`, that we have not seen yet:
 The method `Info+` makes it easy to compose information together.
+The empty `Info` is neutral: adding it to any `Info` gives back that other `Info`.
 Two `Info` messages are joined with a newline, two `Info` lists are concatenated and two `Info` maps are merged:
 - If a key is present in only one of the two sources, the key -> element mapping will be present in the resulting information.
 - If the key is present in both sources, the resulting information will map that key to the sum of the two elements using `Info+` recursively.
 
 Finally, if the two infos are not of the same kind, they are lifted to maps with a single mapping containing the original information:
-  - A message info is lifted to a map with a single mapping `` `msg` ``.
-  - A list info is lifted to a map with a single mapping `` `list` ``.
+  - A message info is lifted to a map with a single mapping `"msg"`.
+  - A list info is lifted to a map with a single mapping `"list"`.
 
 Often we use `.context` to add context to our actions.
 Consider the code below where `persons` is a `List[Person]`:
@@ -156,7 +157,7 @@ persons.tryGet(3).map{::.name}
 ```
 would return an `Action[Str]` containing the name of the person in position 3.
 
-Note that if the map operation would fail by calling `Error.msg`, 
+Note that if the function passed to `.map` fails by calling `Error.msg`, 
 that error would not turn the action into a failed action with the `.info` containing the error; it would just leak out when we attempt to `.run` our action.
 >TODO: should we design this alternative behaviour too and see how it looks?
 
@@ -180,7 +181,7 @@ If the original `Action[R]` is successful (i.e., produces a value), `.map` appli
 
 `.andThen` extends the functionality of `.map` by allowing the transformation function itself to produce the new `Action[RR]`. This is useful when the transformation's outcome isn't just a value, but a new computation or action that might itself succeed or fail.
 The function used in `.andThen` takes a value of type `R` and returns a new `Action[RR]`.
-Method `.andThen` is designed to handle nested actions. If the original `Action[R]` is successful, `.andThen` uses the value to generate a new `Action[RR]` using the provided function. This new Action is then executed as part of the overall computation. If the original `Action[R]` is a failure, both `.map` and `.andThen` simply propagate the failure information.
+Method `.andThen` is designed to handle nested actions. If the original `Action[R]` is successful, `.andThen` uses the value to generate a new `Action[RR]` using the provided function. This new action is then executed as part of the overall computation. If the original `Action[R]` is a failure, both `.map` and `.andThen` simply propagate the failure information.
 Method `.andThen` is particularly useful in scenarios where subsequent actions depend on the results of previous ones.
 For example, the code below
 ```
@@ -188,7 +189,7 @@ persons.tryGet(3).andThen{p->
   jobs.tryGet(p.name).map{ j->"Person "+p+" works as a "+j } }
 ```
 
-does two different actions: extracts person `3` and connects their name with their job using `jobs: Map[Str,Job]`.
+does two different actions: extracts the person at index `3` and connects their name with their job using `jobs: Map[Str,Job]`.
 Finally it uses the job `j` and the person `p` to produce an `Action[Str]`. Note how this is only needed if we want to get a detailed error message in case of failure. We can encode the same idea with optionals with the more conventional flow code below:
 ```
 persons.opt(3).flow.flatMap{p->
@@ -204,7 +205,7 @@ Note: if we expect the person and the job to be there, and it should be an obser
 In this way our code will correctly fail as soon as an error is detected.
 
 ### Errors or Actions?
-In Fearless, Actions and errors can be used together to handle computation that can potentially fail.
+In Fearless, actions and errors can be used together to handle computation that can potentially fail.
 The idea is that the code will have layers of responsibility:
 Code with less responsibility can simply throw errors, while code with higher responsibility will use actions.
 
@@ -241,10 +242,12 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
       }}}
 ```
 
-Here Points has a `.fromInfo` method creating a point using the `.x` and `.y` coordinates stored in an `Info` object.
+Here `Points` has a `.fromInfo` method creating a point using the `"x"` and `"y"` coordinates stored in an `Info` object.
 Then, method `Points#` takes the `x` and `y` `Nat` coordinates and creates the resulting `Point`.
 However, before the point is created, we use `Nat.assertInRange` to check that `x` and `y` are in the desired range.
-`Nat.assertInRange` will throw an error if the condition is false.
+`Nat.assertInRange` will throw an error if the number is not in the range.
+In `.cmp`, the parameters `{.x,.y}1` and `{.x,.y}2` are patterns taking the two points apart:
+`{.x,.y}1` declares the names `x1` and `y1`, standing for the `.x` and `.y` of the first point, and `{.x,.y}2` declares `x2` and `y2` for the second point.
 
 > TODO: we need to decide if those are deterministic or non deterministic errors.
 > Same for most errors in the std library right now.
@@ -261,7 +264,7 @@ In a complex program we can have a few layers of responsibility like this, where
 
 We have seen that `Try#{...}` creates an `Action[R]` and that `myAction!` can do
 `Error!(info)`.
-But.. what happens next? 
+But... what happens next? 
 Another `Try#{...}` can turn the leaked error into another `Action[R]`, or the whole program could fail. How does this failure look?
 It will look something like this:
 ````
@@ -273,7 +276,7 @@ stack trace:
 ````
 The first chunk prints the info.
 It could be just `.msg` or could be richer if the info contained more data.
-But we also get this **stack trace** details.
+But we also get these **stack trace** details.
 What is that about?
 It is about the set of active calls when the error leaked.
 
@@ -333,7 +336,7 @@ As you can imagine, it is quite rare to have to capture non-deterministic errors
 - Web server: It must run many different pieces of code serving web pages, and a page error, no matter how severe, should not terminate the whole web server.
 - Try different strategies from a database of options to solve a problem. Then record statistical data about what option solved the problem better and faster to produce self-improving programs.
 - Airplane or nuclear plant supervision system: you probably do not want it to terminate, no matter the error.
-- Videogame where users can somehow forge code either directly or by combining magic objects with standard effects.
+- Video game where users can somehow forge code either directly or by combining magic objects with standard effects.
 
 > need a Cap that gives you current line number and file name!
 
@@ -370,7 +373,7 @@ In Fearless both issues are solved at the same time by tunable assertion levels.
 #### Tunable assertion levels:
 There are many different layers of assertions:
  - assert:  observed bug: the code of this package has a bug.
- - assertPre: precondition violation: the code of this package has been called with parameters that violate its requirements.
+ - assertPre: precondition violation: the code of this package has been called with arguments that violate its requirements.
  - assertSys: The program is fine but the system running this program does not support the needed requirements. For example, a file must be present for the application to work; memory or stack are insufficient; OS resources can not be obtained.
  - assertNetwork: The program and the system are fine, but some needed remote service is unavailable.
  - given that there are already 4 levels, we also have `.assert5`... `.assert16` to cover other user defined situations. `assert1`..`assert4` are aliases for those shown named assertion kinds.

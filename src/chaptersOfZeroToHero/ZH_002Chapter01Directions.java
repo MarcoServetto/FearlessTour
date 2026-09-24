@@ -204,7 +204,7 @@ A better solution for any given direction would be to call `.turn`
 twice and get the desired result:
 rotating 180 degrees clockwise is the same as rotating 90 degrees clockwise, twice.
 
-However, if we simply follow this intuition and we add `.turn.turn` in all the directions, we get even more verbose code.
+If we simply follow this intuition and we add `.turn.turn` in all the directions, we get even more verbose code.
 -------------------------*/@Test void reverse2() { run("""
 Direction: { .turn: Direction; .reverse: Direction; }
 North: Direction { .turn -> East;  .reverse -> North.turn.turn; }
