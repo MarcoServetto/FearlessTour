@@ -106,7 +106,7 @@ We do this to support different programming styles instead of imposing our prefe
 
 Next we are going to see some new methods. They all either come from `DataType` or use features coming from `DataType`
 ````
-  .str -> this.imm?{ .then->`True`; .else->`False` };//this as Str, from DataType
+  .str -> this.imm?{ .then->"True"; .else->"False" };//this as Str, from DataType
 
   .assertTrue: Void -> this.assertEq True;
   .assertFalse: Void -> this.assertEq False;
@@ -200,7 +200,7 @@ Opt[E:*]: _Opt[E]{
   .match m    -> m.empty;
   .isEmpty    -> this.match{.some _ -> False; .empty -> True};
   .isSome     -> this.match{.some _ -> True; .empty -> False};
-  !           -> this.match{.some x -> x; .empty -> Error.msg `Opt was empty`};
+  !           -> this.match{.some x -> x; .empty -> Error.msg "Opt was empty"};
 
   .orValue default -> this.match{.some x -> x; .empty -> default};
 
@@ -251,8 +251,8 @@ The methods below are just to implement `DataType`.
 We have a `.str` method, allowing to easily turn optionals into a string.
 ````
   .str  by  -> this.match{
-    .empty -> `Opt[]`;
-    .some x -> `Opt[`+(by#x)+`]`;
+    .empty -> "Opt[]";
+    .some x -> "Opt["+(by#x)+"]";
   };
 ````
 The code above shows `.str` taking a parameter `by`.
@@ -406,7 +406,7 @@ Bool:Sealed,DataType[Bool,Bool]{
 
   .not: Bool;
   ==> (b: mut MF[Bool]): Bool -> this.not || b;
-  .str -> this.imm?{ .then->`True`; .else->`False` };//this as Str, from DataType
+  .str -> this.imm?{ .then->"True"; .else->"False" };//this as Str, from DataType
 
   .assertTrue: Void -> this.assertEq True;
   .assertFalse: Void -> this.assertEq False;
@@ -450,7 +450,7 @@ Opt[E:*]: _Opt[E]{
   .match m    -> m.empty;
   .isEmpty    -> this.match{.some _ -> False; .empty -> True};
   .isSome     -> this.match{.some _ -> True; .empty -> False};
-  !           -> this.match{.some x -> x; .empty -> Error.msg `Opt was empty`};
+  !           -> this.match{.some x -> x; .empty -> Error.msg "Opt was empty"};
 
   .orValue default -> this.match{.some x -> x; .empty -> default};
 
@@ -463,8 +463,8 @@ Opt[E:*]: _Opt[E]{
   .ifSome  f  -> this.match{.some x -> f#x; .empty -> {}};
   .ifEmpty f  -> this.match{.some _ -> {}; .empty -> f#};
   .str  by  -> this.match{
-    .empty -> `Opt[]`;
-    .some x -> `Opt[`+(by#x)+`]`;
+    .empty -> "Opt[]";
+    .some x -> "Opt["+(by#x)+"]";
   };
   .info by  -> this.match{ .some x -> Infos.list(by#x); .empty -> {} };
   .imm by     -> this.match{.some x -> Opts#(by#x.imm); .empty->{} };

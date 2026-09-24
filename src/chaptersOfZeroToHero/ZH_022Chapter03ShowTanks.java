@@ -68,7 +68,7 @@ Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{ 'self
     .west  -> Points#(x,     y - 1);
     };
   ==(other:Point): Bool -> other.x == x  .and (other.y == y );
-  .str -> `[x=` + x + `, y=` + y + `]`;
+  .str -> "[x=" + x + ", y=" + y + "]";
   }}
 
 ```
@@ -94,10 +94,10 @@ Direction: ToStr, Sealed, WidenTo[Direction] {
     .west  -> North;
     };
   .str -> this.match{
-    .north -> `North`;
-    .east  -> `East`;
-    .south -> `South`;
-    .west  -> `West`;
+    .north -> "North";
+    .east  -> "East";
+    .south -> "South";
+    .west  -> "West";
     };
   }
 ````
@@ -141,10 +141,10 @@ Tank: ToStr {
   .aiming: Direction;
   .position: Point;
   .move:Tank -> Tanks#(this.heading, this.aiming, this.position.move(this.heading));
-  .repr1: Str -> ` / | \ `;
-  .repr2: Str -> ` | < | `;
-  .repr3: Str -> ` \ _ / `;
-  .str -> `` | (this.repr1) | (this.repr2) | (this.repr3) |;
+  .repr1: Str -> " / | \ ";
+  .repr2: Str -> " | < | ";
+  .repr3: Str -> " \ _ / ";
+  .str -> "" | (this.repr1) | (this.repr2) | (this.repr3) |;
   }
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank ->
   { .heading -> heading; .aiming -> aiming; .position -> position; }
@@ -164,7 +164,7 @@ We remove the line implementing `.str` in `Tank` and we write `Tanks` as follows
 ```
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank -> {'self
   .heading -> heading; .aiming -> aiming; .position -> position;
-  .str -> ``| (self.repr1) | (self.repr2) | (self.repr3) |;
+  .str -> ""| (self.repr1) | (self.repr2) | (self.repr3) |;
   }}
 ```
 Here `self` is always immutable since it is created as an `imm Tank`.
@@ -177,29 +177,29 @@ The centre line (`AimingRepr2`) is a little harder since it also depends on the 
 ```
 //File _tank_game/tank.fear
 AimingRepr1: DirectionMatch[Str]{
-  .north -> ` / | \ `;
-  .east  -> ` / - \ `;
-  .south -> ` / - \ `;
-  .west  -> ` / - \ `;
+  .north -> " / | \ ";
+  .east  -> " / - \ ";
+  .south -> " / - \ ";
+  .west  -> " / - \ ";
   }
 AimingRepr3: DirectionMatch[Str]{
-  .north -> ` \ _ / `;
-  .east  -> ` \ _ / `;
-  .south -> ` \ | / `;
-  .west  -> ` \ _ / `;
+  .north -> " \ _ / ";
+  .east  -> " \ _ / ";
+  .south -> " \ | / ";
+  .west  -> " \ _ / ";
   }
 AimingRepr2: DirectionMatch[Str]{
   mut .centre: Str;
-  .north -> ` | ` + (this.centre) + ` | `;
-  .east  -> ` | ` + (this.centre) + ` - `;
-  .south -> ` | ` + (this.centre) + ` | `;
-  .west  -> ` - ` + (this.centre) + ` | `;
+  .north -> " | " + (this.centre) + " | ";
+  .east  -> " | " + (this.centre) + " - ";
+  .south -> " | " + (this.centre) + " | ";
+  .west  -> " - " + (this.centre) + " | ";
   }
 HeadingChar: DirectionMatch[Str]{
-  .north -> `A`;
-  .east  -> `>`;
-  .south -> `V`;
-  .west  -> `<`;
+  .north -> "A";
+  .east  -> ">";
+  .south -> "V";
+  .west  -> "<";
   }
 Tank: ToStr {
   .heading:  Direction;
@@ -223,10 +223,10 @@ We could have alternatively made a factory capturing the missing information in 
   .repr2: Str -> this.aiming .match (AimingRepr2#(this.heading .match HeadingChar));
 ...
 AimingRepr2: F[Str, mut DirectionMatch[Str]]{ centre->{
-  .north -> ` | ` + centre + ` | `;
-  .east  -> ` | ` + centre + ` - `;
-  .south -> ` | ` + centre + ` | `;
-  .west  -> ` - ` + centre + ` | `;
+  .north -> " | " + centre + " | ";
+  .east  -> " | " + centre + " - ";
+  .south -> " | " + centre + " | ";
+  .west  -> " - " + centre + " | ";
   }}
 
 ```
@@ -303,7 +303,7 @@ Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{ 'self
     .west  -> Points#(x,     y - 1);
     };
   ==(other:Point): Bool -> other.x == x  .and (other.y == y );
-  .str -> `[x=` + x + `, y=` + y + `]`;
+  .str -> "[x=" + x + ", y=" + y + "]";
   }}
 // ----------------------------------
 //File _tank_game/direction.fear
@@ -321,42 +321,42 @@ Direction: ToStr, Sealed, WidenTo[Direction] {
     .west  -> North;
     };
   .str -> this.match{
-    .north -> `North`;
-    .east  -> `East`;
-    .south -> `South`;
-    .west  -> `West`;
+    .north -> "North";
+    .east  -> "East";
+    .south -> "South";
+    .west  -> "West";
     };
   }
 // ----------------------------------
 //File _tank_game/tank.fear
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank -> {'self
   .heading -> heading; .aiming -> aiming; .position -> position;
-  .str -> ``| (self.repr1) | (self.repr2) | (self.repr3) |;
+  .str -> ""| (self.repr1) | (self.repr2) | (self.repr3) |;
   }}
 AimingRepr1: DirectionMatch[Str]{
-  .north -> ` / | \\ `;
-  .east  -> ` / - \\ `;
-  .south -> ` / - \\ `;
-  .west  -> ` / - \\ `;
+  .north -> " / | \\ ";
+  .east  -> " / - \\ ";
+  .south -> " / - \\ ";
+  .west  -> " / - \\ ";
   }
 AimingRepr3: DirectionMatch[Str]{
-  .north -> ` \\ _ / `;
-  .east  -> ` \\ _ / `;
-  .south -> ` \\ | / `;
-  .west  -> ` \\ _ / `;
+  .north -> " \\ _ / ";
+  .east  -> " \\ _ / ";
+  .south -> " \\ | / ";
+  .west  -> " \\ _ / ";
   }
 AimingRepr2: DirectionMatch[Str]{
   mut .centre: Str;
-  .north -> ` | ` + (this.centre) + ` | `;
-  .east  -> ` | ` + (this.centre) + ` - `;
-  .south -> ` | ` + (this.centre) + ` | `;
-  .west  -> ` - ` + (this.centre) + ` | `;
+  .north -> " | " + (this.centre) + " | ";
+  .east  -> " | " + (this.centre) + " - ";
+  .south -> " | " + (this.centre) + " | ";
+  .west  -> " - " + (this.centre) + " | ";
   }
 HeadingChar: DirectionMatch[Str]{
-  .north -> `A`;
-  .east  -> `>`;
-  .south -> `V`;
-  .west  -> `<`;
+  .north -> "A";
+  .east  -> ">";
+  .south -> "V";
+  .west  -> "<";
   }
 Tank: ToStr {
   .heading:  Direction;

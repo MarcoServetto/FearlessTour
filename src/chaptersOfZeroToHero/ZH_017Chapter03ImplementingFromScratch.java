@@ -34,7 +34,7 @@ We call **Magic methods** the methods from the standard library giving direct ac
 The following code introduces updatable local variables, and uses a few new features.
 -------------------------*/@Test void var1 () { run("""
 //OMIT_START
-_Magic: { ![R:**]: R -> base.Error.msg`magic`; }
+_Magic: { ![R:**]: R -> base.Error.msg"magic"; }
 //OMIT_END
 Void:{}
 Var[E: imm,mut,read]:{

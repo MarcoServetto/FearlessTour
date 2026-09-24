@@ -156,13 +156,13 @@ use base.Void as Void;
 Bot: {
   .message(s: Str): Str ->
     // Outer Check: Is the message `hello`?
-    s == `hello` .if { //here R = Str
-      .then -> `Hi, I'm Bot; how can I help you?`;
-      .else -> // Logic for when s is NOT `hello`
-        // Inner Check: Is the message `bye`?
-        s == `bye` .if { //writing .if[Str] would be the same
-          .then -> `goodbye!`; //Response if inner condition is True
-          .else -> `I don't understand`; // Response if inner condition is False
+    s == "hello" .if { //here R = Str
+      .then -> "Hi, I'm Bot; how can I help you?";
+      .else -> // Logic for when s is NOT "hello"
+        // Inner Check: Is the message "bye"?
+        s == "bye" .if { //writing .if[Str] would be the same
+          .then -> "goodbye!"; //Response if inner condition is True
+          .else -> "I don't understand"; // Response if inner condition is False
 
         } //End of inner ThenElse
     } //End of outer ThenElse
@@ -182,134 +182,134 @@ This nesting allows us to create more complex decision trees.
 #### Visualizing reductions
 ---
 1. ````
-   Bot.message(`hello`)
+   Bot.message("hello")
    ````
 
 2. ````
-   `hello` == `hello` .if {
-     .then -> `hi...`;
+   "hello" == "hello" .if {
+     .then -> "hi...";
      .else -> ...;
      }
    ````
 
 3. ````
    True.if {
-     .then -> `hi...`;
+     .then -> "hi...";
      .else -> ...;
      }
    ````
 
 4. ````
    {
-     .then -> `hi...`;
+     .then -> "hi...";
      .else -> ...;
      }.then
    ````
 
 5. ````
-   `Hi, I'm Bot; how can I help you?`
+   "Hi, I'm Bot; how can I help you?"
    ````
 ---
 
 1. ````
-   Bot.message(`bye`)
+   Bot.message("bye")
    ````
 
 2. ````
-   `bye` == `hello` .if{
-     .then -> `hi...`;
-     .else -> `bye` == `bye` .if{
-       .then -> `goodbye!`;
-       .else -> `I don't understand`;
+   "bye" == "hello" .if{
+     .then -> "hi...";
+     .else -> "bye" == "bye" .if{
+       .then -> "goodbye!";
+       .else -> "I don't understand";
        };
      }
    ````
 
 3. ````
    False.if{
-     .then -> `hi...`;
-     .else -> `bye` == `bye` .if{
-       .then -> `goodbye!`;
-       .else -> `I don't understand`;
+     .then -> "hi...";
+     .else -> "bye" == "bye" .if{
+       .then -> "goodbye!";
+       .else -> "I don't understand";
        };
      }
    ````
 
 4. ````
    {
-     .then -> `hi...`;
-     .else -> `bye` == `bye` .if{
-       .then -> `goodbye!`;
-       .else -> `I don't understand`;
+     .then -> "hi...";
+     .else -> "bye" == "bye" .if{
+       .then -> "goodbye!";
+       .else -> "I don't understand";
        };
      }.else
    ````
 
 5. ````
-   `bye` == `bye` .if{
-     .then -> `goodbye!`;
-     .else -> `I don't understand`;
+   "bye" == "bye" .if{
+     .then -> "goodbye!";
+     .else -> "I don't understand";
      }
    ````
 
 6. ````
    True.if{
-     .then -> `goodbye!`;
-     .else -> `I don't understand`;
+     .then -> "goodbye!";
+     .else -> "I don't understand";
      }
    ````
 
 7. ````
    {
-     .then -> `goodbye!`;
-     .else -> `I don't understand`;
+     .then -> "goodbye!";
+     .else -> "I don't understand";
      }.then
    ````
 
 
 8. ````
-   `goodbye!`
+   "goodbye!"
    ````
 ---
 1. ````
-   Bot.message(`test`)
+   Bot.message("test")
    ````
 
 2. ````
-   `test` == `hello` .if{
-     .then -> `hi...`;
-     .else -> `test` == `bye` .if{
-       .then -> `goodbye!`;
-       .else -> `I don't understand`;
+   "test" == "hello" .if{
+     .then -> "hi...";
+     .else -> "test" == "bye" .if{
+       .then -> "goodbye!";
+       .else -> "I don't understand";
        };
      }
    ````
 
 3. ````
    False.if{
-     .then -> `hi...`;
-     .else -> `test` == `bye` .if{
-       .then -> `goodbye!`;
-       .else -> `I don't understand`;
+     .then -> "hi...";
+     .else -> "test" == "bye" .if{
+       .then -> "goodbye!";
+       .else -> "I don't understand";
        };
      }
    ````
 
 4. ````
-   `test` == `bye` .if{
-     .then -> `goodbye!`;
-     .else -> `I don't understand`;
+   "test" == "bye" .if{
+     .then -> "goodbye!";
+     .else -> "I don't understand";
      }
    ````
 
 5. ````
    False.if{
-     .then -> `goodbye!`;
-     .else -> `I don't understand`;
+     .then -> "goodbye!";
+     .else -> "I don't understand";
      }
    ````
 6. ````
-   `I don't understand`
+   "I don't understand"
    ````
 ---
 > You may have noticed that in the last reduction we omitted the execution step with the body of the `.if`: the explicit call to `.then` or `.else`.

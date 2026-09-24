@@ -125,7 +125,7 @@ Finally, if the two infos are not of the same kind, they are lifted to maps with
 Often we use `.context` to add context to our actions.
 Consider the code below where `persons` is a `List[Person]`:
 ``` 
-persons.tryGet(5).context{`The list persons was too small when`}
+persons.tryGet(5).context{"The list persons was too small when"}
 ```
 This code would add the information that we were looking into the list of persons, and the error would look like
   
@@ -185,21 +185,21 @@ Method `.andThen` is particularly useful in scenarios where subsequent actions d
 For example, the code below
 ```
 persons.tryGet(3).andThen{p->
-  jobs.tryGet(p.name).map{ j->`Person `+p+` works as a `+j } }
+  jobs.tryGet(p.name).map{ j->"Person "+p+" works as a "+j } }
 ```
 
 does two different actions: extracts person `3` and connects their name with their job using `jobs: Map[Str,Job]`.
 Finally it uses the job `j` and the person `p` to produce an `Action[Str]`. Note how this is only needed if we want to get a detailed error message in case of failure. We can encode the same idea with optionals with the more conventional flow code below:
 ```
 persons.opt(3).flow.flatMap{p->
-  jobs.opt(p.name).flow.map{ j->`Person ` + p + ` works as a ` + j } }.getOpt
+  jobs.opt(p.name).flow.map{ j->"Person " + p + " works as a " + j } }.getOpt
 ```
 Here, if the person or the job is not present, we would simply get an empty optional.
 Note: if we expect the person and the job to be there, and it should be an observed bug if this is not the case, then we should write the simpler code
 ```
   Block#
     .let p= {persons.get(3)}
-    .return { `Person ` + p + ` works as a `+ jobs.get(p.name) }
+    .return { "Person " + p + " works as a "+ jobs.get(p.name) }
 ```
 In this way our code will correctly fail as soon as an error is detected.
 
@@ -219,7 +219,7 @@ We could use errors to enforce that whenever a `Point` is observed, the `.x` and
 ```
 Points: F[Nat,Nat,Point], FromInfo[Point] {
 
-  .fromInfo(i) -> Points#(i.getMap.get(`x`).getMsg.getNat, i.getMap.get(`y`).getMsg.getNat);
+  .fromInfo(i) -> Points#(i.getMap.get("x").getMsg.getNat, i.getMap.get("y").getMsg.getNat);
 
   # x, y ->Block#
     .do { x.assertInRange(0=~~10) }
@@ -236,8 +236,8 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
         };
       .cmp {.x,.y}1, {.x,.y}2, m -> x1 <=> (x2, m && { y1 <=> (y2,m) });
       .hash -> x.hash.hashWith(y.hash);
-      .info -> Infos.map(`x`,x,  `y`,y);
-      .str -> `[` + x + `, ` + y + `]`;
+      .info -> Infos.map("x",x,  "y",y);
+      .str -> "[" + x + ", " + y + "]";
       }}}
 ```
 
@@ -265,7 +265,7 @@ But.. what happens next?
 Another `Try#{...}` can turn the leaked error into another `Action[R]`, or the whole program could fail. How does this failure look?
 It will look something like this:
 ````
-Error info: {.msg:`....`}
+Error info: {.msg:"...."}
 stack trace:
 ...//TODO: complete example with correct code.
 ...
@@ -283,7 +283,7 @@ Stuff:{
   .foo -> Lists#(1,2,3).get(5);
   .bar -> Try#{this.foo};
   .beer1 -> this.bar!;
-  .beer2 -> this.bar.context{`InBeer2`}!;
+  .beer2 -> this.bar.context{"InBeer2"}!;
   }
 ````
 
@@ -395,7 +395,7 @@ Another form of assertions is useful when we want to provide alternative behavio
 ````
 //in file _foo/bar.fear
 Block# //many options for the actual API
-  .let content= {AssertSys.or({..readFile `foo.txt` ..},{..ask user for existing file with file chooser..} }
+  .let content= {AssertSys.or({..readFile "foo.txt" ..},{..ask user for existing file with file chooser..} }
   .let foo= AssertPre#(foo.bar(),{::.inRange(3,25)},{_->10})
   .do{...}
   ..

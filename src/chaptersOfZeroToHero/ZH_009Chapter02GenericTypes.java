@@ -51,7 +51,7 @@ Crucially, ``someFork.choose(`Hello`,`Hi`)``, where `someFork` is a parameter of
 The idea is that a method can return a decision by returning a `Fork`, and then the user of that method can use the decision to select a value between two.
 Of course, once we have forks we can nest them to select a value between three, for example: 
 ```
-firstChoice.choose(`Option1`,  secondChoice.choose(`Option2`, `Option3`)  )
+firstChoice.choose("Option1",  secondChoice.choose("Option2", "Option3")  )
 ```
 where `firstChoice` and `secondChoice` are `Fork`s that we obtained somewhere.
 Note how we need the generic type `Val` so that our `Fork` can work on any type:
@@ -91,7 +91,7 @@ In this set up, ``someFork.choose(`Hello`,`Hi`)`` would work as before, but
 ``someFork.choose(`Hello`,23)`` would also pass type checking.
 What would happen at run time? Consider for example:
 ```
-someFork.choose(`Hello`,23) * 2
+someFork.choose("Hello",23) * 2
 ```
 If `someFork` is `Right`, we would get `23 * 2` and then `46`.
 However, if `someFork` is `Left` we would get `` `Hello` * 2`` and since `Str` does not have a `*` method, then the reduction would get stuck, unable to proceed.
@@ -147,8 +147,8 @@ Right: Fork{::.right}
 A:{#(someFork: Fork):Str->
 //OMIT_END
 someFork.choose{
-  .left->`Hello`;
-  .right->`Hi`;
+  .left->"Hello";
+  .right->"Hi";
 }
 //OMIT_START
 }
@@ -185,8 +185,8 @@ Again, empty parentheses can be omitted.
 We can now understand what is the meaning of 
 ```
 someFork.choose{
-  .left->`Hello`;
-  .right->`Hi`;
+  .left->"Hello";
+  .right->"Hi";
 }
 ```
 Without the sugar and the type inference, the code would look as follows:
