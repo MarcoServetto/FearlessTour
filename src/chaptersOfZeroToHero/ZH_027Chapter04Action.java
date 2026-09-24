@@ -28,10 +28,10 @@ Let's make this more concrete.
 
 - Code 1: ``Directions.map.get(`Nope`)`` raises an error with a readable error message.
 - Code 2: ``Try#{Directions.map.get(`Nope`)}`` returns an object of type `Action[Direction]`.
-- Code 3: ``Directions.map.tryGet(`Nope`)`` would behave identically to Code 2, but could be faster.
+- Code 3: ``Directions.map.tryGet(`Nope`)`` behaves like Code 2, but it is faster: no error is thrown and caught.
 
->Note: `.tryGet` is not a real method of the standard library yet; it is used through the rest of this
->chapter as a proposed shorthand for ``Try#{..get(..)}``, to keep the examples about `Action` focused.
+Every `.getXX` method of the standard library that can fail has a `.tryGetXX` version returning an `Action`.
+Conceptually `.tryGetXX` is the primitive: `.getXX` behaves as ``this.tryGetXX!``.
 
 We can use code 1 when we trust that the error will not be raised, or when, if the error condition happens, we want the program to terminate with a good error message.
 When we want to consciously extract an element that may or may not be there, with the intention that the element being missing does not represent an error, we can use the method `.opt`, as in ``Directions.map.opt(`Nope`)``, returning an `Opt[Direction]`.
@@ -130,7 +130,7 @@ persons.tryGet(5).context{`The list persons was too small when`}
 This code would add the information that we were looking into the list of persons, and the error would look like
   
 >  The list persons was too small when  
->  attempted access in position 5 over a list of size 3
+>  List.get: List index 5 out of range for List of length 3
 
 Note that the computation required to format this extra information will only be executed if the `Action[R]` actually fails. This is often a big win in terms of performance, since nicely formatted error messages may be quite slow to compute.
 

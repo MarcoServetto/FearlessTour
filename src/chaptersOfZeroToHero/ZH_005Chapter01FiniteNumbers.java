@@ -342,7 +342,7 @@ There are two kinds of libraries:
 A few kinds of numbers are part of the Fearless standard library:
 
 `Nat` (Natural Numbers): These represent non-negative whole numbers (`0`, `1`, `2`, `3`, and so on). You write them just like you'd expect: `1`, `0`, `34`, `45235`.
-They have familiar methods like `+`, `-`, `*`, `.getSucc`, `.getPred`, similar to our `Number` example. For example: `5 + 3` results in `8`.
+They have familiar methods like `+`, `-`, `*`, `.succ`, `.pred`, similar to our `Number` example. For example: `5 + 3` results in `8`.
 
 `Int` (Integers): These represent positive and negative whole numbers (..., `-2`, `-1`, `+0`, `+1`, `+2`, ...). To distinguish them, you must include the sign before the number. Note that zero as an `Int` is written `+0` (`-0` is also accepted, and denotes the same number).
 Some `Int`s: `+10`, `-25`, `+0`, `+12345`, `-987`.
@@ -370,16 +370,16 @@ That is, in the standard library there are many, many types defined following ro
 ```
 //Nat: Familiar Logic, Ludicrous Scale
 Nat:{
-  .getPred:Nat; .getSucc:Nat;
+  .pred:Nat; .succ:Nat;
   +(other: Nat): Nat->....;/*more methods as in Number*|/
   }
 0: Nat{
-   .getPred-> 18446744073709551615; .getSucc-> 1;
+   .pred-> 18446744073709551615; .succ-> 1;
    +(other)-> other;/*more methods as in Number*|/
    }
-1: Nat{.getPred->  0; .getSucc->  2; }
+1: Nat{.pred->  0; .succ->  2; }
 ...
-18446744073709551615: Nat{.getPred-> 18446744073709551614; .getSucc->  0; }
+18446744073709551615: Nat{.pred-> 18446744073709551614; .succ->  0; }
 ```
 The schemas look just like our clock's.
 The only difference? The scale is mind-boggling. The max value isn't `11`;
@@ -399,9 +399,9 @@ Did someone actually type them all out?
 Of course, there isn't really a file containing billions of billions of lines like this:
 ```
 ...
-18446744070000000004: Nat{.getPred-> 18446744070000000003; .getSucc->  18446744070000000005; }
-18446744070000000005: Nat{.getPred-> 18446744070000000004; .getSucc->  18446744070000000006; }
-18446744070000000006: Nat{.getPred-> 18446744070000000005; .getSucc->  18446744070000000007; }
+18446744070000000004: Nat{.pred-> 18446744070000000003; .succ->  18446744070000000005; }
+18446744070000000005: Nat{.pred-> 18446744070000000004; .succ->  18446744070000000006; }
+18446744070000000006: Nat{.pred-> 18446744070000000005; .succ->  18446744070000000007; }
 ...
 ```
 But let's imagine, just for fun. Picture "The Infinite Typist", a mythical programmer fueled by pure
@@ -435,19 +435,19 @@ In addition to `Nat` we have `Int`.
 That is, `Int` follows the schema below:
 ```
 Int:{
-  .getPred:Int; .getSucc:Int;
+  .pred:Int; .succ:Int;
   +(other: Int): Int->....;/*more methods as in Number*|/
   }
 +0: Int{
-   .getPred-> -1; .getSucc-> +1;
+   .pred-> -1; .succ-> +1;
    +(other)-> other;/*more methods as in Number*|/
    }
-+1: Int{.getPred->  +0; .getSucc->  +2; }
++1: Int{.pred->  +0; .succ->  +2; }
 ...
-+9223372036854775807: Int{.getPred-> +9223372036854775806; .getSucc->  -9223372036854775808; }
--1: Int{.getPred->  -2; .getSucc->  +0; }
++9223372036854775807: Int{.pred-> +9223372036854775806; .succ->  -9223372036854775808; }
+-1: Int{.pred->  -2; .succ->  +0; }
 ...
--9223372036854775808: Int{.getPred-> +9223372036854775807; .getSucc->  -9223372036854775807; }
+-9223372036854775808: Int{.pred-> +9223372036854775807; .succ->  -9223372036854775807; }
 ```
 As you can see, the predecessor of `+0` is `-1` and the successor and predecessor of
 the biggest numbers are linked together.
@@ -522,10 +522,10 @@ N10: Number{.pred->  N9; .succ-> N11; }
 N11: Number{.pred-> N10; .succ->  N0; }
 
 HasPredSucc:{
-  .hasPredNat(a:base.Nat):base.Nat->a.getPred;
-  .hasSuccNat(a:base.Nat):base.Nat->a.getSucc;
-  .hasPredInt(a:base.Int):base.Int->a.getPred;
-  .hasSuccInt(a:base.Int):base.Int->a.getSucc;
+  .hasPredNat(a:base.Nat):base.Nat->a.pred;
+  .hasSuccNat(a:base.Nat):base.Nat->a.succ;
+  .hasPredInt(a:base.Int):base.Int->a.pred;
+  .hasSuccInt(a:base.Int):base.Int->a.succ;
 }
 """); }/*--------------------------------------------
 //OMIT_END
