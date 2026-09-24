@@ -56,9 +56,9 @@ This is also used for code reuse.
   - Relevance: methods contain expressions (instructions/behaviour) and allow us to run/execute/start those instructions.
   They can be abstract or concrete.
   - Examples:<BR/>
-  `mut .foo(a: A): B;` (abstract method),<BR/>
-  `mut .foo(a: A): B -> a.toB;` (concrete method full form),<BR/>
-  `mut .foo(a)-> a.toB;` (concrete method inferred types),<BR/>
+  `.foo(a: A): B;` (abstract method),<BR/>
+  `.foo(a: A): B -> a.toB;` (concrete method full form),<BR/>
+  `.foo(a)-> a.toB;` (concrete method inferred types),<BR/>
   `a->a.foo` or `::.foo` inside `{a->a.foo}` and `{::.foo}` 
   (concrete method inferred name and types).
 

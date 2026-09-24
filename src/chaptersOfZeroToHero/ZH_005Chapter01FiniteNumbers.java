@@ -157,10 +157,10 @@ This inductive approach, defining a base case and a rule to reduce other cases
 towards the base case, is fundamental in programming and especially elegant in
 object-oriented languages like Fearless.
 
-> **Inductive thinking:** When we define methods like `Number+`  partly in terms of themselves, it might look like circular reasoning. It's not! This technique is simply about defining behaviour based on the structure we've already established.
+> **Inductive thinking:** When we define methods like `Number+` partly in terms of themselves, it might look like circular reasoning. It's not! This technique is simply about defining behaviour based on the structure we've already established.
 >For numbers, we define addition based on the previous number. We're breaking the problem down into a simpler version of itself plus one step. This way of thinking is crucial for any kind of programming, but it may take a while to get used to it.
 >Experience shows that with dedicated practice, people eventually become proficient in inductive thinking.
-It's a common hurdle, but definitely a conquerable one.
+>It's a common hurdle, but definitely a conquerable one.
 >It is not hard, it is unfamiliar.
 
 #### Implementing multiplication inductively in Fearless:

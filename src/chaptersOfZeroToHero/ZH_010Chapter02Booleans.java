@@ -171,8 +171,8 @@ Bot: {
 
 The `.message` method uses an `.if` checking whether the input `s` is equal to `hello`.
 The call is conceptually
-``(s ==(`hello`)).if[Str]({..})``
-but we can just write ``s == `hello` .if {..}``
+`(s ==("hello")).if[Str]({..})`
+but we can just write `s == "hello" .if {..}`
 by removing parentheses and relying on generic type inference.
 The `[Str]` indicates that both the `.then` and `.else` branches must produce a `Str` result.
 The first `.then` branch is simple: it just returns the greeting string.

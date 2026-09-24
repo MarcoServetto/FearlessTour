@@ -139,7 +139,7 @@ The state of the game will be represented by a `Stack[Tank]`.
 The game is implemented by a `NextState` function.
 `NextState#` is implemented with a `Let`, and uses some sub methods for readability.
 
-The idea is that first all the tanks shoot, and all of the tanks one step in the direction of fire are eliminated.
+The idea is that first all the tanks shoot, and every tank standing one step in front of another tank's turret (in its aiming direction) is eliminated.
 Then, all the surviving tanks move in their heading direction, but only if that position is free.
 A position is free if it is neither the current position nor the destination of another tank.
 

@@ -38,7 +38,7 @@ Person: { .name: Str }
 Doctors: { #(ps: List[Person]): List[Person] ->ps.flow.filter{::.name.startsWith "Dr." }.list }
 ```
 
-Here we only keep the persons whose name starts with `` `Dr.` ``.
+Here we only keep the persons whose name starts with `"Dr."`.
 That is, the list in output is always going to contain only elements from the original list; but not all elements may be present. Thus the list in output may be shorter than the list in input. Again, the size of the input/output guides our reasoning.
 
 ### Method `.flatMap`
@@ -615,9 +615,9 @@ Maps can have `mut`, `imm` or `read` elements; but only immutable keys. This is 
 
 We can flow on a map, but since both keys and elements are present, the flow method takes a function mapping keys and elements into some value.
 For example
-```myMap.flow{k,e-> k.name + e }.list```
+`myMap.flow{k,e-> k.name + e }.list`
 will return
-```Lists#(`BobToronto 34b Warden St.`,`AliceWellington 134 Kelburn Parade`)```
+`Lists#("BobToronto 34b Warden St.","AliceWellington 134 Kelburn Parade")`
 
 Note how the order of the flow is the same as the insertion order.
 

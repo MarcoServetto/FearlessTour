@@ -182,7 +182,7 @@ Thus, as for before, we write `.match(m) -> m.elem(e, this);` to implement the m
 However, we use `e` and `this` also to implement the `Stack[T]++` method.
 
 Consider the method body `this ++ other  + e`.
-This code first calls `Stack[T]++`  with code `this ++ other`.
+This code first calls `Stack[T]++` with code `this ++ other`.
 Then, `Stack[T]+` is called on the result of `this ++ other`. This adds `e` at the top of the result of `this ++ other`.
 That is, the ultimate result will contain `e` as the first element. Remember that `e` was the first element of the current stack.
 

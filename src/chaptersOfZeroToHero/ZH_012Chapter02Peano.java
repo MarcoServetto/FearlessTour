@@ -11,7 +11,7 @@ class ZH_012Chapter02Peano {
 ### Peano and the infinite range of natural numbers
 
 We have seen how in the standard library we have many finite, but gigantic, number types:
-There are  2<sup>64</sup> instances of `Nat` and there are 
+There are 2<sup>64</sup> instances of `Nat` and there are 
 just a little more than 10<sup>4,256,895,041</sup> instances of `Str`.
 Each `Nat` can be stored in exactly eight bytes, where a byte is eight bits.
 Strings use an incremental space consumption; this means that storing small strings would use
@@ -80,8 +80,8 @@ This is now a good time to summarise how to write numbers in Fearless:
 Basically, if we use the fraction symbol `/` on natural numbers or integers we get those arbitrarily large fractional numbers.
 It is very common to write numbers followed by `/1` as a way to specify that we mean arbitrary size numbers.
 For example `(18446744073709551615/1) * (18446744073709551615/1)` is a very large instance of `Num`; much bigger than what can be represented with `Nat` or `Int`.
-//TODO for next re reading round: this came frome a past where we had Num literal, the sentence above should talk about the current new way to do it: 
-//amethod with a String literal and converting into num; a method with no args doing it over and over could have it auto cached without us having to explain caching.
+`Num` has no literal syntax of its own: a `Num` whose numerator or denominator is too large to be written as a `Nat` or `Int` literal is obtained by parsing a string with `.getNum`.
+For example `"123456789012345678901234567890/7".getNum` is a `Num` whose numerator is far beyond the largest `Nat`.
 OMIT_START
 -------------------------*/@Test void num1 () { run("""
 use base.Void as Void;

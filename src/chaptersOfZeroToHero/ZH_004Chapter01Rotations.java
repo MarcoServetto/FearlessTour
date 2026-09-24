@@ -208,7 +208,7 @@ Before we discussed how `North` is a literal.
 `North` is just sugar for `SomeName147:North{}`. Exactly in the same way and via the same process `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }` can be shortened by the sugar to `{ d-> this#(r#(d)) }`.
 
 At first look, you may think that the body `this#(r#(d))`
-would go in an infinite reduction since we call method `Rotation#`  on `this`
+would go in an infinite reduction since we call method `Rotation#` on `this`
 during the execution of `Rotation#`.
 However, that `this` is the outer rotation object (the receiver of the call `Rotation+`)
 that must be some `Rotation` object defined before `Rotation+`

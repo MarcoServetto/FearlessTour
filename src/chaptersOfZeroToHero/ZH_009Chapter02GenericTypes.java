@@ -45,9 +45,9 @@ We can read the above code as follows:
 
 Generic type parameters like `Val` are also uppercase starting identifiers exactly like type names.
 
-With the code above, ``Left.choose(`Hello`,`Hi`)`` reduces to `` `Hello` `` and
-``Right.choose(`Hello`,`Hi`)`` reduces to `` `Hi` ``.
-Crucially, ``someFork.choose(`Hello`,`Hi`)``, where `someFork` is a parameter of type `Fork` will reduce one way or the other depending on the value of `someFork`.
+With the code above, `Left.choose("Hello","Hi")` reduces to `"Hello"` and
+`Right.choose("Hello","Hi")` reduces to `"Hi"`.
+Crucially, `someFork.choose("Hello","Hi")`, where `someFork` is a parameter of type `Fork` will reduce one way or the other depending on the value of `someFork`.
 The idea is that a method can return a decision by returning a `Fork`, and then the user of that method can use the decision to select a value between two.
 Of course, once we have forks we can nest them to select a value between three, for example: 
 ```
@@ -55,10 +55,10 @@ firstChoice.choose("Option1",  secondChoice.choose("Option2", "Option3")  )
 ```
 where `firstChoice` and `secondChoice` are `Fork`s that we obtained somewhere.
 Note how we need the generic type `Val` so that our `Fork` can work on any type:
-We can write ``someFork.choose(`Hello`,`Hi`)`` but also ``someFork.choose(1,5)``.
-However, ``someFork.choose(`Hello`,5)`` would be ill typed: there needs to be a type that can be used to instantiate `Val`.
+We can write `someFork.choose("Hello","Hi")` but also `someFork.choose(1,5)`.
+However, `someFork.choose("Hello",5)` would be ill typed: there needs to be a type that can be used to instantiate `Val`.
 Type inference usually takes care of finding the types that instantiate a generic method call.
-However, we can pass the type argument ourselves if we want, using syntax ``someFork.choose[Str](`Hello`,`Hi`)``.
+However, we can pass the type argument ourselves if we want, using syntax `someFork.choose[Str]("Hello","Hi")`.
 As you can see, we can add `[..]` after the method name and before the list of parameters,
 following this syntax:
 ```
@@ -87,14 +87,14 @@ Left : Fork{ l,r -> l }
 Right: Fork{ l,r -> r }
 ```
 Where basically anything goes.
-In this set up, ``someFork.choose(`Hello`,`Hi`)`` would work as before, but
-``someFork.choose(`Hello`,23)`` would also pass type checking.
+In this set up, `someFork.choose("Hello","Hi")` would work as before, but
+`someFork.choose("Hello",23)` would also pass type checking.
 What would happen at run time? Consider for example:
 ```
 someFork.choose("Hello",23) * 2
 ```
 If `someFork` is `Right`, we would get `23 * 2` and then `46`.
-However, if `someFork` is `Left` we would get `` `Hello` * 2`` and since `Str` does not have a `*` method, then the reduction would get stuck, unable to proceed.
+However, if `someFork` is `Left` we would get `"Hello" * 2` and since `Str` does not have a `*` method, then the reduction would get stuck, unable to proceed.
 
 Ok,... that was bad.
 Let's not consider this broken Fearless variant any more.
@@ -130,7 +130,7 @@ And... that is exactly the syntax, and semantics, of generic methods: it is a wa
 
 #### Generic methods and generic types
 Even with all of this explanation, calls of method `Fork.choose` are not very readable:
-``someFork.choose(`Hello`,`Hi`)`` is really cryptic.
+`someFork.choose("Hello","Hi")` is really cryptic.
 We think this is for the same reason the original `Rectangles#` was cryptic: the role of the two parameters is not obvious by just reading the text.
 
 We can make it more readable by introducing a literal forcing us to name the two branches.

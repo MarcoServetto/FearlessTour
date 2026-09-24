@@ -222,7 +222,7 @@ Calling this method is equivalent to claiming
 > I, the programmer, know that in this case the optional will definitely have a value inside.
 > If not, this is an observed bug.
 
-Note how this is conceptually similar to the `.assertTrue` method we have seen before. Indeed, the internal call ``Error.msg `..` `` is pretty much what the body of `.assertEq` from `DataType` does.
+Note how this is conceptually similar to the `.assertTrue` method we have seen before. Indeed, the internal call `Error.msg ".."` is pretty much what the body of `.assertEq` from `DataType` does.
 
 A Fearless method can indicate failure by throwing an error.
 Errors are not part of the basic semantics of Fearless, and they can be thrown using magic methods or convenience methods using magic methods internally.

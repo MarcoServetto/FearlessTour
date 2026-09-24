@@ -62,7 +62,7 @@ ReadGame: {
 As you can see, the no-args `.read` method takes the text of the file, parses it as an `Info` and then parses that `Info` as a list of `Tank`s.
 
 You may be scratching your head about where this file comes from.
-We are not specifying an actual operation like read the file called `` `input.txt` ``. Where is this file coming from?
+We are not specifying an actual operation like read the file called `"input.txt"`. Where is this file coming from?
 It turns out that every single OS has ways to capture files intended as input, and 
 this is exactly what `sys.inputCursor# !` is doing.
 The idea is that there can be many files intended as input, and more may be added at any time.
@@ -125,7 +125,7 @@ The errors in 2 and 3 leak out when using `.map` and are captured when using `.a
 > An interesting corner of design would be to offer some way to go from `Flow[Action[T]]` into `Action[List[T]]` ? or `Action[R]` with a transformation function on the flow?
 
 
-Note that `ReadGame.read` body is `` this.read(Lists#(`StartConfiguration.txt`))! ``,
+Note that `ReadGame.read` body is `this.read(Lists#("StartConfiguration.txt"))!`,
 thus the errors that we carefully separated in the second implementation end up together again when we call the method `!` on the result of `.read(fileName)`.
 This causes all the errors to become observed bugs and to stop our application.
 

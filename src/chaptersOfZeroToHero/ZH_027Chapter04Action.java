@@ -16,7 +16,7 @@ That is, any code anywhere can write `Error!(someInfo)` and throw that `Info` ob
 
 
 Before we discussed the convenience method `Error.msg` that takes a simple string and converts it into an `Info` object holding
-that string as its `` `.msg` `` variant.
+that string as its `.msg` variant.
 The method `Map.get` either returns the mapped value or uses `Error.msg(..)` to report the lookup failure.
 
 When a method throws an error the computation stops and the error is reported outside of the program.
@@ -26,15 +26,15 @@ Fearless actions are a way to handle behaviour that can fail while recovering po
 
 Let's make this more concrete.
 
-- Code 1: ``Directions.map.get(`Nope`)`` raises an error with a readable error message.
-- Code 2: ``Try#{Directions.map.get(`Nope`)}`` returns an object of type `Action[Direction]`.
-- Code 3: ``Directions.map.tryGet(`Nope`)`` behaves like Code 2, but it is faster: no error is thrown and caught.
+- Code 1: `Directions.map.get("Nope")` raises an error with a readable error message.
+- Code 2: `Try#{Directions.map.get("Nope")}` returns an object of type `Action[Direction]`.
+- Code 3: `Directions.map.tryGet("Nope")` behaves like Code 2, but it is faster: no error is thrown and caught.
 
 Every `.getXX` method of the standard library that can fail has a `.tryGetXX` version returning an `Action`.
 Conceptually `.tryGetXX` is the primitive: `.getXX` behaves as ``this.tryGetXX!``.
 
 We can use code 1 when we trust that the error will not be raised, or when, if the error condition happens, we want the program to terminate with a good error message.
-When we want to consciously extract an element that may or may not be there, with the intention that the element being missing does not represent an error, we can use the method `.opt`, as in ``Directions.map.opt(`Nope`)``, returning an `Opt[Direction]`.
+When we want to consciously extract an element that may or may not be there, with the intention that the element being missing does not represent an error, we can use the method `.opt`, as in `Directions.map.opt("Nope")`, returning an `Opt[Direction]`.
 
 Using `Try#` or `.tryGet` means that we suspect that the value may not be there because of some buggy logic or input.
 
@@ -77,10 +77,10 @@ Action[R:*]: {
 Method `Action!` returns the `R` value, or throws an error with the provided info.
 That is, `!` is actually the opposite of `Try#`.
 For example, 
-- ``Try#{ Directions.map.get(`Nope`) }!``
+- `Try#{ Directions.map.get("Nope") }!`
 
 is equivalent to
-- ``Directions.map.get(`Nope`)``
+- `Directions.map.get("Nope")`
 
 In the same way, 
 - ``Try#{ myAction! }``
@@ -114,13 +114,14 @@ Method `.context` is a convenience method to add contextual information to actio
 Its parameter `msg: read LazyInfo` is a lazy `F[read ToInfo]`: any lazy value that can become an `Info` is accepted, so a lazy `Str`, as used below, works because `Str` implements `ToInfo`.
 Internally, it uses method `Info+`, that we have not seen yet:
 The method `Info+` makes it easy to compose information together.
+The empty `Info` is neutral: adding it to any `Info` gives back that other `Info`.
 Two `Info` messages are joined with a newline, two `Info` lists are concatenated and two `Info` maps are merged:
 - If a key is present in only one of the two sources, the key -> element mapping will be present in the resulting information.
 - If the key is present in both sources, the resulting information will map that key to the sum of the two elements using `Info+` recursively.
 
 Finally, if the two infos are not of the same kind, they are lifted to maps with a single mapping containing the original information:
-  - A message info is lifted to a map with a single mapping `` `msg` ``.
-  - A list info is lifted to a map with a single mapping `` `list` ``.
+  - A message info is lifted to a map with a single mapping `"msg"`.
+  - A list info is lifted to a map with a single mapping `"list"`.
 
 Often we use `.context` to add context to our actions.
 Consider the code below where `persons` is a `List[Person]`:

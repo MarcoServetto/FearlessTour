@@ -31,7 +31,7 @@ West:  Direction{.imm->West;  "West" }
 ```
 
 With this alone, `Directions.list` is the four directions in declaration order, `North.index` is `0`
-and `West.index` is `3`, `North < East` is `True`, ``Directions.map.get(`North`)`` is `North`, and
+and `West.index` is `3`, `North < East` is `True`, `Directions.map.get("North")` is `North`, and
 `Directions.fromInfo(North.info)` round-trips back to `North`:
 
 OMIT_START
@@ -91,7 +91,7 @@ South: Direction{::.south; .imm->South; "South"}
 West:  Direction{::.west;  .imm->West;  "West" }
 ```
 
-Now ``North.match(DirectionMatch[Str]{ .north->`n`; .east->`e`; .south->`s`; .west->`w`; })`` is `` `n` ``;
+Now `North.match(DirectionMatch[Str]{ .north->"n"; .east->"e"; .south->"s"; .west->"w"; })` is `"n"`;
 every value still gets `.list`/`.map`/`.index`/`.info`/`.fromInfo` for free from `Enums`/`Enum`, on top
 of its own `.match`:
 
@@ -166,7 +166,7 @@ Thanks to `Enums[Direction]` we get a `.map` method mapping names to directions.
 `Enums[E]` also needs a `.strBy: ToStrBy[E]` witness: a function turning any value of type `E` into
 something with a `.str`. `Directions.strBy -> {::};` says that witness is just the identity, which is
 valid precisely because every concrete `Direction` value already has its own `.str`.
-That is, the result of `.map` will be equivalent to the result of ``Maps#({::},`North`,North,  `East`,East,  `South`,South,  `West`,West)``.
+That is, the result of `.map` will be equivalent to the result of `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West)`.
 
 Many enumeration types will have similar utility methods.
 Note how methods `.list` and `.map` are fully deterministic. They take no arguments: the receiver contains no information (since it is a singleton) and there are no other parameters. This means that every time that code is executed, it would produce the same result.
@@ -177,22 +177,22 @@ Finally, the `.fromInfo` method uses this map to convert an `Info` string back i
 
 A map only connects some specific keys to an element.
 Most possible key values will not have any associated element.
-In the case of ``Maps#({::},`North`,North,  `East`,East,  `South`,South,  `West`,West)`` only four specific strings have an associated `Direction`.
+In the case of `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West)` only four specific strings have an associated `Direction`.
 So, how can we extract an element from a map if we have a string that may or may not be a valid key?
 
 The `Map[K,E]` type from the standard library offers two different methods:
 `.get` and `.opt`.
 
-Calling ``Maps#({::},`North`,North,  `East`,East,  `South`,South,  `West`,West).opt(`North`)``
+Calling `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).opt("North")`
 will result in `Opts#(North)`: an `Opt[Direction]` containing the `North` direction.
-Calling ``Maps#({::},`North`,North,  `East`,East,  `South`,South,  `West`,West).opt(`Nope`)``
+Calling `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).opt("Nope")`
 will result in `Opt[Direction]`: an empty optional.
 
 This is a general approach: when a method may not be able to return a result, we can return an optional value.
 This is a minimum effort approach that works on a small scale, but does not provide the user of our code with much useful information.
 Either the data is there, or it is not. If the data is not there, we are not giving any hint of why it is not there.
 
-Calling ``Maps#({::},`North`,North,  `East`,East,  `South`,South,  `West`,West).get(`North`)`` will result in the `North` direction, but calling ``Maps#({::},`North`,North,  `East`,East,  `South`,South,  `West`,West).get(`Nope`)`` will fail with an error.
+Calling `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).get("North")` will result in the `North` direction, but calling `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).get("Nope")` will fail with an error.
 That is, the code will stop running and the program will report that it failed in a certain code location because the key `Nope` is not in the set `North`, `East`, `South`, `West`.
 
 Next we will see how to handle those errors.
