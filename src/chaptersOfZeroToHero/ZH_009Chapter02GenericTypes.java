@@ -201,14 +201,14 @@ Right: Fork{ :: .right }
 A : { # ( someFork: Fork): Str ->
 //OMIT_END
 someFork.choose( SomeLeftRight[]:LeftRight[Str]{
-  .left[](): Str -> _Str1[]:`Hello`[]{};
-  .right[](): Str-> _Str2[]:`Hi`[]{};
+  .left[](): Str -> _Str1[]:"Hello"{};
+  .right[](): Str-> _Str2[]:"Hi"{};
 })
 //OMIT_START
 }
 //ERROR|In file: [###]
-//ERROR|011|   .left[](): Str -> _Str1[]:`Hello`[]{};
-//ERROR|   |                     ^^^^^^^^^^^^^^^^^^^
+//ERROR|011|   .left[](): Str -> _Str1[]:"Hello"{};
+//ERROR|   |                     ^^^^^^^^^^^^^^^^^
 //ERROR|[###]
 //OMIT_END
 """); }/*--------------------------------------------
