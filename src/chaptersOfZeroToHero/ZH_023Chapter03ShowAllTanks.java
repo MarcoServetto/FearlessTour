@@ -120,7 +120,7 @@ NextState:{
     .let[List[Point]] danger= { tanks.flow.map{ t -> t.position.move(t.aiming) }.list }
     .let[List[Tank]] survivors= { tanks.flow.filter{t -> danger.flow.filter{::==(t.position)}.isEmpty } .list }
     .let[List[Point]] occupied= {
-      (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}) .list }
+      (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}.list) .list }
     .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
 
   read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
