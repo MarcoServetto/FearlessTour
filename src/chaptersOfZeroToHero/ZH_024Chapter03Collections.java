@@ -613,9 +613,10 @@ myMap.opt(Persons#(38,"Neil Armstrong")).orValue "Moon" // alternative default v
 
 Maps can have `mut`, `imm` or `read` elements; but only immutable keys. This is because the implementation of `Map[K,E]` needs to assume that the result of `.hash` and `==` is consistent over time.
 
-We can flow on a map, but since both keys and elements are present, the flow method takes a function mapping keys and elements into some value.
+We can flow on a map: since both keys and elements are present, `.flow` returns a `BiFlow`, with the keys in one channel and the elements in the other.
+Method `.getMerge` takes a function mapping each key and its element into some value, and returns a normal flow of those values.
 For example
-`myMap.flow{k,e-> k.name + e }.list`
+`myMap.flow.getMerge{k,e-> k.name + e }.list`
 will return
 `Lists#("BobToronto 34b Warden St.","AliceWellington 134 Kelburn Parade")`
 
@@ -1120,20 +1121,20 @@ TestMapsAndSets:F[Tests,Tests]{::
   .test(
     Maps#({::},
       Persons#(25,"Bob",List[Cat]), "A",
-      Persons#(34,"Alice",List[Cat]), "B" //:: and extraction
-      ).flow.map{::.key.name + (::.elem)}.list.get(0).assertEq "BobA"
+      Persons#(34,"Alice",List[Cat]), "B" //getMerge
+      ).flow.getMerge{k,e-> k.name + e}.list.get(0).assertEq "BobA"
     )
   .test(
     Maps#({::},
       Persons#(25,"Bob",List[Cat]), "A",
-      Persons#(34,"Alice",List[Cat]), "B" //flow+map together
-      ).flow{k,e-> k.name + e}.list.get(0).assertEq "BobA"
+      Persons#(34,"Alice",List[Cat]), "B" //getFold
+      ).flow.getFold({""},{acc,k,e-> acc + (k.name) + e}).assertEq "BobAAliceB"
     )
   .test(
     Maps#({::},
       Persons#(25,"Bob",List[Cat]), "A",
       Persons#(34,"Alice",List[Cat]), "B"
-      ).flow.map{::.key.name + (::.elem)}.list.get(1).assertEq "AliceB"
+      ).flow.getMerge{k,e-> k.name + e}.list.get(1).assertEq "AliceB"
     )
 
   // mapping: build a map from a flow
