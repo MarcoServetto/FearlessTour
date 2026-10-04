@@ -246,5 +246,71 @@ While writing parentheses after the `#` method feels natural, we are all used to
 Thus, we can write `Turn90 + Turn90 + Turn90 + Turn90` to obtain the same result as before.
 We will discuss Fearless operator precedence, or the Fearless lack thereof, when we introduce numbers in the next section.
 
+//OMIT_START
+-------------------------*/@Test void rotationsBehave() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+Test: Main{s-> Block#
+  .do{Debug#(North.turn)}
+  .do{Debug#(North.turn.turn)}
+  .do{Debug#(Turn180#(North))}
+  .do{Debug#(Turn180#(Turn180#(South)))}
+  .do{Debug#((Turn90+(Turn180))#(North))}
+  .do{Debug#((Turn90+(Turn90))#(East))}
+  .do{Debug#((Turn180)#(East))}
+  .do{Debug#((Turn90+(Turn90)+(Turn90)+(Turn90))#(West))}
+  .do{Debug#((Turn90 + Turn90 + Turn90 + Turn90)#(South))}
+  .do{Debug#(Turn270#(North))}
+  .do{Debug#(Turn0#(East))}
+  .do{Debug#(Verbose90#(North))}
+  .do{Debug#(Implicit90#(North))}
+  .do{Debug#(Short90#(North))}
+  .do{Debug#(Tanks#(North,East).turnTurret(Turn180).aiming)}
+  .do{Debug#(Tanks#(North,East).turnTurret(Turn180).heading)}
+  .return{Void}}
+Direction: base.ToStr{ .turn: Direction; }
+North: Direction{ .turn->East;  .str->"North" }
+East:  Direction{ .turn->South; .str->"East" }
+South: Direction{ .turn->West;  .str->"South" }
+West:  Direction{ .turn->North; .str->"West" }
+Rotation: {
+  #(d: Direction):Direction;
+  +(r: Rotation): Rotation-> { d -> this#( r#(d) ) }
+}
+Turn0: Rotation{::}
+Turn90: Rotation{::.turn }
+Turn180: Rotation{::.turn.turn }
+Turn270: Rotation{::.turn.turn.turn }
+Verbose90: Rotation{#(dir: Direction): Direction -> dir.turn }
+Implicit90: Rotation{#(dir)-> dir.turn }
+Short90: Rotation{dir-> dir.turn }
+Tanks: { #(heading: Direction, aiming: Direction): Tank-> {.heading ->heading; .aiming ->aiming;}}
+Tank: {
+  .heading: Direction;
+  .aiming: Direction;
+  .turnTurret(r: Rotation): Tank-> Tanks#(this.heading, r#(this.aiming))
+}
+
+//PRINT|East
+//PRINT|South
+//PRINT|South
+//PRINT|South
+//PRINT|West
+//PRINT|West
+//PRINT|West
+//PRINT|West
+//PRINT|South
+//PRINT|West
+//PRINT|East
+//PRINT|East
+//PRINT|East
+//PRINT|East
+//PRINT|West
+//PRINT|North
+
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }

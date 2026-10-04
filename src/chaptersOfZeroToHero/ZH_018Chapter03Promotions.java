@@ -75,5 +75,64 @@ Code `PromotionExample#.run(10)` would not compile because method `PromotionExam
 
 > Ideally we should expand and talk more about promotions and their interactions with inference.
 
+//OMIT_START
+-------------------------*/@Test void promotionResult() { run("""
+use base.Void as Void;
+use base.Nat as Nat;
+use base.Block as Block;
+Points:{ #(x: Nat, y: Nat): Point -> Point:{.x: Nat -> x; .y: Nat -> y} }
+Animals: {
+  #(start: Point): mut Animal -> Block#
+   .var[Point] loc= {start}
+   .return{ mut Animal: {
+      read .location: Point -> loc.get;
+      mut .run(x: Nat): Void ->
+        loc.set(Points#(loc.get.x + x, loc.get.y));
+    }}}
+PromotionExample: {
+  #: imm Animal -> Animals#(Points#(10,20))
+  }
+Test: base.Main{s-> base.Debug#(PromotionExample#.location.x)}
+//PRINT|10
+
+"""); }/*--------------------------------------------
+//OMIT_END
+//OMIT_START
+-------------------------*/@Test void promotionRunRejected() { run("""
+use base.Void as Void;
+use base.Nat as Nat;
+use base.Block as Block;
+Points:{ #(x: Nat, y: Nat): Point -> Point:{.x: Nat -> x; .y: Nat -> y} }
+Animals: {
+  #(start: Point): mut Animal -> Block#
+   .var[Point] loc= {start}
+   .return{ mut Animal: {
+      read .location: Point -> loc.get;
+      mut .run(x: Nat): Void ->
+        loc.set(Points#(loc.get.x + x, loc.get.y));
+    }}}
+PromotionExample: {
+  #: imm Animal -> Animals#(Points#(10,20))
+  }
+Bad: { #: Void -> PromotionExample#.run(10) }
+//ERROR|In file: [###]_test/_rank_app111.fear
+//ERROR|
+//ERROR|016| Bad: { #: Void -> PromotionExample#.run(10) }
+//ERROR|   |        -----------~~~~~~~~~~~~~~~~~^^^^^~~~
+//ERROR|
+//ERROR|While inspecting "#" line 16
+//ERROR|This call to method "mut Animal.run(_)" cannot typecheck.
+//ERROR|The receiver (the expression before the method name) has capability "imm".
+//ERROR|This call requires a receiver with capability "mut" or "iso".
+//ERROR|
+//ERROR|Receiver required by each promotion:
+//ERROR|- "mut" (As declared)
+//ERROR|- "iso" (Strengthen result)
+//ERROR|
+//ERROR|Compressed relevant code with inferred types: (compression indicated by `-`)
+//ERROR|Pro-ple#.run[mut](10)
+//ERROR|Error 8 TypeError
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }

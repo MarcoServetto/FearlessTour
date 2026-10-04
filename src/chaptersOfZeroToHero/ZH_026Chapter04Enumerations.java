@@ -198,10 +198,56 @@ That is, the code will stop running and the program will report that it failed i
 Next we will see how to handle those errors.
 
 OMIT_START
--------------------------*/@Test void anotherPackage() { run("fooBar","Test","""
-package fooBar
-alias base.Block as B,
-alias base.Void as Void,
+-------------------------*/@Test void lookups() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Lists as Lists;
+use base.Debug as Debug;
+use base.Enums as Enums;
+use base.Enum as Enum;
+use base.Maps as Maps;
+use base.Infos as Infos;
+use base.Str as Str;
+Test: Main{s-> Block#
+  .do{Debug#(Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).opt("North").str{::})}
+  .do{Debug#(Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).opt("Nope").str{::})}
+  .do{Debug#(Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).get("North"))}
+  .do{Debug#(Directions.map.size)}
+  .do{Debug#(Directions.map.opt("Nope").orValue(North))}
+  .do{Debug#(Directions.map.flow{k,e->k}.list.str{::})}
+  .do{Debug#(Directions.indexMap.get("South"))}
+  .do{Debug#(South.index)}
+  .do{Debug#(South.info.str)}
+  .do{Debug#(Directions.fromInfo(Infos.msg("West")))}
+  .do{Debug#(West > South)}
+  .do{Debug#(Lists#(West,North,South).flow.sort{::}.list.get(0))}
+  .return{Void}}
+
+Directions: Enums[Direction]{
+  .list -> Lists#(North,East,South,West);
+  .strBy -> {::};
+  }
+Direction: Enum[Direction]{
+  .enums->Directions;
+  .close->this; .close->::;
+  }
+North: Direction{.imm->North; "North"}
+East:  Direction{.imm->East;  "East" }
+South: Direction{.imm->South; "South"}
+West:  Direction{.imm->West;  "West" }
+//PRINT|Opt[North]
+//PRINT|Opt[]
+//PRINT|North
+//PRINT|4
+//PRINT|North
+//PRINT|[North, East, South, West]
+//PRINT|2
+//PRINT|2
+//PRINT|"South"
+//PRINT|West
+//PRINT|True
+//PRINT|North
 """); }/*--------------------------------------------
 OMIT_END
 END*/

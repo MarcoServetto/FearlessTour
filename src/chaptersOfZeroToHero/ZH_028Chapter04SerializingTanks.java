@@ -150,10 +150,109 @@ We are now going to move forward, toward other interesting examples.
 
 
 OMIT_START
--------------------------*/@Test void anotherPackage() { run("fooBar","Test","""
-package fooBar
-alias base.Block as B,
-alias base.Void as Void,
+-------------------------*/@Test void serialiseTanks() { run("""
+use base.Main as Main;
+use base.Str as Str;
+use base.Nat as Nat;
+use base.Bool as Bool;
+use base.F as F;
+use base.ToStr as ToStr;
+use base.ToInfo as ToInfo;
+use base.List as List;
+use base.Lists as Lists;
+use base.Block as Block;
+use base.Sealed as Sealed;
+use base.WidenTo as WidenTo;
+use base.DataType as DataType;
+use base.FromInfo as FromInfo;
+use base.Infos as Infos;
+use base.Info as Info;
+use base.Enums as Enums;
+use base.Enum as Enum;
+use base.OrderHash as OrderHash;
+use base.InputCursorNode as InputCursorNode;
+use base.Void as Void;
+use base.Debug as Debug;
+use base.Try as Try;
+use base.Action as Action;
+DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
+Directions: Enums[Direction]{
+  .list -> Lists#(North,East,South,West);
+  .strBy -> {::};
+  }
+Direction: Enum[Direction]{
+  .enums->Directions;
+  read .match[R:**](m: mut DirectionMatch[R]): R;
+  .close->this; .close->::;
+  }
+North: Direction{::.north; .imm->North; "North"}
+East:  Direction{::.east;  .imm->East;  "East" }
+South: Direction{::.south; .imm->South; "South"}
+West:  Direction{::.west;  .imm->West;  "West" }
+Points: F[Nat,Nat,Point], FromInfo[Point] {
+  .fromInfo(i) -> Points#(i.getMap.get("x").getMsg.getNat, i.getMap.get("y").getMsg.getNat);
+  # x, y ->Block#
+    .do { x.assertInRange(0=~~10) }
+    .do { y.assertInRange(0=~~10) }
+    .return{ Point: DataType[Point,Point]{'self
+      read .x: Nat -> x;
+      read .y: Nat -> y;
+      .cmp t0, t1, m -> t0.x <=> (t1.x, m && { t0.y <=> (t1.y,m) });
+      .hash -> x.hash.hashWith(y.hash);
+      .info -> Infos.map("x",x,  "y",y);
+      .str -> "[" + x + ", " + y + "]";
+      .close->self; .close->::; .imm->self;
+      }}}
+Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
+  heading, aiming, position -> Tank:ToInfo, ToStr,OrderHash[Tank]{'self
+    read .heading: Direction -> heading;
+    read .aiming: Direction -> aiming;
+    read .position: Point -> position;
+    .info -> Infos.map("heading", heading, "aiming", aiming,   "position", position);
+    .str  -> "tank";
+    .close->self; .close->::;
+    .cmp t1,t2,m -> t1.heading <=> (t2.heading,
+      m&&{t1.aiming <=> (t2.aiming, m&&{t1.position <=> (t2.position,m)})});
+    .hash -> heading.hash.hashWith(aiming.hash).hashWith(position.hash);
+    };
+  .fromInfo(i) -> Tanks#(
+    Directions.fromInfo(i.getMap.get("heading")),
+    Directions.fromInfo(i.getMap.get("aiming")),
+    Points.fromInfo(i.getMap.get("position"))
+    );
+  }
+ReadGame: {
+  mut .in: mut InputCursorNode;
+  mut .read : List[Tank] -> Block#
+    .let[Str] text= {this.in.text!}
+    .let[Info] info= {Infos.fromStr(text)}
+    .return {info.getList.flow.map{i->Tanks.fromInfo(i)}.list};
+  }
+
+Test: Main{s-> Block#
+  .do{Debug#(Tanks#(North,East,Points#(1,2)).info.str)}
+  .do{Debug#(Tanks.fromInfo(Infos.fromStr(Tanks#(North,East,Points#(1,2)).info.str)) == (Tanks#(North,East,Points#(1,2))))}
+  .do{Debug#(Tanks.fromInfo(Infos.fromStr(Tanks#(North,East,Points#(1,2)).info.str)) == (Tanks#(North,East,Points#(1,3))))}
+  .do{Debug#(Infos.fromStr(`[{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}},{"heading":"West","aiming":"South","position":{"x":"7","y":"3"}}]`).getList.flow.map{i->Tanks.fromInfo(i)}.list.size)}
+  .do{Debug#(Infos.fromStr(`[{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}},{"heading":"West","aiming":"South","position":{"x":"7","y":"3"}}]`).getList.flow.map{i->Tanks.fromInfo(i)}.list.get(1).position.x)}
+  .do{Debug#(Infos.fromStr(`[{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}},{"heading":"West","aiming":"South","position":{"x":"7","y":"3"}}]`).getList.flow.map{i->Tanks.fromInfo(i)}.list.get(1).heading)}
+  .do{Debug#(Try#{Infos.fromStr("[")}.context{"While deserialising Info from string"}.info!.getMsg.startsWith("While deserialising Info from string"))}
+  .do{Debug#(Try#{Infos.fromStr("[")}.context{"While deserialising Info from string"}.info!.getMsg.contains("unterminated list"))}
+  .do{Debug#(Try#{Tanks.fromInfo(Infos.fromStr(`{"heading":"North"}`))}.context{"While deserialising tanks from Info"}.info!.getMsg.startsWith("While deserialising tanks from Info"))}
+  .do{Debug#(Try#{Infos.fromStr("[")}.map{i->i.str}.info.isEmpty)}
+  .return{Void}}
+
+//PRINT|{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}}
+//PRINT|True
+//PRINT|False
+//PRINT|2
+//PRINT|7
+//PRINT|West
+//PRINT|True
+//PRINT|True
+//PRINT|True
+//PRINT|False
+
 """); }/*--------------------------------------------
 OMIT_END
 END*/

@@ -442,10 +442,104 @@ Many different kinds of software are produced depending on the assertion profile
 > Discuss the various forms of match: match with datatype, match without data type (.cmp), match over data that exists (stack etc), match over computations (action); note how composing those two kinds of match is different; Finally matchers can carry extra parameters and pass / wire them around; consider CapTry with iso.
 
 OMIT_START
--------------------------*/@Test void anotherPackage() { run("fooBar","Test","""
-package fooBar
-alias base.Block as B,
-alias base.Void as Void,
+-------------------------*/@Test void actions() { run("""
+use base.Action as Action;
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Lists as Lists;
+use base.Debug as Debug;
+use base.Enums as Enums;
+use base.Enum as Enum;
+use base.Maps as Maps;
+use base.Map as Map;
+use base.Opts as Opts;
+use base.Info as Info;
+use base.Str as Str;
+use base.Try as Try;
+use base.Actions as Actions;
+use base.Nat as Nat;
+Test: Main{s-> Block#
+  .do{Debug#(Try#{Directions.map.get("Nope")}.info!.getMsg.startsWith("Map.get: Tried to get key Nope"))}
+  .do{Debug#(Directions.map.tryGet("Nope").info!.getMsg.startsWith("Map.get: Tried to get key Nope"))}
+  .do{Debug#(Try#{Directions.map.get("North")}.ok.str{::})}
+  .do{Debug#(Try#{Directions.map.get("Nope")}.ok.str{::})}
+  .do{Debug#(Directions.map.tryGet("West")!)}
+  .do{Debug#(Try#{Directions.map.get("East")}!)}
+  .do{Debug#(Try#{Directions.map.get("Nope")}.catch{i->South})}
+  .do{Debug#(Try#{Directions.map.get("Nope")}.recover{i->Opts#(West)}!)}
+  .do{Debug#(Try#{Directions.map.get("East")}.map{d->d.index}!)}
+  .do{Debug#(Directions.map.opt("Nope").str{::})}
+  .do{Debug#(Lists#(Persons#("a"),Persons#("b")).tryGet(5).context{"The list persons was too small when"}.info!.getMsg.startsWith("The list persons was too small when"))}
+  .do{Debug#(Lists#(Persons#("a"),Persons#("b")).tryGet(5).context{"The list persons was too small when"}.info!.getMsg.contains("List index 5 out of range for List of length 2"))}
+  .do{Debug#(Lists#(Persons#("a"),Persons#("b")).tryGet(1).map{::.name}!)}
+  .do{Debug#(Try#{Stuff.beer1}.info!.getMsg.startsWith("List.get:"))}
+  .do{Debug#(Try#{Stuff.beer2}.info!.getMsg.startsWith("InBeer2"))}
+  .do{Debug#(Try#{Stuff.beer2}.info!.getMsg.contains("List index 5 out of range"))}
+  .do{Debug#(Lists#(Persons#("a"),Persons#("b")).tryGet(1).andThen{p->Jobs.map.tryGet(p.name).map{j->"Person "+(p.name)+" works as a "+j}}!)}
+  .do{Debug#(Lists#(Persons#("a"),Persons#("z")).tryGet(1).andThen{p->Jobs.map.tryGet(p.name).map{j->"Person "+(p.name)+" works as a "+j}}.info!.getMsg.startsWith("Map.get: Tried to get key z"))}
+  .do{Debug#(Lists#(Persons#("a"),Persons#("z")).tryGet(5).andThen{p->Jobs.map.tryGet(p.name).map{j->"Person "+(p.name)+" works as a "+j}}.info!.getMsg.startsWith("List.get: List index 5"))}
+  .do{Debug#(Block#.let p= {Lists#(Persons#("a"),Persons#("b")).get(1)}.return { "Person " + (p.name) + " works as a "+ (Jobs.map.get(p.name)) })}
+  .do{Debug#(Pts#(3,4))}
+  .do{Debug#(Actions.ok(7).run{ .ok v->Actions.ok(v); .info i-> Actions.info(i); }!)}
+  .do{Debug#(Actions.msg[Nat]("bad").info!.getMsg)}
+  .return{Void}}
+Directions: Enums[Direction]{
+  .list -> Lists#(North,East,South,West);
+  .strBy -> {::};
+  }
+Direction: Enum[Direction]{
+  .enums->Directions;
+  .close->this; .close->::;
+  }
+North: Direction{.imm->North; "North"}
+East:  Direction{.imm->East;  "East" }
+South: Direction{.imm->South; "South"}
+West:  Direction{.imm->West;  "West" }
+
+
+
+
+
+Persons:{ #(name: Str): Person -> Person:{ .name: Str -> name; } }
+Stuff:{
+  .foo: Nat -> Lists#(1,2,3).get(5);
+  .bar: mut Action[Nat] -> Try#{this.foo};
+  .beer1: Nat -> this.bar!;
+  .beer2: Nat -> this.bar.context{"InBeer2"}!;
+  }
+Jobs:{ .map: Map[Str,Str] -> Maps#({::},"a","baker","b","cook"); }
+Pts:{ #(x: Nat, y: Nat): Nat -> Block#
+    .do { x.assertInRange(0=~~10) }
+    .do { y.assertInRange(0=~~10) }
+    .return{x+y};
+  }
+
+//PRINT|True
+//PRINT|True
+//PRINT|Opt[North]
+//PRINT|Opt[]
+//PRINT|West
+//PRINT|East
+//PRINT|South
+//PRINT|West
+//PRINT|1
+//PRINT|Opt[]
+//PRINT|True
+//PRINT|True
+//PRINT|b
+//PRINT|True
+//PRINT|True
+//PRINT|True
+//PRINT|Person b works as a cook
+//PRINT|True
+//PRINT|True
+//PRINT|Person b works as a cook
+//PRINT|7
+//PRINT|7
+//PRINT|bad
+
+
 """); }/*--------------------------------------------
 OMIT_END
 END*/

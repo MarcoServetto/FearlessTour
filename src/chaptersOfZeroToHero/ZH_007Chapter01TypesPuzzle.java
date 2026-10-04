@@ -300,5 +300,138 @@ Depending on the reader, this code could be more or less readable than the one b
 The difference is that we have consistently omitted the method name for one of the methods we are defining.
 This is unambiguous since that would be the only remaining abstract method that we need to implement; thus the conventional sugar applies.
 
+//OMIT_START
+-------------------------*/@Test void areaFourInts() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Int as Int;
+Test: Main{s-> Block#
+  .do{Debug#(Rectangles#(+1,+3,+10,+25).area)}
+  .do{Debug#(Rectangles#(+1,+3,+10,+25).x2)}
+  .do{Debug#(Rectangles#(+0,+0,+4,+5).area)}
+  .return{Void}}
+Rectangles:{#(x1: Int, y1: Int, x2: Int, y2: Int): Rectangle -> Rectangle:{
+  .x1: Int -> x1;
+  .y1: Int -> y1;
+  .x2: Int -> x2;
+  .y2: Int -> y2;
+  .area: Int -> (x2 - x1) * (y2 - y1);
+  }}
+
+//PRINT|+198
+//PRINT|+10
+//PRINT|+20
+
+"""); }/*--------------------------------------------
+//OMIT_END
+//OMIT_START
+-------------------------*/@Test void areaTypedPoints() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Int as Int;
+Test: Main{s-> Block#
+  .do{Debug#(Rectangles#(Points#(Xs#(+1),Ys#(+3)),Points#(Xs#(+10),Ys#(+25))).area.val)}
+  .do{Debug#(Points#(Xs#(+2),Ys#(+5)).y.val)}
+  .return{Void}}
+Xs:{#(val: Int): X -> X:{.val: Int -> val}}
+Ys:{#(val: Int): Y -> Y:{.val: Int -> val}}
+Areas:{#(val: Int): Area -> Area:{.val: Int-> val}}
+Points:{#(x: X, y: Y): Point ->Point:{
+  .x: X-> x;
+  .y: Y-> y;
+  }}
+Rectangles:{#(topLeft: Point, bottomRight: Point): Rectangle -> Rectangle:{
+  .topLeft: Point -> topLeft;
+  .bottomRight: Point -> bottomRight;
+  .area: Area -> Areas#(
+    bottomRight.x.val - (topLeft.x.val)
+    * (bottomRight.y.val - (topLeft.y.val))
+    );
+  }}
+
+//PRINT|+198
+//PRINT|+5
+
+"""); }/*--------------------------------------------
+//OMIT_END
+//OMIT_START
+-------------------------*/@Test void tanksMoveCompact() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Int as Int;
+Test: Main{s-> Block#
+  .do{Debug#(Tanks#(North,East,Points#(+5,+5)).move.position.x)}
+  .do{Debug#(Tanks#(North,East,Points#(+5,+5)).move.position.y)}
+  .do{Debug#(Tanks#(East,North,Points#(+5,+5)).move.position.y)}
+  .do{Debug#(Tanks#(South,East,Points#(+5,+5)).move.move.position.x)}
+  .do{Debug#(Tanks#(West,East,Points#(+5,+5)).move.position.y)}
+  .do{Debug#(Tanks#(West,East,Points#(+5,+5)).move.aiming.point.y)}
+  .do{Debug#(North.point.x)}
+  .return{Void}}
+Point: {
+  .x: Int; .y: Int;
+  +(other: Point): Point ->
+    Points#(other.x + (this.x), other.y + (this.y));
+  .move(d: Direction): Point -> this + ( d.point );
+  }
+Points: {#(x: Int, y: Int): Point -> { x; .y -> y } }
+
+Direction: { .turn: Direction; .point: Point; }
+North: Direction { East;  .point -> Points#(-1, +0); }
+East : Direction { South; .point -> Points#(+0, +1); }
+South: Direction { West;  .point -> Points#(+1, +0); }
+West : Direction { North; .point -> Points#(+0, -1); }
+Tank: {
+  .heading: Direction;
+  .aiming: Direction;
+  .position:Point;
+  .move:Tank -> Tanks#(this.heading, this.aiming, this.position.move(this.heading));
+  }
+Tanks: { #(h: Direction, a: Direction, p: Point): Tank->{ h; .aiming->a; .position->p} }
+
+//PRINT|+4
+//PRINT|+5
+//PRINT|+6
+//PRINT|+7
+//PRINT|+4
+//PRINT|+1
+//PRINT|-1
+
+"""); }/*--------------------------------------------
+//OMIT_END
+//OMIT_START
+-------------------------*/@Test void intsAreNotDirections() { run("""
+use base.Int as Int;
+Direction:{ .turn: Direction }
+North: Direction {East}
+East : Direction {South}
+South: Direction {West}
+West : Direction {North}
+Tank: {.heading: Direction; .aiming: Direction; }
+Tanks: { #(heading: Direction, aiming: Direction): Tank -> { .heading -> heading; .aiming -> aiming; } }
+Bad: { #: Tank -> Tanks#(+3,-6) }
+
+//ERROR|In file: [###]_test/_rank_app111.fear
+//ERROR|
+//ERROR|009| Bad: { #: Tank -> Tanks#(+3,-6) }
+//ERROR|   |        -----------~~~~~^^~~~~~~
+//ERROR|
+//ERROR|While inspecting "#" line 9
+//ERROR|This call to method "Tanks#(_,_)" cannot typecheck.
+//ERROR|Argument 1 has type "iso Int".
+//ERROR|That is not a subtype of "Direction" (the type required by the method signature).
+//ERROR|
+//ERROR|Compressed relevant code with inferred types: (compression indicated by `-`)
+//ERROR|-#(+3,-)
+//ERROR|Error 8 TypeError
+
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }

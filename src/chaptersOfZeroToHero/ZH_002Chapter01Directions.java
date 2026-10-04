@@ -293,5 +293,51 @@ it can not be used directly as a valid object literal.
 We will call types with abstract methods **abstract types**.
 
 
+//OMIT_START
+-------------------------*/@Test void directionsBehave() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+Test: Main{s-> Block#
+  .do{Debug#(North.turn)}
+  .do{Debug#(East.turn)}
+  .do{Debug#(South.turn)}
+  .do{Debug#(West.turn)}
+  .do{Debug#(North.turn.turn)}
+  .do{Debug#(South.turn.turn)}
+  .do{Debug#(North.reverse)}
+  .do{Debug#(East.reverse)}
+  .do{Debug#(South.reverse)}
+  .do{Debug#(West.reverse)}
+  .do{Debug#(West.turn.turn.turn.turn)}
+  .do{Debug#(North.turn().turn())}
+  .do{Debug#(North.reverse.reverse)}
+  .return{Void}}
+Direction: base.ToStr{
+  .turn: Direction;
+  .reverse: Direction -> this.turn.turn;
+  }
+North: Direction { .turn->East;  .str->"North" }
+East : Direction { .turn->South; .str->"East" }
+South: Direction { .turn->West;  .str->"South" }
+West : Direction { .turn->North; .str->"West" }
+
+//PRINT|East
+//PRINT|South
+//PRINT|West
+//PRINT|North
+//PRINT|South
+//PRINT|North
+//PRINT|South
+//PRINT|West
+//PRINT|North
+//PRINT|East
+//PRINT|West
+//PRINT|South
+//PRINT|North
+
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }

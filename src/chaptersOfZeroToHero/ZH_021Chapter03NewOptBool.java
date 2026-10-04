@@ -512,6 +512,82 @@ _Opt[E:*]:DataType[Opt[E],Opt[imm E],E,imm E]{
   read .mapSome[R:*](mut MF[read/imm E, R]): mut Opt[R];
 }
 """); }/*--------------------------------------------
+-------------------------*/@Test void realBoolAndOpt() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Nat as Nat;
+use base.Opts as Opts;
+use base.Opt as Opt;
+use base.Str as Str;
+use base.True as True;
+use base.False as False;
+use base.Bool as Bool;
+Test: Main{s-> Block#
+  .do{Debug#(True & False)}
+  .do{Debug#(True && {False})}
+  .do{Debug#(False || {True})}
+  .do{Debug#(True | False)}
+  .do{Debug#(True.not)}
+  .do{Debug#(False ==> {False})}
+  .do{Debug#(True ==> {False})}
+  .do{Debug#(True ==> {True})}
+  .do{Debug#(True.match{.true->"t"; .false->"f"})}
+  .do{Debug#(True.toOpt{5}.str{::})}
+  .do{Debug#(False.toOpt{5}.str{::})}
+  .do{Debug#(True.str)}
+  .do{Debug#(False.str)}
+  .do{Debug#(True.hash)}
+  .do{Debug#(False.hash)}
+  .do{Debug#(True.info.str)}
+  .do{Debug#(False < True)}
+  .do{Debug#(True < False)}
+  .do{Debug#(True == True)}
+  .do{Debug#(Opts#(5).orValue 3)}
+  .do{Debug#(Opt[Nat].orValue 3)}
+  .do{Debug#(Opt[Nat].orLazy{7})}
+  .do{Debug#(Opts#(5).mapSome{n->n+1}.str{::})}
+  .do{Debug#(Opts#(Opts#(5)).str{::.str{::}})}
+  .do{Debug#(Opts#(5).info{::}.str)}
+  .do{Debug#(Opt[Nat].isEmpty)}
+  .do{Debug#(Opts#(5).isSome)}
+  .do{Debug#(Opts#(5)!)}
+  .do{Debug#(Opt[Nat].info{::}.str)}
+  .return{Void}}
+
+
+//PRINT|False
+//PRINT|False
+//PRINT|True
+//PRINT|True
+//PRINT|False
+//PRINT|True
+//PRINT|False
+//PRINT|True
+//PRINT|t
+//PRINT|Opt[5]
+//PRINT|Opt[]
+//PRINT|True
+//PRINT|False
+//PRINT|1
+//PRINT|0
+//PRINT|"True"
+//PRINT|True
+//PRINT|False
+//PRINT|True
+//PRINT|5
+//PRINT|3
+//PRINT|7
+//PRINT|Opt[6]
+//PRINT|Opt[Opt[5]]
+//PRINT|["5"]
+//PRINT|True
+//PRINT|True
+//PRINT|5
+//PRINT|null
+
+"""); }/*--------------------------------------------
 OMIT_END
 
 Here we summarise the other types mentioned above.

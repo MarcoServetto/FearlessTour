@@ -52,7 +52,7 @@ public class TourHelper {
     //var a=strView(expectedPrint+"\n");
     //var b=strView(m.out().toString());
     //assertEquals(a,b);
-    strCmp(expectedErr, m.err().toString());
+    strCmp(expectedErr, m.err().toString().replace('\\','/'));
     //assertEquals(expectedPrint.length(), m.out().length());//+1 for new line
     strCmp("||"+expectedPrint+"||", "||"+m.out().toString()+"||");
   }

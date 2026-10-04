@@ -218,5 +218,70 @@ What you're looking at is a mental blueprint. One that can become a key part of 
 
 This snippet is foundational for a powerful mental model, that will guide you toward cleaner solutions, clearer abstractions, and more maintainable code.
 
+//OMIT_START
+-------------------------*/@Test void stackBehaviour() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Nat as Nat;
+use base.Bool as Bool;
+use base.F as F;
+Test: Main{s-> Block#
+  .do{Debug#(Examples.sum(Examples.nums))}
+  .do{Debug#(Examples.times(Examples.nums))}
+  .do{Debug#(Examples.matchSum(Examples.nums))}
+  .do{Debug#(Examples.sum(Examples.nums.map{n->n+5}))}
+  .do{Debug#(Examples.fluent(Examples.nums))}
+  .do{Debug#(Examples.sum(Examples.nums.filter{n->n >= 2}))}
+  .do{Debug#(Examples.sum(Examples.nums.filter{n->n >= 4}))}
+  .do{Debug#(Examples.sum(Stack[Nat]))}
+  .do{Debug#(Examples.times(Stack[Nat]))}
+  .return{Void}}
+StackMatch[T,R]: {
+  .empty: R;
+  .elem(top:T, tail: Stack[T]): R;
+  }
+Stack[T]: {
+  .match[R](m: StackMatch[T,R]): R -> m.empty;
+  .fold[R](start:R, f: F[R,T,R]): R -> start;
+  .map[R](f: F[T, R]): Stack[R] -> {};
+  .filter(f: F[T,Bool]): Stack[T]-> {};
+  +(e: T): Stack[T] -> {
+    .match m       -> m.elem(e, this);
+    .fold start, f -> f#(this.fold(start, f), e);
+    .map f         -> this.map(f) + ( f#(e) );
+    .filter f      -> f#(e).if{
+      .then -> this.filter(f) + e;
+      .else -> this.filter(f);
+      };
+    };
+  }
+Examples:{
+  .nums: Stack[Nat] -> Stack[Nat] + 1 + 2 + 3;
+  .sum(ns: Stack[Nat]): Nat -> ns.fold(0, { n1,n2 -> n1 + n2 });
+  .times(ns: Stack[Nat]): Nat -> ns.fold(1, { n1,n2 -> n1 * n2 });
+  .matchSum(ns: Stack[Nat]): Nat -> ns.match{
+    .empty          -> 0;
+    .elem top, tail -> top + ( this.matchSum(tail) );
+    };
+  .fluent(ns: Stack[Nat]): Nat -> ns
+    .map { n -> n + 10 }
+    .map { n -> n *  3 }
+    .fold(0, { n1,n2 -> n1 + n2 });
+  }
+
+//PRINT|6
+//PRINT|6
+//PRINT|6
+//PRINT|21
+//PRINT|108
+//PRINT|5
+//PRINT|0
+//PRINT|0
+//PRINT|1
+
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }

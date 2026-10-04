@@ -250,5 +250,80 @@ The `Left.choose` implementation chooses the `.left` option, while the
 In Fearless, there are many types that look like `Fork`; we will see them next.
 Overall, `Fork` itself is not really used in Fearless, but it is a really interesting type, and it should open your mind to the next big topic: Booleans.
 
+//OMIT_START
+-------------------------*/@Test void forkBehaviour() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Str as Str;
+use base.Nat as Nat;
+Test: Main{s-> Block#
+  .do{Debug#(Left.choose("Hello","Hi"))}
+  .do{Debug#(Right.choose("Hello","Hi"))}
+  .do{Debug#(Left.choose(1,5))}
+  .do{Debug#(Right.choose[Str]("Hello","Hi"))}
+  .do{Debug#(Left.choose("Option1", Right.choose("Option2", "Option3")))}
+  .do{Debug#(Right.choose("Option1", Right.choose("Option2", "Option3")))}
+  .do{Debug#(Right.choose("Option1", Left.choose("Option2", "Option3")))}
+  .return{Void}}
+Fork : { .choose[Val](leftVal: Val, rightVal: Val): Val }
+Left : Fork{ l,r -> l }
+Right: Fork{ l,r -> r }
+
+//PRINT|Hello
+//PRINT|Hi
+//PRINT|1
+//PRINT|Hi
+//PRINT|Option1
+//PRINT|Option3
+//PRINT|Option2
+
+"""); }/*--------------------------------------------
+//OMIT_END
+//OMIT_START
+-------------------------*/@Test void leftRightBehaviour() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Str as Str;
+use base.Nat as Nat;
+Test: Main{s-> Block#
+  .do{Debug#(A#(Left))}
+  .do{Debug#(A#(Right))}
+  .do{Debug#(B#(Left))}
+  .do{Debug#(B#(Right))}
+  .do{Debug#(C#(Left))}
+  .return{Void}}
+Fork : { .choose[Val](leftRight: LeftRight[Val]): Val }
+LeftRight[LR]: { .left: LR; .right: LR }
+Left : Fork{::.left}
+Right: Fork{::.right}
+A:{#(someFork: Fork):Str->
+  someFork.choose{
+    .left->"Hello";
+    .right->"Hi";
+    }
+  }
+B:{#(someFork: Fork):Str->
+  someFork.choose( SomeLeftRight:LeftRight[Str]{
+    .left: Str -> "Hello";
+    .right: Str -> "Hi";
+    })
+  }
+C:{#(someFork: Fork):Nat->
+  someFork.choose{ .left->1; .right->Slow.code; }
+  }
+Slow:{ .code: Nat -> this.code; }
+
+//PRINT|Hello
+//PRINT|Hi
+//PRINT|Hello
+//PRINT|Hi
+//PRINT|1
+
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }

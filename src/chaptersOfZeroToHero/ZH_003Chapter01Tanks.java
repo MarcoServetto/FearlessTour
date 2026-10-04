@@ -526,5 +526,52 @@ Code under reduction is not source code, but just a tool for us to understand th
 we can afford to relax and to rely on inference as much, or as little, as we want.
 We can even make up our own notation to represent code in a more compact way.
 
+//OMIT_START
+-------------------------*/@Test void tanksBehave() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+Test: Main{s-> Block#
+  .do{Debug#(TankNN.heading)}
+  .do{Debug#(TankNN.aiming)}
+  .do{Debug#(Tanks#(North,East).heading)}
+  .do{Debug#(Tanks#(North,East).aiming)}
+  .do{Debug#(Tanks#(North,East).turnTurret.aiming)}
+  .do{Debug#(Tanks#(North,East).turnTurret.heading)}
+  .do{Debug#(Tanks#(North,East).turnTurret.turnTurret.aiming)}
+  .do{Debug#(Makers.of(South,West).aiming)}
+  .do{Debug#(Makers.of(South,West).heading)}
+  .do{Debug#(Tanks#(North.reverse,East).heading)}
+  .do{Debug#(Tanks#(North,East.reverse).aiming)}
+  .return{Void}}
+Direction: base.ToStr{
+  .turn: Direction;
+  .reverse: Direction -> this.turn.turn;
+  }
+North: Direction { .turn->East;  .str->"North" }
+East : Direction { .turn->South; .str->"East" }
+South: Direction { .turn->West;  .str->"South" }
+West : Direction { .turn->North; .str->"West" }
+Tank: {.heading: Direction; .aiming: Direction; .turnTurret: Tank-> Tanks#(this.heading, this.aiming.turn); }
+Tanks: { #(heading: Direction, aiming: Direction): Tank -> { .heading -> heading; .aiming -> aiming; } }
+TankNN: Tank {.heading -> North; .aiming -> North;}
+Makers: { .of(heading: Direction, aiming: Direction): Tank -> MadeTank: Tank { .heading -> heading; .aiming -> aiming;} }
+
+//PRINT|North
+//PRINT|North
+//PRINT|North
+//PRINT|East
+//PRINT|South
+//PRINT|North
+//PRINT|West
+//PRINT|West
+//PRINT|South
+//PRINT|South
+//PRINT|West
+
+
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }

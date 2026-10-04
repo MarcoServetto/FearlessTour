@@ -528,6 +528,98 @@ HasPredSucc:{
   .hasSuccInt(a:base.Int):base.Int->a.succ;
 }
 """); }/*--------------------------------------------
+-------------------------*/@Test void numberArithmetic() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Nat as Nat;
+Test: Main{s-> Block#
+  .do{Debug#(N10.succ.succ.succ.n)}
+  .do{Debug#(N11.succ.n)}
+  .do{Debug#(N0.pred.n)}
+  .do{Debug#((N3 + N2).n)}
+  .do{Debug#((N2 * N3 + N1).n)}
+  .do{Debug#((N1 + N2 * N3).n)}
+  .do{Debug#((N1 + (N2 * N3)).n)}
+  .do{Debug#((N5 - N2).n)}
+  .do{Debug#((N2 - N5).n)}
+  .do{Debug#((N11 + N1).n)}
+  .do{Debug#((N6 * N6).n)}
+  .return{Void}}
+Number:{
+  .pred:Number; .succ:Number; .n: base.Nat -> this.pred.n + 1;
+  +(other: Number): Number -> this.pred + (other.succ);
+  *(other: Number): Number -> (this.pred * other) + other;
+  -(other: Number): Number -> other._rightSub(this);
+  ._rightSub(other: Number): Number-> this.pred._rightSub(other.pred);
+  }
+N0: Number{
+  .pred-> N11; .succ->  N1; .n -> 0;
+  +(other)-> other;
+  *(other)-> N0;
+  ._rightSub(other: Number): Number-> other;
+  }
+N1: Number{.pred->  N0; .succ->  N2; }
+N2: Number{.pred->  N1; .succ->  N3; }
+N3: Number{.pred->  N2; .succ->  N4; }
+N4: Number{.pred->  N3; .succ->  N5; }
+N5: Number{.pred->  N4; .succ->  N6; }
+N6: Number{.pred->  N5; .succ->  N7; }
+N7: Number{.pred->  N6; .succ->  N8; }
+N8: Number{.pred->  N7; .succ->  N9; }
+N9: Number{.pred->  N8; .succ->  N10; }
+N10: Number{.pred->  N9; .succ-> N11; }
+N11: Number{.pred-> N10; .succ->  N0; }
+
+
+
+//PRINT|1
+//PRINT|0
+//PRINT|11
+//PRINT|5
+//PRINT|7
+//PRINT|9
+//PRINT|7
+//PRINT|3
+//PRINT|9
+//PRINT|0
+//PRINT|0
+
+"""); }/*--------------------------------------------
+-------------------------*/@Test void standardNumbers() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+Test: Main{s-> Block#
+  .do{Debug#(5 + 3)}
+  .do{Debug#(+10 + -3)}
+  .do{Debug#(+0 == -0)}
+  .do{Debug#((+0).pred)}
+  .do{Debug#((+0).succ)}
+  .do{Debug#(0.succ)}
+  .do{Debug#(5.pred)}
+  .do{Debug#(-987 * +2)}
+  .do{Debug#(18446744073709551615)}
+  .do{Debug#(+9223372036854775807)}
+  .do{Debug#(-9223372036854775808)}
+  .return{Void}}
+
+
+//PRINT|8
+//PRINT|+7
+//PRINT|True
+//PRINT|-1
+//PRINT|+1
+//PRINT|1
+//PRINT|4
+//PRINT|-1974
+//PRINT|18446744073709551615
+//PRINT|+9223372036854775807
+//PRINT|-9223372036854775808
+
+"""); }/*--------------------------------------------
 //OMIT_END
 END*/
 }

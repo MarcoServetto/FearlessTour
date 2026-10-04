@@ -194,5 +194,75 @@ via syntactic sugar instead of being a core language feature.
 In other languages they are often known by one (or more) of the following names:
 local bindings, bindings, let-bindings, lets, constants, local variables, (final) variables.
 
+//OMIT_START
+-------------------------*/@Test void distancesAgree() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Nat as Nat;
+use base.F as F;
+Test: Main{s-> Block#
+  .do{Debug#(D1.distance(Points#(7,9),Points#(4,5)))}
+  .do{Debug#(D2.distance(Points#(7,9),Points#(4,5)))}
+  .do{Debug#(D3.distance(Points#(7,9),Points#(4,5)))}
+  .do{Debug#(D4.distance(Points#(7,9),Points#(4,5)))}
+  .do{Debug#(D5.distance(Points#(7,9),Points#(4,5)))}
+  .do{Debug#(D5.distance(Points#(3,4),Points#(3,4)))}
+  .do{Debug#(D4.distance(Points#(1,1),Points#(0,0)))}
+  .return{Void}}
+Point:{ .x: Nat; .y: Nat }
+Points:{ #(x: Nat, y: Nat): Point -> { .x -> x; .y -> y } }
+Continuation[T,C,R]: { #(x: T, self: C): R }
+Let[R]: {
+  .let[T](x: F[T], c: Continuation[T,Let[R],R]): R-> c#(x#,this);
+  .return(f: F[R]): R -> f#;
+  }
+Let: { #[R]: Let[R] -> {} }
+Let1:{ #[T,R](x: T, f: F[T,R]): R -> f#x }
+D1:{
+.distance(p1: Point, p2: Point): Nat->
+  p1.x - (p2.x) * (p1.x - (p2.x)) + (p1.y - (p2.y) * (p1.y - (p2.y)))  .softSqrt .softNat
+}
+D2:{
+.distance(p1: Point, p2: Point): Nat->
+  F[Nat,Nat,Nat]{diffX, diffY ->
+     (diffX * diffX) + (diffY * diffY).softSqrt.softNat }
+  #( p1.x - (p2.x), p1.y - (p2.y) )
+}
+D3:{
+.distance(p1: Point, p2: Point): Nat->
+  Let1#(p1.x - (p2.x), {diffX ->
+  Let1#(p1.y - (p2.y), {diffY ->
+  Let1#((diffX * diffX) + (diffY * diffY), {res ->
+  res.softSqrt.softNat
+  })})})
+}
+D4:{
+.distance(p1: Point, p2: Point): Nat->Let#
+  .let({p1.x - (p2.x)}, {diffX, self0 -> self0
+  .let({p1.y - (p2.y)}, {diffY, self1 -> self1
+  .let({(diffX * diffX) + (diffY * diffY)}, {res, self2 -> self2
+  .return {res.softSqrt.softNat}
+  })})})
+}
+D5:{
+.distance(p1: Point, p2: Point): Nat -> Let#
+  .let diffX = {p1.x - (p2.x)}
+  .let diffY = {p1.y - (p2.y)}
+  .let res   = {(diffX * diffX) + (diffY * diffY)}
+  .return {res.softSqrt.softNat}
+}
+
+//PRINT|5
+//PRINT|5
+//PRINT|5
+//PRINT|5
+//PRINT|5
+//PRINT|0
+//PRINT|1
+
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }
