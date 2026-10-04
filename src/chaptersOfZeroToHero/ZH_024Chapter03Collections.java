@@ -1111,17 +1111,11 @@ TestMapsAndSets:F[Tests,Tests]{::
     )
 
   // map.flow preserves insertion order
-  .test(//Three alternative ways
-    Maps#({::},
-      Persons#(25,"Bob",List[Cat]), "A",
-      Persons#(34,"Alice",List[Cat]), "B" //decomposition
-      ).flow.map{{.key,.elem}-> key.name + elem}.list.get(0).assertEq "BobA"
-    )
   .test(
     Maps#({::},
       Persons#(25,"Bob",List[Cat]), "A",
-      Persons#(34,"Alice",List[Cat]), "B" //:: and extraction
-      ).flow.map{::.key.name + (::.elem)}.list.get(0).assertEq "BobA"
+      Persons#(34,"Alice",List[Cat]), "B" //BiFlow merge
+      ).flow.getMerge{k,e-> k.name + e}.list.get(0).assertEq "BobA"
     )
   .test(
     Maps#({::},
@@ -1132,8 +1126,14 @@ TestMapsAndSets:F[Tests,Tests]{::
   .test(
     Maps#({::},
       Persons#(25,"Bob",List[Cat]), "A",
+      Persons#(34,"Alice",List[Cat]), "B" //fold
+      ).fold({""},{acc,k,e-> acc + (k.name) + e}).assertEq "BobAAliceB"
+    )
+  .test(
+    Maps#({::},
+      Persons#(25,"Bob",List[Cat]), "A",
       Persons#(34,"Alice",List[Cat]), "B"
-      ).flow.map{::.key.name + (::.elem)}.list.get(1).assertEq "AliceB"
+      ).flow{k,e-> k.name + e}.list.get(1).assertEq "AliceB"
     )
 
   // mapping: build a map from a flow
