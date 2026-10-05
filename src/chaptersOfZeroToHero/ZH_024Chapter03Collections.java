@@ -49,10 +49,9 @@ We can use `.flatMap`. For example:
 Person: {  .name: Str; .cats: List[Cat]  }
 Cat: { .name: Str }
 ...
-AllCats: {  #(ps: List[Person]): List[Cat] -> ps.flow.flatMap{::.cats.flow }.list  }
+AllCats: {  #(ps: List[Person]): List[Cat] -> ps.flow.flatMap{::.cats }.list  }
 ```
 Here we extract all the cats owned by the persons in the list.
-Note how we use `{::.cats.flow}` and not just `{::.cats}`. Method `.flatMap` requires a lambda returning a flow.
 In this example we also see how we change the type of our list: we take a `List[Person]` in input and we produce a `List[Cat]` in output.
 While `.flatMap` is often used to add elements, it may also remove them. For example, if all the persons in the input list have no cats, the output will be the empty list.
 
@@ -286,34 +285,39 @@ Sometimes `EList[E]` is used as a builder/accumulator to eventually create a `Li
 
 The standard library provides a simple way to define and combine ordering operations (`<`, `<=`, `==`, `!=`, `>=`, `>`) through the type `Order[T]`.
 
-### Understanding `Order[T]` and `OrderMatch[R]`
+### Understanding `Order` and `Order[T]`
 
-The type `OrderMatch` mediates the outcome of a comparison between two elements.
+The type `OrderMatch` describes the outcomes of a comparison between two elements.
 
 ````
 OrderMatch[R:**]: { mut .lt: R; mut .eq: R; mut .gt: R; }
 ````
 This looks like a standard matcher with three possible outcomes: either the data is `lt` (less than), `eq` (equal), or `gt` (greater than).
-But... what is this data? Here we are talking about the result of a comparison operation. There is no need to materialise the data, we can just pass the matcher itself.
+But... what is this data? Here we are talking about the result of a comparison operation, and the standard library calls it `Order`:
+````
+Order:{ read #[R:**](m: mut OrderMatch[R]): R; }
+````
+An `Order` takes a matcher and selects one of its three methods, as `Bool.if` selects `.then` or `.else`.
+We do not need to define three types for the three outcomes: `{::.lt}`, `{::.eq}` and `{::.gt}` are object literals implementing `Order`.
 Consider this code:
 ````
 Order[T]:{
-  read .cmp[R:**](t0: read T, t1: read T, m: mut OrderMatch[R]): R;
+  read .cmp(t0: read T, t1: read T): Order;
   }
 ````
-Here `.cmp` does not return a thingy that can be `lt/eq/gt` so that we can then later match on it. It directly takes the matcher, so that we can immediately jump to the final result `R`.
+Here `.cmp` compares `t0` and `t1` and returns the outcome; whoever called `.cmp` can then match on it.
 We could implement it on our `Point` type as follows:
 ````
 Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
   read .x: Nat -> x;
   read .y: Nat -> y;
-  .cmp t0, t1, m -> Block#
-    .if {t0.x < (t1.x)}.return {m.lt}
-    .if {t0.x > (t1.x)}.return {m.gt}
-    .if {t0.y < (t1.y)}.return {m.lt}
-    .if {t0.y > (t1.y)}.return {m.gt}
-    .return {m.eq};
-  read ==(other: read Point): Bool -> self.cmp(self,other,{.lt->False; .eq->True; .gt->False;});
+  .cmp t0, t1 -> Block#
+    .if {t0.x < (t1.x)}.return {{::.lt}}
+    .if {t0.x > (t1.x)}.return {{::.gt}}
+    .if {t0.y < (t1.y)}.return {{::.lt}}
+    .if {t0.y > (t1.y)}.return {{::.gt}}
+    .return {{::.eq}};
+  read ==(other: read Point): Bool -> self.cmp(self,other)#{.lt->False; .eq->True; .gt->False;};
   }}
 ````
 As you can see, now we have a `.cmp` method in `Point`, and we can use it to implement `==`.
@@ -322,12 +326,12 @@ By moving methods up in the subtyping hierarchy, we achieve more code reuse: eve
 
 ````
 Order[T]:{
-  read .cmp[R:**](t0: read T, t1: read T, m: mut OrderMatch[R]): R;
-  read ==(other: read T): Bool -> this.cmp(this,other,{.lt->False; .eq->True; .gt->False;});
+  read .cmp(t0: read T, t1: read T): Order;
+  read ==(other: read T): Bool -> this.cmp(this,other)#{.lt->False; .eq->True; .gt->False;};
   }
 Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
   .x: Nat -> x; .y: Nat -> y;
-  .cmp t0, t1, m -> ...;
+  .cmp t0, t1 -> ...;
   }}
 ````
 This code above does not compile.
@@ -345,7 +349,7 @@ Can you spot why?
 **Solution coming soon**
 
 **Solution:**
-In the code `this.cmp(this,other,{...});` we use `this` twice: the first time as `Order[T]` to call `.cmp`, but the second time we use it as a `T`.
+In the code `this.cmp(this,other)#{...};` we use `this` twice: the first time as `Order[T]` to call `.cmp`, but the second time we use it as a `T`.
 And the type system does not see any connection between `T` and `Order[T]`.
 The code used to work in `Point` because `Point` implements `Order[Point]`; thus in the context of `Point`, `self` was both a `Point` and an `Order[Point]`.
 
@@ -353,13 +357,13 @@ We can solve this type limitation by adding a `.close` method:
 
 ````
 Order[T]:{
-  read .cmp[R:**](t0: read T, t1: read T, m: mut OrderMatch[R]): R;
+  read .cmp(t0: read T, t1: read T): Order;
   read .close: read T; /// convert 'this' from type 'Order[T]' to type 'T'
-  read ==(other: read T): Bool -> this.cmp(this.close,other,{.lt->False; .eq->True; .gt->False;});
+  read ==(other: read T): Bool -> this.cmp(this.close,other)#{.lt->False; .eq->True; .gt->False;};
   }
 Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
   .x: Nat -> x; .y: Nat -> y;
-  .cmp t0, t1, m -> ...;
+  .cmp t0, t1 -> ...;
   .close->self;
   }}
 ````
@@ -377,47 +381,43 @@ But... those components implement `Order[T]` too, so we could call `.cmp` direct
 
 ````
 Order[T]:{
-  read .cmp[R:**](t0: read T, t1: read T, m: mut OrderMatch[R]): R;
+  read .cmp(t0: read T, t1: read T): Order;
   read .close: read T; /// convert 'this' from type 'Order[T]' to type 'T'
-  read ==(other: read T): Bool -> this.cmp(this.close,other,{.lt->False; .eq->True; .gt->False;});
+  read ==(other: read T): Bool -> this.cmp(this.close,other)#{.lt->False; .eq->True; .gt->False;};
   //and 5 more methods !=,<,>,<=,>= implemented using .cmp
   }
 Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
   read .x: Nat -> x;
   read .y: Nat -> y;
-  .cmp t0, t1, m -> t0.x.cmp(t0.x,t1.x,{.lt->m.lt; .gt->m.gt; .eq->t0.y.cmp(t0.y,t1.y,m)});
+  .cmp t0, t1 -> t0.x.cmp(t0.x,t1.x)#{.lt->{::.lt}; .gt->{::.gt}; .eq->t0.y.cmp(t0.y,t1.y)};
   .close->self;
   }}
 ````
-This is better, but having to pass `t0.x` and `t0.y` twice is still a repetition, and the delegation `.lt->m.lt; .gt->m.gt;` is redundant.
+This is better, but having to pass `t0.x` and `t0.y` twice is still a repetition, and the delegation `.lt->{::.lt}; .gt->{::.gt};` is redundant.
 Any coding investment we do in `Order[T]` can pay off every time we implement it, so a little more abstraction is worth it:
 
 ````
-OrderMatch[R:**]: {
-  mut .lt: R; mut .eq: R; mut .gt: R;
-  mut &&(onEq: mut MF[R]): mut OrderMatch[R]-> {
-    .lt->this.lt;
-    .eq->onEq#;
-    .gt->this.gt;
-    }
+Order:{
+  read #[R:**](m: mut OrderMatch[R]): R;
+  read &&(onEq: mut MF[Order]): Order -> this#{ .lt -> {::.lt}; .eq -> onEq#; .gt -> {::.gt} };
   }
 Order[T]:{
-  read .cmp[R:**](t0: read T, t1: read T, m: mut OrderMatch[R]): R;
+  read .cmp(t0: read T, t1: read T): Order;
   read .close: read T; /// convert 'this' from type 'Order[T]' to type 'T'
-  read <=>[R:**](other: read Order[T], m: mut OrderMatch[R]): R ->
-    this.cmp(this.close, other.close, m);
-  read ==(other: read T): Bool -> this.cmp(this.close,other,{.lt->False; .eq->True; .gt->False;});
+  read <=>(other: read Order[T]): Order ->
+    this.cmp(this.close, other.close);
+  read ==(other: read T): Bool -> this.cmp(this.close,other)#{.lt->False; .eq->True; .gt->False;};
   //and 5 more methods !=,<,>,<=,>= implemented using .cmp
   }
 Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
   read .x: Nat -> x;
   read .y: Nat -> y;
-  .cmp t0, t1, m -> t0.x<=>(t1.x,m &&{t0.y<=>(t1.y,m)});
+  .cmp t0, t1 -> t0.x <=> (t1.x) && {t0.y <=> (t1.y)};
   .close->self;
   }}
 ````
 And here we have it.
-- Method `OrderMatch[R]&&` makes it easier to compose matchers by only overriding the `.eq` case.
+- Method `Order&&` makes it easier to compose outcomes by only replacing the `eq` case.
 - Method `Order[T]<=>` is easy to use, while `Order[T].cmp` is easy to define.
 With both, we can define `.cmp` by using `<=>` on the sub components.
 
@@ -442,8 +442,8 @@ The parameter of `.max` could logically be just of type `F[E,Order[E]]`, but to 
 ````
 OrderBy[T,K]:{ #(read T): read Order[K]; }
 OrderBy[T]:OrderBy[T,T]{
-  .cmp[R:**](t0: read T, t1: read T, m: mut OrderMatch[R]): R;
-  # t -> { .close -> t; .cmp t0,t1,m -> this.cmp(t0,t1,m) };
+  .cmp(t0: read T, t1: read T): Order;
+  # t -> { .close -> t; .cmp t0,t1 -> this.cmp(t0,t1) };
 }
 ````
 Those two types are designed to cooperate well with the type inference and syntactic sugar.
@@ -454,7 +454,7 @@ On the other hand, if we want to give a top level name for a specific way to ord
 Assuming `Cat` also has a `.weight: Nat` method, we can write:
 ```
 ByCats:OrderBy[Person]{
-  p1,p2,m -> p1.cats.flow.map{::.weight}.sum 0 <=> (p2.cats.flow.map{::.weight}.sum 0, m);
+  p1,p2 -> p1.cats.flow.map{::.weight}.sum 0 <=> (p2.cats.flow.map{::.weight}.sum 0);
   }
 ```
 And now we can use `ByCats` to compare two persons based on who owns more cats, by total weight of course.
@@ -466,10 +466,10 @@ OrderBy[T,K]:{
   #(read T): read Order[K];
 
   .then[K0](next: OrderBy[T,K0]): OrderBy[T] ->
-    {t0,t1,m -> this#t0 <=> ( this#t1, m &&{ next#t0<=>(next#t1,m)}) };
+    {t0,t1 -> this#t0 <=> (this#t1) && {next#t0 <=> (next#t1)}};
 
   .view[A](f: F[read A,read T]): OrderBy[A] ->
-    {a0,a1,m-> this#(f#a0)<=>(this#(f#a1),m)};
+    {a0,a1 -> this#(f#a0) <=> (this#(f#a1))};
   }
 ````
 - Method `.then` lexicographically composes the `OrderBy` with another one.
@@ -481,8 +481,8 @@ would compare cars by the total cats weight of their `.driver`.
 Here are some more boring examples:
 ```
 Persons:{#(age:Nat, name:Str):Person -> Person:{read .age: Nat -> age; read .name: Str -> name }}
-Older:OrderBy[Person]{ p1,p2,m -> p1.age <=> (p2.age, m) }
-OlderLonger:OrderBy[Person]{p1,p2,m-> p1.age <=> (p2.age, m&&{p1.name.size <=> (p2.name.size,m)}) }
+Older:OrderBy[Person]{ p1,p2 -> p1.age <=> (p2.age) }
+OlderLonger:OrderBy[Person]{ p1,p2 -> p1.age <=> (p2.age) && {p1.name.size <=> (p2.name.size)} }
 ```
 
 ### Comparators and Flows: `.max`, `.min`, `.sort` and `.distinct`
@@ -577,7 +577,7 @@ This is again needed in the error messages, to turn a `T` into an `OrderHash[T]`
 Persons: { #(age: Nat, name: Str): Person -> Person: OrderHash[Person]{'self
   read .age:  Nat   -> age;
   read .name: Str   -> name;
-  .cmp p1,p2,m -> p1.age <=> (p2.age, m && { p1.name <=> (p2.name,m) });
+  .cmp p1,p2 -> p1.age <=> (p2.age) && {p1.name <=> (p2.name)};
   .hash        -> age.hash.hashWith(name.hash);
   .str         -> "Person[age="+age+", name="+name+"]";
   .close->self; .close->::;
@@ -638,10 +638,10 @@ Sets also support `.flow`, but unlike lists and maps, a set's flow order follows
 See below some examples of using sets.
 ```
 Sets#({::},1,2,3,4,5)//set of 5 numbers
-Sets#(OrderBy[Str]{s1,s2,m->...},"a","aa","aaaaa")//Does not compile.
+Sets#(OrderBy[Str]{s1,s2->...},"a","aa","aaaaa")//Does not compile.
 Sets#(StrSizeOrder,"a","aa","aaaaa")//good
 StrSizeOrder:OrderHashBy[Str]{
-  t0,t1,m-> t0.imm.size<=>(t1.imm.size,m);
+  t0,t1 -> t0.imm.size <=> (t1.imm.size);
   .hash s->s.imm.size.hash;
   .str s->s.imm;
   }//Here we manually define an ordering for strings using their size.
@@ -674,11 +674,11 @@ The idea is that by providing an `OrderBy` for the elements, we can produce an
 ```
 Order[T,E:*]: {
   read .close: read T;
-  read .cmp[K,R:**](by: OrderBy[imm E,K], t0: read T, t1: read T, m: mut OrderMatch[R]): R;
+  read .cmp[K](by: OrderBy[imm E,K], t0: read T, t1: read T): Order;
 
   read .order[K](by: OrderBy[imm E,K]): read Order[T] -> {
     .close -> this.close;
-    .cmp t0,t1,m -> this.cmp(by,t0,t1,m);
+    .cmp t0,t1 -> this.cmp(by,t0,t1);
   };
 }
 ````
@@ -693,11 +693,11 @@ Opt[E:*]: _Opt[E]{
   ...
   .close->this; //shows the type system that T is just Opt[E]
 
-  .cmp by, a, b, m -> a.match{
-    .empty -> b.match{ .empty -> m.eq; .some _ -> m.lt; };
+  .cmp by, a, b -> a.match{
+    .empty -> b.match{ .empty -> {::.eq}; .some _ -> {::.lt}; };
     .some ea -> b.match{
-      .empty   -> m.gt;
-      .some eb -> by#ea <=> (by#eb, m);
+      .empty   -> {::.gt};
+      .some eb -> by#ea <=> (by#eb);
       }
     };
 ````
@@ -712,7 +712,7 @@ OrderHash[T,E:*]:Order[T,E],ToStr[E]{
   read .orderHash[K](by: OrderHashBy[imm E,K]): read OrderHash[T] -> {
     .close -> this.close;
     .close t -> this.close(t).orderHash(by);
-    .cmp t0,t1,m -> this.cmp(by,t0,t1,m);
+    .cmp t0,t1 -> this.cmp(by,t0,t1);
     .hash -> this.hash by;
     .str  -> this.str by;
     };
@@ -836,7 +836,7 @@ Persons:{
       read .cats: List[Cat] -> cats;
 
       // Order by age, then by name (lexicographic).
-      .cmp p1,p2,m -> p1.age<=>(p2.age, m &&{ p1.name<=>(p2.name, m) });
+      .cmp p1,p2 -> p1.age <=> (p2.age) && {p1.name <=> (p2.name)};
 
       // Hash consistent with == (based on age+name; cats ignored for keying).
       .hash: Nat -> age.hash.hashWith(name.hash);
@@ -850,7 +850,7 @@ Persons:{
 
 Names:{ #(ps: List[Person]): List[Str] -> ps.flow.map{::.name}.list }
 Doctors:{ #(ps: List[Person]): List[Person] -> ps.flow.filter{::.name.startsWith "Dr."}.list }
-AllCats:{ #(ps: List[Person]): List[Cat] -> ps.flow.flatMap{::.cats.flow}.list }
+AllCats:{ #(ps: List[Person]): List[Cat] -> ps.flow.flatMap{::.cats}.list }
 AllNames:{ #(ps: List[Person]): Str -> ps.flow.map{::.name}.join ", " }
 SumSizes:{ #(ps: List[Person]): Nat -> ps.flow.map{::.name.size}.sum 0 }
 
@@ -915,7 +915,7 @@ Points:{
     Point: Order[Point]{ 'self
       read .x: Nat -> x;
       read .y: Nat -> y;
-      .cmp p0,p1,m -> p0.x<=>(p1.x, m &&{ p0.y<=>(p1.y, m) });
+      .cmp p0,p1 -> p0.x <=> (p1.x) && {p0.y <=> (p1.y)};
       .close -> self;
       }
   }
@@ -923,12 +923,12 @@ Cars:{
   #(id: Nat, driver: Person): Car -> Car:{'self .id: Nat -> id; .driver: Person -> driver; read .imm:Car->self; }
   }
 StrSizeOrder:OrderHashBy[Str]{
-  t0,t1,m -> t0.imm.size<=>(t1.imm.size, m);
+  t0,t1 -> t0.imm.size <=> (t1.imm.size);
   .hash s -> s.imm.size.hash;
   .str s  -> s.imm;
   }
 ByCats:OrderBy[Person]{
-  p1,p2,m -> p1.cats.flow.map{::.weight}.sum 0 <=> (p2.cats.flow.map{::.weight}.sum 0, m);
+  p1,p2 -> p1.cats.flow.map{::.weight}.sum 0 <=> (p2.cats.flow.map{::.weight}.sum 0);
   }
 TestFlowsBasics:F[Tests,Tests]{::
   // map: persons -> names

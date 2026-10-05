@@ -114,9 +114,9 @@ Next we are going to see some new methods. They all either come from `DataType` 
   .info -> Infos.msg(this.str); //methods from DataType here and below
   .close -> this; .close -> ::;
   .hash -> this.imm?{ .then->1; .else->0 };
-  .cmp a, b, m -> a.imm?{
-    .then->b.imm?{ .then->m.eq; .else->m.gt };
-    .else->b.imm?{ .then->m.lt; .else->m.eq };
+  .cmp a, b -> a.imm?{
+    .then->b.imm?{ .then->{::.eq}; .else->{::.gt} };
+    .else->b.imm?{ .then->{::.lt}; .else->{::.eq} };
     };
 }
 ````
@@ -206,7 +206,7 @@ Opt[E:*]: _Opt[E]{
 
   .orLazy  default -> this.match{.some x -> x; .empty -> default#};
 
-  .flow       -> this.match{.empty -> Flows#; .some x -> Flows#(x)};
+  .seqFlow    -> this.match{.empty -> Flows#; .some x -> Flows#(x)};
 
   .mapSome[R:*] f -> this.match{.some x->Opts#(f#x); .empty->{}};
 
@@ -239,7 +239,8 @@ The two methods `Opt[E].orValue` and `Opt[E].orLazy` both return the value store
 - `Opt[E].orValue` takes the default value directly.
 - `Opt[E].orLazy` takes a lazy default: an `MF[E]` only called if the optional is empty.
 
-Method `.flow` returns a `Flow[E]`. Flows are a very important data type in the Fearless standard library and we will discuss them later.
+Modern computers can run many computations at the same time: this is called parallel programming.
+Method `.seqFlow` returns a `Flow[E]` working sequentially, that is, running one computation after the other. Flows are a very important data type in the Fearless standard library and we will discuss them later, including how they support parallel programming.
 
 The method `.mapSome` is used to change the type of the optional, taking a function to map the content to a new type.
 
@@ -295,11 +296,11 @@ Here below you can see the other `Opt[E]` methods. Note how `.info`, `.imm` and 
     .empty  -> 0;
     .some e -> 31.aluAddWrap(by#e.hash);
     };
-  .cmp by, a, b, m -> a.match{
-    .empty -> b.match{ .empty -> m.eq; .some _ -> m.lt; };
+  .cmp by, a, b -> a.match{
+    .empty -> b.match{ .empty -> {::.eq}; .some _ -> {::.lt}; };
     .some ea -> b.match{
-      .empty   -> m.gt;
-      .some eb -> by#ea<=>(by#eb, m);
+      .empty   -> {::.gt};
+      .some eb -> by#ea <=> (by#eb);
       }
     };
   .close->this; .close->::;
@@ -325,9 +326,8 @@ _Opt[E:*]:BaseContainer[E],DataType[Opt[E],Opt[imm E],E,imm E]{
   mut  !: E;
   read !: read/imm E;
 
-  mut  .flow: mut Flow[E];
-  read .flow: mut Flow[read/imm E];
-  imm  .flow: mut Flow[imm E];
+  mut  .seqFlow: mut Flow[E];
+  read .seqFlow: mut Flow[read/imm E];
 
   mut  .ifSome(mut MF[E, Void]): Void;
   read .ifSome(mut MF[read/imm E, Void]): Void;
@@ -414,9 +414,9 @@ Bool:Sealed,DataType[Bool,Bool]{
   .info -> Infos.msg(this.str); //other methods from DataType here and below
   .close -> this; .close -> ::; //methods from DataType
   .hash -> this.imm?{ .then->1; .else->0 };
-  .cmp a, b, m -> a.imm?{
-    .then->b.imm?{ .then->m.eq; .else->m.gt };
-    .else->b.imm?{ .then->m.lt; .else->m.eq };
+  .cmp a, b -> a.imm?{
+    .then->b.imm?{ .then->{::.eq}; .else->{::.gt} };
+    .else->b.imm?{ .then->{::.lt}; .else->{::.eq} };
     };
 }
 True:Bool{
@@ -456,7 +456,7 @@ Opt[E:*]: _Opt[E]{
 
   .orLazy  default -> this.match{.some x -> x; .empty -> default#};
 
-  .flow       -> this.match{.empty -> Flows#; .some x -> Flows#(x)};
+  .seqFlow    -> this.match{.empty -> Flows#; .some x -> Flows#(x)};
 
   .mapSome[R:*] f -> this.match{.some x->Opts#(f#x); .empty->{}};
 
@@ -472,11 +472,11 @@ Opt[E:*]: _Opt[E]{
     .empty  -> 0;
     .some e -> 31.aluAddWrap(by#e.hash);
     };
-  .cmp by, a, b, m -> a.match{
-    .empty -> b.match{ .empty -> m.eq; .some _ -> m.lt; };
+  .cmp by, a, b -> a.match{
+    .empty -> b.match{ .empty -> {::.eq}; .some _ -> {::.lt}; };
     .some ea -> b.match{
-      .empty   -> m.gt;
-      .some eb -> by#ea<=>(by#eb, m);
+      .empty   -> {::.gt};
+      .some eb -> by#ea <=> (by#eb);
       }
     };
   .close->this; .close->::;
@@ -496,9 +496,8 @@ _Opt[E:*]:DataType[Opt[E],Opt[imm E],E,imm E]{
   mut  !: E;
   read !: read/imm E;
 
-  mut  .flow: mut Flow[E];
-  read .flow: mut Flow[read/imm E];
-  imm  .flow: mut Flow[imm E];
+  mut  .seqFlow: mut Flow[E];
+  read .seqFlow: mut Flow[read/imm E];
 
   mut  .ifSome(mut MF[E, Void]): Void;
   read .ifSome(mut MF[read/imm E, Void]): Void;

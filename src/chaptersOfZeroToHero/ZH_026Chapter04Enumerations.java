@@ -155,7 +155,7 @@ Enum[E]: DataType[E,E]{
   .info -> Infos.msg(this.str);
   read .index: Nat -> this.enums.indexMap.get(this.str);
   read .close(t: read E): read Enum[E];
-  .cmp t0,t1,m -> this.close(t0).index<=>(this.close(t1).index,m);
+  .cmp t0,t1 -> this.close(t0).index <=> (this.close(t1).index);
   .hash -> this.index;
   }
 ```

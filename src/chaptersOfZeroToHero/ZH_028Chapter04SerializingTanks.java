@@ -13,17 +13,18 @@ class ZH_028Chapter04SerializingTanks {
 With our understanding from before, we can reimplement `Tanks` as follows:
 ```
 Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
-  heading, aiming, position -> Tank:ToInfo, ToStr,OrderHash[Tank]{'self
+  heading, aiming, position -> Tank:DataType[Tank,Tank]{'self
     .heading: Direction -> heading;
     .aiming: Direction -> aiming;
     .position: Point -> position;
     .info -> Infos.map("heading", heading, "aiming", aiming,   "position", position);
     .str  -> ...;//includes repr1...repr3
-    .cmp t1,t2,m -> t1.heading <=> (t2.heading,//This looks atrocious
-      m&&{t1.aiming <=> (t2.aiming, m&&{t1.position <=> (t2.position,m)})});
+    .cmp t1,t2 -> t1.imm.heading <=> (t2.imm.heading)//This looks atrocious
+      && {t1.imm.aiming <=> (t2.imm.aiming)} && {t1.imm.position <=> (t2.imm.position)};
     .cmp t1,t2,m -> m.cmp({::.heading}.then{::.aiming}.then{::.position},t1,t2);
     //can we get the above instead?
     .hash -> heading.hash.hashWith(aiming.hash).hashWith(position.hash);
+    .close->self; .close->::; .imm->self;
     };
   .fromInfo(i) -> Tanks#(
     Directions.fromInfo(i.getMap.get("heading")),

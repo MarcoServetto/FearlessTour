@@ -38,7 +38,7 @@ use base.WidenTo as WidenTo;
 use base.Output as Output;
 use base.InputCursorNode as InputCursorNode;
 //File _tank_game/point.fear
-Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{ 'self
+Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{
   .x: Nat -> x;
   .y: Nat -> y;
   +(other: Point): Point -> Points#(other.x + x, other.y + y);
@@ -148,7 +148,7 @@ TanksToS: F[List[Tank],Str]{ ts -> Block#
     .do{ res.get(x * 3 + 2).get(y).set(t.repr3) }
     .done
     }}
-  .return { res.flow.map{::.flow.map{::.get}.join("")}.join(""|) };
+  .return { res.seqFlow.map{::.seqFlow.map{::.get}.join("")}.join(""|) };
   read .newLine: mut List[mut Var[Str]] -> 0 =~~ 10 .flow.map{ _ -> Vars#("       ")}.list;
   }
 PrintGame: {
