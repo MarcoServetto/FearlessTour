@@ -21,6 +21,7 @@ public class TourHelper {
   static{
     Err.setUp(AssertionFailedError.class, Assertions::assertEquals, Assertions::assertTrue);
     System.setProperty(JavacTool.appDirKey, appDir().toString());
+    System.setProperty(JavacTool.launcherKey, JavacTool.consoleKey);
   }
   private static Path appDir(){
     var artefactRoot= ResolveResource.stLibPath.getParent().resolve("fearlessArtefact");
@@ -35,7 +36,7 @@ public class TourHelper {
   protected static void strCmp(String expected, String got){ Err.strCmp(expected, got); }
   static public final Path stdBase= ResolveResource.stLibPath;
   static public final Path stdRt= ResolveResource.stLibRTPath;
-  static public final Path out= Path.of("tmpOut");
+  static public final Path out= ResolveResource.stLibPath.getParent().getParent().resolve("FearlessTour","tmpOut");
 
   public static void run(String code){
     String expectedPrint= printRequirement(code);
