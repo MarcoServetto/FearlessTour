@@ -115,5 +115,64 @@ Points:{#(x: Int, y: Int): Point -> Point[]:{'self
 """); }/*--------------------------------------------
 //OMIT_END
 
+//OMIT_START
+-------------------------*/@Test void namesAndLambdas() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Nat as Nat;
+use base.F as F;
+Test: Main{s-> Block#
+  .do{Debug#(Names.foo)}
+  .do{Debug#(Names._bar)}
+  .do{Debug#(Names._b12)}
+  .do{Debug#(Names.baz')}
+  .do{Debug#(Names + 5)}
+  .do{Debug#(Names ++ 7)}
+  .do{Debug#(Names +> 8)}
+  .do{Debug#(Names <= 9)}
+  .do{Debug#(Names <#--)}
+  .do{Debug#(Names.twice({a->a+3},1))}
+  .do{Debug#(Names.twice({::+3},1))}
+  .do{Debug#(Names.pair(4,5))}
+  .do{Debug#(F[Nat,Nat,Nat]{a,b->a+b}#(1,2))}
+  .do{Debug#(F[Nat,Nat]{ a -> a + 1 }#(1))}
+  .do{Debug#(F[Nat]{ 1 + 2 }#)}
+  .do{Debug#(F[Nat,Nat]{::+3 }#(4))}
+  .return{Void}}
+Names:{
+  .foo: Nat -> 1;
+  ._bar: Nat -> 2;
+  ._b12: Nat -> 3;
+  .baz': Nat -> 4;
+  +(x': Nat): Nat -> x' + 10;
+  ++(_foo: Nat): Nat -> 20;
+  +>(_b12: Nat): Nat -> _b12;
+  <=(other: Nat): Nat -> other;
+  <#--: Nat -> 5;
+  .twice(f: F[Nat,Nat], a: Nat): Nat -> f#(f#(a));
+  .pair(a: Nat, b: Nat): Nat -> F[Nat,Nat,Nat]{a1,b1 -> a1 + b1}#(a,b);
+  }
+
+//PRINT|1
+//PRINT|2
+//PRINT|3
+//PRINT|4
+//PRINT|15
+//PRINT|20
+//PRINT|8
+//PRINT|9
+//PRINT|5
+//PRINT|7
+//PRINT|7
+//PRINT|9
+//PRINT|3
+//PRINT|2
+//PRINT|3
+//PRINT|7
+
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }

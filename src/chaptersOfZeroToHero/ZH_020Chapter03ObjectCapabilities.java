@@ -70,10 +70,18 @@ That is, object capabilities and reference capabilities are two different concep
 
 
 OMIT_START
--------------------------*/@Test void anotherPackage() { run("fooBar","Test","""
-package fooBar
-alias base.Block as B,
-alias base.Void as Void,
+-------------------------*/@Test void outputCapability() { run("""
+use base.Main as Main;
+use base.Output as Output;
+use base.Block as Block;
+use base.System as System;
+Test:Main {sys -> Block#
+  .let[mut Output] out= {sys.out}
+  .do {out.println("one")}
+  .return {out.println("two")}
+  }
+//PRINT|one
+//PRINT|two
 """); }/*--------------------------------------------
 OMIT_END
 END*/

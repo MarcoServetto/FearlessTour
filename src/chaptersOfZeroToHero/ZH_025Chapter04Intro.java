@@ -148,10 +148,50 @@ The empty `Info` object can be obtained by writing `Info` or just `{}`.
 >Add examples showing this behaviour
 
 OMIT_START
--------------------------*/@Test void anotherPackage() { run("fooBar","Test","""
-package fooBar
-alias base.Block as B,
-alias base.Void as Void,
+-------------------------*/@Test void infoKinds() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Lists as Lists;
+use base.Debug as Debug;
+use base.Infos as Infos;
+use base.Info as Info;
+use base.Str as Str;
+use base.List as List;
+Test: Main{s-> Block#
+  .do{Debug#(Infos.map("heading","North",  "aiming","East",  "point",Infos.map("x","10",  "y","5")).str)}
+  .do{Debug#(Infos.list("North",Infos.list("10","5")).str)}
+  .do{Debug#(Infos.msg("hi").str)}
+  .do{Debug#(Info.str)}
+  .do{Debug#(Infos.map("point",Infos.map("x","10",  "y","5")).getMap.get("point").getMap.get("x").getMsg)}
+  .do{Debug#(Infos.fromStr(`{"heading":"North","point":{"x":"10","y":"5"}}`).getMap.get("point").str)}
+  .do{Debug#(Infos.fromStr(Infos.map("heading","North","point",Infos.map("x","10")).str) == (Infos.map("heading","North","point",Infos.map("x","10"))))}
+  .do{Debug#(Infos.msg("hi").msg.isEmpty)}
+  .do{Debug#(Infos.msg("hi").list.isEmpty)}
+  .do{Debug#(Infos.msg("hi").map.isEmpty)}
+  .do{Debug#(Infos.msg("hi").softMsg)}
+  .do{Debug#(Infos.msg("hi").softList.size)}
+  .do{Debug#(Infos.msg("").isEmpty)}
+  .do{Debug#(List[Str].info{::}.isEmpty)}
+  .do{Debug#(Lists#("a","b","c").info{::}.str)}
+  .do{Debug#(5.info.str)}
+  .return{Void}}
+//PRINT|{"heading":"North","aiming":"East","point":{"x":"10","y":"5"}}
+//PRINT|["North",["10","5"]]
+//PRINT|"hi"
+//PRINT|null
+//PRINT|10
+//PRINT|{"x":"10","y":"5"}
+//PRINT|True
+//PRINT|False
+//PRINT|True
+//PRINT|True
+//PRINT|hi
+//PRINT|0
+//PRINT|True
+//PRINT|True
+//PRINT|["a","b","c"]
+//PRINT|"5"
 """); }/*--------------------------------------------
 OMIT_END
 END*/

@@ -181,5 +181,53 @@ That is, only one `Animal` has been created by that code, and by making the two 
 Note how we use `.let` and not `.var`.
 `bunny` and `mammal` are not variables. They are local parameters referring to objects that (indirectly) contain a variable inside.
 
+//OMIT_START
+-------------------------*/@Test void aliasingBehaviour() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Nat as Nat;
+Test: Main{s-> Block#
+  .do{Debug#(AliasingExample#)}
+  .do{Debug#(Separate#)}
+  .do{Debug#(Counter#)}
+  .return{Void}}
+Points:{ imm #(x: imm Nat, y: imm Nat): imm Point ->
+  imm Point:{.x: imm Nat -> x; .y: imm Nat -> y} }
+
+Animals: {
+  imm #(start: imm Point): mut Animal -> imm Block#
+   .var[imm Point] loc= {start}
+   .return{ mut Animal: {
+      read .location: imm Point -> loc.get;
+      mut .run(x: imm Nat): imm Void ->
+        loc.set(imm Points#(loc.get.x + x, loc.get.y));
+    }}}
+AliasingExample: {#: Nat -> Block#
+  .let bunny= { Animals#(Points#(10,20)) }
+  .let mammal= { bunny }
+  .do { bunny.run(15) }
+  .return { mammal.location.x }
+  }
+Separate: {#: Nat -> Block#
+  .let bunny= { Animals#(Points#(10,20)) }
+  .let other= { Animals#(Points#(10,20)) }
+  .do { bunny.run(15) }
+  .return { other.location.x }
+  }
+Counter: {#: Nat -> Block#
+  .var[Nat] n= {0}
+  .do { n.set(n.get + 1) }
+  .do { n.set(n.get + 1) }
+  .return { n.get }
+  }
+
+//PRINT|25
+//PRINT|10
+//PRINT|2
+
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }

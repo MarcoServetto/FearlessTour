@@ -299,5 +299,95 @@ This chapter marks a milestone: You have begun to see the beauty in the minimali
 
 Let's keep going.
 
+//OMIT_START
+-------------------------*/@Test void gameBehaviour() { run(fullPreface+"""
+NS1: F[Stack[Tank],Stack[Tank]]{
+  #(tanks) -> Let#
+    .let[Stack[Point]] danger    = { tanks.map{ t -> t.position.move(t.aiming) } }
+    .let[Stack[Tank]]  survivors = { tanks.filter{t -> this.notIn(t,danger)} }
+    .let[Stack[Point]] occupied  =
+      { survivors.map{::.position} ++ (survivors.map{::.move.position}) }
+    .return { survivors.map{t -> this.moveIfFree(t,occupied)} };
+
+ .notIn(t: Tank, ps: Stack[Point]): Bool ->
+    ps.fold(True,{acc, p -> acc .and  ( t.position == p .not) });
+
+  .moveIfFree(t: Tank, occupied: Stack[Point]): Tank -> this.notIn(t.move, occupied).if{
+    .then -> t.move;
+    .else -> t;
+    };
+  }
+NS2: F[Stack[Tank],Stack[Tank]]{
+  #(tanks) -> Let#
+    .let[Stack[Point]] danger    = { tanks.map{ t -> t.position.move(t.aiming) } }
+    .let[Stack[Tank]] survivors = { tanks.filter{t -> this.notIn(t,danger)} }
+    .let[Stack[Point]] occupied  = { (survivors.map{::.position}) ++ (survivors.map{::.move.position}) }
+    .return { survivors.map{t -> this.moveIfFree(t,occupied)} };
+
+  .notIn(t: Tank, ps: Stack[Point]): Bool ->
+    ps.fold(True,{acc, p -> acc .and  ( t.position == p .not) });
+
+  .moveIfFree(t: Tank, occupied: Stack[Point]): Tank -> occupied
+    .fold(0, {acc, p -> t.move.position == p .if{ .then -> 1; .else -> 0} + acc })
+    == 1 .if { .then-> t.move; .else-> t; };
+  }
+NS3: F[Stack[Tank],Stack[Tank]]{
+  #(tanks) -> Let#
+    .let[Stack[Point]] danger    = { tanks.map{ t -> t.position.move(t.aiming) } }
+    .let[Stack[Tank]] survivors = { tanks.filter{t -> this.notIn(t,danger)} }
+    .let[Stack[Point]] occupied  = { (survivors.map{::.position}) ++ (survivors.map{::.move.position}) }
+    .return { survivors.map{t -> this.moveIfFree(t,occupied)} };
+
+ .notIn(t: Tank, ps: Stack[Point]): Bool ->
+    ps.fold(True,{acc, p -> acc .and  ( t.position == p .not) });
+
+  .moveIfFree(t: Tank, occupied: Stack[Point]): Tank ->
+    this.countHits(t,occupied) == 1
+      .match { .true -> t.move; .false -> t; };
+
+  .countHits(t: Tank, occupied: Stack[Point]): Nat -> occupied.fold(0, {acc, p ->
+    t.move.position == p .if{ .then -> 1; .else -> 0} + acc
+    });
+  }
+NS4: F[Stack[Tank],Stack[Tank]]{
+  #(tanks) -> Let#
+    .let[Stack[Point]] danger    = { tanks.map{ t -> t.position.move(t.aiming) } }
+    .let[Stack[Tank]] survivors = { tanks.filter{t -> this.notIn(t,danger)} }
+    .let[Stack[Point]] occupied  = { (survivors.map{::.position}) ++ (survivors.map{::.move.position}) }
+    .return { survivors.map{t -> this.moveIfFree(t,occupied)} };
+
+ .notIn(t: Tank, ps: Stack[Point]): Bool ->
+    ps.fold(True,{acc, p -> acc .and  ( t.position == p .not) });
+
+  .moveIfFree(t: Tank, occupied: Stack[Point]): Tank -> occupied
+    .filter{ :: == (t.move.position) }
+    .size
+    == 1
+    .if{ .then -> t.move; .else -> t };
+  }
+Game:{
+  .start: Stack[Tank] -> Stack[Tank] + (Tanks#(South, East, Points#(+0,+0))) + (Tanks#(South, East, Points#(+5,+5)));
+  .sumX(ts: Stack[Tank]): Int -> ts.fold(+0, {acc, t -> acc + (t.position.x)});
+  .count(ts: Stack[Tank]): Nat -> ts.size;
+  }
+Test: base.Main{s-> base.Block#
+  .do{base.Debug#(Game.sumX(Game.start))}
+  .do{base.Debug#(Game.sumX(NS1#(Game.start)))}
+  .do{base.Debug#(Game.sumX(NS2#(Game.start)))}
+  .do{base.Debug#(Game.sumX(NS3#(Game.start)))}
+  .do{base.Debug#(Game.sumX(NS4#(Game.start)))}
+  .do{base.Debug#(Game.count(NS4#(Game.start)))}
+  .do{base.Debug#(Game.count(NS4#(Stack[Tank] + (Tanks#(South, East, Points#(+0,+0))) + (Tanks#(South, East, Points#(+0,+1))))))}
+  .return{base.Void}}
+//PRINT|+5
+//PRINT|+5
+//PRINT|+7
+//PRINT|+7
+//PRINT|+7
+//PRINT|2
+//PRINT|1
+
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }

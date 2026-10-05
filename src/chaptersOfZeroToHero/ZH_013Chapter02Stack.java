@@ -281,5 +281,93 @@ We will soon see how **Testing** can be used to supplement the miserable visuali
 
 Conceptually, `Stack[T]++` is similar to the Peano `Number+` operation, and the whole stack concept can be seen as a Peano number where some information is stored near each successor call.
 
+//OMIT_START
+-------------------------*/@Test void concatenationOrders() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Str as Str;
+use base.Nat as Nat;
+use base.Opt as Opt;
+use base.Opts as Opts;
+Test: Main{s-> Block#
+  .do{Debug#(ShowA#(StackA[Nat] + 1 + 2 + 3))}
+  .do{Debug#(Sum#(StackA[Nat] + 1 + 2 + 3))}
+  .do{Debug#(ShowA#((StackA[Nat] + 3 + 2 + 1) ++ (StackA[Nat] + 6 + 5 + 4)))}
+  .do{Debug#(ShowB#((StackB[Nat] + 3 + 2 + 1) ++ (StackB[Nat] + 6 + 5 + 4)))}
+  .do{Debug#(ShowC#((StackC[Nat] + 3 + 2 + 1) ++ (StackC[Nat] + 6 + 5 + 4)))}
+  .do{Debug#(ShowB#((StackB[Nat] + 3 + 2 + 1) ++ StackB[Nat]))}
+  .do{Debug#(ShowA#((StackA[Nat] + 3 + 2 + 1) ++ StackA[Nat]))}
+  .do{Debug#((StackA[Opt[Nat]] + {} + {} + ( Opts#(3) )).match{.empty->"none"; .elem top, tail -> top.str{::}})}
+  .do{Debug#((StackA[StackA[Nat]] + {} + {} + ( StackA[Nat] + 3 )).match{.empty->"none"; .elem top, tail -> ShowA#(top)})}
+  .return{Void}}
+StackA[T]: {
+  .match[R](m: StackMatchA[T,R]): R -> m.empty;
+  ++(other: StackA[T]): StackA[T] -> other;
+  +(e: T): StackA[T] -> {
+    .match m -> m.elem(e, this);
+    ++ other -> this ++ other  + e;
+    };
+  }
+StackMatchA[T,R]: {
+  .empty: R;
+  .elem(top:T, tail: StackA[T]): R;
+  }
+ShowA:{ #(s: StackA[Nat]): Str -> s.match{
+  .empty -> "";
+  .elem top, tail -> top.str + (this#(tail));
+  }}
+StackB[T]: {
+  .match[R](m: StackMatchB[T,R]): R -> m.empty;
+  ++(other: StackB[T]): StackB[T] -> other;
+  +(e: T): StackB[T] -> {
+    .match m -> m.elem(e, this);
+    ++ other -> this ++ (other  + e);
+    };
+  }
+StackMatchB[T,R]: {
+  .empty: R;
+  .elem(top:T, tail: StackB[T]): R;
+  }
+ShowB:{ #(s: StackB[Nat]): Str -> s.match{
+  .empty -> "";
+  .elem top, tail -> top.str + (this#(tail));
+  }}
+StackC[T]: {
+  .match[R](m: StackMatchC[T,R]): R -> m.empty;
+  ++(other: StackC[T]): StackC[T] -> other;
+  +(e: T): StackC[T] -> {
+    .match m -> m.elem(e, this);
+    ++ other -> other ++ this + e;
+    };
+  }
+StackMatchC[T,R]: {
+  .empty: R;
+  .elem(top:T, tail: StackC[T]): R;
+  }
+ShowC:{ #(s: StackC[Nat]): Str -> s.match{
+  .empty -> "";
+  .elem top, tail -> top.str + (this#(tail));
+  }}
+Sum:{ #(ns: StackA[Nat]): Nat -> ns.match{
+  0;
+  top, tail -> top + ( this#(tail) );
+  }}
+
+
+
+//PRINT|321
+//PRINT|6
+//PRINT|123456
+//PRINT|321456
+//PRINT|142536
+//PRINT|321
+//PRINT|123
+//PRINT|Opt[3]
+//PRINT|3
+
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }

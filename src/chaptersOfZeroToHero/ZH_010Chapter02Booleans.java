@@ -542,5 +542,107 @@ In the rest of the guide we will see other situations where lazy and eager opera
 When programming we often need to **keep in mind multiple levels of abstraction and multiple levels of precision**.
 At a coarser level of precision, `.and` and `&&` are equivalent; at a finer level of precision, we can see differences. Occasionally, fine behavioural details can bubble up the ladder of abstractions and become relevant.
 
+//OMIT_START
+-------------------------*/@Test void truthTables() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Str as Str;
+use base.F as F;
+Test: Main{s-> Block#
+  .do{Debug#(Show#(True.and(True)))}
+  .do{Debug#(Show#(True.and(False)))}
+  .do{Debug#(Show#(False.and(True)))}
+  .do{Debug#(Show#(False.and(False)))}
+  .do{Debug#(Show#(True.or(True)))}
+  .do{Debug#(Show#(True.or(False)))}
+  .do{Debug#(Show#(False.or(True)))}
+  .do{Debug#(Show#(False.or(False)))}
+  .do{Debug#(Show#(True.not))}
+  .do{Debug#(Show#(False.not))}
+  .do{Debug#(Show#(True.and(False).if[Bool]{.then->True.not.not; .else->False.not.not}))}
+  .do{Debug#(Show#(Much.code && {Slow.code}))}
+  .do{Debug#(Show#(True || {Slow.code}))}
+  .do{Debug#(Show#(True && {False}))}
+  .do{Debug#(Show#(False || {True}))}
+  .return{Void}}
+Bool: {
+  .and(Bool): Bool;
+  .or(Bool): Bool;
+  .not: Bool;
+  .if[R](ThenElse[R]): R;
+  &&(F[Bool]): Bool;
+  ||(F[Bool]): Bool;
+  }
+ThenElse[R]:{ .then: R; .else: R }
+True: Bool{
+  .and other -> other;
+  .or  other -> this;
+  .not       -> False;
+  .if  m     -> m.then;
+  &&   other -> other#;
+  ||   other -> this;
+  }
+False: Bool{
+  .and other -> this;
+  .or  other -> other;
+  .not       -> True;
+  .if  m     -> m.else;
+  &&   other -> this;
+  ||   other -> other#;
+  }
+Show:{ #(b: Bool): Str -> b.if[Str]{ .then->"True"; .else->"False" } }
+Slow:{ .code: Bool -> this.code; }
+Much:{ .code: Bool -> False; }
+
+//PRINT|True
+//PRINT|False
+//PRINT|False
+//PRINT|False
+//PRINT|True
+//PRINT|True
+//PRINT|True
+//PRINT|False
+//PRINT|False
+//PRINT|True
+//PRINT|False
+//PRINT|False
+//PRINT|True
+//PRINT|False
+//PRINT|True
+
+"""); }/*--------------------------------------------
+//OMIT_END
+//OMIT_START
+-------------------------*/@Test void botMessages() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Str as Str;
+Test: Main{s-> Block#
+  .do{Debug#(Bot.message("hello"))}
+  .do{Debug#(Bot.message("bye"))}
+  .do{Debug#(Bot.message("test"))}
+  .return{Void}}
+Bot: {
+  .message(s: Str): Str ->
+    s == "hello" .if {
+      .then -> "Hi, I'm Bot; how can I help you?";
+      .else ->
+        s == "bye" .if {
+          .then -> "goodbye!";
+          .else -> "I don't understand";
+        }
+    }
+}
+
+//PRINT|Hi, I'm Bot; how can I help you?
+//PRINT|goodbye!
+//PRINT|I don't understand
+
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }

@@ -94,5 +94,78 @@ Test:Main{s->base.Debug#(+23/4)}
 """); }/*--------------------------------------------
 //OMIT_END
 
+//OMIT_START
+-------------------------*/@Test void peanoBehaviour() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Str as Str;
+use base.Nat as Nat;
+Test: Main{s-> Block#
+  .do{Debug#(Zero.n)}
+  .do{Debug#(Zero.succ.n)}
+  .do{Debug#(Zero.succ.succ.n)}
+  .do{Debug#((Zero.succ.succ + (Zero.succ.succ.succ)).n)}
+  .do{Debug#((Zero.succ.succ * (Zero.succ.succ.succ)).n)}
+  .do{Debug#((Zero * (Zero.succ.succ)).n)}
+  .do{Debug#((Zero.succ.succ * Zero).n)}
+  .return{Void}}
+Number:{
+  .pred: Number;
+  .succ:Number->{ this };
+  .n: Nat -> this.pred.n + 1;
+  +(other: Number): Number -> this.pred + (other.succ);
+  *(other: Number): Number -> (this.pred * other) + other;
+  }
+Zero:Number {
+  .pred   -> this.pred;
+  .n -> 0;
+  + other -> other;
+  * other -> this;
+ }
+
+
+
+//PRINT|0
+//PRINT|1
+//PRINT|2
+//PRINT|5
+//PRINT|6
+//PRINT|0
+//PRINT|0
+
+"""); }/*--------------------------------------------
+//OMIT_END
+//OMIT_START
+-------------------------*/@Test void numLiterals() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Str as Str;
+use base.Nat as Nat;
+use base.Num as Num;
+Test: Main{s-> Block#
+  .do{Debug#(+12/1)}
+  .do{Debug#(1/3)}
+  .do{Debug#(-13/75)}
+  .do{Debug#((18446744073709551615/1) * (18446744073709551615/1))}
+  .do{Debug#("123456789012345678901234567890/7".getNum)}
+  .do{Debug#((1/3) + (1/6))}
+  .do{Debug#((2/4) == (1/2))}
+  .return{Void}}
+
+
+//PRINT|+12/1
+//PRINT|+1/3
+//PRINT|-13/75
+//PRINT|+340282366920938463426481119284349108225/1
+//PRINT|+17636684144620811271604938270/1
+//PRINT|+1/2
+//PRINT|True
+
+"""); }/*--------------------------------------------
+//OMIT_END
 END*/
 }
