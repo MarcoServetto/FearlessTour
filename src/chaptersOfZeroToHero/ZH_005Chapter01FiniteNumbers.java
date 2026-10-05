@@ -257,14 +257,14 @@ In order to obtain `7`, those parentheses are needed.
 Fearless does not have operator precedence: operators are just methods,
 and when parentheses are omitted,
 the method will eagerly capture the first piece of code that looks like an argument.
-This behavior is called **left associativity**.
+This behaviour is called **left associativity**.
 Thus, when coding in Fearless we need to ignore the usual operator precedence
 that they tried to hammer into our heads at school, and we just follow this simpler rule
 of eager application.
 
 >In other words: Fearless method calls (including operators like `+`,`*`, etc.)
 >happen from left to right unless we use parentheses `(..)` to group them.
->There is no built-in "multiplication before addition" rule like in math class.
+>There is no built-in "multiplication before addition" rule like in maths class.
 >In Fearless `a + b * c` means `(a + b) * c`.
 
 
@@ -413,20 +413,20 @@ it would stretch roughly from the Earth to Pluto. Seriously.
 We did the maths (it involves quintillions of lines and very large bookshelves).
 
 
-#### The Reality: optimized internal representation
+#### The Reality: optimised internal representation
 Okay, back to reality. The standard library doesn't rely on mythical typists
-or planet-sized bookshelves. It uses highly optimized internal techniques,
+or planet-sized bookshelves. It uses highly optimised internal techniques,
 leveraging how computer hardware works, to represent these numbers efficiently
 in a small, fixed amount of memory. This allows mathematical operations on `Nat`
 to be incredibly fast.
-The Fearless standard library is internally optimized in ways that a library written
+The Fearless standard library is internally optimised in ways that a library written
 by a regular programmer could not. In particular, the standard library can define
 a number of types that is out of the reach of what can realistically be coded by hand,
 or even stored on your hard drive.
 However, those types do exist and we can code in Fearless using them.
 This also means that the type names `0`, `1`, `2` and so on are already taken,
 and thus we can not actually define our numbers called `0`-`11` as we did before.
-Crucially, even though the implementation is optimized, the conceptual model of that
+Crucially, even though the implementation is optimised, the conceptual model of that
 massive, wrap-around clock face still holds: every number has a well defined predecessor
 and successor, wrapping from the highest value back to `0`.
 
@@ -471,7 +471,7 @@ something, somewhere, will eventually trigger an unexpected overflow if you're s
 relying on `Nat` or `Int` without careful checks.
 
 Overflows and underflows are a fundamental trade-off for the speed
-gained by optimized integers in most programming languages.
+gained by optimised integers in most programming languages.
 This isn't a Fearless-specific issue; it's a real issue in most languages and the
 cause of a large number of bugs.
 The big issue is that overflows and underflows do not make the code fail, they make
@@ -484,12 +484,12 @@ If the programmer has not been careful, the patient may receive eighteen quintil
 units of medicine the second after.
 
 The creators of the Fearless standard library did not like this outcome.
-The solution was to add a layer of checks on top of the behavior of `Int`, `Nat` and many other types.
-In this way, with the default behavior of the standard library, overflows, underflows and other
+The solution was to add a layer of checks on top of the behaviour of `Int`, `Nat` and many other types.
+In this way, with the default behaviour of the standard library, overflows, underflows and other
 dangerous numeric operations with odd unpredictable results are going to stop the
 whole execution instead of performing probably nonsensical operations.
 We will discuss the details on how those checks can be tuned later in the guide.
-For now, it is important that you realize that those problems do exist.
+For now, it is important that you realise that those problems do exist.
 Ignoring them is building on shaky ground.
 Accepting this reality is step one to writing robust code.
 

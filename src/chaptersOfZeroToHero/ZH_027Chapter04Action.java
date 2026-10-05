@@ -214,7 +214,7 @@ We could use errors to enforce that whenever a `Point` is observed, the `.x` and
 > Note: we do not show .assert { x.inRange(0,10) } since it would make a bad error message.
 > should we have a general Bool.orMsg(`...`) ?
 > if we want disableable assertions, we could have .assert taking a void like do.
-> then we get to write .assert{ x.checkInRange(0,10) } taking an read F[Void]
+> then we get to write .assert{ x.checkInRange(0,10) } taking a read F[Void]
 >read F[Void] is a very unusual type, but this seems to be the good use case: it guarantees no side effects visible AND no value created
 
 ```

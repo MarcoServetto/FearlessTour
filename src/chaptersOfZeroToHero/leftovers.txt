@@ -8,7 +8,7 @@ a tremendously large number that fits compactly into 64 bits due to the exponent
 How large is 2<sup>64</sup>?<BR/>
 It is more than eighteen quintillions.<BR/>
 It is more than 18 billion billions.<BR/>
-It is more tan 18 followed by 18 zeros.
+It is more than 18 followed by 18 zeros.
 
 This ability to encapsulate a vast range of numbers into a small bit space is a potent feature of binary systems. Modern architectures can execute operations on two 64-bit numbers in just a single computational cycle, enhancing efficiency and speed. This efficiency is vital for operations that occur billions of times per second.
 

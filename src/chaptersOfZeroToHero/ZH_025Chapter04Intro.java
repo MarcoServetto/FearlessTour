@@ -144,7 +144,7 @@ Similarly, we can use the type `Infos` to programmatically create `Info` objects
 In the standard library `Infos.list` takes one or two elements; a longer list `myList` can be turned into an `Info` with `myList.info{::}`.
 The empty `Info` object can be obtained by writing `Info` or just `{}`.
 
->Note: tests that the 4 kinds of info works, and that empty list and empty map and empty string return the empty info, and that the other kind is returned otherwise.
+>Note: tests that the 4 kinds of info work, and that empty list and empty map and empty string return the empty info, and that the other kind is returned otherwise.
 >Add examples showing this behaviour
 
 OMIT_START

@@ -118,7 +118,7 @@ The parametric `Tank.turnTurret` method is great progress! Instead of needing mu
 This code example shows the core ideas of programming:
  1. We define names to denote concepts. Those names can be type names, method names and parameter names.
  2. Using those names we model a world where our code will be able to run.
- 3. We encode behavior by passing values around from method to method.
+ 3. We encode behaviour by passing values around from method to method.
  4. Parameters are used to hold those values while we wire them from one place to another.
 
 Under this lens, we can describe programming as **Naming Parametric Abstractions**.
@@ -233,7 +233,7 @@ Turn270: Rotation{::.turn.turn.turn}
 //OMIT_END
 """); }/*--------------------------------------------
 
-is to assume that the method `Rotation#` will have the behavior that we can see in `Rotation`.
+is to assume that the method `Rotation#` will have the behaviour that we can see in `Rotation`.
 Here `Rotation#` is abstract. Thus, there is no way that the calls `this#` or `r#` would ever resolve into the non-existent code of `Rotation#`; they will always resolve to some concrete implementation of it.
 
 While this is self evident in `Rotation#`, since there is no body, this holds also when a body is present; since methods can be overridden in other literals.

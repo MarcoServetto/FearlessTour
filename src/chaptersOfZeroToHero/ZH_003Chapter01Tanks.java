@@ -172,7 +172,7 @@ What does `Tank: { ... }` mean here, inside a method body? It looks like our ear
 but it is now also an object literal.
 In addition to defining the `Tank` type, it also serves as a template for `Tank` objects.
 The execution of `Tanks.of` will evaluate this object literal and thus return
-a `Tank` object customized with `heading` and `aiming`.
+a `Tank` object customised with `heading` and `aiming`.
 
 **Using the parameters:** Notice how `heading` and `aiming` (the parameter names) appear inside this object definition:
 - `.heading: Direction -> heading` means:
@@ -191,9 +191,9 @@ This allows us to create `Tank` objects with custom, specific states based on th
 to the `.of` method. We have moved from having only a few fixed `Direction` objects to being able to create many
 different `Tank` objects, each remembering its own specific heading and aiming.
 
-To summarize, `Tank: { ... -> heading; ... }` is a form of object literal expression;
+To summarise, `Tank: { ... -> heading; ... }` is a form of object literal expression;
 it's a way to define the structure of a type and forge an object of that type in one step,
-often using captured parameter values to customize it.
+often using captured parameter values to customise it.
 
 #### Method Declaration Syntax 
 Methods can have as many parameters as we want.

@@ -202,7 +202,7 @@ Instead, `List[E].as` is a zero-cost retyping: the compiler checks that the func
 Animal: { .name: Str; }
 Dog: Animal { .name: Str; .bark: Str -> "Woof"; }
 ```
-all of the following works:
+all of the following work:
 ```
   Lists#(1,2,3).as{::}                                              //List[Nat] to itself
   .greetAll(pets: List[mut Dog]): List[Dog] -> pets.as{::}          //List[mut Dog] to List[Dog]
@@ -1144,7 +1144,7 @@ TestMapsAndSets:F[Tests,Tests]{::
       }).get("Dr. Carol").assertEq 40
     )
 
-  // Sets: size/isEmpty/contains, insertion order in flow
+  // Sets: size/isEmpty/contains, sorted order in flow
   .test(Sets#({::},1,2,3,4,5).size.assertEq 5)
   .test(Sets#({::},1,2,3,4,5).contains(3).assertEq True)
   .test(Sets#({::},1,2,3,4,5).contains(6).assertEq False)
@@ -1259,7 +1259,7 @@ TestOrderByCaseInsensitive:F[Tests,Tests]{::
         }
     )
 
-  // And the "same behavior by splitting into two max calls"
+  // And the "same behaviour by splitting into two max calls"
   .test(
     Data.carsCase.flow
       .max(OrderByCaseInsensitive.view{::.imm.driver.name})

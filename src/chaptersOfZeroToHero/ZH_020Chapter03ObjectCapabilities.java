@@ -52,7 +52,7 @@ Double click on `start.fearless` and the program will start.
 
 Then, open `_demo/_rank_app.fear` with any kind of text editor (not a word processor; use something like notepad, gedit, kate, or notepad++).
 You can now see and edit the Fearless code.
-Try to write a different message instead of `Hello World!` and rerun the project, by double clicking again on `start.fearless`.
+Try to write a different message instead of `Hello, World!` and rerun the project, by double clicking again on `start.fearless`.
 
 Any type implementing `base.Main` can be the starting point for the execution.
 `Main` is declared in `base` as follows:
