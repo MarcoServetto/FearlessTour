@@ -197,7 +197,7 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
     .return{ Point: DataType[Point,Point]{'self
       read .x: Nat -> x;
       read .y: Nat -> y;
-      .cmp t0, t1, m -> t0.x <=> (t1.x, m && { t0.y <=> (t1.y,m) });
+      .cmp t0, t1 -> t0.x <=> (t1.x) && {t0.y <=> (t1.y)};
       .hash -> x.hash.hashWith(y.hash);
       .info -> Infos.map("x",x,  "y",y);
       .str -> "[" + x + ", " + y + "]";
@@ -211,8 +211,8 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     .info -> Infos.map("heading", heading, "aiming", aiming,   "position", position);
     .str  -> "tank";
     .close->self; .close->::;
-    .cmp t1,t2,m -> t1.heading <=> (t2.heading,
-      m&&{t1.aiming <=> (t2.aiming, m&&{t1.position <=> (t2.position,m)})});
+    .cmp t1,t2 -> t1.heading <=> (t2.heading)
+      && {t1.aiming <=> (t2.aiming)} && {t1.position <=> (t2.position)};
     .hash -> heading.hash.hashWith(aiming.hash).hashWith(position.hash);
     };
   .fromInfo(i) -> Tanks#(
