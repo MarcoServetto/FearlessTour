@@ -19,10 +19,7 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     .position: Point -> position;
     .info -> Infos.map("heading", heading, "aiming", aiming,   "position", position);
     .str  -> ...;//includes repr1...repr3
-    .cmp t1,t2 -> t1.imm.heading <=> (t2.imm.heading)//This looks atrocious
-      && {t1.imm.aiming <=> (t2.imm.aiming)} && {t1.imm.position <=> (t2.imm.position)};
-    .cmp t1,t2,m -> m.cmp({::.heading}.then{::.aiming}.then{::.position},t1,t2);
-    //can we get the above instead?
+    .cmp t1,t2 -> t1 <=> (t2, {::.imm.heading}.then{::.imm.aiming}.then{::.imm.position});
     .hash -> heading.hash.hashWith(aiming.hash).hashWith(position.hash);
     .close->self; .close->::; .imm->self;
     };
@@ -34,6 +31,8 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
   }
 ```
 As you can see, `Tank` is quite similar to `Point`.
+Its `.cmp` uses `<=>` with an `OrderBy`, as we have seen while comparing objects in Chapter 3: two tanks are compared by heading, then by aiming, then by position.
+The methods `.heading`, `.aiming` and `.position` are `imm`, while the parameters of `.cmp` are `read`, so each key goes through `.imm`.
 
 #### Reading a `List[Tank]` from a file
 

@@ -485,6 +485,33 @@ Older:OrderBy[Person]{ p1,p2 -> p1.age <=> (p2.age) }
 OlderLonger:OrderBy[Person]{ p1,p2 -> p1.age <=> (p2.age) && {p1.name.size <=> (p2.name.size)} }
 ```
 
+### Comparing by keys: `<=>` with an `OrderBy`
+
+`Order[T]` offers a second version of `<=>`, taking an `OrderBy` together with the other value:
+````
+Order[T]:{
+  ...
+  read <=>(other: read Order[T]): Order -> this.cmp(this.close, other.close);
+  read <=>[K](other: read T, by: OrderBy[T,K]): Order -> by#(this.close) <=> (by#other);
+  }
+````
+The first version compares two values of type `T` using the `.cmp` of `T`.
+The second version does not use the `.cmp` of `T` at all: `by` turns both `this.close` and `other` into keys of type `Order[K]`, and the two keys are compared with the first version of `<=>`.
+That is, `a <=> (b, by)` means "compare `a` and `b` by the keys that `by` extracts".
+
+This is very convenient to implement `.cmp` itself.
+The parameters of `.cmp` are values of type `T`, and `T` implements `Order[T]`; thus we can call this `<=>` on them.
+For example, for our `Point` we can write
+````
+  .cmp t0, t1 -> t0 <=> (t1, {::.x}.then{::.y});
+````
+instead of `t0.x <=> (t1.x) && {t0.y <=> (t1.y)}`.
+Every component is mentioned only once, and comparing by one more component is just one more `.then`.
+Note that the parameters of `.cmp` are `read`: here `{::.x}` works because `.x` is a `read` method. With `imm` methods we write `{::.imm.x}`, using the `.imm` that every `DataType` offers.
+
+The `OrderBy` is an argument of `<=>`, so the inference knows that `{::.x}.then{::.y}` must be an `OrderBy[Point,K]`.
+If instead we use the same code as a receiver, as in `{::.x}.then{::.y}.cmp(t0, t1)`, the code may fail to compile: there the inference may not know that `{::.x}` is meant to be an `OrderBy`.
+
 ### Comparators and Flows: `.max`, `.min`, `.sort` and `.distinct`
 
 `Flow[E]` offers methods `.max` and `.min` to find the biggest and smallest element `E`.
@@ -919,6 +946,15 @@ Points:{
       .close -> self;
       }
   }
+KeyPoints:{
+  #(x: Nat, y: Nat): KeyPoint ->
+    KeyPoint: Order[KeyPoint]{ 'self
+      read .x: Nat -> x;
+      read .y: Nat -> y;
+      .cmp p0,p1 -> p0 <=> (p1, {::.x}.then{::.y});
+      .close -> self;
+      }
+  }
 Cars:{
   #(id: Nat, driver: Person): Car -> Car:{'self .id: Nat -> id; .driver: Person -> driver; read .imm:Car->self; }
   }
@@ -1027,6 +1063,10 @@ TestOrderBasics:F[Tests,Tests]{::
   .test(Points#(1,2) != (Points#(1,3)).assertTrue)
   .test(Points#(1,2) <  (Points#(1,3)).assertTrue)
   .test(Points#(1,9) >  (Points#(0,99)).assertTrue)
+  .test(KeyPoints#(1,2) == (KeyPoints#(1,2)).assertTrue)
+  .test(KeyPoints#(1,2) <  (KeyPoints#(1,3)).assertTrue)
+  .test(KeyPoints#(1,9) >  (KeyPoints#(0,99)).assertTrue)
+  .test((Points#(1,9) <=> (Points#(0,99), {::.y}))#{.lt -> 0; .eq -> 1; .gt -> 2}.assertEq 0)
 
   // range helpers (each numeric type has its own .inRange, not from Order[T]):
   // =~~= is inclusive-inclusive, ~~ is
