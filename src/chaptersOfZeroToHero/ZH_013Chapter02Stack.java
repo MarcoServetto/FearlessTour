@@ -71,7 +71,7 @@ We can use the stack in many different ways. Some usage examples below:
 - `Stack[Nat] + 1 + 2 + 3` is a stack of `Nat`. It contains `3`,`2`,`1`. Yes, in this order. `3` is the last element we inserted in the stack so it is the first element.
 - `Stack[Opt[Nat]] + {} + {} + ( Opts#(3) )` is a stack of `Opt[Nat]`. It contains the optional containing `3`, and then two empty optionals.
 - `Stack[Stack[Nat]] + {} + {} + ( Stack[Nat] + 3 )` is a stack of `Stack[Nat]`. It contains a stack with just the element `3`, and then two empty stacks.
-Note how we can use `{}` both for the empty stack and the empty optional. The inference recognizes that the method `Stack[T]+` takes an optional in one case and a stack in another. Thus it infers that `{}` is an empty optional or an empty stack depending on the surrounding code.
+Note how we can use `{}` both for the empty stack and the empty optional. The inference recognises that the method `Stack[T]+` takes an optional in one case and a stack in another. Thus it infers that `{}` is an empty optional or an empty stack depending on the surrounding code.
 
 Here we show how to use match to sum all the elements in a `Stack[Nat]`.
 -------------------------*/@Test void stack2 () { run("""
@@ -111,8 +111,8 @@ So, let's start reducing it.
 
 As you can see, this is **quite hard to read**.
 Arguably, `Stack[Nat] + 1 + 2 + 3` was much clearer.
-Visualizing reductions is great if it helps us to understand the semantics of the code. Getting stuck in the mud of redundant verbose value syntax would make visualizing reductions less useful.
-To better visualize this method execution we will use a symbolic representation for stacks.
+Visualising reductions is great if it helps us to understand the semantics of the code. Getting stuck in the mud of redundant verbose value syntax would make visualising reductions less useful.
+To better visualise this method execution we will use a symbolic representation for stacks.
 
 We will represent the result of `Stack[Nat] + 1 + 2 + 3` as `[3,2,1]`.
 
@@ -232,7 +232,7 @@ This represents more closely what a person could do if they had to merge two sta
 Note how this version produces a different ordering in the result.
 
 This is known in computer science as a **tail recursive** algorithm.
-Some older languages require tail recursive algorithms for optimization reasons. This is usually not a concern in Fearless. It is still early to discuss **why and how** this is not a problem. Now we just clarify that we can avoid worrying about those ideas in a modern language like Fearless.
+Some older languages require tail recursive algorithms for optimisation reasons. This is usually not a concern in Fearless. It is still early to discuss **why and how** this is not a problem. Now we just clarify that we can avoid worrying about those ideas in a modern language like Fearless.
 
 Note how if we explicitly pass the empty stack as the second argument, we can use it as an empty initial accumulator, and we get a reverse:
 `[1,2,3] ++ []` reduces to `[3,2,1]`

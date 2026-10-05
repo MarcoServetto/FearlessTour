@@ -19,7 +19,7 @@ only a small amount of memory (with 34 bytes being the minimum size; still much 
 
 On the other extreme, storing a single string near the maximum representable size would take about 2 GB (two gigabytes).
 2 GB is a large amount of memory, but nowadays we have computers with thousands of times more memory than that.
-Such a string would be very, very long. If we were to print it on conventional A4 paper with the standard 10 points font size and make a book out of it, that book would be more than 30 meters tall; taller than a 10-storey building.
+Such a string would be very, very long. If we were to print it on conventional A4 paper with the standard 10 point font size and make a book out of it, that book would be more than 30 metres tall; taller than a 10-storey building.
 Big, but still not infinite. I mean, actually quite small,... we have many buildings taller than that!
 
 Can we represent an actual infinite set of numbers?

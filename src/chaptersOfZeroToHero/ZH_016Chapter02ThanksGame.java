@@ -277,7 +277,7 @@ NextState: F[Stack[Tank],Stack[Tank]]{
 """); }/*--------------------------------------------
 
 This last way is more common in practical Fearless, but practising with `.fold` is very educational.
-Moreover, we can look at those two ways to implement `.moveIfFree` and realize that `.size` is actually a very good abstraction, since
+Moreover, we can look at those two ways to implement `.moveIfFree` and realise that `.size` is actually a very good abstraction, since
 - it has a clear name with an obvious behaviour
 - it is useful independently
 - it allows us to simplify the method `.moveIfFree` quite a lot.

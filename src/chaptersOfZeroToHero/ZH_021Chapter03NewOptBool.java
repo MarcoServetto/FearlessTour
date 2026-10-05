@@ -138,7 +138,7 @@ How does this work?
 
   Methods `.assertTrue`/`.assertFalse` are implemented on top of `DataType.assertEq`.
 
-- `.info`, `.close`, `.hash` and `.cmp` are methods from `DataType` to represent the boolean in a serialisable format and to allow booleans to be compared and organized into data structures.
+- `.info`, `.close`, `.hash` and `.cmp` are methods from `DataType` to represent the boolean in a serialisable format and to allow booleans to be compared and organised into data structures.
 
 ````
 True:Bool{

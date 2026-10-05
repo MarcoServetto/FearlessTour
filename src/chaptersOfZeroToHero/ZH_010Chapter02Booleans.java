@@ -127,7 +127,7 @@ False:Bool{
 A:{#:Bool ->
 True .and False .if[Bool] ThenElse[Bool]{//[Bool] needed since this Bool does not implement WidenTo
   .then:Bool -> True.not.not;//TODO: all those annotations are needed,
-  .else:Bool -> False.not.not;//this is because inference can temporarly override user define annotations
+  .else:Bool -> False.not.not;//this is because inference can temporarily override user defined annotations
   }
 }
 //OMIT_END
@@ -179,7 +179,7 @@ The first `.then` branch is simple: it just returns the greeting string.
 The first `.else` branch contains another `.if` call, nested inside. This inner check sees if `s` is equal to `"bye"`.
 This nesting allows us to create more complex decision trees.
 
-#### Visualizing reductions
+#### Visualising reductions
 ---
 1. ````
    Bot.message("hello")
