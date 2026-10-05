@@ -193,7 +193,7 @@ does two different actions: extracts the person at index `3` and connects their 
 Finally it uses the job `j` and the person `p` to produce an `Action[Str]`. Note how this is only needed if we want to get a detailed error message in case of failure. We can encode the same idea with optionals with the more conventional flow code below:
 ```
 persons.opt(3).flow.flatMap{p->
-  jobs.opt(p.name).flow.map{ j->"Person " + p + " works as a " + j } }.getOpt
+  jobs.opt(p.name).mapSome{ j->"Person " + p + " works as a " + j } }.getOpt
 ```
 Here, if the person or the job is not present, we would simply get an empty optional.
 Note: if we expect the person and the job to be there, and it should be an observed bug if this is not the case, then we should write the simpler code
@@ -235,10 +235,11 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
         .south -> Points#(x + 1, y    );
         .west  -> Points#(x,     y - 1);
         };
-      .cmp {.x,.y}1, {.x,.y}2, m -> x1 <=> (x2, m && { y1 <=> (y2,m) });
+      .cmp {.imm.x,.imm.y}1, {.imm.x,.imm.y}2 -> x1 <=> x2 && {y1 <=> y2};
       .hash -> x.hash.hashWith(y.hash);
       .info -> Infos.map("x",x,  "y",y);
       .str -> "[" + x + ", " + y + "]";
+      .close->self; .close->::; .imm->self;
       }}}
 ```
 
@@ -246,8 +247,9 @@ Here `Points` has a `.fromInfo` method creating a point using the `"x"` and `"y"
 Then, method `Points#` takes the `x` and `y` `Nat` coordinates and creates the resulting `Point`.
 However, before the point is created, we use `Nat.assertInRange` to check that `x` and `y` are in the desired range.
 `Nat.assertInRange` will throw an error if the number is not in the range.
-In `.cmp`, the parameters `{.x,.y}1` and `{.x,.y}2` are patterns taking the two points apart:
-`{.x,.y}1` declares the names `x1` and `y1`, standing for the `.x` and `.y` of the first point, and `{.x,.y}2` declares `x2` and `y2` for the second point.
+In `.cmp`, the parameters `{.imm.x,.imm.y}1` and `{.imm.x,.imm.y}2` are patterns taking the two points apart:
+`{.imm.x,.imm.y}1` declares the names `x1` and `y1`, standing for the `.imm.x` and `.imm.y` of the first point, and `{.imm.x,.imm.y}2` declares `x2` and `y2` for the second point.
+The parameters of `.cmp` are `read`, so we use `.imm`, offered by any `DataType`, to call the `imm` methods `.x` and `.y`.
 
 > TODO: we need to decide if those are deterministic or non deterministic errors.
 > Same for most errors in the std library right now.
@@ -398,8 +400,8 @@ Another form of assertions is useful when we want to provide alternative behavio
 ````
 //in file _foo/bar.fear
 Block# //many options for the actual API
-  .let content= {AssertSys.or({..readFile "foo.txt" ..},{..ask user for existing file with file chooser..} }
-  .let foo= AssertPre#(foo.bar(),{::.inRange(3,25)},{_->10})
+  .let content= {AssertSys.or({..readFile "foo.txt" ..},{..ask user for existing file with file chooser..})}
+  .let foo= {AssertPre#(foo.bar(),{::.inRange(3,25)},{_->10})}
   .do{...}
   ..
 ````

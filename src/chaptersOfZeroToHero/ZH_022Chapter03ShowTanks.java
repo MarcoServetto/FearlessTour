@@ -53,11 +53,12 @@ use base.WidenTo as WidenTo;
 We have met all of those types except `List`, similar to `Stack` but part of the standard library, and `WidenTo`, that we will discuss soon.
 
 The following file defines `Point`. We will implement `ToStr` also for `Point`.
-Note again the syntax `'self`, to name the current `Point` object. Since `Point` is defined inside of `Points`, the `this` in scope would be an instance of `Points`, not `Point`.
+Since `Point` is defined inside of `Points`, the `this` in scope would be an instance of `Points`, not `Point`.
+Here no method of `Point` needs to mention the current `Point` object, so we do not use the syntax `'self`: Fearless reports a `'self` that is never used as an error.
 
 ```
 //File _tank_game/point.fear
-Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{ 'self
+Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{
   .x: Nat -> x;
   .y: Nat -> y;
   +(other: Point): Point -> Points#(other.x + x, other.y + y);
@@ -152,7 +153,7 @@ Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank ->
 ```
 The code above is wrong in two different ways:
 - We do not check our aiming/heading direction and simply show a predefined representation. This is intentional at this point, so that we could show the structure of the code before going into the details. Writing a skeleton of the code is often a good technique to start our coding tasks.
-- The code as written does not compile. The method `.str` reports 3 errors:
+- The code as written does not compile. The method `.str` has 3 type errors:
    We can not call `this.repr1`, `this.repr2` and `this.repr3` from `.str`.
 
 This is because the `.str` method is `read` and we declared those repr methods as `imm`.
@@ -292,7 +293,7 @@ use base.Sealed as Sealed;
 use base.WidenTo as WidenTo;
 // ----------------------------------
 //File _tank_game/point.fear
-Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{ 'self
+Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{
   .x: Nat -> x;
   .y: Nat -> y;
   +(other: Point): Point -> Points#(other.x + x, other.y + y);
