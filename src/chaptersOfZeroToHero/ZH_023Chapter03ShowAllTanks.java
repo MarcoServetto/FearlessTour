@@ -268,6 +268,7 @@ We now focus on those two lines:
 - Finally, we use `.list` to turn the flow into a list.
 - `.newLine` internally does very similar work:
   We range from 0..9 and for each of those we create a `Var` initialised with seven spaces.
+
 That is, the type of `res` is `mut List[mut List[mut Var[Str]]]`.
 This is a large and intricate type, representing a list of lists of variable strings.
 The next section will discuss `List`s and `Flow`s in detail.

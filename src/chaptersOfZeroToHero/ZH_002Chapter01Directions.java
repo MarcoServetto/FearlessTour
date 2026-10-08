@@ -60,7 +60,7 @@ In the example above,
 Within this declaration
 - `North` is the type name.
 - `.turn` is a **method name**. The text `.turn` is a single token and includes the `.`
-- `.turn -> East;` is a **method declaration** and in this case
+- `.turn -> East;` is a **method implementation** (a method declaration with a body) and in this case
   the method body is just `East`.
 - The token `->` gives a body to a method. In the case of `.turn` the body
  is the new direction after turning 90&deg; clockwise.
@@ -72,7 +72,7 @@ specifically, an object literal expression.
 
 Programming is all about defining kinds of objects and the relations between them.
 Other terms for 'object' could be 'value', 'entity', 'instance' or 'element'.
-We will use the term 'object' consistently to talk about those.
+We will mostly use the term 'object' to talk about those; the terminology recap at the end of this chapter explains when the other names are used.
 
 To understand this better, consider the English sentence "Stop."
 This sentence contains a single word; and yet, it is still a sentence.

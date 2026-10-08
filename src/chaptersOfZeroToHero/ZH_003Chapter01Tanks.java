@@ -211,7 +211,7 @@ empty brackets.
 
 This newly shown method can be called with syntax:
 `Tanks.of(North, East)`
-Here `Tanks` is the first implicit parameter and it is called **the receiver**.
+Here `Tanks` is the first implicit parameter and it is called **the receiver** (inside the method it is the parameter `this`).
 The others are provided after the method name in parentheses.
 
 The syntax `.of(heading: Direction, aiming: Direction): Tank`
@@ -571,6 +571,17 @@ Makers: { .of(heading: Direction, aiming: Direction): Tank -> MadeTank: Tank { .
 //PRINT|West
 
 
+"""); }/*--------------------------------------------
+-------------------------*/@Test void typeDeclaredInsideAMethodIsLocal() { run("""
+Direction:{}
+Tanks:{ .of(heading: Direction, aiming: Direction): Tank -> Tank:{ .heading: Direction -> heading; .aiming: Direction -> aiming } }
+X:{ .t: Tank -> Tank }
+//ERROR|In file: [###]_test/_rank_app111.fear
+//ERROR|[###]
+//ERROR|The type "Tank" is declared inside a method body.
+//ERROR|A type declared inside a method can capture any parameter name in scope,
+//ERROR|so it cannot be extended or instantiated.
+//ERROR|[###]
 """); }/*--------------------------------------------
 //OMIT_END
 END*/

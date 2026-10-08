@@ -15,11 +15,11 @@ There are 2<sup>64</sup> instances of `Nat` and there are
 just a little more than 10<sup>4,256,895,041</sup> instances of `Str`.
 Each `Nat` can be stored in exactly eight bytes, where a byte is eight bits.
 Strings use an incremental space consumption; this means that storing small strings would use
-only a small amount of memory (with 34 bytes being the minimum size; still much more than the 8 bytes needed for a `Nat`).
+only a small amount of memory (still much more than the 8 bytes needed for a `Nat`, even for the empty string).
 
 On the other extreme, storing a single string near the maximum representable size would take about 2 GB (two gigabytes).
-2 GB is a large amount of memory, but nowadays we have computers with thousands of times more memory than that.
-Such a string would be very, very long. If we were to print it on conventional A4 paper with the standard 10 point font size and make a book out of it, that book would be more than 30 metres tall; taller than a 10-storey building.
+2 GB is a large amount of memory, but nowadays we have computers with many times more memory than that.
+Such a string would be very, very long. If we were to print it on conventional A4 paper with the standard 10 point font size and make a book out of it, that book would be tens of metres tall, about as tall as a 10-storey building.
 Big, but still not infinite. I mean, actually quite small,... we have many buildings taller than that!
 
 Can we represent an actual infinite set of numbers?
@@ -77,12 +77,13 @@ This is now a good time to summarise how to write numbers in Fearless:
 - `Nat` is the type of natural numbers, and we write them as `0`,`1`,`2`,.... 
 - `Int` is the type of signed integers, and we write them as `-2`,`-1`,`+0`, `+1`, `+2`,... 
 - `Num` is the type of arbitrarily large fractions, and we write them by dividing a `Nat` or an `Int` by a `Nat`, as in `+12/1`, `-13/75`, `1/3`, ...
+- `Float` is the type of approximate fractional numbers, written with a decimal point, as in `3.5` or `-4.75`.
 
 Basically, if we use the fraction symbol `/` on natural numbers or integers we get those arbitrarily large fractional numbers.
 It is very common to write numbers followed by `/1` as a way to specify that we mean arbitrary size numbers.
 For example `(18446744073709551615/1) * (18446744073709551615/1)` is a very large instance of `Num`; much bigger than what can be represented with `Nat` or `Int`.
 `Num` has no literal syntax of its own: a `Num` whose numerator or denominator is too large to be written as a `Nat` or `Int` literal is obtained by parsing a string with `.getNum`.
-For example `"123456789012345678901234567890/7".getNum` is a `Num` whose numerator is far beyond the largest `Nat`.
+For example `"123456789012345678901234567891/7".getNum` is a `Num` whose numerator is far beyond the largest `Nat`.
 OMIT_START
 -------------------------*/@Test void num1 () { run("""
 use base.Void as Void;
@@ -151,7 +152,7 @@ Test: Main{s-> Block#
   .do{Debug#(1/3)}
   .do{Debug#(-13/75)}
   .do{Debug#((18446744073709551615/1) * (18446744073709551615/1))}
-  .do{Debug#("123456789012345678901234567890/7".getNum)}
+  .do{Debug#("123456789012345678901234567891/7".getNum)}
   .do{Debug#((1/3) + (1/6))}
   .do{Debug#((2/4) == (1/2))}
   .return{Void}}
@@ -161,7 +162,7 @@ Test: Main{s-> Block#
 //PRINT|+1/3
 //PRINT|-13/75
 //PRINT|+340282366920938463426481119284349108225/1
-//PRINT|+17636684144620811271604938270/1
+//PRINT|+123456789012345678901234567891/7
 //PRINT|+1/2
 //PRINT|True
 

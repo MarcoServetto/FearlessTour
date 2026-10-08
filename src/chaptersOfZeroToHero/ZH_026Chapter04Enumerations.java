@@ -32,7 +32,8 @@ West:  Direction{.imm->West;  "West" }
 
 With this alone, `Directions.list` is the four directions in declaration order, `North.index` is `0`
 and `West.index` is `3`, `North < East` is `True`, `Directions.map.get("North")` is `North`, and
-`Directions.fromInfo(North.info)` round-trips back to `North`:
+`Directions.fromInfo(North.info)` round-trips back to `North`.
+In `North: Direction{.imm->North; "North"}` the bare string literal `"North"` implements the only method that is still abstract, `.str`: it is what gives each direction its name.
 
 OMIT_START
 -------------------------*/@Test void withoutMatch () { run("""
@@ -93,7 +94,7 @@ West:  Direction{::.west;  .imm->West;  "West" }
 
 Now `North.match(DirectionMatch[Str]{ .north->"n"; .east->"e"; .south->"s"; .west->"w"; })` is `"n"`;
 every value still gets `.list`/`.map`/`.index`/`.info`/`.fromInfo` for free from `Enums`/`Enum`, on top
-of its own `.match`:
+of its own `.match`.
 
 OMIT_START
 -------------------------*/@Test void withMatch () { run("""
@@ -162,6 +163,7 @@ Enum[E]: DataType[E,E]{
 Thanks to `Enums[Direction]` we get a `.map` method mapping names to directions.
 - Method `.map` returns a `Map[Str,Direction]` linking the string names of directions
  (`North`, `East`, etc.) to their corresponding `Direction` objects. This allows us to look up a `Direction` by its name. This is computed by using the method `.mapping`; taking a literal with a `.key` method and an `.elem` method, converting the flow elements into the key and element values for the newly created map.
+
 `E` is a bare generic parameter, so it carries no methods of its own - not even `.str` - which is why
 `Enums[E]` also needs a `.strBy: ToStrBy[E]` witness: a function turning any value of type `E` into
 something with a `.str`. `Directions.strBy -> {::};` says that witness is just the identity, which is

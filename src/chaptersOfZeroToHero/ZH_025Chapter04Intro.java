@@ -108,7 +108,7 @@ Info:{
 ```
 With that, we can represent our tank as follows:
 ```
-Infos.map("heading","North",  "aiming","East",  "point",Infos.map("x","10",  "y","5"))
+Infos.map("heading","North",  "aiming","East",  "position",Infos.map("x","10",  "y","5"))
 ```
 We could do `Infos.map("heading","North",   "aiming","East",   "x","10",   "y","5")`, but the corresponding mindset can cause issues.
 This would again flatten the `Point` into the `Tank`.
@@ -128,6 +128,7 @@ An `Info` can be one of the following:
 - A list of `Info` values.
 - A map from simple string keys to `Info` elements.
 - An empty `Info`.
+
 The operations `Info.str` and `Infos.fromStr` are provided to convert `Info` objects to JSON strings and to parse JSON strings as `Info` objects, respectively.
 
 With an `Info` object named `myInfo`, the real `.msg`/`.list`/`.map` accessors each return an `Opt`, since only one variant is actually present at a time:
@@ -159,13 +160,13 @@ use base.Info as Info;
 use base.Str as Str;
 use base.List as List;
 Test: Main{s-> Block#
-  .do{Debug#(Infos.map("heading","North",  "aiming","East",  "point",Infos.map("x","10",  "y","5")).str)}
+  .do{Debug#(Infos.map("heading","North",  "aiming","East",  "position",Infos.map("x","10",  "y","5")).str)}
   .do{Debug#(Infos.list("North",Infos.list("10","5")).str)}
   .do{Debug#(Infos.msg("hi").str)}
   .do{Debug#(Info.str)}
-  .do{Debug#(Infos.map("point",Infos.map("x","10",  "y","5")).getMap.get("point").getMap.get("x").getMsg)}
-  .do{Debug#(Infos.fromStr(`{"heading":"North","point":{"x":"10","y":"5"}}`).getMap.get("point").str)}
-  .do{Debug#(Infos.fromStr(Infos.map("heading","North","point",Infos.map("x","10")).str) == (Infos.map("heading","North","point",Infos.map("x","10"))))}
+  .do{Debug#(Infos.map("position",Infos.map("x","10",  "y","5")).getMap.get("position").getMap.get("x").getMsg)}
+  .do{Debug#(Infos.fromStr(`{"heading":"North","position":{"x":"10","y":"5"}}`).getMap.get("position").str)}
+  .do{Debug#(Infos.fromStr(Infos.map("heading","North","position",Infos.map("x","10")).str) == (Infos.map("heading","North","position",Infos.map("x","10"))))}
   .do{Debug#(Infos.msg("hi").msg.isEmpty)}
   .do{Debug#(Infos.msg("hi").list.isEmpty)}
   .do{Debug#(Infos.msg("hi").map.isEmpty)}
@@ -176,7 +177,7 @@ Test: Main{s-> Block#
   .do{Debug#(Lists#("a","b","c").info{::}.str)}
   .do{Debug#(5.info.str)}
   .return{Void}}
-//PRINT|{"heading":"North","aiming":"East","point":{"x":"10","y":"5"}}
+//PRINT|{"heading":"North","aiming":"East","position":{"x":"10","y":"5"}}
 //PRINT|["North",["10","5"]]
 //PRINT|"hi"
 //PRINT|null

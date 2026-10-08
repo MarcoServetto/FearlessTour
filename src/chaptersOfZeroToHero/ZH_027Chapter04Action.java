@@ -62,7 +62,7 @@ We call the generic parameters `R` and `RR` to suggest that `R` is the result of
 Note how all the methods are `mut` and all the generic parameters accept `imm`, `mut` and `read`. This is because actions are often used together with side effects and mutations.
 The actual implementation of `Action[R]` also offers some convenience methods (`.map`, `.mapInfo`, `.andThen`, `!`, `.context`, `.recover`, `.catch` and a few more).
 Methods `!` and `.context` are widely used and beginner-friendly, while methods `.map` and `.andThen` are used more rarely.
-Here we examine those methods one by one:
+Here we examine `!`, `.context`, `.map` and `.andThen` one by one:
 
 >Note: Action.mapInfo is also present, but we do not discuss it in the guide
 
@@ -150,6 +150,7 @@ Action[R:*]: {
 ```
 Method `.map` takes another mutating function `f` and returns a `mut Action[RR]` object that, when a matcher `m` is provided, calls the `.run` method on the outer `Action[R]` and delegates the behaviour of `.ok` and `.info` to `m.ok` and `m.info`.
 - `m.ok` will take as input not the original value `x`, but the result of applying `f` to `x`.
+
 Method `.map` is useful to transform the type of actions without actually executing any code at that moment.
 For example 
 ```
@@ -186,21 +187,21 @@ Method `.andThen` is particularly useful in scenarios where subsequent actions d
 For example, the code below
 ```
 persons.tryGet(3).andThen{p->
-  jobs.tryGet(p.name).map{ j->"Person "+p+" works as a "+j } }
+  jobs.tryGet(p.name).map{ j->"Person "+(p.name)+" works as a "+j } }
 ```
 
 does two different actions: extracts the person at index `3` and connects their name with their job using `jobs: Map[Str,Job]`.
 Finally it uses the job `j` and the person `p` to produce an `Action[Str]`. Note how this is only needed if we want to get a detailed error message in case of failure. We can encode the same idea with optionals with the more conventional flow code below:
 ```
 persons.opt(3).flow.flatMap{p->
-  jobs.opt(p.name).mapSome{ j->"Person " + p + " works as a " + j } }.getOpt
+  jobs.opt(p.name).mapSome{ j->"Person " + (p.name) + " works as a " + j } }.getOpt
 ```
 Here, if the person or the job is not present, we would simply get an empty optional.
 Note: if we expect the person and the job to be there, and it should be an observed bug if this is not the case, then we should write the simpler code
 ```
   Block#
     .let p= {persons.get(3)}
-    .return { "Person " + p + " works as a "+ jobs.get(p.name) }
+    .return { "Person " + (p.name) + " works as a " + (jobs.get(p.name)) }
 ```
 In this way our code will correctly fail as soon as an error is detected.
 
@@ -259,6 +260,7 @@ The idea is that most of the code can create points assuming that the creation w
 From the perspective of that code, a failure to create a `Point` object is an observed bug.
 
 Then, if the program as a whole does not want to consider failing to create points an observed bug, it can wrap a function making a lot of computations about points into a `Try#{..}`, thus producing an action that can be safely handled.
+This works for the deterministic errors, like a missing key in a `Map`. Today `assertInRange` fails with a non-deterministic error (see the end of this chapter), and `Try#` does not capture those: only `sys.try` does.
 
 In a complex program we can have a few layers of responsibility like this, where some code works as a supervisor of some other code that is allowed to fail.
 
@@ -270,11 +272,9 @@ But... what happens next?
 Another `Try#{...}` can turn the leaked error into another `Action[R]`, or the whole program could fail. How does this failure look?
 It will look something like this:
 ````
-Error info: {.msg:"...."}
-stack trace:
-...//TODO: complete example with correct code.
-...
-...
+List.get: List index 5 out of range for List of length 3
+imm Foo.bar(_) error line: 4 in file //.../_rank_app.fear
+imm Test.main(_) error line: 7 in file //.../_rank_app.fear
 ````
 The first chunk prints the info.
 It could be just `.msg` or could be richer if the info contained more data.
@@ -606,6 +606,17 @@ Test: base.Main{s-> Block#
 //PRINT|Opt[Person b works as a cook]
 //PRINT|Opt[]
 //PRINT|Opt[]
+"""); }/*--------------------------------------------
+-------------------------*/@Test void tryDoesNotCaptureAssertionFailures() { run("""
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Try as Try;
+Test: base.Main{s-> Block#
+  .do{Debug#(s.try#{5 .assertInRange(1=~~=4)}.info.isSome)}
+  .do{Debug#(s.try#{Try#{5 .assertInRange(1=~~=4)}.info.isSome}.info.isSome)}
+  .return{base.Void}}
+//PRINT|True
+//PRINT|True
 """); }/*--------------------------------------------
 OMIT_END
 END*/

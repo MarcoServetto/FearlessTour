@@ -137,7 +137,7 @@ Regular code expressed via method calls is fertile ground for both code reuse an
 ### The = sugar.
 
 We are now going to show one crucial form of syntactic sugar in Fearless. 
-Any method with two parameters (three counting also the receiver) can be called using this sugar. In particular this includes the `.let` method defined above.
+Any method with two parameters (three counting also the receiver) can be called using this sugar, as long as its second parameter is a type with a single abstract method that takes two parameters, like `Continuation[T,C,R]`. In particular this includes the `.let` method defined above.
 
 Consider the call
 `Let#.let({p1.x - (p2.x)}, {diffX, self0 -> self0 ...})`
@@ -281,6 +281,25 @@ D1:{
   p1.x - (p2.x) * (p1.x - (p2.x)) + (p1.y - (p2.y) * (p1.y - (p2.y)))  .softSqrt .softNat
 }
 //PRINT|True
+//PRINT|False
+"""); }/*--------------------------------------------
+-------------------------*/@Test void getStopsAndSoftClamps() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Try as Try;
+Test: Main{s-> Block#
+  .do{Debug#(Try#{3.5 .getNat}.info.isSome)}
+  .do{Debug#(3.5 .softNat)}
+  .do{Debug#((-1.0) .softNat)}
+  .do{Debug#(2 .softSqrt .softNat)}
+  .do{Debug#(Try#{3.0 .getNat}.info.isSome)}
+  .return{Void}}
+//PRINT|True
+//PRINT|3
+//PRINT|0
+//PRINT|1
 //PRINT|False
 """); }/*--------------------------------------------
 //OMIT_END

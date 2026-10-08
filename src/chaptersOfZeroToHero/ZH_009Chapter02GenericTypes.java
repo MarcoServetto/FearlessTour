@@ -36,7 +36,7 @@ Left : Fork{ l,r -> l }
 Right: Fork{ l,r -> r }
 """); }/*--------------------------------------------
 
-Here we see the generic type `[Val]`.
+Here we see the generic type parameter `Val`, declared by `[Val]`.
 We can read the above code as follows:
 
 >`Fork` has a generic method `.choose` that forall types `Val` takes two arguments of type `Val` and returns a `Val`. Method `Fork.choose` is abstract.
@@ -56,7 +56,7 @@ firstChoice.choose("Option1",  secondChoice.choose("Option2", "Option3")  )
 where `firstChoice` and `secondChoice` are `Fork`s that we obtained somewhere.
 Note how we need the generic type `Val` so that our `Fork` can work on any type:
 We can write `someFork.choose("Hello","Hi")` but also `someFork.choose(1,5)`.
-However, `someFork.choose("Hello",5)` would be ill typed: there needs to be a type that can be used to instantiate `Val`.
+However, `someFork.choose("Hello",5)` would be ill typed: `Val` needs to be instantiated with one type that fits both arguments, and the inference does not find one for a `Str` and a `Nat`.
 Type inference usually takes care of finding the types that instantiate a generic method call.
 However, we can pass the type argument ourselves if we want, using syntax `someFork.choose[Str]("Hello","Hi")`.
 As you can see, we can add `[..]` after the method name and before the list of arguments,
@@ -71,7 +71,7 @@ On the other hand, when we declare a generic method, as in
 .choose[Val](leftVal: Val, rightVal: Val): Val;
 ```
 we need to specify all the generic types that we are introducing.
-If we omit the `[..]` in the method declaration, then the conventional sugar allowing us to omit any empty parentheses applies. Thus, when we declared
+If we omit the `[..]` in the method declaration, then the conventional sugar allowing us to omit any empty square brackets and parentheses applies. Thus, when we declared
 `.turn: Direction` at the start of our journey, we actually declared
 `.turn[](): Direction`: a method called `.turn` that takes zero generic types and zero parameters.
 
@@ -177,7 +177,7 @@ In this case there are `LeftRight[Str]`, `LeftRight[Int]` and so on.
 Even `LeftRight[LeftRight[Str]]` is a valid member of the `LeftRight` family.
 As you can see, a single generic type declaration actually declares an infinite number of types!
 
-While generic parameters are inferred for generic methods, they are always explicit for generic types.
+While generic parameters are usually inferred for generic methods, they are always explicit for generic types.
 When at the start we declared `Direction:{.turn:Direction;}`
 thanks to the sugar we were actually declaring `Direction[]:{.turn[]():Direction[];}`.
 Again, empty parentheses can be omitted.
@@ -328,6 +328,17 @@ Slow:{ .code: Nat -> this.code; }
 //PRINT|Hi
 //PRINT|1
 
+"""); }/*--------------------------------------------
+-------------------------*/@Test void forkNeedsOneTypeForBothValues() { run("""
+Fork : { .choose[Val](leftVal: Val, rightVal: Val): Val }
+Left : Fork{ l,r -> l }
+Test: base.Main{s-> base.Debug#(Left.choose("Hello",5))}
+//ERROR|In file: [###]_test/_rank_app111.fear
+//ERROR|[###]
+//ERROR|This call to method "Left.choose(_,_)" cannot typecheck.
+//ERROR|Argument 1 has type "iso base.Str".
+//ERROR|That is not a subtype of "base.Nat" (the type required by the method signature).
+//ERROR|[###]
 """); }/*--------------------------------------------
 //OMIT_END
 END*/

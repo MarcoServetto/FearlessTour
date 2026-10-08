@@ -146,7 +146,7 @@ The discussion has to cover:
 - Ways to hide auxiliary methods, like `._rightSub` (Chapter 1, finite numbers).
 - Fluent libraries where the continuation changes the receiver to a different value or type (Chapter 2, locals).
 - Testing, to supplement the visualisation of how code reduces (Chapter 2, stack).
-- Why tail recursive algorithms are not a concern in Fearless (Chapter 2, stack).
+- How to repeat a computation many times without exhausting the stack, with `Block.loop` (Chapter 2, stack).
 - `DataType` in detail (Chapter 3).
 - `Try` in detail (Chapter 3).
 - Flows in detail, including parallel flows and the difference between `.flow` and `.seqFlow` (Chapter 3).

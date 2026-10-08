@@ -89,7 +89,7 @@ There are three main kinds of error here:
 - 2 Deserialising the string into an `Info`
 - 3 Deserialising the info into a `List[Tank]`
 
-We may want to provide alternative behaviour ...
+We may want to provide alternative behaviour when one of these three errors happens.
 > not sure this would make for a good example.
 
 > should the input node have a method .info directly?
@@ -125,6 +125,9 @@ What errors just leak out?
 - The errors from (1) always leak out, as soon as `.read` is called.
 - The errors from (2) are always captured by the action.
 - The errors from (3) leak out when using `.map` and are captured when using `.andThen` + `Try#`.
+
+Here "errors" means deterministic errors, like a missing key or an unknown direction name.
+A non-deterministic error, like the failure of the `assertInRange` in `Points#`, is not captured by `Try#`.
 
 
 > An interesting corner of design would be to offer some way to go from `Flow[Action[T]]` into `Action[List[T]]` ? or `Action[R]` with a transformation function on the flow?

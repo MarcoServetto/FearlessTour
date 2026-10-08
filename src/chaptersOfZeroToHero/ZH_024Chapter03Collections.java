@@ -16,7 +16,7 @@ We will conclude Chapter 3 showing many useful examples of flows and related dat
 ### Method `.map`
 Flows can be used to transform lists into other lists.
 When focusing on this aspect, it is important to keep in mind the size of the lists:
-If the output list is supposed to be of the same size as the input list, we can use map.
+If the output list is supposed to be of the same size as the input list, we can use `.map`.
 For example:
 ```
 Person: { .name: Str }
@@ -158,7 +158,7 @@ However, when elements are arranged in a specific sequence, accessing them via i
 - The fourth at index `3`,
 - The fifth and last at index `4`.
 
-This zero-based indexing system has beneficial mathematical properties. For example, it allows a single list to efficiently emulate a grid structure. Consider a 3x5 grid as depicted below, where `x` ranges from `0` to `4` (columns) and `y` from `0` to `2` (rows). Each cell `x, y` corresponds to the **single index** `y * 5 + x` in a flat list of length `15`:
+This zero-based indexing system has beneficial mathematical properties. For example, it allows a single list to efficiently emulate a grid structure. Consider a 3x5 grid as depicted below, where `x` ranges from `0` to `4` (columns) and `y` from `0` to `2` (rows). Each cell `x, y` corresponds to the **single index** `y * 5 + x` in a flat list of length `15` (in the tank game `x` is the row and `y` the column; here it is the other way around):
 
 ```
  x,y                          -->  index mapping
@@ -478,7 +478,7 @@ Example usage: `{::.age}.then{::.name}` would compare a person by age first and 
 - Method `.view` allows us to compare entities of type `A` if we can convert them into a `T` for which we have an `OrderBy`.
 Example usage: `ByCats.view{::.driver}`
 would compare cars by the total cats weight of their `.driver`,
-assuming that `Car` has a `read .driver: Person` method (we explain below why it has to be `read`).
+assuming that `Car` has a `read .driver: Person` method (it has to be `read` because the functions given to `.view`, `.max` and the like see their argument as `read`, as we explain below for the parameters of `.cmp`).
 
 Here are some more boring examples:
 ```
@@ -697,6 +697,7 @@ However, how can we sort a list of lists?
 To order a collection we need to reason about two generic types:
 - The type of the current collection `T`.
 - The type of the collection elements `E`.
+
 The idea is that by providing an `OrderBy` for the elements, we can produce an
 `Order` for the collection.
 ```

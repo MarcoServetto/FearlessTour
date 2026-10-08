@@ -71,6 +71,7 @@ We can use the stack in many different ways. Some usage examples below:
 - `Stack[Nat] + 1 + 2 + 3` is a stack of `Nat`. It contains `3`,`2`,`1`. Yes, in this order. `3` is the last element we inserted in the stack so it is the first element.
 - `Stack[Opt[Nat]] + {} + {} + ( Opts#(3) )` is a stack of `Opt[Nat]`. It contains the optional containing `3`, and then two empty optionals.
 - `Stack[Stack[Nat]] + {} + {} + ( Stack[Nat] + 3 )` is a stack of `Stack[Nat]`. It contains a stack with just the element `3`, and then two empty stacks.
+
 Note how we can use `{}` both for the empty stack and the empty optional. The inference recognises that the method `Stack[T]+` takes an optional in one case and a stack in another. Thus it infers that `{}` is an empty optional or an empty stack depending on the surrounding code.
 
 Here we show how to use match to sum all the elements in a `Stack[Nat]`.
@@ -114,7 +115,7 @@ Arguably, `Stack[Nat] + 1 + 2 + 3` was much clearer.
 Visualising reductions is great if it helps us to understand the semantics of the code. Getting stuck in the mud of redundant verbose value syntax would make visualising reductions less useful.
 To better visualise this method execution we will use a symbolic representation for stacks.
 
-We will represent the result of `Stack[Nat] + 1 + 2 + 3` as `[3,2,1]`.
+We will represent the result of `Stack[Nat] + 1 + 2 + 3` as `[3,2,1]`, and the empty stack `Stack[Nat]` as `[]`.
 
 
 With this representation problem sorted out, we can now reduce
@@ -127,9 +128,9 @@ With this representation problem sorted out, we can now reduce
 06. `3+ ({ 0; top,tail -> top+(Example.sum(tail))}.elem(2,[1]))`
 07. `3+(2+(Example.sum([1])))`
 08. `3+(2+([1].match{ 0; top,tail -> top+(Example.sum(tail))}))`
-09. `3+(2+({ 0; top,tail -> top+(Example.sum(tail))}.elem(1,Stack[Nat])))`
-10. `3+(2+(1+(Example.sum(Stack[Nat]))))`
-11. `3+(2+(1+(Stack[Nat].match{ 0; top,tail -> top+(Example.sum(tail))})))`
+09. `3+(2+({ 0; top,tail -> top+(Example.sum(tail))}.elem(1,[])))`
+10. `3+(2+(1+(Example.sum([]))))`
+11. `3+(2+(1+([].match{ 0; top,tail -> top+(Example.sum(tail))})))`
 12. `3+(2+(1+(0)))`
 13. `3+(2+(1.pred+(0.succ)))`
 14. `3+(2+(0+(0.succ)))`
@@ -145,7 +146,7 @@ This, again, is long and verbose. When we have methods like `.match`, or methods
 01. `Example.sum([3,2,1])`
 02. `3+( Example.sum([2,1]) )`
 03. `3+(2+( Example.sum([1]) ))`
-04. `3+(2+(1+( Example.sum(Stack[Nat]) )))`
+04. `3+(2+(1+( Example.sum([]) )))`
 05. `3+(2+(1+0))`
 06. `3+(2+1)`
 07. `3+3`
@@ -232,7 +233,7 @@ This represents more closely what a person could do if they had to merge two sta
 Note how this version produces a different ordering in the result.
 
 This is known in computer science as a **tail recursive** algorithm.
-Some older languages require tail recursive algorithms for optimisation reasons. This is usually not a concern in Fearless. It is still early to discuss **why and how** this is not a problem. Now we just clarify that we can avoid worrying about those ideas in a modern language like Fearless.
+Some languages optimise tail recursive algorithms, so that they can repeat for any number of steps without using more and more memory. Fearless does not do this: a recursion with several thousand calls nested inside each other, tail recursive or not, can run out of stack space and stop the program. The examples of this guide are small enough for this not to be a concern; it is still early to discuss how to repeat a computation many times (`Block` offers a `.loop` method for this purpose).
 
 Note how if we explicitly pass the empty stack as the second argument, we can use it as an empty initial accumulator, and we get a reverse:
 `[1,2,3] ++ []` reduces to `[3,2,1]`

@@ -200,6 +200,8 @@ The method `Rotation+` is considered very elegant code.
 Inside it, `this` refers to the first `Rotation` (`Turn90` in `Turn90 +(Turn180)`).
 `r` refers to the second rotation (`Turn180`).
 The object literal `{ d -> this#( r#(d) ) }` creates a new `Rotation` object. When this new object's `#` method is called later, it will use the `this` and `r` that were captured when it was created.
+In other words, `Turn90+(Turn180)` is `RotateTwice` with its first two parameters already given: a `Rotation` that still waits for a `Direction`.
+Giving a function only some of its arguments, to obtain a function that waits for the others, is called **partial application**.
 
 Thanks to our syntactic sugar and inference, the body of method `Rotation+` is very compact.
 The expression `{ d-> this#(r#(d)) }` is equivalent to

@@ -57,9 +57,9 @@ All such methods are already part of the standard library, so no user program wo
 The description below explains how the code above works, but will only mention `mut`, `imm`, `read` and `read/imm` without explaining how they work in detail yet.
 First we define a type `Void:{}`. Nothing special here, just a type that does nothing. `Void` is often used to represent an operation that has no meaningful result, and simply performs side effects, and to do so it will have to use magic methods internally.
 Then we define `Var[E]` as a generic type.
-The type `E` has a constraint: it can only be `imm`,`mut` or `read`.
+The type `E` has a constraint: it can only be `imm`, `mut` or `read`.
 Those are keywords called reference capabilities: they describe how values can interact with magic.
-An instance of `Var` will store an object of type `E`. The crucial bit is that such a value can change over time.
+An instance of `Var` will store an object of type `E`. The crucial bit is that such a value can change over time: this is called **mutation**.
 Method `.set` takes a new value, and magically changes the current object to store that new value instead of the old one.
 Note how this method starts with the `mut` keyword.
 In Fearless, types and methods can have a keyword in front to track how they interact with magic.

@@ -355,7 +355,7 @@ As you can see, designing generic container types supporting a range of referenc
 You may have noticed a shift in tone. The code for `_Opt[E]` looks significantly more intimidating than the conceptual `Opt[T]` we wrote in Chapter 2.
 
 We are crossing the bridge from **conceptual logic** to **production engineering**.
-The logic remains identical: an optional is still just "something or nothing." However, a production-grade library seamlessly handles `mut`,`imm` and `read` data.
+The logic remains identical: an optional is still just "something or nothing." However, a production-grade library seamlessly handles `mut`, `imm` and `read` data.
 
 Up to now we made sure to explain every single detail when first used. We will eventually provide all the details and teach you the ins and outs of every corner; but there is no longer a clear linear path to follow.
 Here we are showing you the real implementation of those very useful types, and by their nature of being used in all contexts of the language, they are interconnected with every aspect of the language.
@@ -619,7 +619,7 @@ DataTypeBy[E,K,K0]:ToInfoBy[E],ToImmBy[E,K0],OrderHashBy[E,K]{ #(e: read E): rea
 Method `ToStr.str` represents an object as a string.
 Method `ToInfo.info` represents an object in a structured data format (similar to JSON) useful for communication across programs.
 Type `OrderHash[T]` provides hashing and comparison methods to a type `T` extending it. Objects extending `OrderHash[T]` can easily be organised in efficient data structures.
-Method `ToImm[T].imm` converts an object of any reference capability into an immutable version of the same object. For objects that can only ever be immutable, this method simply returns the object itself.
+Method `ToImm[T0].imm` converts an object of any reference capability into an immutable version of the same object. For objects that can only ever be immutable, this method simply returns the object itself.
 
 Note how many of those types have a generic variant, like `ToStr` and `ToStr[E]`. As we will see later, this is because for generic containers we need a way to convert the contained objects to be able to convert the container itself.
 

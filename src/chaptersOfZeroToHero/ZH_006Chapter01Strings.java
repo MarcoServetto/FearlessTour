@@ -47,7 +47,7 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 space and new line
 ```
 It is now 96 symbols. Those are all the symbols we can easily type on most keyboards.
-With this, we could express any text!
+With this, we could express any text made of those symbols!
 We call numbers expressed in this form (simple) strings.
 It is very compact to represent very large numbers in this notation. For example number 5,000 would be just `` "Q8" ``.
 1,000,030 in base-96 has a representation of `` "1cM " ``. Note the space after the `M`.

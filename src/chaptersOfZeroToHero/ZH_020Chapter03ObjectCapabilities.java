@@ -13,7 +13,7 @@ class ZH_020Chapter03ObjectCapabilities {
 Finally, we have discussed all of the knowledge needed to make our first Fearless program.
 
 -------------------------*/@Test void finallyMain() { run("""
-//in file _test/_rank_app.fear
+//in file _demo/_rank_app.fear
 use base.Main as Main;
 use base.Output as Output;
 
@@ -43,6 +43,7 @@ This new folder will contain the following files:
 - `start.fearless`
 - `_demo`
 - `_demo/_rank_app.fear`
+
 You should right click on `start.fearless` and associate files with extension `*.fearless` with 
 that same executable.
 That is it, you are all set to use Fearless on your machine.
