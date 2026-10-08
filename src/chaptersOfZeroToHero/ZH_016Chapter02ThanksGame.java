@@ -293,7 +293,7 @@ We started from just the ability to declare types and methods, and we have const
 We defined our own representations of booleans, numbers, stacks, and optionals, patiently assembling them from minimal concepts.
 
 The little tank game we have just built is not trivial. It demonstrates how complexity emerges naturally and cleanly from minimal building blocks.
-By mastering this foundational thinking, you've already gained the ability to envision and construct software in ways many programmers never deeply experience.
+By working through these examples, you are building the foundational thinking needed to envision and construct software in ways many programmers never deeply experience.
 
 This chapter marks a milestone: You have begun to see the beauty in the minimalistic design of Fearless. As we continue, you will find these insights becoming not just a guide to coding, but a lens through which all programming becomes clearer.
 

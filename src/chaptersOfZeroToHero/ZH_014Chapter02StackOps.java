@@ -210,13 +210,10 @@ Stack[T]: {
   }
 """); }/*--------------------------------------------
 
-You should pause here, absorb every detail, and even commit this little snippet to memory.
-
-This compact piece of code is not just another programming example. Within it lies the distilled essence of the core ideas we've been exploring.
-
-What you're looking at is a mental blueprint. One that can become a key part of your intuitive programming toolkit. Once internalised, it fundamentally reshapes your thinking about problems. You'll begin seeing opportunities everywhere to elegantly apply these patterns, and clearly express yourself via code.
-
-This snippet is foundational for a powerful mental model, that will guide you toward cleaner solutions, clearer abstractions, and more maintainable code.
+This `Stack` implementation, especially with `map`, `fold` and `filter`, demonstrates some powerful, recurring patterns in object-oriented design.
+Understanding how we built it, starting with a base case (empty) and an inductive step (`+`), and then abstracting common operations, provides a strong foundation.
+As you see more Fearless code, you will likely recognise variations of these ideas.
+Take a moment to review how these pieces fit together.
 
 //OMIT_START
 -------------------------*/@Test void stackBehaviour() { run("""
