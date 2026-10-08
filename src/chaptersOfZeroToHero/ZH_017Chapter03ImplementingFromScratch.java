@@ -32,6 +32,7 @@ We call **magic methods** the methods from the standard library giving direct ac
 ### Var: the first bit of magic
 
 The following code introduces updatable local variables, and uses a few new features.
+It is a simplified version of the standard library `Var`, which has the same `.set` and `.get`, and also a `.swap` method.
 -------------------------*/@Test void var1 () { run("""
 //OMIT_START
 _Magic: { ![R:**]: R -> base.Error.msg"magic"; }

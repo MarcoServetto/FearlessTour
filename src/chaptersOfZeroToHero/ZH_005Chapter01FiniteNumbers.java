@@ -404,7 +404,7 @@ Of course, there isn't really a file containing billions of billions of lines li
 18446744070000000006: Nat{.pred-> 18446744070000000005; .succ->  18446744070000000007; }
 ...
 ```
-But let's imagine, just for fun. Picture "The Infinite Typist", a mythical programmer fueled by pure
+But let's imagine, just for fun. Picture "The Infinite Typist", a mythical programmer fuelled by pure
 determination and questionable amounts of coffee, who decided one day to manually define numbers,
 one after another. Day after day, century after century, they typed...
 If we printed their monumental work, using tiny font and three columns per page,

@@ -254,6 +254,86 @@ Test: Main{s-> Block#
 //PRINT|False
 
 """); }/*--------------------------------------------
+-------------------------*/@Test void pointAndTankAsShown() { run("""
+use base.Main as Main;
+use base.Nat as Nat;
+use base.F as F;
+use base.Block as Block;
+use base.DataType as DataType;
+use base.FromInfo as FromInfo;
+use base.Infos as Infos;
+use base.Lists as Lists;
+use base.Enums as Enums;
+use base.Enum as Enum;
+use base.Void as Void;
+use base.Debug as Debug;
+DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
+Directions: Enums[Direction]{
+  .list -> Lists#(North,East,South,West);
+  .strBy -> {::};
+  }
+Direction: Enum[Direction]{
+  .enums->Directions;
+  read .match[R:**](m: mut DirectionMatch[R]): R;
+  .close->this; .close->::;
+  }
+North: Direction{::.north; .imm->North; "North"}
+East:  Direction{::.east;  .imm->East;  "East" }
+South: Direction{::.south; .imm->South; "South"}
+West:  Direction{::.west;  .imm->West;  "West" }
+Points: F[Nat,Nat,Point], FromInfo[Point] {
+
+  .fromInfo(i) -> Points#(i.getMap.get("x").getMsg.getNat, i.getMap.get("y").getMsg.getNat);
+
+  # x, y ->Block#
+    .do { x.assertInRange(0=~~10) }
+    .do { y.assertInRange(0=~~10) }
+    .return{ Point: DataType[Point,Point]{'self
+      .x: Nat -> x;
+      .y: Nat -> y;
+      +(other: Point): Point -> Points#(other.x + x, other.y + y);
+      .move(d: Direction): Point -> d.match{
+        .north -> Points#(x - 1, y    );
+        .east  -> Points#(x,     y + 1);
+        .south -> Points#(x + 1, y    );
+        .west  -> Points#(x,     y - 1);
+        };
+      .cmp {.imm.x,.imm.y}1, {.imm.x,.imm.y}2 -> x1 <=> x2 && {y1 <=> y2};
+      .hash -> x.hash.hashWith(y.hash);
+      .info -> Infos.map("x",x,  "y",y);
+      .str -> "[" + x + ", " + y + "]";
+      .close->self; .close->::; .imm->self;
+      }}}
+Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
+  heading, aiming, position -> Tank:DataType[Tank,Tank]{'self
+    .heading: Direction -> heading;
+    .aiming: Direction -> aiming;
+    .position: Point -> position;
+    .info -> Infos.map("heading", heading, "aiming", aiming,   "position", position);
+    .str  -> "tank";
+    .cmp t1,t2 -> t1 <=> (t2, {::.imm.heading}.then{::.imm.aiming}.then{::.imm.position});
+    .hash -> heading.hash.hashWith(aiming.hash).hashWith(position.hash);
+    .close->self; .close->::; .imm->self;
+    };
+  .fromInfo(i) -> Tanks#(
+    Directions.fromInfo(i.getMap.get("heading")),
+    Directions.fromInfo(i.getMap.get("aiming")),
+    Points.fromInfo(i.getMap.get("position"))
+    );
+  }
+Test: Main{s-> Block#
+  .do{Debug#(Tanks#(North,East,Points#(1,2)).info.str)}
+  .do{Debug#(Tanks.fromInfo(Infos.fromStr(Tanks#(North,East,Points#(1,2)).info.str)) == (Tanks#(North,East,Points#(1,2))))}
+  .do{Debug#(Tanks.fromInfo(Infos.fromStr(Tanks#(North,East,Points#(1,2)).info.str)) == (Tanks#(North,East,Points#(1,3))))}
+  .do{Debug#(Points#(3,4) < (Points#(3,5)))}
+  .do{Debug#(Points#(3,4).move(West).str)}
+  .return{Void}}
+//PRINT|{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}}
+//PRINT|True
+//PRINT|False
+//PRINT|True
+//PRINT|[3, 3]
+"""); }/*--------------------------------------------
 OMIT_END
 END*/
 }

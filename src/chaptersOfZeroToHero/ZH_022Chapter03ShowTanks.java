@@ -112,17 +112,15 @@ Basically, `WidenTo[Direction]` makes it so that the inference would never infer
 >`DataType` does use `WidenTo[S]` internally, and this is why
 > the inference will always infer `Bool` instead of `True`/`False` and `Nat` instead of `42`.
 
-Here, if we were to omit `WidenTo[Direction]`, the code
+Here, if we were to omit `WidenTo[Direction]`, the `.turn` above would still compile, since it declares its return type `Direction`.
+However, the code
 ````
-  .turn: Direction -> this.match{
-    .north -> East;
-    .east  -> South;
-    .south -> West;
-    .west  -> North;
-    };
+  .turn2: Direction -> Block#
+    .let d= {this.match{ .north -> East; .east -> South; .south -> West; .west -> North; }}
+    .return{d};
 ````
-may fail to compile:
-the inference would see `.north -> East;` and may conclude that the method `.north` is returning `East` of type `East`, thus this match should return an `East` instead of a direction.
+would fail to compile:
+the inference would see `.north -> East;` and conclude that the method `.north` is returning `East` of type `East`, thus this match should return an `East` instead of a direction.
 
 We define `DirectionMatch[R]` to be mutable. This is because we want to allow the execution of `.match` to mutate the state of objects captured by the running operation. In some cases we will want our matchers to be more restrictive and to only support operations that do not perform mutations, but in most cases we will use the shown signature.
 Note how, assuming the intention of defining an enumeration, the three lines
@@ -394,5 +392,78 @@ Test:Main {sys -> sys.out.println(  Tanks#(North, West, Points#(1, 2))  )}
 //PRINT| \\ _ / \n\
 //PRINT|
 """); }/*--------------------------------------------
+OMIT_START
+-------------------------*/@Test void widenToNotNeededWithDeclaredReturnType() { run("""
+use base.Main as Main;
+use base.Str as Str;
+use base.ToStr as ToStr;
+use base.Sealed as Sealed;
+use base.Debug as Debug;
+North: Direction {::.north}
+East : Direction {::.east}
+South: Direction {::.south}
+West : Direction {::.west}
+DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
+Direction: ToStr, Sealed {
+  read .match[R: **](mut DirectionMatch[R]): R;
+  .turn: Direction -> this.match{
+    .north -> East;
+    .east  -> South;
+    .south -> West;
+    .west  -> North;
+    };
+  .str -> this.match{ .north -> "North"; .east -> "East"; .south -> "South"; .west -> "West"; };
+  }
+Test: Main{s-> Debug#(North.turn)}
+//PRINT|East
+"""); }/*--------------------------------------------
+-------------------------*/@Test void widenToNeededWithoutDeclaredReturnType() { run("""
+use base.Block as Block;
+use base.Str as Str;
+use base.ToStr as ToStr;
+use base.Sealed as Sealed;
+North: Direction {::.north}
+East : Direction {::.east}
+South: Direction {::.south}
+West : Direction {::.west}
+DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
+Direction: ToStr, Sealed {
+  read .match[R: **](mut DirectionMatch[R]): R;
+  .turn2: Direction -> Block#
+    .let d= {this.match{ .north -> East; .east -> South; .south -> West; .west -> North; }}
+    .return{d};
+  .str -> this.match{ .north -> "North"; .east -> "East"; .south -> "South"; .west -> "West"; };
+  }
+//ERROR|In file: [###]_test/_rank_app111.fear
+//ERROR|[###]
+//ERROR|Method ".east" inside the object literal instance of "iso DirectionMatch[East]" (line 13)
+//ERROR|is implemented with an expression returning "iso South".
+//ERROR|Object literal is of type "South" instead of a subtype of "East".
+//ERROR|[###]
+"""); }/*--------------------------------------------
+-------------------------*/@Test void widenToFixesTheInferredType() { run("""
+use base.Main as Main;
+use base.Block as Block;
+use base.Str as Str;
+use base.ToStr as ToStr;
+use base.Sealed as Sealed;
+use base.WidenTo as WidenTo;
+use base.Debug as Debug;
+North: Direction {::.north}
+East : Direction {::.east}
+South: Direction {::.south}
+West : Direction {::.west}
+DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
+Direction: ToStr, Sealed, WidenTo[Direction] {
+  read .match[R: **](mut DirectionMatch[R]): R;
+  .turn2: Direction -> Block#
+    .let d= {this.match{ .north -> East; .east -> South; .south -> West; .west -> North; }}
+    .return{d};
+  .str -> this.match{ .north -> "North"; .east -> "East"; .south -> "South"; .west -> "West"; };
+  }
+Test: Main{s-> Debug#(North.turn2)}
+//PRINT|East
+"""); }/*--------------------------------------------
+OMIT_END
 END*/
 }

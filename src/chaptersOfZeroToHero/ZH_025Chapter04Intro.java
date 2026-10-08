@@ -141,7 +141,7 @@ There's also an empty `Info`. For the common cases where the variant is assumed 
 This structured approach to serialisation using `Info` not only simplifies data handling but also enhances the clarity and flexibility of your codebase, making it easier to manage and extend.
 
 Similarly, we can use the type `Infos` to programmatically create `Info` objects using methods `Infos.msg(Str)`, `Infos.list(/*..elements..*|/)` and `Infos.map(/*..keys and values..*|/)`.
-In the standard library `Infos.list` takes one or two elements; a longer list `myList` can be turned into an `Info` with `myList.info{::}`.
+In the standard library `Infos.list` takes one or two elements, so the three elements of `Infos.list("North","East",Infos.list("10","5"))` above work only with the `Infos` sketched earlier; a longer list `myList` can be turned into an `Info` with `myList.info{::}`.
 The empty `Info` object can be obtained by writing `Info` or just `{}`.
 
 >Note: tests that the 4 kinds of info work, and that empty list and empty map and empty string return the empty info, and that the other kind is returned otherwise.

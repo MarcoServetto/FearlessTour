@@ -170,8 +170,9 @@ That is, the result of `.map` will be equivalent to the result of `Maps#({::},"N
 
 Many enumeration types will have similar utility methods.
 Note how methods `.list` and `.map` are fully deterministic. They take no arguments: the receiver contains no information (since it is a singleton) and there are no other parameters. This means that every time that code is executed, it produces the same result.
-Fearless will cache the result of such methods, so that the computation runs only one time.
-This means that user code can call `Directions.map` many times without worrying about the performance cost of creating the map over and over again. The map is created only one time and then the system remembers it.
+This makes such methods good candidates for caching, so that the computation runs only one time.
+Fearless does not do this automatically: the standard library offers the `Cache` type for the cases where it is worth it, and `Enums` does not use it.
+This means that every call to `Directions.map` creates the map again. For a small enumeration that is cheap, but it is a cost to keep in mind when calling such methods over and over again.
 
 Finally, the `.fromInfo` method uses this map to convert an `Info` string back into a `Direction` object. It should find the direction's name in the map and return the associated `Direction`.
 

@@ -208,7 +208,7 @@ Opt[E:*]: _Opt[E]{
 
   .seqFlow    -> this.match{.empty -> Flows#; .some x -> Flows#(x)};
 
-  .mapSome[R:*] f -> this.match{.some x->Opts#(f#x); .empty->{}};
+  .mapSome f -> this.match{.some x->Opts#(f#x); .empty->{}};
 
   .ifSome  f  -> this.match{.some x -> f#x; .empty -> {}};
   .ifEmpty f  -> this.match{.some _ -> {}; .empty -> f#};
@@ -458,7 +458,7 @@ Opt[E:*]: _Opt[E]{
 
   .seqFlow    -> this.match{.empty -> Flows#; .some x -> Flows#(x)};
 
-  .mapSome[R:*] f -> this.match{.some x->Opts#(f#x); .empty->{}};
+  .mapSome f -> this.match{.some x->Opts#(f#x); .empty->{}};
 
   .ifSome  f  -> this.match{.some x -> f#x; .empty -> {}};
   .ifEmpty f  -> this.match{.some _ -> {}; .empty -> f#};

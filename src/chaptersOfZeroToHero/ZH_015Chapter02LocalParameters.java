@@ -41,6 +41,7 @@ Note that those are the needed parentheses:
 This method uses the Pythagorean theorem, but it is not ideal:
   - we duplicate code for `p1.x - (p2.x)` and `p1.y - (p2.y)`
   - all the code is in a single hard to read line.
+  - with `Nat` coordinates, `p1.x - (p2.x)` stops the execution when `p2.x` is bigger than `p1.x`, since a `Nat` can not be negative (the underflow we discussed before). We ignore this problem here.
 
 What if we want to introduce more names?
 We can define a function on the fly and call it, as shown below:
@@ -262,6 +263,25 @@ D5:{
 //PRINT|0
 //PRINT|1
 
+"""); }/*--------------------------------------------
+-------------------------*/@Test void distanceStopsOnNatUnderflow() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Nat as Nat;
+Test: Main{s-> Block#
+  .do{Debug#(s.try#{D1.distance(Points#(4,5),Points#(7,9))}.info.isSome)}
+  .do{Debug#(s.try#{D1.distance(Points#(7,9),Points#(4,5))}.info.isSome)}
+  .return{Void}}
+Point:{ .x: Nat; .y: Nat }
+Points:{ #(x: Nat, y: Nat): Point -> { .x -> x; .y -> y } }
+D1:{
+.distance(p1: Point, p2: Point): Nat->
+  p1.x - (p2.x) * (p1.x - (p2.x)) + (p1.y - (p2.y) * (p1.y - (p2.y)))  .softSqrt .softNat
+}
+//PRINT|True
+//PRINT|False
 """); }/*--------------------------------------------
 //OMIT_END
 END*/

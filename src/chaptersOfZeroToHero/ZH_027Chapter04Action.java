@@ -285,24 +285,25 @@ It is about the set of active calls when the error leaked.
 For example
 ````
 Stuff:{
-  .foo -> Lists#(1,2,3).get(5);
-  .bar -> Try#{this.foo};
-  .beer1 -> this.bar!;
-  .beer2 -> this.bar.context{"InBeer2"}!;
+  .foo: Nat -> Lists#(1,2,3).get(5);
+  .bar: mut Action[Nat] -> Try#{this.foo};
+  .beer1: Nat -> this.bar!;
+  .beer2: Nat -> this.bar.context{"InBeer2"}!;
   }
 ````
 
 `this.beer1` would have
-`list too short`
-stack trace `Stuff.beer1, Stuff.foo, List.get`.
+`List.get: List index 5 out of range for List of length 3`
+stack trace `Stuff.beer1`.
 
 `this.beer2` would have
 ```
 InBeer2
-list too short
+List.get: List index 5 out of range for List of length 3
 ```
 stack trace `Stuff.beer2`
-As you can see, the call to context added custom text but removed information from the stack trace.
+As you can see, the call to context added custom text.
+In both cases the stack trace starts where `!` throws the error again: `Stuff.foo` is not part of it, since the error was caught by `Try#` before.
 >Is this what we want? big design decision. The other implementation where we keep the original stack trace must also be possible. (mutate the exception obj and re-throw it)
 
 We can capture this information programmatically with the capability `System.try`

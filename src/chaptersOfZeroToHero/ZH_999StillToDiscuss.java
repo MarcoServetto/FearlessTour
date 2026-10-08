@@ -108,9 +108,9 @@ The solution is a matcher whose match method takes the extra references as param
 ````
 CaseToken[A,B,R:**]: { .match(a: iso A, b: mutH B, m: mut CaseTokenMatch[A,B,R]): R }
 CaseTokenMatch[A,B,R:**]: {
-  .eof(a: iso A, b: mutH B): R;
-  .plus(a: iso A, b: mutH B): R;
-  .num(a: iso A, b: mutH B, n: Nat): R;
+  mut .eof(a: iso A, b: mutH B): R;
+  mut .plus(a: iso A, b: mutH B): R;
+  mut .num(a: iso A, b: mutH B, n: Nat): R;
   }
 CaseTokens: { #[A,B,R:**](t: Token): mut CaseToken[A,B,R] -> t.match{
   .eof    -> {a,b,m -> m.eof(a,b)};

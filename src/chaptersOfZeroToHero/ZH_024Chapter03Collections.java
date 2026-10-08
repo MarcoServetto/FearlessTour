@@ -543,7 +543,7 @@ myCars.flow
   .first//like with .filter: we can split two conditions into two calls if we prefer
 
 myCars.flow
-  .max OrderBy[Car]{c1,c2,m->...}// to write a comparator by hand
+  .max OrderBy[Car]{c1,c2->...}// to write a comparator by hand
   .min {::} //to use the conventional comparator on the equally maximal cars
   .list
 ```
