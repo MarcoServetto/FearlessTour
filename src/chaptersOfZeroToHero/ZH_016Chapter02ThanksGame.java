@@ -251,7 +251,7 @@ NextState: F[Stack[Tank],Stack[Tank]]{
 //OMIT_END
 """); }/*--------------------------------------------
 
-There are many other ways to check this, and if the stack has a `.size` method, we can just do
+There are many other ways to check this, and if the stack has a `.size` method (we can add it as we did for `.map` and `.filter`: the size of the empty stack is `0`, and the size of a stack made by `+` is `this.size + 1`), we can just do
 -------------------------*/@Test void newCode4 () { run("""
 //OMIT_START
 """+fullPreface+"""

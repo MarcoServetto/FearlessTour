@@ -39,7 +39,7 @@ This is also used for code reuse.
   
 - Method name:
   - Relevance: giving names to methods (aka operations) allows us to mnemonically connect behaviour with names.
-  - Syntax: dot `.` followed by lowercase identifier, including letters, numbers, underscore but no spaces, that can also have `'` at the end; or operator symbols.
+  - Syntax: dot `.` followed by lowercase identifier (optionally preceded by `_`), including letters, numbers, underscore but no spaces, that can also have `'` at the end; or operator symbols.
   - Examples: `.foo`, `._bar`, `._b12`, `.baz'`, `+`, `++`, `+>`, `<=`, `<#--`
   
 - Parameter name:

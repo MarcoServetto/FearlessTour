@@ -95,38 +95,44 @@ We may want to provide alternative behaviour ...
 > should the input node have a method .info directly?
 > If so, what should happen if the file is valid text but not valid info? Opt empty or error? why? similar questions may pop up for malformed images.
 
-> this text below was for a former API, that used action and we could discuss how to nest `.andThen`+`Try`
+For example, `ReadGame` could return an `Action[List[Tank]]` instead of leaking the errors, so that its caller can choose what to do with them.
+The first point of error is reading the text of the file: `this.in.text!` is not inside any `Try#`, thus an error here still leaks out when `.read` is called.
+For the other two points we can use `Try#` to forge an action. Using `.map` we get
 ```
 ReadGame: {..
-  mut .read(fileName: List[UStr]): mut Action[List[Tank]] -> this.io
-    .accessR(fileName)                      //mut ReadPath
-    .readStr                                //mut Action[Str]
-    .andThen{s -> Try#{Infos.fromStr(s)}}   //mut Action[Info]
-    .andThen{i -> Try#{i.getList.flow.map{i->Tanks.fromInfo(i)}.list}}
+  mut .read: mut Action[List[Tank]] -> Block#
+    .let[Str] text= {this.in.text!}
+    .return {Try#{Infos.fromStr(text)}                                  //mut Action[Info]
+      .map{info -> info.getList.flow.map{i->Tanks.fromInfo(i)}.list}};  //mut Action[List[Tank]]
   }
 ```
 > Note: could we have `Flow.tryMap`, and make it work also for `Action[mut T]`?  
 > Also, should we have a variant of .andThen/.map that uses Try# on the argument, since it seems common?  
 
-Instead of `.map` we now use `.andThen` + `Try#`.
+Here the errors from (2) are captured by the action, but the errors from (3) happen inside the function passed to `.map`: as we have seen, they are not captured by the action and they just leak out when the action is run.
+Instead of `.map` we can use `.andThen` + `Try#`:
+```
+ReadGame: {..
+  mut .read: mut Action[List[Tank]] -> Block#
+    .let[Str] text= {this.in.text!}
+    .return {Try#{Infos.fromStr(text)}                                            //mut Action[Info]
+      .andThen{info -> Try#{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}}};  //mut Action[List[Tank]]
+  }
+```
 The type is the same, but the error management is now very different.
-There are three main points of error:
-- 1 Reading the string from file
-- 2 Deserialising the string into an `Info`
-- 3 Deserialising the info into a `List[Tank]`
-
-Those three kinds of errors are handled differently when calling `.read(fileName).run{..}`.
-What errors are captured inside the `Info` of the `Action[List[Tank]]` returned by the `.read(fileName)` method?
+What errors are captured inside the `Info` of the `Action[List[Tank]]` returned by `.read`?
 What errors just leak out?
-The errors from (1) are always handled by the action. This means that they always end up captured by the action `Info`.
-The errors in 2 and 3 leak out when using `.map` and are captured when using `.andThen` + `Try#`.
+- The errors from (1) always leak out, as soon as `.read` is called.
+- The errors from (2) are always captured by the action.
+- The errors from (3) leak out when using `.map` and are captured when using `.andThen` + `Try#`.
 
 
 > An interesting corner of design would be to offer some way to go from `Flow[Action[T]]` into `Action[List[T]]` ? or `Action[R]` with a transformation function on the flow?
 
 
-Note that `ReadGame.read` body is `this.read(Lists#("StartConfiguration.txt"))!`,
-thus the errors that we carefully separated in the second implementation end up together again when we call the method `!` on the result of `.read(fileName)`.
+In the `Test` of Chapter 3, we would now call `mut ReadGame{in}.read!`.
+The method `!` throws the info of a failed action again,
+thus the errors that we carefully separated end up together again.
 This causes all the errors to become observed bugs and to stop our application.
 
 This is not always the desired behaviour. When writing larger applications it becomes important to distinguish which errors are recoverable situations (so that we can capture them into the action `Info`) and which errors are observed bugs.
@@ -134,12 +140,13 @@ Using `.map` or `.andThen` + `Try#` we can choose how to classify such details.
 
 We can also add information to the error messages using code as below
 ```
-    .andThen{s -> Try#{Infos.fromStr(s)}
-      .context{"While deserialising Info from string"}}
-    .andThen{i -> Try#{i.getList.flow.map{i->Tanks.fromInfo(i)}.list}
-      .context{"While deserialising tanks from Info"}}
+    .return {Try#{Infos.fromStr(text)}
+        .context{"While deserialising Info from string"}
+      .andThen{info -> Try#[List[Tank]]{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}
+        .context{"While deserialising tanks from Info"}}};
 ```
 Note how the indentation helps us see the context text becoming part of the action.
+Here the type argument `[List[Tank]]` of the second `Try#` is written explicitly: without it, the inference would conclude that the action produces the `mut List[Tank]` returned by `.list`, and the result would not be an `Action[List[Tank]]`.
 
 #### Graduation
 This is the end of Chapter 4.
@@ -333,6 +340,139 @@ Test: Main{s-> Block#
 //PRINT|False
 //PRINT|True
 //PRINT|[3, 3]
+"""); }/*--------------------------------------------
+-------------------------*/@Test void readGameAsAction() { run("""
+
+use base.Main as Main;
+use base.Str as Str;
+use base.Nat as Nat;
+use base.Bool as Bool;
+use base.F as F;
+use base.ToStr as ToStr;
+use base.ToInfo as ToInfo;
+use base.List as List;
+use base.Lists as Lists;
+use base.Block as Block;
+use base.Sealed as Sealed;
+use base.WidenTo as WidenTo;
+use base.DataType as DataType;
+use base.FromInfo as FromInfo;
+use base.Infos as Infos;
+use base.Info as Info;
+use base.Enums as Enums;
+use base.Enum as Enum;
+use base.OrderHash as OrderHash;
+use base.InputCursorNode as InputCursorNode;
+use base.Void as Void;
+use base.Debug as Debug;
+use base.Try as Try;
+use base.Action as Action;
+DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
+Directions: Enums[Direction]{
+  .list -> Lists#(North,East,South,West);
+  .strBy -> {::};
+  }
+Direction: Enum[Direction]{
+  .enums->Directions;
+  read .match[R:**](m: mut DirectionMatch[R]): R;
+  .close->this; .close->::;
+  }
+North: Direction{::.north; .imm->North; "North"}
+East:  Direction{::.east;  .imm->East;  "East" }
+South: Direction{::.south; .imm->South; "South"}
+West:  Direction{::.west;  .imm->West;  "West" }
+Points: F[Nat,Nat,Point], FromInfo[Point] {
+  .fromInfo(i) -> Points#(i.getMap.get("x").getMsg.getNat, i.getMap.get("y").getMsg.getNat);
+  # x, y ->Block#
+    .do { x.assertInRange(0=~~10) }
+    .do { y.assertInRange(0=~~10) }
+    .return{ Point: DataType[Point,Point]{'self
+      read .x: Nat -> x;
+      read .y: Nat -> y;
+      .cmp t0, t1 -> t0.x <=> (t1.x) && {t0.y <=> (t1.y)};
+      .hash -> x.hash.hashWith(y.hash);
+      .info -> Infos.map("x",x,  "y",y);
+      .str -> "[" + x + ", " + y + "]";
+      .close->self; .close->::; .imm->self;
+      }}}
+Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
+  heading, aiming, position -> Tank:ToInfo, ToStr,OrderHash[Tank]{'self
+    read .heading: Direction -> heading;
+    read .aiming: Direction -> aiming;
+    read .position: Point -> position;
+    .info -> Infos.map("heading", heading, "aiming", aiming,   "position", position);
+    .str  -> "tank";
+    .close->self; .close->::;
+    .cmp t1,t2 -> t1.heading <=> (t2.heading)
+      && {t1.aiming <=> (t2.aiming)} && {t1.position <=> (t2.position)};
+    .hash -> heading.hash.hashWith(aiming.hash).hashWith(position.hash);
+    };
+  .fromInfo(i) -> Tanks#(
+    Directions.fromInfo(i.getMap.get("heading")),
+    Directions.fromInfo(i.getMap.get("aiming")),
+    Points.fromInfo(i.getMap.get("position"))
+    );
+  }
+Nodes:{ #(t: Str): mut InputCursorNode -> {'self
+  .label -> "fake";
+  .text -> base.Opts#t;
+  .close -> self;
+  .iso -> base.Error.msg "unused";
+  } }
+BadNode:{ #: mut InputCursorNode -> {'self
+  .label -> "bad";
+  .text -> base.Error.msg "cannot read the file";
+  .close -> self;
+  .iso -> base.Error.msg "unused";
+  } }
+ReadMap: {
+  mut .in: mut InputCursorNode;
+  mut .read: mut Action[List[Tank]] -> Block#
+    .let[Str] text= {this.in.text!}
+    .return {Try#{Infos.fromStr(text)}
+      .map{info -> info.getList.flow.map{i->Tanks.fromInfo(i)}.list}};
+  }
+ReadThen: {
+  mut .in: mut InputCursorNode;
+  mut .read: mut Action[List[Tank]] -> Block#
+    .let[Str] text= {this.in.text!}
+    .return {Try#{Infos.fromStr(text)}
+      .andThen{info -> Try#{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}}};
+  }
+ReadContext: {
+  mut .in: mut InputCursorNode;
+  mut .read: mut Action[List[Tank]] -> Block#
+    .let[Str] text= {this.in.text!}
+    .return {Try#{Infos.fromStr(text)}
+        .context{"While deserialising Info from string"}
+      .andThen{info -> Try#[List[Tank]]{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}
+        .context{"While deserialising tanks from Info"}}};
+  }
+Good:{ .t: Str -> `[{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}}]`; }
+BadInfo:{ .t: Str -> "["; }
+BadTank:{ .t: Str -> `[{"heading":"North"}]`; }
+Test: Main{s-> Block#
+  .do{Debug#(mut ReadMap{Nodes#(Good.t)}.read!.size)}
+  .do{Debug#(mut ReadMap{Nodes#(BadInfo.t)}.read.info.isSome)}
+  .do{Debug#(Try#{mut ReadMap{Nodes#(BadTank.t)}.read.info.isSome}.info.isSome)}
+  .do{Debug#(Try#{mut ReadMap{BadNode#}.read.info.isSome}.info.isSome)}
+  .do{Debug#(mut ReadThen{Nodes#(Good.t)}.read!.size)}
+  .do{Debug#(mut ReadThen{Nodes#(BadInfo.t)}.read.info.isSome)}
+  .do{Debug#(mut ReadThen{Nodes#(BadTank.t)}.read.info.isSome)}
+  .do{Debug#(Try#{mut ReadThen{BadNode#}.read.info.isSome}.info.isSome)}
+  .do{Debug#(mut ReadContext{Nodes#(BadInfo.t)}.read.info!.getMsg.startsWith("While deserialising Info from string"))}
+  .do{Debug#(mut ReadContext{Nodes#(BadTank.t)}.read.info!.getMsg.startsWith("While deserialising tanks from Info"))}
+  .return{Void}}
+//PRINT|1
+//PRINT|True
+//PRINT|True
+//PRINT|True
+//PRINT|1
+//PRINT|True
+//PRINT|True
+//PRINT|True
+//PRINT|True
+//PRINT|True
 """); }/*--------------------------------------------
 OMIT_END
 END*/

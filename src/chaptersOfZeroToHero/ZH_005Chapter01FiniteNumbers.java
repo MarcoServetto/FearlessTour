@@ -66,7 +66,7 @@ Number:{
    }
  /*... all other numbers as before*|/
 ```
-Where we simply call `.succ` a large number of times.
+In each of them we simply call `.succ` the needed number of times.
 
 This works, and for just 12 numbers, it's barely feasible. But imagine doing this for thousands or millions of numbers.
 Imagine writing a chain of `.succ` thousands or millions of calls long! It would be incredibly repetitive and impractical. We need a more general approach.
@@ -419,6 +419,11 @@ or planet-sized bookshelves. It uses highly optimised internal techniques,
 leveraging how computer hardware works, to represent these numbers efficiently
 in a small, fixed amount of memory. This allows mathematical operations on `Nat`
 to be incredibly fast.
+
+The number 2<sup>64</sup> is not arbitrary: a computer stores a number as a sequence of bits, where a bit is a digit that can only be `0` or `1`.
+A `Nat` uses exactly 64 bits (eight bytes), and there are 2<sup>64</sup> different sequences of 64 bits, one for each `Nat` from `0` to ( 2<sup>64</sup> ) - 1.
+Computer hardware directly supports adding, subtracting and multiplying numbers of exactly this size, and this is what makes `Nat` operations so fast.
+
 The Fearless standard library is internally optimised in ways that a library written
 by a regular programmer could not. In particular, the standard library can define
 a number of types that is out of the reach of what can realistically be coded by hand,
@@ -451,6 +456,7 @@ Int:{
 ```
 As you can see, the predecessor of `+0` is `-1` and the successor and predecessor of
 the biggest numbers are linked together.
+Like a `Nat`, an `Int` uses 64 bits; since they are shared between negative and non negative numbers, the biggest `Int` is about half of the biggest `Nat`.
 
 Finally, `Float` and `Num` are numeric types useful to represent fractions.
 We will discuss them later.

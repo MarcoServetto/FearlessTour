@@ -194,7 +194,9 @@ This is a minimum effort approach that works on a small scale, but does not prov
 Either the data is there, or it is not. If the data is not there, we are not giving any hint of why it is not there.
 
 Calling `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).get("North")` will result in the `North` direction, but calling `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).get("Nope")` will fail with an error.
-That is, the code will stop running and the program will report that it failed in a certain code location because the key `"Nope"` is not in the set `"North"`, `"East"`, `"South"`, `"West"`.
+That is, the code will stop running and the program will report that it failed in a certain code location, with the message
+`Map.get: Tried to get key Nope that is not contained in this map.`
+(followed by the advice to consider using `Map.opt`).
 
 Next we will see how to handle those errors.
 
@@ -249,6 +251,35 @@ West:  Direction{.imm->West;  "West" }
 //PRINT|West
 //PRINT|True
 //PRINT|North
+"""); }/*--------------------------------------------
+-------------------------*/@Test void mapGetMessage() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Lists as Lists;
+use base.Debug as Debug;
+use base.Enums as Enums;
+use base.Enum as Enum;
+use base.Maps as Maps;
+use base.Try as Try;
+Test: Main{s-> Block#
+  .do{Debug#(Try#{Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).get("Nope")}.info!.getMsg)}
+  .return{Void}}
+
+Directions: Enums[Direction]{
+  .list -> Lists#(North,East,South,West);
+  .strBy -> {::};
+  }
+Direction: Enum[Direction]{
+  .enums->Directions;
+  .close->this; .close->::;
+  }
+North: Direction{.imm->North; "North"}
+East:  Direction{.imm->East;  "East" }
+South: Direction{.imm->South; "South"}
+West:  Direction{.imm->West;  "West" }
+//PRINT|Map.get: Tried to get key Nope that is not contained in this map.
+//PRINT| Consider using `Map.opt` to properly handle the failure case.
 """); }/*--------------------------------------------
 OMIT_END
 END*/

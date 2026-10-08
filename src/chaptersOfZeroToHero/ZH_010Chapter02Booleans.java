@@ -87,7 +87,7 @@ All of those lines reduce in a single step:
 - <code class="ws">False .and True  --&gt; False</code> because `False.and` returns `this`
 
 The code above shows that we can combine booleans to get more booleans. This is similar to what we have seen with `Nat` and `Rotation`. But the real power comes when we use them to make decisions: to execute different pieces of code depending on whether something is `True` or `False`. Crucially, booleans are a better form of `Fork`.
-- There are two kinds of `Bool` in the same way there are two kinds of `Fork`,
+- There are two kinds of `Bool` in the same way there are two kinds of `Fork`.
 - We can compose `Bool`s with `.and`, `.or` and `.not`.
 - We can obtain `Bool`s from many other data types using `==` and `!=`.
 
@@ -132,6 +132,10 @@ True .and False .if[Bool] ThenElse[Bool]{//[Bool] needed since this Bool does no
 }
 //OMIT_END
 """); }/*--------------------------------------------
+When implementing a method whose signature is already declared, the types are inferred and the round brackets around the parameter names can be omitted:
+`.if m -> m.then` means the same as `.if(m) -> m.then`, and `.and other -> other` means the same as `.and(other) -> other`.
+A method with many parameters lists them separated by commas, as in `.foo a, b -> ...`.
+
 ```
 //usage example
 True .and False .if{
@@ -140,7 +144,7 @@ True .and False .if{
   }
 ```
 As you can see, now we can encode binary choices as expressions inside of method bodies.
-Here we use the generic type variable `R` to represent the type returned by the methods of the `ThenElse[R]` literal. That is, the code `True.if[Str]{..}` returns a string.
+Here we use the type parameter `R` to represent the type returned by the methods of the `ThenElse[R]` literal. That is, the code `True.if[Str]{..}` returns a string.
 This is a crucial abstraction step. We can now write a lot of example code.
 
 
@@ -532,7 +536,7 @@ For example, what if `Slow` were defined as follows:
 ```
 Slow:{.code: Bool -> this.code; }
 ```
-The method call `Slow.code` reduces in one step to `Slow.code`, that reduces in itself again, and again, and again. This reduction never stops!
+The method call `Slow.code` reduces in one step to `Slow.code`, which reduces to itself again, and again, and again. This reduction never stops!
 Executing `Slow.code` would either never terminate or produce some kind of error.
 In that case, if `Much.code` reduces to `False`, the first line simply reduces to `False`, while the second line would either never terminate or produce an error.
 That is, while `Slow.code` never terminates, `{Slow.code}` is a value of type `F[Bool]`. Non-termination only happens when and if method `#` is called on that value.

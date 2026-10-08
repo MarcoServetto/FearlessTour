@@ -64,7 +64,7 @@ First, two matcher types:
 ThenElse[R:**]: { mut .then: R; mut .else: R; }
 BoolMatch[R:**]:{ mut .true: R; mut .false: R; }
 ````
-We have seen `ThenElse[R]` before; `BoolMatch[R]` is the same but with names for the two cases. They work in the same way, but sometimes one of the two is more readable than the other.
+We have seen `ThenElse[R]` before; `BoolMatch[R]` is the same but with different names for the two cases. They work in the same way, but sometimes one of the two is more readable than the other.
 Note how we take any kind of `R` by using `R:**` and the methods require a `mut` receiver.
 We are not requiring the boolean to be `mut`. This is about the `ThenElse` object that is usually created in order to call the `.if` (or `?`) method.
 With `mut .then` and `mut .else`, the operation inside the `.if` is able to mutate external state if need be.

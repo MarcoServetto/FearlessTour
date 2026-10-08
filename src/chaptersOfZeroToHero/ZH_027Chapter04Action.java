@@ -306,13 +306,13 @@ As you can see, the call to context added custom text.
 In both cases the stack trace starts where `!` throws the error again: `Stuff.foo` is not part of it, since the error was caught by `Try#` before.
 >Is this what we want? big design decision. The other implementation where we keep the original stack trace must also be possible. (mutate the exception obj and re-throw it)
 
-We can capture this information programmatically with the capability `System.try`
+We can capture this information programmatically with the capability `System.try` (of type `CapTry`)
 
 ````
 example.
 ````
 
-Code `capTry#{...}` creates an `Action[R]` whose `Info` is going to be the sum of the
+Code `sys.try#{...}` creates an `Action[R]` whose `Info` is going to be the sum of the
 normal `Info` and the info containing the stack trace.
 > How? list of string or structured?
 
@@ -371,9 +371,10 @@ But, in a real program 90% of the code is new abstractions written by the progra
 
 When programmers learn about offensive programming, they are usually scared about two issues:
 Performance and false positives.
-In Fearless both issues are solved at the same time by tunable assertion levels.
+Fearless is designed to solve both issues at the same time with tunable assertion levels.
+What follows describes this design: the standard library offers `Block.assert` and assertion methods like `.assertTrue`, `.assertEq` and `.assertInRange`, but the levels `assertPre`, `assertSys`, `assertNetwork` and `.assert5`..`.assert16`, the `disable` directive and the other forms of assertion shown below do not exist yet, and their exact syntax is still open.
 
-#### Tunable assertion levels:
+#### Tunable assertion levels (design):
 There are many different layers of assertions:
  - assert:  observed bug: the code of this package has a bug.
  - assertPre: precondition violation: the code of this package has been called with arguments that violate its requirements.
@@ -543,6 +544,68 @@ Pts:{ #(x: Nat, y: Nat): Nat -> Block#
 //PRINT|bad
 
 
+"""); }/*--------------------------------------------
+-------------------------*/@Test void assertionLevelsAreOnlyADesign() { run("""
+use base.Block as Block;
+use base.True as True;
+Test: base.Main{s-> Block#
+  .assertPre{ True }
+  .return{base.Void}}
+//ERROR|In file: [###]_test/_rank_app111.fear
+//ERROR|[###]
+//ERROR|Method ".assertPre(_)" is not declared on type "Block[_]".
+//ERROR|Did you mean ".assert" ?
+//ERROR|[###]
+"""); }/*--------------------------------------------
+-------------------------*/@Test void disableDirectiveDoesNotExist() { run("""
+disable foo.assertPre;
+Test: base.Main{s-> base.Void}
+//ERROR|In file: [###]_test/_rank_app111.fear
+//ERROR|[###]
+//ERROR|Missing header keyword "map" or "use".
+//ERROR|Found instead: "disable".
+//ERROR|[###]
+"""); }/*--------------------------------------------
+-------------------------*/@Test void infoSumLiftsDifferentKindsToMaps() { run("""
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Infos as Infos;
+Test: base.Main{s-> Block#
+  .do{Debug#((Infos.msg("a") + (Infos.list("x"))).str)}
+  .do{Debug#((Infos.msg("a") + (Infos.msg("b"))).str)}
+  .do{Debug#((Infos.list("x") + (Infos.list("y"))).str)}
+  .do{Debug#((Infos.map("k","v") + (Infos.map("k","w","j","z"))).str)}
+  .return{base.Void}}
+//PRINT|{"msg":"a","list":["x"]}
+//PRINT|"a\\nb"
+//PRINT|["x","y"]
+//PRINT|{"k":"v\\nw","j":"z"}
+"""); }/*--------------------------------------------
+-------------------------*/@Test void optionalFlowVersionOfAndThen() { run("""
+use base.Block as Block;
+use base.Debug as Debug;
+use base.List as List;
+use base.Lists as Lists;
+use base.Map as Map;
+use base.Maps as Maps;
+use base.Opt as Opt;
+use base.Str as Str;
+Person:{ .name: Str }
+Persons:{ #(n: Str): Person -> { .name -> n } }
+Jobs:{ .map: Map[Str,Str] -> Maps#({::},"a","baker","b","cook"); }
+Ex:{
+  #(persons: List[Person], jobs: Map[Str,Str]): Opt[Str] ->
+    persons.opt(1).flow.flatMap{p->
+      jobs.opt(p.name).mapSome{ j->"Person " + (p.name) + " works as a " + j } }.getOpt
+  }
+Test: base.Main{s-> Block#
+  .do{Debug#(Ex#(Lists#(Persons#("a"),Persons#("b")),Jobs.map).str{::})}
+  .do{Debug#(Ex#(Lists#(Persons#("a"),Persons#("z")),Jobs.map).str{::})}
+  .do{Debug#(Ex#(Lists#(Persons#("a")),Jobs.map).str{::})}
+  .return{base.Void}}
+//PRINT|Opt[Person b works as a cook]
+//PRINT|Opt[]
+//PRINT|Opt[]
 """); }/*--------------------------------------------
 OMIT_END
 END*/

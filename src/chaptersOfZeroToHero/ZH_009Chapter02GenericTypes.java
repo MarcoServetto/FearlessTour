@@ -114,7 +114,7 @@ Fork : {
 As you can see this is quite repetitive and error prone. Moreover, it is never enough.
 When programming we will add new types over and over again, and we can not realistically add a variant for each type we will ever declare.
 
-However, if you squint looking at the code, you see that there is a clear pattern.
+However, if you squint at the code, you can see a clear pattern.
 ```
 Fork : {
   .chooseInt(leftVal: Int, rightVal: Int): Int;
@@ -122,7 +122,7 @@ Fork : {
   .chooseDirection(leftVal: Direction, rightVal: Direction): Direction;
   .choosePoint(leftVal: Point, rightVal: Point): Point;
   ...
-  .choose[Type](leftVal: Type, rightVal: Type): Type;
+  .choose[Val](leftVal: Val, rightVal: Val): Val;
   }
 ```
 And... that is exactly the syntax, and semantics, of generic methods: it is a way to declare an infinite number of methods, all following a simple pattern, where the only thing that changes is some types.
@@ -200,7 +200,7 @@ Left : Fork{ :: .left }
 Right: Fork{ :: .right }
 A : { # ( someFork: Fork): Str ->
 //OMIT_END
-someFork.choose( SomeLeftRight[]:LeftRight[Str]{
+someFork.choose[Str]( SomeLeftRight[]:LeftRight[Str]{
   .left[](): Str -> _Str1[]:"Hello"{};
   .right[](): Str-> _Str2[]:"Hi"{};
 })
@@ -209,11 +209,16 @@ someFork.choose( SomeLeftRight[]:LeftRight[Str]{
 //ERROR|In file: [###]
 //ERROR|011|   .left[](): Str -> _Str1[]:"Hello"{};
 //ERROR|   |                     ^^^^^^^^^^^^^^^^^
+//ERROR|
+//ERROR|While inspecting object literal "_Str1"
+//ERROR|Object literal "_Str1" implements sealed type [###]
+//ERROR|Sealed types can only be implemented in their own package.
 //ERROR|[###]
 //OMIT_END
 """); }/*--------------------------------------------
 
 That is, the argument of `Fork.choose` is a literal of a fresh type (here called `SomeLeftRight`) that implements `LeftRight[Str]`, since that is the expected type for the argument of `Fork.choose`.
+The code above only shows the structure: `_Str1[]:"Hello"{}` is the expanded form of the string literal `"Hello"`, and a program is not allowed to write it, since the type `"Hello"` is sealed (we will see what that means in Chapter 3).
 In order to implement a `LeftRight[Str]`, we need to specify an implementation for the two abstract methods, `.left` and `.right`.
 Another advantage of this new way is that we can now write complex and time consuming computations inside the body of methods `.left` and `.right`, and only one of those computations is going to be triggered.
 

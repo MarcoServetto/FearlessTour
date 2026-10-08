@@ -322,7 +322,7 @@ That is, there are three different kinds of object literals:
   `MadeTank: Tank { .heading -> heading; .aiming -> aiming;}`<br/> 
   and `Tank: { .heading: Direction -> heading; .aiming: Direction -> aiming }`, as we have seen before
   are named object literals: we do explicitly choose the name for this new type we are declaring.
-  It is the most complete form of literal; it is a top level declaration that doubles as an object creation. 
+  It is the most complete form of literal; it is a type declaration that doubles as an object creation.
  
 #### The three kinds of expressions, revisited.
 
@@ -330,10 +330,10 @@ We have now seen more examples for the three kinds of expressions:
 
 - Parameters: `this`, `heading`, `aiming`
 - Method calls: `North.turn`, `Tanks.of(North,East)`, `Tanks.of(North,East.reverse)`
-- Object literals `North`, `East`, `Tank: { ... -> heading; ... }`, `{..}`
+- Object literals: `North`, `East`, `Tank: { ... -> heading; ... }`, `{..}`
 
-Method bodies are expressions, so any method body will be exactly one expression. Expressions can have sub expressions:
-`Tanks.of(North,East.reverse)` has sub expressions
+Method bodies are expressions, so any method body will be exactly one expression. Expressions can have sub-expressions:
+`Tanks.of(North,East.reverse)` has sub-expressions
 `Tanks`, `North` and `East.reverse`. In turn `East.reverse` has sub-expression `East`.
 
 Object literal expressions are also type declarations, and

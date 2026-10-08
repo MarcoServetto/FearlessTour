@@ -98,9 +98,9 @@ Thus code matching on a value while holding a `mutH` or an `iso` reference may n
 For example, in a parser consuming a `mutH Lexer` and building an `iso Exp`:
 ````
 .parsePlus(l: mutH Lexer, left: iso Exp): iso Exp -> l.nextToken.match{
-  .plus   -> Exps.sum(Vars#(left), Vars#(this.parseNum(l))),
-  .eof    -> left,
-  .num(n) -> Error.msg "unexpected num",
+  .plus   -> Exps.sum(Vars#(left), Vars#(this.parseNum(l)));
+  .eof    -> left;
+  .num(n) -> Error.msg "unexpected num";
   }
 ````
 the matcher would need to capture `l` and `left`.
@@ -140,15 +140,20 @@ The discussion has to cover:
 
 ## Promised by earlier chapters
 
+- The rules for valid type names (Chapter 1, tanks).
 - `Float` and `Num`, the numeric types for fractions (Chapter 1, finite numbers).
 - How the checks on numbers, like overflow and underflow, can be tuned (Chapter 1, finite numbers).
+- Ways to hide auxiliary methods, like `._rightSub` (Chapter 1, finite numbers).
 - Fluent libraries where the continuation changes the receiver to a different value or type (Chapter 2, locals).
+- Testing, to supplement the visualisation of how code reduces (Chapter 2, stack).
+- Why tail recursive algorithms are not a concern in Fearless (Chapter 2, stack).
 - `DataType` in detail (Chapter 3).
 - `Try` in detail (Chapter 3).
 - Flows in detail, including parallel flows and the difference between `.flow` and `.seqFlow` (Chapter 3).
 - `EList[E]` and `ESet[E]` (Chapter 3, collections).
 - Graphics, to render the tanks as images (Chapter 3).
 - Deterministic and non deterministic errors (Chapter 4, action).
+- The techniques supporting offensive programming when working with mutable data (Chapter 4, action).
 
 ## Helping the inference
 

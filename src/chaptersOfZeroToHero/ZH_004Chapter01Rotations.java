@@ -61,10 +61,10 @@ We show 4 ways to declare `Turn90`, from the most verbose to the most compact:
   Turn90: Rotation{dir-> dir.turn }
   Turn90: Rotation{::.turn }
 ```
-- The first way repeats the type declaration of `#`. As we discussed, this is not needed.
+- The first way repeats the whole signature of `#`, parameter and return types included. As we discussed, this is not needed.
 Note how the code is naming the parameter `dir` instead of `d`.
 This is ok: when implementing a method, the name of the parameters is irrelevant and can be chosen anew every time the method is implemented.
-- The second explicitly implements `#`.
+- The second still names `#`, but omits the types: they are inferred.
 - The third relies on the fact that the `#` method is the only abstract method of `Rotation`, thus we can avoid mentioning the method name. We still need to mention the parameter name and the `->` symbol.
 - The last uses a new form of syntactic sugar, designed to simplify writing literals
   overriding a method with a single parameter just to immediately use such parameter.
@@ -128,7 +128,7 @@ We have now seen two kinds of abstractions:
 We will see other forms of abstraction later on.
 
 Note how `Tanks` and `Rotation` are kind of similar: they are both top level types with a `#` method. We call types like those **functions**.
-In the common mathematical notation, a function can be directly applied to the arguments doing `f(x,y)`. In Fearless we need to add the extra `#` symbol, and we get `f#(x,y)`.
+In the common mathematical notation, a function is applied to its arguments by writing `f(x,y)`. In Fearless we need to add the extra `#` symbol, and we get `f#(x,y)`.
 
 ### Composing rotations
 
@@ -204,7 +204,7 @@ The object literal `{ d -> this#( r#(d) ) }` creates a new `Rotation` object. Wh
 Thanks to our syntactic sugar and inference, the body of method `Rotation+` is very compact.
 The expression `{ d-> this#(r#(d)) }` is equivalent to
 `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }`.
-Before we discussed how `North` is a literal.
+Earlier we discussed how `North` is a literal.
 `North` is just sugar for `SomeName147:North{}`. Exactly in the same way and via the same process `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }` can be shortened by the sugar to `{ d-> this#(r#(d)) }`.
 
 At first look, you may think that the body `this#(r#(d))`
@@ -214,7 +214,7 @@ However, that `this` is the outer rotation object (the receiver of the call `Rot
 that must be some `Rotation` object defined before `Rotation+`
 was called, thus the behaviour of method `this#` was fully determined before `Rotation+` was called
 and the return value of `Rotation+` created.
-We are sure that the method `Rotation#` of `this` is implemented because all literals have no abstract methods, and parameters (like `this`) are replaced with literals when methods are called.
+We are sure that the method `Rotation#` of `this` is implemented because a literal never has abstract methods, and parameters (like `this`) are replaced with literals when methods are called.
 
 A common source of confusion when looking at code like
 -------------------------*/@Test void rotationPlus2() { run("""

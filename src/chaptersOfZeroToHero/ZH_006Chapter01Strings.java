@@ -79,7 +79,7 @@ That is, when working with text, there is absolutely no reason to think about th
 For example we can write `` "Hello".size`` to get `5`.
 We will discuss those methods when they become relevant in the rest of the guide.
 
-Strings and comments can contain any character, thus they can contain unbalanced parentheses. For example, the following is a valid string: `` "A(B" ``.
+Strings and comments can contain brackets of any kind, thus they can contain unbalanced parentheses. For example, the following is a valid string: `` "A(B" ``.
 If we ignore parentheses in strings and comments, a Fearless program always has balanced parentheses.
 For example: ``A:{ .foo:Str->"B}"}``
 is a valid type declaration, with balanced parentheses. The `}` inside of the string literal does not matter.
@@ -87,8 +87,8 @@ is a valid type declaration, with balanced parentheses. The `}` inside of the st
 If we use those gigantic numbers to represent text,
 we had better define some ways to concatenate text.
 We have seen how we can merge numbers of type `Nat` with `+` and `*`:
-`10 + 5` is `15`, and if I wanted to concatenate them,
-I could do `(10*10) + 5` and get `105`.
+`10 + 5` is `15`, and if we wanted to concatenate them,
+we could do `(10*10) + 5` and get `105`.
 Can we do the same thing with text?
 In the same way `10` is an object literal extending the standard library type `Nat`,
 `` "bob" `` is an object literal extending the standard library type `Str` (string).
@@ -96,7 +96,7 @@ In the same way `10` is an object literal extending the standard library type `N
 `` "bo"+"b" `` reduces to ``"bob"``.
 
 Similarly, `` "Hello " + "world" `` will reduce to `` "Hello world" ``.
-Note the space after the `"o"` in `` "Hello " ``.
+Note the space after the `o` in `` "Hello " ``.
 
 That is, the `+` method does not sum the two strings as numbers but just concatenates them.
 
@@ -125,7 +125,8 @@ and `` "Zb2A" `` is the rest of the string.
 `|` works exactly like `+`, but also jams a new line in the middle.
 Similarly, `^` is the concatenation operator with double quote.
 `^` works exactly like `+`, but also jams a `` " `` in the middle.
- 
+Both can also be written without a right operand: `` "Hi"| `` is `` "Hi" `` followed by a new line, and `` "Hi"^ `` is `` "Hi" `` followed by a `` " ``.
+
 Thus `` "Hi, "^"John"^", are you really John?" `` contains `John` in double quotes.
 Alternatively, Fearless allows strings to be delimited by backticks `` ` ``, allowing us to write the string above as
 `` `Hi, "John", are you really John?` ``.
@@ -138,6 +139,14 @@ Test:base.Main {sys -> base.Debug#("Hello " + "world")}//OK
 -------------------------*/@Test void exampleStringsEscape () { run("""
 Test:base.Main {sys -> base.Debug#("He"^"ll"^"o " + "wor\\ld")}//OK
 //PRINT|He"ll"o wor\\ld
+"""); }/*--------------------------------------------
+-------------------------*/@Test void exampleStringsWithoutRightOperand () { run("""
+Test:base.Main {sys -> base.Block#
+  .do{base.Debug#(("Hi"|).size)}
+  .do{base.Debug#(("Hi"^) == `Hi"`)}
+  .return{base.Void}}
+//PRINT|3
+//PRINT|True
 """); }/*--------------------------------------------
 
 //OMIT_END

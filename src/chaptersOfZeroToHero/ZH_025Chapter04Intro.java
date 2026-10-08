@@ -95,7 +95,7 @@ Now we could represent our `Tank` as follows:
 Infos.list("North","East",Infos.list("10","5"))
 ```
 
-However, we still do not know at a glance if the first element of the list represents the aiming direction.
+However, we still do not know at a glance if the first element of the list represents the heading direction or the aiming direction.
 We would like a list where every element is associated with a label.
 That is a `Map[Str,Info]`.
 If we add such a map component to `Info` we get the following.

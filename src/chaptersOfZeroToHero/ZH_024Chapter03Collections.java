@@ -10,7 +10,7 @@ class ZH_024Chapter03Collections {
 
 ## Flows and related data types
 
-As you can see, in Chapter 2 we showed how to build our own `Stack[E]` by hand and how to make the tank game using our own stack and `.map` methods. Here in Chapter 3 we have shown `List[E]` and how to make the tank game using `Flow[E]`.
+As you can see, in Chapter 2 we showed how to build our own `Stack[T]` by hand and how to make the tank game using our own stack and `.map` methods. Here in Chapter 3 we have shown `List[E]` and how to make the tank game using `Flow[E]`.
 We will conclude Chapter 3 showing many useful examples of flows and related data types, and many nice ways they can be used.
 
 ### Method `.map`
@@ -145,7 +145,7 @@ That is a big but not unlimited number, and flows could in principle contain man
 
 ### Core List methods for Random Access: .size, .isEmpty and .get
 
-With our homemade `Stack[E]`, the only way to compute the number of elements in the stack is to explore the whole stack and manually count the elements one by one.
+With our homemade `Stack[T]`, the only way to compute the number of elements in the stack is to explore the whole stack and manually count the elements one by one.
 Lists offer a method `List[E].size` that can return the number of elements in the list without the need of counting them. The size information is simply stored directly. For convenience, there is also a method `.isEmpty` equivalent to calling `myList.size == 0`.
 
 The method `List.get(i: Nat)` either returns the element in index `i` or uses `Error.msg(..)` to report the lookup failure.
@@ -253,10 +253,11 @@ The expressions below are all equivalent:
 ```
 Lists#(1,2,3,4)
 Lists#(1,2) +> 3 +> 4
-Lists#(1,2) ++ Lists#(3,4)
-Lists#(1) ++ Lists#(2,3,4)
+Lists#(1,2) ++ (Lists#(3,4))
+Lists#(1) ++ (Lists#(2,3,4))
 ```
 As you can see, we use `+>` to concatenate a list and an element, and `++` to concatenate two lists.
+Since Fearless has no operator precedence, the argument of `++` needs the parentheses: without them, `Lists#(1,2) ++ Lists#(3,4)` would be read as `(Lists#(1,2) ++ Lists)#(3,4)`.
 Since `<+` is a method of `List`, the following code does not work:
 ```
 1 <+ Lists#(2,3,4)
@@ -476,7 +477,8 @@ OrderBy[T,K]:{
 Example usage: `{::.age}.then{::.name}` would compare a person by age first and name second. `{::.age}.then ByCats` would compare by age first and by total cats weight second.
 - Method `.view` allows us to compare entities of type `A` if we can convert them into a `T` for which we have an `OrderBy`.
 Example usage: `ByCats.view{::.driver}`
-would compare cars by the total cats weight of their `.driver`.
+would compare cars by the total cats weight of their `.driver`,
+assuming that `Car` has a `read .driver: Person` method (we explain below why it has to be `read`).
 
 Here are some more boring examples:
 ```
@@ -522,7 +524,7 @@ Finding the max from some elements is not as obvious as it looks; there are two 
 
 Given this, the best design for `.max` and `.min` is to work as filters, and just remove all the elements that are not the max or the min.
 In this way, the empty flow would stay empty, and all the biggest/smallest elements would be preserved.
-Assuming a `Car` type with a `Person` driver, here you can see some interesting usage examples.
+Assuming the same `Car` type, with a `read .driver: Person` method, here you can see some interesting usage examples.
 ```
 myCars.flow
   .max{::}//if Car implements Order[Car]
@@ -531,7 +533,7 @@ myCars.flow
   .max{::.driver}//comparing drivers. Ok since Person implements Order[Person]
   .get //this requires that there is exactly one max
 myCars.flow
-  .max({::.driver}.then Older) //here we check using the Older comparator
+  .max(Older.view{::.driver}) //here we check using the Older comparator
   .getOpt//this requires that there is at most one max
 myCars.flow
   .max(OrderByCaseInsensitive.view{::.driver.name}.then {::.driver.age}) //here names ignoring case
@@ -616,8 +618,7 @@ With such a `Person` type, we can define a map from persons to addresses:
 ```
 Maps#({::},   // this {::} is expanded as OrderHashBy[Person,Person]{x->x}
   Persons#(25,"Bob"),"Toronto 34b Warden St.",
-  Persons#(34,"Alice"),"Wellington 134 Kelburn Parade",
-  ...
+  Persons#(34,"Alice"),"Wellington 134 Kelburn Parade"
   )
 ```
 As you can see, maps take an `OrderHashBy` exactly like we have seen with `OrderBy` and `ToStrBy`.
@@ -1345,6 +1346,60 @@ TestByCatsNamedComparator:F[Tests,Tests]{::
     )
   }
 
+"""); }/*--------------------------------------------
+-------------------------*/@Test void carAndListExamplesAsShown() { run("""
+use base.Nat as Nat;
+use base.Str as Str;
+use base.List as List;
+use base.Lists as Lists;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.OrderHash as OrderHash;
+use base.OrderBy as OrderBy;
+use base.OrderByCaseInsensitive as OrderByCaseInsensitive;
+Cats:{ #(weight: Nat): Cat -> Cat:{ .weight: Nat -> weight; } }
+Persons:{
+  #(age: Nat, name: Str, cats: List[Cat]): Person ->
+    Person: OrderHash[Person]{ 'self
+      read .name: Str -> name;
+      read .age: Nat -> age;
+      read .cats: List[Cat] -> cats;
+      .cmp p1,p2 -> p1.age <=> (p2.age) && {p1.name <=> (p2.name)};
+      .hash: Nat -> age.hash.hashWith(name.hash);
+      .str: Str -> "P"+name;
+      .close -> self;
+      .close -> ::;
+      }
+  }
+Older:OrderBy[Person]{ p1,p2 -> p1.age <=> (p2.age) }
+ByCats:OrderBy[Person]{
+  p1,p2 -> p1.cats.flow.map{::.weight}.sum 0 <=> (p2.cats.flow.map{::.weight}.sum 0);
+  }
+Cars:{ #(driver: Person): Car -> Car:{ read .driver: Person -> driver; } }
+Data:{ .cars: List[Car] -> Lists#(
+  Cars#(Persons#(30,"bob",Lists#(Cats#(3)))),
+  Cars#(Persons#(40,"Ann",List[Cat])),
+  Cars#(Persons#(20,"Zed",Lists#(Cats#(1),Cats#(5)))) );
+  }
+Test: Main{s-> Block#
+  .do{Debug#(Data.cars.flow.max{::.driver}.get.driver.name)}
+  .do{Debug#(Data.cars.flow.max(Older.view{::.driver}).get.driver.name)}
+  .do{Debug#(Data.cars.flow.max(ByCats.view{::.driver}).get.driver.name)}
+  .do{Debug#(Data.cars.flow.max(OrderByCaseInsensitive.view{::.driver.name}.then {::.driver.age}).first.match{.empty->"none"; .some c->c.driver.name})}
+  .do{Debug#((Lists#(1,2) ++ (Lists#(3,4))).str{::})}
+  .do{Debug#((Lists#(1) ++ (Lists#(2,3,4))).str{::})}
+  .do{Debug#((Lists#(1,2) +> 3 +> 4).str{::})}
+  .do{Debug#((Lists#(2,3,4) <+ 1).str{::})}
+  .return{base.Void}}
+//PRINT|Ann
+//PRINT|Ann
+//PRINT|Zed
+//PRINT|Zed
+//PRINT|[1, 2, 3, 4]
+//PRINT|[1, 2, 3, 4]
+//PRINT|[1, 2, 3, 4]
+//PRINT|[1, 2, 3, 4]
 """); }/*--------------------------------------------
 OMIT_END
 END*/
