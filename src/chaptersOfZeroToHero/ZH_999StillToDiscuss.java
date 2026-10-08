@@ -1,5 +1,7 @@
 package chaptersOfZeroToHero;
 
+import org.junit.jupiter.api.Test;
+import static testHelpers.TourHelper.run;
 class ZH_999StillToDiscuss {
 /*START
 --CHAPTER-- Still to discuss
@@ -153,5 +155,167 @@ The discussion has to cover:
 The inference is going to improve over time, so the guide talks about it in terms of what may or may not compile.
 The discussion has to cover the ways to help it:
 explicit type arguments (`Foo#[Bar](bar)`), literals with an explicit type (`OrderBy[Tank,Direction]{::.imm.heading}`), and the difference between arguments, where an expected type is known, and receivers, where it may not be.
+OMIT_START
+-------------------------*/@Test void blockRejectsResultWithHygienicReferences() { run("""
+use base.Nat as Nat;
+use base.Block as Block;
+use base.OrderMatch as OrderMatch;
+Point:{ .x: Nat; .y: Nat;
+  .cmp[R:**](t0: Point, t1: Point, m: mut OrderMatch[R]): R -> Block#
+    .if {t0.x < (t1.x)}.return {m.lt}
+    .if {t0.x > (t1.x)}.return {m.gt}
+    .return {m.eq};
+  }
+//ERROR|In file: [###]_test/_rank_app111.fear
+//ERROR|
+//ERROR|005|   .cmp[R:**](t0: Point, t1: Point, m: mut OrderMatch[R]): R -> Block#
+//ERROR|   |                                                                ^^^^^^
+//ERROR|   | ... 2 lines ...
+//ERROR|008|     .return {m.eq};
+//ERROR|
+//ERROR|While inspecting method call "#" > ".cmp(_,_,_)" line 5
+//ERROR|The call to "#" is invalid.
+//ERROR|Type argument 1 ("R") does not satisfy the bounds
+//ERROR|for type parameter "R" in "Block#".
+//ERROR|Here "R" can only use capabilities "imm" or "mut" or "read".
+//ERROR|But type argument "R" can use capabilities "imm" or "iso" or "mut" or "mutH" or "read" or "readH".
+//ERROR|
+//ERROR|Compressed relevant code with inferred types: (compression indicated by `-`)
+//ERROR|Block#[imm,R]
+//ERROR|Error 8 TypeError
+"""); }/*--------------------------------------------
+-------------------------*/@Test void blockComputesAnOrderThatIsAppliedToTheMatcher() { run("""
+use base.Nat as Nat;
+use base.Block as Block;
+use base.Order as Order;
+Point:{ .x: Nat; .y: Nat; }
+Points:{ #(x: Nat, y: Nat): Point -> { .x -> x; .y -> y } }
+Compare:{
+  #(t0: Point, t1: Point): Order -> Block#
+    .if {t0.x < (t1.x)}.return {{::.lt}}
+    .if {t0.x > (t1.x)}.return {{::.gt}}
+    .return {{::.eq}};
+  }
+Name:{ #(o: Order): base.Str -> o#{.lt->"lt";.eq->"eq";.gt->"gt"} }
+Test:base.Main {sys -> Block#
+  .do{base.Debug#(Name#(Compare#(Points#(1,2),Points#(2,0))))}
+  .do{base.Debug#(Name#(Compare#(Points#(3,2),Points#(2,0))))}
+  .do{base.Debug#(Name#(Compare#(Points#(2,2),Points#(2,0))))}
+  .return{base.Void}}
+//PRINT|lt
+//PRINT|gt
+//PRINT|eq
+"""); }/*--------------------------------------------
+-------------------------*/@Test void matchShapes() { run("""
+use base.Nat as Nat;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Error as Error;
+use base.Opt as Opt;
+use base.Opts as Opts;
+use base.Order as Order;
+Name:{ #(o: Order): base.Str -> o#{.lt->"lt";.eq->"eq";.gt->"gt"} }
+Test:base.Main {sys -> Block#
+  .do{Debug#(base.True.if{.then->"True case";.else->"False case"})}
+  .do{Debug#(base.False.if{.then->"True case";.else->"False case"})}
+  .do{Debug#(Opts#(7).match{.empty->0; .some x->x})}
+  .do{Debug#(Opt[Nat].match{.empty->0; .some x->x})}
+  .do{Debug#(Name#(Order{::.lt} && {Error.msg "never evaluated"}))}
+  .do{Debug#(Name#(Order{::.gt} && {Error.msg "never evaluated"}))}
+  .do{Debug#(Name#(Order{::.eq} && {Order{::.gt}}))}
+  .do{Debug#(Name#(Order{::.eq} && {Order{::.eq}}))}
+  .return{base.Void}}
+//PRINT|True case
+//PRINT|False case
+//PRINT|7
+//PRINT|0
+//PRINT|lt
+//PRINT|gt
+//PRINT|gt
+//PRINT|eq
+"""); }/*--------------------------------------------
+-------------------------*/@Test void matcherCannotCaptureHygienicReferences() { run("""
+use base.Nat as Nat;
+use base.Error as Error;
+Exp:{ .val: Nat }
+Exps:{
+  #(n: Nat): iso Exp -> { .val -> n };
+  .sum(a: Exp, b: Exp): iso Exp -> { .val -> a.val + (b.val) };
+  }
+Token:{ .match[R:**](m: mut TokenMatch[R]): R }
+TokenMatch[R:**]:{ mut .plus: R; mut .eof: R; mut .num(n: Nat): R; }
+Lexer:{ mut .nextToken: Token; }
+Parser:{
+  .parseNum(l: mutH Lexer): Exp -> Exps#(1);
+  .parsePlus(l: mutH Lexer, left: iso Exp): iso Exp -> l.nextToken.match{
+    .plus   -> Exps.sum(left, this.parseNum(l));
+    .eof    -> left;
+    .num(n) -> Error.msg "unexpected num";
+    }
+  }
+//ERROR|In file: [###]_test/_rank_app111.fear
+//ERROR|
+//ERROR|013|   .parsePlus(l: mutH Lexer, left: iso Exp): iso Exp -> l.nextToken.match{
+//ERROR|014|     .plus   -> Exps.sum(left, this.parseNum(l));
+//ERROR|   |     ----------------------------------------^^-
+//ERROR|   | ... 2 lines ...
+//ERROR|017|     }
+//ERROR|
+//ERROR|While inspecting parameter "l" > ".plus" line 14 > ".parsePlus(_,_)" line 13
+//ERROR|parameter "l" has type "mutH Lexer".
+//ERROR|The type of parameter "l" is hygienic (readH or mutH)
+//ERROR|and thus it cannot be captured in the object literal instance of "mut TokenMatch[iso Exp]" (line 13).
+//ERROR|
+//ERROR|Compressed relevant code with inferred types: (compression indicated by `-`)
+//ERROR|l
+//ERROR|Error 8 TypeError
+"""); }/*--------------------------------------------
+-------------------------*/@Test void matcherCarriesHygienicReferencesAsParameters() { run("""
+use base.Nat as Nat;
+use base.Error as Error;
+Exp:{ .val: Nat }
+Exps:{
+  #(n: Nat): iso Exp -> { .val -> n };
+  .sum(a: Exp, b: Exp): iso Exp -> { .val -> a.val + (b.val) };
+  }
+Token:{ .match[R:**](m: mut TokenMatch[R]): R }
+TokenMatch[R:**]:{ mut .plus: R; mut .eof: R; mut .num(n: Nat): R; }
+Lexer:{ mut .nextToken: Token; }
+CaseToken[A,B,R:**]: { .match(a: iso A, b: mutH B, m: mut CaseTokenMatch[A,B,R]): R }
+CaseTokenMatch[A,B,R:**]: {
+  mut .eof(a: iso A, b: mutH B): R;
+  mut .plus(a: iso A, b: mutH B): R;
+  mut .num(a: iso A, b: mutH B, n: Nat): R;
+  }
+CaseTokens: { #[A,B,R:**](t: Token): mut CaseToken[A,B,R] -> t.match{
+  .eof    -> {a,b,m -> m.eof(a,b)};
+  .plus   -> {a,b,m -> m.plus(a,b)};
+  .num(n) -> {a,b,m -> m.num(a,b,n)};
+  }}
+Parser:{
+  .parseNum(l: mutH Lexer): Exp -> Exps#(1);
+  .parsePlus(l: mutH Lexer, left: iso Exp): iso Exp ->
+    CaseTokens#(l.nextToken).match(left, l, {
+      .plus(left', l') -> Exps.sum(left', this.parseNum(l'));
+      .eof(left', _)   -> left';
+      .num(_, _, n)    -> Error.msg "unexpected num";
+      })
+  }
+Tokens:{
+  .plus: Token -> { .match m -> m.plus };
+  .eof: Token -> { .match m -> m.eof };
+  .num(n: Nat): Token -> { .match m -> m.num(n) };
+  }
+Lexers:{ #(t: Token): mut Lexer -> { .nextToken -> t } }
+Test:base.Main {sys -> base.Block#
+  .do{base.Debug#(Parser.parsePlus(Lexers#(Tokens.plus), Exps#(5)).val)}
+  .do{base.Debug#(Parser.parsePlus(Lexers#(Tokens.eof), Exps#(5)).val)}
+  .do{base.Debug#(base.Try#{Parser.parsePlus(Lexers#(Tokens.num 3), Exps#(5)).val}.info!.getMsg)}
+  .return{base.Void}}
+//PRINT|6
+//PRINT|5
+//PRINT|unexpected num
+"""); }/*--------------------------------------------
+OMIT_END
 END*/
 }
