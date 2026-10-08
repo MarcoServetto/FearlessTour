@@ -227,6 +227,7 @@ South: Direction {.turn -> West;  .point -> Points#(+1, +0); }
 West : Direction {.turn -> North; .point -> Points#(+0, -1); }
 """); }/*--------------------------------------------
 
+Here `.x` counts rows, growing towards the South, and `.y` counts columns, growing towards the East: heading North decreases `.x`.
 By adding a connection between points and directions, both types become more meaningful.
 This is how meaning emerges. Meaning is obtained by the network of connections between our data types.
 

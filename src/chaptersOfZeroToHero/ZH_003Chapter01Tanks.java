@@ -40,7 +40,7 @@ type inference, syntactic sugar is also designed to avoid redundant code.
 
 Syntactic sugar allows representing specific well known coding patterns using more concise and more readable syntax.
 
-Syntactic sugar does not change the meaning, it just provides a shorter way to write the exact same thing. Think of it like a contraction in English: "don't" instead of "do not". It is shorter, but the underlying meaning is identical.
+Syntactic sugar does not change the meaning; it just provides a shorter way to write the exact same thing. Think of it like a contraction in English: "don't" instead of "do not". It is shorter, but the underlying meaning is identical.
 
 We will now see how a combination of syntactic sugar and inference can make the
 code for `Direction` even more compact.
@@ -213,6 +213,7 @@ This newly shown method can be called with syntax:
 `Tanks.of(North, East)`
 Here `Tanks` is the first implicit parameter and it is called **the receiver** (inside the method it is the parameter `this`).
 The others are provided after the method name in parentheses.
+The expressions written inside the parentheses are called **arguments**: in `Tanks.of(North, East)` the receiver is `Tanks` and the arguments are `North` and `East`.
 
 The syntax `.of(heading: Direction, aiming: Direction): Tank`
 defines a method called `.of` with parameters `heading` and `aiming`.
@@ -290,7 +291,7 @@ via the `Tanks.of` method or via a top level declaration, like `TankNN`.
 
 To do so, we introduced the name `MadeTank`,
 to indicate tanks originating from that point in the code.
-The name `MadeTank` is not very useful, we will probably never want to
+The name `MadeTank` is not very useful: we will probably never want to
 talk only about tanks made with the `Tanks.of` method,
 so we can rely on the sugar and type inference to choose a name for us and to infer that the literal we are creating is extending `Tank`.
 In this case, the name for our literal is going to be some fresh name
@@ -388,8 +389,8 @@ Bar # ( Add |- )
 This is a call of the method called `#` on the receiver `Bar`, and the single argument is a call of the method called `|-` on the receiver `Add`.
 Method `|-` takes zero parameters.
 
-On the other hand, parameter names start with a lower-case letter, and
-type names mostly start with an upper-case letter.
+On the other hand, parameter names start with a lowercase letter, and
+type names mostly start with an uppercase letter.
 The rules for valid type names are a little more involved,
 and we will discuss them in detail later.
 
@@ -519,7 +520,7 @@ Tanks#(
 It is important to learn to visualise how the code reduces in your mind, so that you can predict code behaviour.
 Note how we wrote `Tank{.heading -> North; .aiming -> South }`.
 - Should we just write `{.heading ->North; .aiming ->South }` and rely more on the inference?
-- Should we write `Anon27: Tank{.heading -> North; .aiming -> South }` and write the whole object literal explicitly?
+- Should we write `SomeName27: Tank{.heading -> North; .aiming -> South }` and write the whole object literal explicitly?
 
 Inference works on source code: the code we write.
 Code under reduction is not source code, but just a tool for us to understand the code behaviour. Since it is just a tool,

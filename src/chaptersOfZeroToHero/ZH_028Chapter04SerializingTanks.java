@@ -79,6 +79,8 @@ InputCursorNode: ToIso[InputCursorNode], WidenTo[InputCursorNode]{
 ````
 - `sys.inputCursor` is the capability to observe the files intended as input.
 - `sys.inputCursor#` gets the first input node.
+- `sys.inputCursor.next` is the cursor for the following input.
+- `.label` is a best effort name of the file, to help debugging.
 - `sys.inputCursor# !` extracts the actual `InputCursorNode`, throwing an error if no input has been provided yet.
 - `this.in.text` then calls the `.text` method. If the file has text, the optional will not be empty.
 - With `this.in.text!` we extract the content from the optional with `!`.

@@ -162,13 +162,13 @@ Enum[E]: DataType[E,E]{
 ```
 Thanks to `Enums[Direction]` we get a `.map` method mapping names to directions.
 - Method `.map` returns a `Map[Str,Direction]` linking the string names of directions
- (`North`, `East`, etc.) to their corresponding `Direction` objects. This allows us to look up a `Direction` by its name. This is computed by using the method `.mapping`; taking a literal with a `.key` method and an `.elem` method, converting the flow elements into the key and element values for the newly created map.
+ (`North`, `East`, etc.) to their corresponding `Direction` objects. This allows us to look up a `Direction` by its name. This is computed by using the flow method `.mapping`, which takes an `OrderHashBy` for the keys (here `{::}`) and a literal with a `.key` method and an `.elem` method, converting the flow elements into the key and element values for the newly created map.
+That is, the result of `.map` will be equivalent to the result of `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West)`.
 
 `E` is a bare generic parameter, so it carries no methods of its own - not even `.str` - which is why
 `Enums[E]` also needs a `.strBy: ToStrBy[E]` witness: a function turning any value of type `E` into
 something with a `.str`. `Directions.strBy -> {::};` says that witness is just the identity, which is
 valid precisely because every concrete `Direction` value already has its own `.str`.
-That is, the result of `.map` will be equivalent to the result of `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West)`.
 
 Many enumeration types will have similar utility methods.
 Note how methods `.list` and `.map` are fully deterministic. They take no arguments: the receiver contains no information (since it is a singleton) and there are no other parameters. This means that every time that code is executed, it produces the same result.
@@ -183,13 +183,13 @@ Most possible key values will not have any associated element.
 In the case of `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West)` only four specific strings have an associated `Direction`.
 So, how can we extract an element from a map if we have a string that may or may not be a valid key?
 
-The `Map[K,E]` type from the standard library offers two different methods:
+The `Map[K,E]` type from the standard library offers, among others, two methods:
 `.get` and `.opt`.
 
 Calling `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).opt("North")`
 will result in `Opts#(North)`: an `Opt[Direction]` containing the `North` direction.
 Calling `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).opt("Nope")`
-will result in `Opt[Direction]`: an empty optional.
+will result in an empty `Opt[Direction]`.
 
 This is a general approach: when a method may not be able to return a result, we can return an optional value.
 This is a minimum effort approach that works on a small scale, but does not provide the user of our code with much useful information.

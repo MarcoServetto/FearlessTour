@@ -62,6 +62,7 @@ However, those values are all numbers. Same for `Str`: it contains a mind-boggli
 
 - `Opt[E]` is the first truly flexible type we have seen: it can contain zero or one element of any fixed type `E`.
 - `List[E]` is a little more flexible: it can contain any number of elements of any fixed type `E`.
+
 Using a `List[Str]`, a `Tank` could be represented as `Lists#("North", "East", "10", "5")`.
 This is much better than using strings! However, it is still unsatisfactory: the x and y coordinates come from the separate `Point` object, but are now flattened into the `Tank` representation. That is, in this mindset every object needs to be represented as a flat set of attributes, while data is often composed of smaller units of existing data.
 What if instead of using a `List[Str]` we used a list of something that contains itself?
@@ -138,7 +139,7 @@ With an `Info` object named `myInfo`, the real `.msg`/`.list`/`.map` accessors e
 
 Notably, strings, lists and maps are three kinds of objects that can conceptually be empty.
 Since `Info` can represent either a string, a list, or a map, only one of these properties can be non-empty and hold data at any given time, reflecting the contained type.
-There's also an empty `Info`. For the common cases where the variant is assumed to be there, or a default is acceptable instead of an `Opt`, `Info` also offers `.getMsg`/`.getList`/`.getMap` (throwing if `myInfo` is not that variant) and `.softMsg`/`.softList`/`.softMap` (returning the empty string/list/map instead of throwing).
+There's also an empty `Info`: an empty string, an empty list and an empty map are all turned into it. For the common cases where the variant is assumed to be there, or a default is acceptable instead of an `Opt`, `Info` also offers `.getMsg`/`.getList`/`.getMap` (throwing if `myInfo` is not that variant) and `.softMsg`/`.softList`/`.softMap` (returning the empty string/list/map instead of throwing).
 This structured approach to serialisation using `Info` not only simplifies data handling but also enhances the clarity and flexibility of your codebase, making it easier to manage and extend.
 
 Similarly, we can use the type `Infos` to programmatically create `Info` objects using methods `Infos.msg(Str)`, `Infos.list(/*..elements..*|/)` and `Infos.map(/*..keys and values..*|/)`.

@@ -9,7 +9,7 @@ class ZH_005Chapter01FiniteNumbers {
 --SECTION-- Finite numbers
 
 ### Finite Numbers and Modulo Arithmetic.
-The example of the four cardinal directions is intriguing but limited, given there are only four options. Many things, including numbers, come in much larger, even seemingly unlimited quantities. Before exploring sets with infinite elements, let's discuss arithmetic within a finite set of numbers.
+The example of the four cardinal directions is intriguing but limited, given there are only four options. Many things, including numbers, come in much larger, even seemingly unlimited quantities. Before exploring sets with infinitely many elements, let's discuss arithmetic within a finite set of numbers.
 
 Consider a set of numbers that functions like the hours on a clock. Typically, a clock displays 12 hours. After 12 o'clock, the next hour doesn't advance to 13; instead, it cycles back to 1. In this system, each number has a predefined position, and upon reaching the highest number, the sequence loops back to the start.
 
@@ -78,7 +78,7 @@ Imagine writing a chain of `.succ` thousands or millions of calls long! It would
 
 Instead of defining `+` for every single number, we can define it using just two rules that build upon each other. This powerful technique is called an inductive definition.
 
-**Base Case:** The simplest case is adding zero. Adding zero to any number `a` doesn't change it: `0 + a -> a`.
+**Base Case:** The simplest case is adding zero. Adding any number `a` to zero gives `a`: `0 + a = a`.
 
 **Inductive Step:** How do we add a non-zero number (let's call it `this`) to another number `other`?
 - We can think of `this` as being "one more than its predecessor": `this` = `this.pred + 1`.
@@ -166,7 +166,7 @@ object-oriented languages like Fearless.
 #### Implementing multiplication inductively in Fearless:
 
 Building on those ideas, we can encode the other operations of numbers.
-We now show with multiplication:
+We now show multiplication:
 ```
 Number: { 
   .pred: Number; .succ: Number;
@@ -253,7 +253,7 @@ That is, if we want to get `7` we need to use
 12. `0 + 7`
 13. `7`
 
-In order to obtain `7`, those parentheses are needed.
+In order to obtain `7` from `1 + 2 * 3`, the parentheses around `2 * 3` are needed.
 Fearless does not have operator precedence: operators are just methods,
 and when parentheses are omitted,
 the method will eagerly capture the first piece of code that looks like an argument.
@@ -316,7 +316,7 @@ We had to introduce a method `._rightSub` since we can only reason inductively o
 Later we will show ways to actually hide the existence of those auxiliary methods.
 
 
-This section introduced modulo arithmetic and showed how fundamental operations like addition, multiplication, and subtraction can be implemented from scratch using inductive definitions (base cases and recursive steps) purely with types and methods.
+This section introduced modulo arithmetic and showed how fundamental operations like addition, multiplication, and subtraction can be implemented from scratch using inductive definitions (base cases and inductive steps) purely with types and methods.
 
 ### Numbers as a Common Resource
 
@@ -350,7 +350,7 @@ Some `Int`s: `+10`, `-25`, `+0`, `+12345`, `-987`.
 Crucially, `+10` or `-25` are treated as single tokens by the Fearless compiler. `Int` also provides methods like `+`, `-`, `*`, etc. For example: `+10 + -3` results in `+7`.
 
 Note how those tokens, `10`, `134`, `-987` are just type names.
-Remember how we said that type names *mostly* start with upper case letters?
+Remember how we said that type names *mostly* start with uppercase letters?
 Well, this is what we meant: there are some special type names that are used to directly represent numbers.
 Overall, all the type names starting with something other than a letter or `_` are defined by the Fearless standard library, and as such can
 not be defined by regular Fearless programmers. 
@@ -454,8 +454,8 @@ Int:{
 ...
 -9223372036854775808: Int{.pred-> +9223372036854775807; .succ->  -9223372036854775807; }
 ```
-As you can see, the predecessor of `+0` is `-1` and the successor and predecessor of
-the biggest numbers are linked together.
+As you can see, the predecessor of `+0` is `-1`, the successor of the biggest `Int` is the smallest `Int`,
+and the predecessor of the smallest `Int` is the biggest `Int`.
 Like a `Nat`, an `Int` uses 64 bits; since they are shared between negative and non negative numbers, the biggest `Int` is about half of the biggest `Nat`.
 
 Finally, `Float` and `Num` are numeric types useful to represent fractions.

@@ -325,7 +325,7 @@ Generics ensure that the outcomes of different branches are type-compatible.
 Note how the generics are explicitly needed when **defining** the `.if` method but they are all inferred when **using** the `.if` method.
 
 This is where our journey of learning Fearless programming starts to intersect with concepts common to most other programming languages.
-This ability to represent decisions and conditional logic purely through objects and methods like `.if` is a cornerstone of the pure object-oriented style we are learning in Fearless. Where other languages use special 'if statements', Fearless uses method calls on boolean objects. In principle, every possible computation can be represented as just an enormous pile of `.if` calls invoking each other.
+This ability to represent decisions and conditional logic purely through objects and methods like `.if` is a cornerstone of the pure object-oriented style we are learning in Fearless. Where other languages use special 'if statements', Fearless uses method calls on boolean objects. In principle, objects, method calls and `.if` are enough to express every computation.
 
 But just because something can be done, doesn't mean it's the best approach. While you could build complex logic entirely out of nested `.if` calls, a program built only from binary decisions quickly becomes brittle and hard to evolve. Fearless offers more specialised ways to handle different kinds of decisions, which often lead to clearer code. We'll explore them later, and we'll learn to select the right tool for each job.
 
@@ -384,7 +384,7 @@ Tanks: F[Direction,Direction,Tank] { h,a -> { .heading -> h; .aiming -> a } }
 """); }/*--------------------------------------------
 This code is not just slightly shorter, but now `Tanks` is a valid element that can be passed to any method taking a generic `F[A,B,R]`.
 
-This is what is usually called the abstract factory pattern:
+This is what is usually called the factory pattern:
 A factory object is an object whose main goal is to create other objects.
 `Tanks` is a factory object.
 We can have various ways to create objects and we can pass those factory objects to code that needs to create objects internally.
@@ -507,7 +507,7 @@ The full version would be:
 ```
 Anon1[]:F[Bool] { #[](): Bool[] -> Anon2[]:Slow[]{}.code[](); }
 ```
-That is, since the method `F[Bool]#` has exactly zero parameters, we can omit both the method name `#` and the arrow `->` when implementing it.
+That is, since `#` is the only abstract method of `F[Bool]` we can omit its name, and since it has exactly zero parameters we can also omit the arrow `->` when implementing it.
 
 We can now compare and contrast the above with the syntax
 ```
@@ -524,6 +524,7 @@ The arrow `->` is needed here since we have two parameters: `h,a`.
 Instead, since method `F[Bool]#` takes zero parameters, we implement it with just `{Slow.code}` instead of having to awkwardly write `{-> Slow.code}`.
 
 Finally, consider again
+(we call `&&` lazy because it computes its right operand only when needed, and `.and` eager because its argument is always computed before the call)
 ```
 Much.code && { Slow.code } && {ATonOf.code} // lazy
 Much.code .and (Slow.code) .and (ATonOf.code)  // eager

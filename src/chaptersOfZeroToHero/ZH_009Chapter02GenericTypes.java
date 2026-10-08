@@ -39,7 +39,7 @@ Right: Fork{ l,r -> r }
 Here we see the generic type parameter `Val`, declared by `[Val]`.
 We can read the above code as follows:
 
->`Fork` has a generic method `.choose` that forall types `Val` takes two arguments of type `Val` and returns a `Val`. Method `Fork.choose` is abstract.
+>`Fork` has a generic method `.choose` that forall types `Val` takes two parameters of type `Val` and returns a `Val`. Method `Fork.choose` is abstract.
 `Left` is a kind of `Fork` where the `.choose` method returns the first parameter.
 `Right` is a kind of `Fork` where the `.choose` method returns the second parameter.
 
@@ -99,7 +99,7 @@ However, if `someFork` is `Left` we would get `"Hello" * 2` and since `Str` does
 Ok,... that was bad.
 Let's not consider this broken Fearless variant any more.
 
-Can we use the regular Fearless, but without generics?
+Second: can we use the regular Fearless, but without generics?
 We could simply declare multiple variants of the `.choose` method:
 
 ```
@@ -164,9 +164,7 @@ Right: Fork{::.right}
 
 The main difference is that instead of taking a `leftVal` and a `rightVal` parameter, we take a single parameter of type `LeftRight[Val]` that can compute the two original parameters when needed.
 
-Type `LeftRight[Val]` is a generic type.
-
-In the same way, `LeftRight[LR]:{ .left: LR; .right: LR }` is a generic type declaration.
+`LeftRight[LR]:{ .left: LR; .right: LR }` is a generic type declaration, and `LeftRight[Val]` is one of the types it declares.
 
 Earlier we saw generic methods as methods taking both type parameters and actual parameters. Alternatively, we can see generic methods as a way to define an infinite number of concrete methods; one for each possible type instantiation.
 
@@ -180,7 +178,7 @@ As you can see, a single generic type declaration actually declares an infinite 
 While generic parameters are usually inferred for generic methods, they are always explicit for generic types.
 When at the start we declared `Direction:{.turn:Direction;}`
 thanks to the sugar we were actually declaring `Direction[]:{.turn[]():Direction[];}`.
-Again, empty parentheses can be omitted.
+Again, empty square brackets and empty parentheses can be omitted.
 
 We can now understand the meaning of 
 ```
@@ -240,9 +238,9 @@ LeftRightPoint: { .left: Point; .right: Point }
 LeftRightDirection: { .left: Direction; .right: Direction }
 ...
 ```
-As you can see, `LeftRightInt` and `LeftRightPoint` are different types, and thus there is no subtyping relation between them.
+As you can see, `LeftRightInt` and `LeftRightPoint` are unrelated types (neither implements the other), so there is no subtyping relation between them.
 In the same way, 
-`LeftRight[Int]` and `LeftRight[Point]` are different types, and thus there is no subtyping relation between them either.
+`LeftRight[Int]` and `LeftRight[Point]` are unrelated types, so there is no subtyping relation between them either.
 
 ### Recap
 

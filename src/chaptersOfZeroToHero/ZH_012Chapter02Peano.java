@@ -36,8 +36,10 @@ Number:{
 Zero:Number { this.pred } // equivalent to .pred->this.pred
 """); }/*--------------------------------------------
 
+In `.succ: Number -> {this}`, `this` is the number whose `.succ` is called: the new number is a literal answering `.pred` with that number.
+
 As you can see, it is confusingly simple and minimal.
-Note how `Zero.pred` just calls `Zero.pred` again: zero has no predecessor, and asking for it is a computation that never terminates.
+Note how `Zero.pred` just calls `Zero.pred` again: zero has no predecessor, and asking for it is a computation that never terminates (a real run ends with a stack overflow error).
 Here are some examples of Peano numbers:
 ```
 Zero  //0

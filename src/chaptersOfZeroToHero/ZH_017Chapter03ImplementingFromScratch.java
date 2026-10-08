@@ -25,7 +25,7 @@ All that we discussed lives in the world of the language itself. If we want our 
 For example, no matter how many generics, types and methods we write from scratch, we will not be able to draw an image on the screen, or to save a file, or to read information from the internet.
 Those are examples of **external side effects**.
 
-Similarly, there are a few cases where we want to modify the behaviour of our code itself. This is possible using **internal side effects**.
+Similarly, there are cases where we want a value to change while the program runs. This is possible using **internal side effects**.
 
 We call **magic methods** the methods from the standard library giving direct access to operations that would not be possible in plain Fearless.
 
@@ -50,12 +50,12 @@ Vars: {
   }
 """); }/*--------------------------------------------
 
-First: `_Magic` is not something we can use in our code to make any of our wishes come true.
+A note on `_Magic`: it is not something we can use in our code to make any of our wishes come true.
 It is a marker used internally by the compiler to annotate certain method bodies whose behaviour can not be encoded in plain Fearless code.
 All such methods are already part of the standard library, so no user program would ever write `_Magic!`.
 
 The description below explains how the code above works, but will only mention `mut`, `imm`, `read` and `read/imm` without explaining how they work in detail yet.
-First we define a type `Void:{}`. Nothing special here, just a type that does nothing. `Void` is often used to represent an operation that has no meaningful result, and simply performs side effects, and to do so it will have to use magic methods internally.
+First we define a type `Void:{}`. Nothing special here, just a type that does nothing. `Void` is often used to represent an operation that has no meaningful result, and simply performs side effects, and the operations returning it will have to use magic methods internally.
 Then we define `Var[E]` as a generic type.
 The type `E` has a constraint: it can only be `imm`, `mut` or `read`.
 Those are keywords called reference capabilities: they describe how values can interact with magic.
@@ -106,7 +106,7 @@ In this simple example, when an `Animal` runs, it moves along the `x` axis.
 Note how to access the value inside of `loc` we need to use `.get`.
 
 While `loc` is a `mut Var[Point]`, the `Point` itself is immutable.
-As a sugar, any type name without a modifier in front is implicitly `imm`.
+As a sugar, a concrete type name without a modifier in front (like `Point` or `Nat`) is implicitly `imm`; a generic parameter like `E` stands for whatever capability it is instantiated with.
 To clarify this, here is the code from above with all the `imm` keywords explicitly added:
 
 -------------------------*/@Test void mdfsExplicit () { run("""
@@ -132,7 +132,7 @@ most types are just always `imm`, like `imm Void` and `imm Nat`, but also factor
 
 ### Aliasing
 
-Now that we have mutation, we can have aliasing.
+Now that we have mutation, aliasing starts to matter.
 Aliasing is both the best feature of mutation, and the very reason mutation needs to be kept under control.
 Aliasing is like a nuclear power plant:
 - Very powerful.

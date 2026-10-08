@@ -19,6 +19,7 @@ A `get` method promises a precise, correct answer, but only for the cases where 
 Instead of making up an arbitrary answer, `get` methods stop the whole execution.
 A `soft` method takes the opposite approach: it never stops the execution, and instead gives back the closest reasonable answer it
 can, even when an exact one is not possible.
+
 Going back to repetitive code, we show below a difficult to read method computing the distance between two points;
 using the square root function (`.softSqrt`) present on `Nat`. Most numbers (like `2`)
 do not have a whole-number, or even a neat fractional, square root, so `.softSqrt` gives back the closest `Float` it can find.
@@ -37,7 +38,8 @@ A:{
 """); }/*--------------------------------------------
 
 Note that those are the needed parentheses:
-     `p1.x - p2.x` would be interpreted as `(p1.x - p2).x`
+     `p1.x - p2.x` would be interpreted as `(p1.x - p2).x`.
+
 This method uses the Pythagorean theorem, but it is not ideal:
   - we duplicate code for `p1.x - (p2.x)` and `p1.y - (p2.y)`
   - all the code is in a single hard to read line.

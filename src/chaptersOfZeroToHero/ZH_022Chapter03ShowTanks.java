@@ -10,7 +10,7 @@ class ZH_022Chapter03ShowTanks {
 
 ### Visualising the Tank game
 
-Now that we know how to write a full Fearless program, we can write a program reading tanks from a file and running the Tank game on the console.
+Now that we know how to write a full Fearless program, we can write a program reading tanks from a file and running the Tank game on the console (reading the tanks from a file comes in Chapter 4).
 ASCII art is a well known way to visualise simple games. We will use this to visualise the state of a tank.
 Below is the representation of a tank heading `East` and aiming `North`, and another one heading `North` and aiming `West`:
 

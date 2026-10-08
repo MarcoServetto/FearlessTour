@@ -39,7 +39,7 @@ That is the Fearless compiler. Congrats, now you have it on your machine.
 Then, click on the executable whose name starts with `fearless` and ends with `w`, like `fearlessBin0_001w` or `fearlessBin0_001w.exe` (the exact name depends on the version).
 
 You will see a window asking to create a demo project in a location of your choice. Choose anywhere you like, for example a new folder on your Desktop.
-This new folder will contain the following files:
+This new folder will contain the following files and folders:
 - `start.fearless`
 - `_demo`
 - `_demo/_rank_app.fear`

@@ -11,7 +11,7 @@ class ZH_008Chapter01Recap {
 ### Terminology Recap
 
 #### Language Concepts
-- Evaluation: An expression evaluates to a result by slowly progressing into a more and more reduced form
+- Evaluation (also called reduction): An expression evaluates to a result by slowly progressing into a more and more reduced form
   - Example: `North.turn.turn --> East.turn --> South`
 - Supertype: Types are connected by supertype relations allowing us to generalise concepts.
 This is also used for code reuse.
@@ -69,7 +69,7 @@ This is also used for code reuse.
 - Parameter
   - Examples: `this`, `foo`, `bob`, `alice`, `x`, `x'`, `_foo`, `_b12`
 - Method call
-  - Examples: `this.bar(foo.baz)`, `foo+`, `foo+(bar)`, `foo!`
+  - Examples: `this.bar(foo.baz)`, `foo+`, `foo+(bar)`, `foo!` (`foo+` and `foo!` call the methods `+` and `!` that take no argument)
 
 - Object literal: We use many different names for object literals, to focus the attention on some aspects. But they are all just aliases for the same concept. Common aliases: Object, Value, Constant, Lambda, Instance.
 

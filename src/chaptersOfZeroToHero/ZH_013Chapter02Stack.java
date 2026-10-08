@@ -216,7 +216,7 @@ That is, we replace `[2,3] ++ [4,5,6]` with `[3] ++ [4,5,6] + 2`
 inside the expression `[2,3] ++ [4,5,6] + 1`.
 
 Note that there are many alternative ways to write that body.
-All of those ways would compile, but they do conceptually different operations. Some produce different ordering in the result, and some do not even terminate.
+All of those ways would compile, but they do conceptually different operations. Some produce a different ordering in the result, and some do not even terminate.
 
 One obvious variant is to add parentheses: `this ++ (other  + e)`.
 1. `[1,2,3] ++ [4,5,6]`
@@ -266,12 +266,12 @@ Consider this other alternative body: `other ++ (this + e)`
 Oh no! This version loops back to the original form. This means that this algorithm would go on reducing forever.
 Intuitively, this is the case because we are now forcing immediate recomposition of the stack we just decomposed:
 by doing `this + e` early, we go back to our original value, instead of slowly navigating toward the end stack.
-For the same reason, also this following other body variation would not terminate:  `this + e ++ other`
+For the same reason, the body variation `this + e ++ other` would not terminate either.
 
-We have one last variation to consider:
-`other + e ++ this`
-This also does not terminate:
-Termination of `Stack[T]++` is only possible if the left operand is an empty stack, but the result of `Stack[T]+` is never empty.
+We have one last variation to consider: `other + e ++ this`
+
+This also does not terminate.
+The base case of `Stack[T]++` only applies when the receiver, the left operand, is the empty stack. Here the receiver is `other + e`, and the result of `Stack[T]+` is never empty.
 That is, this implementation of `Stack[T]++` calls `Stack[T]++` in a way that is guaranteed to call back the same `Stack[T]++` implementation over and over.
 
 As you can see, there are many ways to permute the `++` and `+` calls on `this`, `other` and `e`.

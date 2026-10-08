@@ -29,6 +29,8 @@ Opts: {
   }
 """); }/*--------------------------------------------
 
+The type `Opt[T]` has no abstract method, so the type name `Opt[T]` is already an object: the empty optional; `Opts#` builds a non-empty one by overriding `.match`.
+Assume that `Person` has a method `.age: Nat` and that `bob` is a `Person`.
 The code above can be used as follows:
 -------------------------*/@Test void opt2 () { run("""
 //OMIT_START

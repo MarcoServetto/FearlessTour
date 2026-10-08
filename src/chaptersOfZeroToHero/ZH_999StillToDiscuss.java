@@ -152,7 +152,7 @@ The discussion has to cover:
 - Flows in detail, including parallel flows and the difference between `.flow` and `.seqFlow` (Chapter 3).
 - `EList[E]` and `ESet[E]` (Chapter 3, collections).
 - Graphics, to render the tanks as images (Chapter 3).
-- Deterministic and non deterministic errors (Chapter 4, action).
+- Deterministic and non-deterministic errors in detail (Chapter 4, action).
 - The techniques supporting offensive programming when working with mutable data (Chapter 4, action).
 
 ## Helping the inference
