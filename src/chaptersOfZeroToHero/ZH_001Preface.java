@@ -99,7 +99,7 @@ MarkDownTest.lineToCode replaces `*|/` with the real asterisk-slash before
 the guide is rendered, so readers still see the real thing. Do not "fix"
 a `*|/` back into a real asterisk-slash on sight: it is not a stray
 duplicate character, it is required. This note does not apply inside an
-OMIT_START/OMIT_END block that intentionally closes this comment for real,
+omitted block that intentionally closes this comment for real,
 to hold actual compiled code.
 //OMIT_END
 
