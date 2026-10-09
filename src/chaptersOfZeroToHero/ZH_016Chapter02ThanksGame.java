@@ -170,6 +170,7 @@ We filter only the tanks not in a dangerous location using method `.notIn`.
 We collect the space occupied by the survivor tanks: this is the union of the space occupied by the survivors in their current position and the space occupied by the survivors after they move in their heading direction.
 Finally we move our tanks if the space they want to go into is free using the method `.moveIfFree`.
 We conclude by returning the new `Stack` of moved tanks.
+
 Method `.notIn` uses a `.fold`:
 Starting with `True`, we accumulate with `.and`, checking that our tank is not in any of the positions `p` inside `ps`.
 This method only exists because we are using our little minimal implementation of a `Stack`.
@@ -292,7 +293,7 @@ We started from just the ability to declare types and methods, and we have const
 We defined our own representations of booleans, numbers, stacks, and optionals, patiently assembling them from minimal concepts.
 
 The little tank game we have just built is not trivial. It demonstrates how complexity emerges naturally and cleanly from minimal building blocks.
-By working through these examples, you are building the foundational thinking needed to envision and construct software in ways many programmers never deeply experience.
+By mastering this foundational thinking, you've already gained the ability to envision and construct software in ways many programmers never deeply experience.
 
 This chapter marks a milestone: You have begun to see the beauty in the minimalistic design of Fearless. As we continue, you will find these insights becoming not just a guide to coding, but a lens through which all programming becomes clearer.
 
