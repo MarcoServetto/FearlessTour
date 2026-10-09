@@ -43,8 +43,6 @@ Note that those are the needed parentheses:
 This method uses the Pythagorean theorem, but it is not ideal:
   - we duplicate code for `p1.x - (p2.x)` and `p1.y - (p2.y)`
   - all the code is in a single hard to read line.
-  - with `Nat` coordinates, `p1.x - (p2.x)` stops the execution when `p2.x` is bigger than `p1.x`, since a `Nat` can not be negative (the underflow we discussed before). We ignore this problem here.
-
 What if we want to introduce more names?
 We can define a function on the fly and call it, as shown below:
 -------------------------*/@Test void distance2 () { run("""
@@ -139,7 +137,7 @@ Regular code expressed via method calls is fertile ground for both code reuse an
 ### The = sugar.
 
 We are now going to show one crucial form of syntactic sugar in Fearless. 
-Any method with two parameters (three counting also the receiver) can be called using this sugar, as long as its second parameter is a type with a single abstract method that takes two parameters, like `Continuation[T,C,R]`. In particular this includes the `.let` method defined above.
+Any method with two parameters (three counting also the receiver) can be called using this sugar. In particular this includes the `.let` method defined above.
 
 Consider the call
 `Let#.let({p1.x - (p2.x)}, {diffX, self0 -> self0 ...})`

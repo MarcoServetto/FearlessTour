@@ -132,10 +132,6 @@ True .and False .if[Bool] ThenElse[Bool]{//[Bool] needed since this Bool does no
 }
 //OMIT_END
 """); }/*--------------------------------------------
-When implementing a method whose signature is already declared, the types are inferred and the round brackets around the parameter names can be omitted:
-`.if m -> m.then` means the same as `.if(m) -> m.then`, and `.and other -> other` means the same as `.and(other) -> other`.
-A method with many parameters lists them separated by commas, as in `.foo a, b -> ...`.
-
 ```
 //usage example
 True .and False .if{
@@ -144,7 +140,7 @@ True .and False .if{
   }
 ```
 As you can see, now we can encode binary choices as expressions inside of method bodies.
-Here we use the type parameter `R` to represent the type returned by the methods of the `ThenElse[R]` literal. That is, the code `True.if[Str]{..}` returns a string.
+Here we use the generic type variable `R` to represent the type returned by the methods of the `ThenElse[R]` literal. That is, the code `True.if[Str]{..}` returns a string.
 This is a crucial abstraction step. We can now write a lot of example code.
 
 
@@ -384,7 +380,7 @@ Tanks: F[Direction,Direction,Tank] { h,a -> { .heading -> h; .aiming -> a } }
 """); }/*--------------------------------------------
 This code is not just slightly shorter, but now `Tanks` is a valid element that can be passed to any method taking a generic `F[A,B,R]`.
 
-This is what is usually called the factory pattern:
+This is what is usually called the abstract factory pattern:
 A factory object is an object whose main goal is to create other objects.
 `Tanks` is a factory object.
 We can have various ways to create objects and we can pass those factory objects to code that needs to create objects internally.
@@ -524,7 +520,6 @@ The arrow `->` is needed here since we have two parameters: `h,a`.
 Instead, since method `F[Bool]#` takes zero parameters, we implement it with just `{Slow.code}` instead of having to awkwardly write `{-> Slow.code}`.
 
 Finally, consider again
-(we call `&&` lazy because it computes its right operand only when needed, and `.and` eager because its argument is always computed before the call)
 ```
 Much.code && { Slow.code } && {ATonOf.code} // lazy
 Much.code .and (Slow.code) .and (ATonOf.code)  // eager

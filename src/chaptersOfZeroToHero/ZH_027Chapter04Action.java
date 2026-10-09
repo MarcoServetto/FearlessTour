@@ -62,7 +62,7 @@ We call the generic parameters `R` and `RR` to suggest that `R` is the result of
 Note how all the methods are `mut` and all the generic parameters accept `imm`, `mut` and `read`. This is because actions are often used together with side effects and mutations.
 The actual implementation of `Action[R]` also offers some convenience methods (`.map`, `.mapInfo`, `.andThen`, `!`, `.context`, `.recover`, `.catch` and a few more).
 Methods `!` and `.context` are widely used and beginner-friendly, while methods `.map` and `.andThen` are used more rarely.
-Here we examine `!`, `.context`, `.map` and `.andThen` one by one:
+Here we examine those methods one by one:
 
 >Note: Action.mapInfo is also present, but we do not discuss it in the guide
 
@@ -96,7 +96,7 @@ To force the execution of an action and still get the action back, we should use
 myAction.run{ .ok v->Actions.ok(v); .info i-> Actions.info(i); }
 ````
 Where `Actions.ok` and `Actions.info` create an always succeeding or always failing action.
-However, the action obtained this way has already run and does nothing new when run again, which is misleading, so the code above is better avoided.
+However, actions that do no actions when called are misleading, so the code above is better avoided.
 
 #### Method `Action[R].context`
 
@@ -148,7 +148,7 @@ Action[R:*]: {
   ...
   }
 ```
-Method `.map` takes a mutating function `f` and returns a `mut Action[RR]` object that, when a matcher `m` is provided, calls the `.run` method on the outer `Action[R]` and delegates the behaviour of `.ok` and `.info` to `m.ok` and `m.info`.
+Method `.map` takes another mutating function `f` and returns a `mut Action[RR]` object that, when a matcher `m` is provided, calls the `.run` method on the outer `Action[R]` and delegates the behaviour of `.ok` and `.info` to `m.ok` and `m.info`.
 - `m.ok` will take as input not the original value `x`, but the result of applying `f` to `x`.
 
 Method `.map` is useful to transform the type of actions without actually executing any code at that moment.
@@ -244,9 +244,7 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
       }}}
 ```
 
-Here `Points` has a `.fromInfo` method creating a point using the `"x"` and `"y"` coordinates stored in an `Info` object.
-The coordinates are stored as text, so `.getNat` on a `Str` parses it into a `Nat`, and stops with an error if the text is not a number (the `get` convention of Chapter 2).
-Then, method `Points#` takes the `x` and `y` `Nat` coordinates and creates the resulting `Point`.
+Here `Points` has a `.fromInfo` method creating a point using the `"x"` and `"y"` coordinates stored in an `Info` object.Then, method `Points#` takes the `x` and `y` `Nat` coordinates and creates the resulting `Point`.
 However, before the point is created, we use `Nat.assertInRange` to check that `x` and `y` are in the desired range.
 `Nat.assertInRange` will throw an error if the number is not in the range.
 In `.cmp`, the parameters `{.imm.x,.imm.y}1` and `{.imm.x,.imm.y}2` are patterns taking the two points apart:
@@ -261,8 +259,6 @@ The idea is that most of the code can create points assuming that the creation w
 From the perspective of that code, a failure to create a `Point` object is an observed bug.
 
 Then, if the program as a whole does not want to consider failing to create points an observed bug, it can wrap a function making a lot of computations about points into a `Try#{..}`, thus producing an action that can be safely handled.
-This works for the deterministic errors, like a missing key in a `Map`. Today `assertInRange` fails with a non-deterministic error (see the section about `CapTry` below), and `Try#` does not capture those: only `sys.try` does.
-
 In a complex program we can have a few layers of responsibility like this, where some code works as a supervisor of some other code that is allowed to fail.
 
 ### Try, CapTry and exact shape of error messages.
@@ -295,7 +291,7 @@ Stuff:{
 
 `this.beer1` would have
 `List.get: List index 5 out of range for List of length 3`
-stack trace `Stuff.beer1`.
+stack trace `Stuff.beer1, Stuff.foo, List.get`.
 
 `this.beer2` would have
 ```
@@ -303,25 +299,21 @@ InBeer2
 List.get: List index 5 out of range for List of length 3
 ```
 stack trace `Stuff.beer2`
-As you can see, the call to context added custom text.
-In both cases the stack trace starts where `!` throws the error again: `Stuff.foo` is not part of it, since the error was caught by `Try#` before.
+As you can see, the call to context added custom text but removed information from the stack trace.
 >Is this what we want? big design decision. The other implementation where we keep the original stack trace must also be possible. (mutate the exception obj and re-throw it)
 
-We can capture this information programmatically with the capability `System.try` (of type `CapTry`)
+We can capture this information programmatically with the capability `System.try`
 
 ````
 sys.try#{ Error.msg[Nat] "boom" }.info!.getMap.get("msg").getMsg
 ````
-The `Info` of such an action is a map: the key `"msg"` holds the message (here `"boom"`), and the key `"list"` holds the stack trace, as a list with one `Info` for each call.
 
 Code `sys.try#{...}` creates an `Action[R]` whose `Info` is going to be the sum of the
 normal `Info` and the info containing the stack trace.
 > How? list of string or structured?
 
 Moreover, `System.try` allows us to capture some sneaky errors, known as **non-deterministic errors**.
-A deterministic error is one that the same operation always raises, or never raises, for the same input, like a missing key in a `Map`.
 Non-deterministic errors are errors that may change depending on the specific system limitations and set up.
-`Try#` captures only the deterministic ones.
 They include:
 - Memory overflow: discuss
 - Stack overflow: discuss
@@ -375,10 +367,9 @@ But, in a real program 90% of the code is new abstractions written by the progra
 
 When programmers learn about offensive programming, they are usually scared about two issues:
 Performance and false positives.
-Fearless is designed to solve both issues at the same time with tunable assertion levels.
-What follows describes this design: the standard library offers `Block.assert` and assertion methods like `.assertTrue`, `.assertEq` and `.assertInRange`, but the levels `assertPre`, `assertSys`, `assertNetwork` and `.assert5`..`.assert16`, the `disable` directive and the other forms of assertion shown below do not exist yet, and their exact syntax is still open.
+In Fearless both issues are solved at the same time by tunable assertion levels.
 
-#### Tunable assertion levels (design):
+#### Tunable assertion levels:
 There are many different layers of assertions:
  - assert:  observed bug: the code of this package has a bug.
  - assertPre: precondition violation: the code of this package has been called with arguments that violate its requirements.
@@ -548,27 +539,6 @@ Pts:{ #(x: Nat, y: Nat): Nat -> Block#
 //PRINT|bad
 
 
-"""); }/*--------------------------------------------
--------------------------*/@Test void assertionLevelsAreOnlyADesign() { run("""
-use base.Block as Block;
-use base.True as True;
-Test: base.Main{s-> Block#
-  .assertPre{ True }
-  .return{base.Void}}
-//ERROR|In file: [###]_test/_rank_app111.fear
-//ERROR|[###]
-//ERROR|Method ".assertPre(_)" is not declared on type "Block[_]".
-//ERROR|Did you mean ".assert" ?
-//ERROR|[###]
-"""); }/*--------------------------------------------
--------------------------*/@Test void disableDirectiveDoesNotExist() { run("""
-disable foo.assertPre;
-Test: base.Main{s-> base.Void}
-//ERROR|In file: [###]_test/_rank_app111.fear
-//ERROR|[###]
-//ERROR|Missing header keyword "map" or "use".
-//ERROR|Found instead: "disable".
-//ERROR|[###]
 """); }/*--------------------------------------------
 -------------------------*/@Test void infoSumLiftsDifferentKindsToMaps() { run("""
 use base.Block as Block;

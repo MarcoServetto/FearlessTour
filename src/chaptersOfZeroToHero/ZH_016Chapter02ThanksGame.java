@@ -141,7 +141,7 @@ The game is implemented by a `NextState` function.
 
 The idea is that first all the tanks shoot, and every tank standing one step in front of another tank's turret (in its aiming direction) is eliminated.
 Then, all the surviving tanks move in their heading direction, but only if that position is free.
-A position is free if no other tank is currently there and no other tank wants to move there.
+A position is free if it is neither the current position nor the destination of another tank.
 
 -------------------------*/@Test void newCode1 () { run("""
 //OMIT_START
@@ -170,8 +170,6 @@ We filter only the tanks not in a dangerous location using method `.notIn`.
 We collect the space occupied by the survivor tanks: this is the union of the space occupied by the survivors in their current position and the space occupied by the survivors after they move in their heading direction.
 Finally we move our tanks if the space they want to go into is free using the method `.moveIfFree`.
 We conclude by returning the new `Stack` of moved tanks.
-Each `.let` writes the type of its local explicitly, as in `.let[Stack[Point]] danger`; the compiler can often infer it, but writing it helps the reader.
-
 Method `.notIn` uses a `.fold`:
 Starting with `True`, we accumulate with `.and`, checking that our tank is not in any of the positions `p` inside `ps`.
 This method only exists because we are using our little minimal implementation of a `Stack`.
@@ -197,7 +195,7 @@ In the code above, there is a subtle logical bug. Can you find it?
 **Solution:** By checking if our specific `Tank` wants to move into an occupied position, we also check against the position this very tank wants to move into.
 With the code as written, every `Tank` will want to move into an occupied position, since we count the position they want to move into as an occupied position.
 If some other tank also wants to go into the same position, then there would be two points in the occupied stack that are in conflict with the point our current tank wants to go into.
-Thus, we can fix the bug by counting how many points of `occupied` are equal to our destination. Our own destination is always counted once, so the position is free exactly when the count is `1`.
+Thus, we can fix the bug by counting the number of points present in our desired next location.
 
 Note how we used the word "our" there. By doing so, we are imagining ourselves to be the tank that is moving. This is a useful psychological technique we can use as programmers to better visualise code execution.
 
@@ -252,8 +250,7 @@ NextState: F[Stack[Tank],Stack[Tank]]{
 //OMIT_END
 """); }/*--------------------------------------------
 
-Here `.match` is used instead of `.if`: it works in the same way, but names the two cases `.true` and `.false`.
-There are many other ways to check this, and if the stack has a `.size` method (we can add it as we did for `.map` and `.filter`: the size of the empty stack is `0`, and the size of a stack made by `+` is `this.size + 1`), we can just do
+There are many other ways to check this, and if the stack has a `.size` method, we can just do
 -------------------------*/@Test void newCode4 () { run("""
 //OMIT_START
 """+fullPreface+"""

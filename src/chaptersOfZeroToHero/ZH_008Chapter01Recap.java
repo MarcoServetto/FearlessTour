@@ -11,12 +11,12 @@ class ZH_008Chapter01Recap {
 ### Terminology Recap
 
 #### Language Concepts
-- Evaluation (also called reduction): An expression evaluates to a result by slowly progressing into a more and more reduced form
+- Evaluation: An expression evaluates to a result by slowly progressing into a more and more reduced form
   - Example: `North.turn.turn --> East.turn --> South`
 - Supertype: Types are connected by supertype relations allowing us to generalise concepts.
 This is also used for code reuse.
   - Example: `North` and `South` are kinds of `Direction` so `Direction` is a supertype of `North` and `South`.
-- Implement(s): By implementing a supertype a type reuses the code of the supertype and is required to satisfy the logical contracts of the supertype. Satisfaction of those (informal) contracts is the responsibility of the programmer, but the type system can catch some common violations. Supertypes and Implements help code reuse and enable dynamic dispatch (the receiver object decides which implementation of the called method runs).
+- Implement(s): By implementing a supertype a type reuses the code of the supertype and is required to satisfy the logical contracts of the supertype. Satisfaction of those (informal) contracts is the responsibility of the programmer, but the type system can catch some common violations. Supertypes and Implements help code reuse and enable dynamic dispatch.
   - Example: `North` implements `Direction`
 
 - Inherited: a method that comes from an implemented supertype.
@@ -29,7 +29,7 @@ This is also used for code reuse.
 
 - Type name:
   - Relevance: giving type names to concepts allows us to talk about concepts and to classify them into cases
-  - Syntax: mostly an uppercase starting identifier, including letters, numbers, underscores but not spaces; the numbers and strings of the standard library, like `12`, `-5` and `"hi"`, are special type names
+  - Syntax: Uppercase starting identifier, including letters, numbers, underscores but not spaces
   - Examples: `North`, `Direction`
   
 - Type:
@@ -39,12 +39,12 @@ This is also used for code reuse.
   
 - Method name:
   - Relevance: giving names to methods (aka operations) allows us to mnemonically connect behaviour with names.
-  - Syntax: dot `.` followed by lowercase identifier (optionally preceded by some `_`), including letters, numbers, underscore but no spaces, that can also have `'` at the end; or operator symbols.
+  - Syntax: dot `.` followed by lowercase identifier, including letters, numbers, underscore but no spaces, that can also have `'` at the end; or operator symbols.
   - Examples: `.foo`, `._bar`, `._b12`, `.baz'`, `+`, `++`, `+>`, `<=`, `<#--`
   
 - Parameter name:
   - Relevance: parameter names describe the role the parameter value will exercise inside the method execution. A parameter that is intended to be unused can be called `_`.
-  - Syntax: lowercase identifier, optionally preceded by some `_`; can also have `'` at the end
+  - Syntax: lowercase identifier, optionally preceded by `_`; can also have `'` at the end
   - Examples: `foo` in `.baz(foo:Bar)`, `.baz(foo)` or `{foo->..}`
   
 - Argument:
@@ -69,7 +69,7 @@ This is also used for code reuse.
 - Parameter
   - Examples: `this`, `foo`, `bob`, `alice`, `x`, `x'`, `_foo`, `_b12`
 - Method call
-  - Examples: `this.bar(foo.baz)`, `foo+`, `foo+(bar)`, `foo!` (`foo+` and `foo!` call the methods `+` and `!` that take no argument)
+  - Examples: `this.bar(foo.baz)`, `foo+`, `foo+(bar)`, `foo!`
 
 - Object literal: We use many different names for object literals, to focus the attention on some aspects. But they are all just aliases for the same concept. Common aliases: Object, Value, Constant, Lambda, Instance.
 

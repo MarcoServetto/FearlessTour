@@ -15,11 +15,11 @@ There are 2<sup>64</sup> instances of `Nat` and there are
 just a little more than 10<sup>4,256,895,041</sup> instances of `Str`.
 Each `Nat` can be stored in exactly eight bytes, where a byte is eight bits.
 Strings use an incremental space consumption; this means that storing small strings would use
-only a small amount of memory (still much more than the 8 bytes needed for a `Nat`, even for the empty string).
+only a small amount of memory (with 34 bytes being the minimum size; still much more than the 8 bytes needed for a `Nat`).
 
 On the other extreme, storing a single string near the maximum representable size would take about 2 GB (two gigabytes).
-2 GB is a large amount of memory, but nowadays we have computers with many times more memory than that.
-Such a string would be very, very long. If we were to print it on conventional A4 paper with the standard 10 point font size and make a book out of it, that book would be tens of metres tall, about as tall as a 10-storey building.
+2 GB is a large amount of memory, but nowadays we have computers with thousands of times more memory than that.
+Such a string would be very, very long. If we were to print it on conventional A4 paper with the standard 10 point font size and make a book out of it, that book would be more than 30 metres tall; taller than a 10-storey building.
 Big, but still not infinite. I mean, actually quite small,... we have many buildings taller than that!
 
 Can we represent an actual infinite set of numbers?
@@ -36,10 +36,8 @@ Number:{
 Zero:Number { this.pred } // equivalent to .pred->this.pred
 """); }/*--------------------------------------------
 
-In `.succ: Number -> {this}`, `this` is the number whose `.succ` is called: the new number is a literal answering `.pred` with that number.
-
 As you can see, it is confusingly simple and minimal.
-Note how `Zero.pred` just calls `Zero.pred` again: zero has no predecessor, and asking for it is a computation that never terminates (a real run ends with a stack overflow error).
+Note how `Zero.pred` just calls `Zero.pred` again: zero has no predecessor, and asking for it is a computation that never terminates.
 Here are some examples of Peano numbers:
 ```
 Zero  //0

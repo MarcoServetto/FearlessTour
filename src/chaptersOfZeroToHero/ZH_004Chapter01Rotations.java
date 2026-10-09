@@ -61,10 +61,10 @@ We show 4 ways to declare `Turn90`, from the most verbose to the most compact:
   Turn90: Rotation{dir-> dir.turn }
   Turn90: Rotation{::.turn }
 ```
-- The first way repeats the whole signature of `#`, parameter and return types included. As we discussed, this is not needed.
+- The first way repeats the type declaration of `#`. As we discussed, this is not needed.
 Note how the code is naming the parameter `dir` instead of `d`.
 This is ok: when implementing a method, the name of the parameters is irrelevant and can be chosen anew every time the method is implemented.
-- The second still names `#`, but omits the types: they are inferred.
+- The second explicitly implements `#`.
 - The third relies on the fact that the `#` method is the only abstract method of `Rotation`, thus we can avoid mentioning the method name. We still need to mention the parameter name and the `->` symbol.
 - The last uses a new form of syntactic sugar, designed to simplify writing literals
   overriding a method with a single parameter just to immediately use such parameter.
@@ -144,7 +144,7 @@ RotateTwice: { #(r1: Rotation, r2: Rotation, d: Direction): Direction->
 The type `RotateTwice` has a single method `#` taking three parameters:
 two `Rotation`s and a `Direction`. It then returns a `Direction`.
 In the method body, we see `r1 # ( r2 # ( d ) )`, where we added some spaces for clarity.
-This code can be read from the inside out: we first call `r2#`, passing it the input direction `d`. This is going to produce some other direction, that is passed as input to method `r1#`.
+This code can be read from the inside out: we first call `r2#` on the input direction `d`. This is going to produce some other direction, that is passed as input to method `r1#`.
 The resulting effect is that we rotate the input by the sum of the rotations `r1` and `r2`.
 
 Function `RotateTwice` takes three parameters.
@@ -166,12 +166,12 @@ Rotation: {
 }
 ```
 As you can see, we can define `+` as a method. As we have seen with `#`, we can use symbols like `+` and `-` as method names.
-Method `Rotation+` has two parameters, counting `this`: `this` and `r`; the two `Rotation`s we want to compose.
+Method `Rotation+` has two parameters: `this` and `r`; the two `Rotation`s we want to compose.
 For example `this` could be `Turn90` and `r` could be `Turn180`.
 
 Using the syntax
 `(Turn90+(Turn180))#(North)`
-method `Rotation+` combines those two parameters to produce a new `Rotation` object, equivalent to `Turn270`.
+method `Rotation+` will combine those two parameters to produce a new `Rotation` object, equivalent to `Turn270`.
 Then it is going to rotate `North` 270 degrees producing `West`.
 Here is the full code:
 -------------------------*/@Test void rotationPlus() { run("""
@@ -202,14 +202,11 @@ The method `Rotation+` is considered very elegant code.
 Inside it, `this` refers to the first `Rotation` (`Turn90` in `Turn90 +(Turn180)`).
 `r` refers to the second rotation (`Turn180`).
 The object literal `{ d -> this#( r#(d) ) }` creates a new `Rotation` object. When this new object's `#` method is called later, it will use the `this` and `r` that were captured when it was created.
-In other words, `Turn90+(Turn180)` is `RotateTwice` with its first two parameters already given: a `Rotation` that still waits for a `Direction`.
-Giving a function only some of its arguments, to obtain a function that waits for the others, is called **partial application**.
-
 Thanks to our syntactic sugar and inference, the body of method `Rotation+` is very compact.
 The expression `{ d-> this#(r#(d)) }` is equivalent to
 `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }`.
 Earlier we discussed how `North` is a literal.
-`North` is just sugar for `SomeName147:North{}`. In a similar way `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }` can be shortened by the sugar to `{ d-> this#(r#(d)) }`.
+`North` is just sugar for `SomeName147:North{}`. Exactly in the same way and via the same process `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }` can be shortened by the sugar to `{ d-> this#(r#(d)) }`.
 
 At first look, you may think that the body `this#(r#(d))`
 would go in an infinite reduction since we call method `Rotation#` on `this`
@@ -240,7 +237,7 @@ Turn270: Rotation{::.turn.turn.turn}
 is to assume that the method `Rotation#` will have the behaviour that we can see in `Rotation`.
 Here `Rotation#` is abstract. Thus, there is no way that the calls `this#` or `r#` would ever resolve into the non-existent code of `Rotation#`; they will always resolve to some concrete implementation of it.
 
-While this is self evident in `Rotation#`, since there is no body, the same caution applies when a body is present: methods can be overridden in other literals, so the call may run an override instead of the body written in `Rotation`.
+While this is self evident in `Rotation#`, since there is no body, this holds also when a body is present, since methods can be overridden in other literals.
 
 The code of `Rotation+` is similar to the code of `Tanks#`: it is creating a new kind of object by capturing the method parameters inside of the returned literal.
 With the `+` method we are able to create all kinds of `Rotation`s by using only `Turn90`:

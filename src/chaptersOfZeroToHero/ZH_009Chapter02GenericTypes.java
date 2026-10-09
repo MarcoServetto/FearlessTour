@@ -36,10 +36,10 @@ Left : Fork{ l,r -> l }
 Right: Fork{ l,r -> r }
 """); }/*--------------------------------------------
 
-Here we see the generic type parameter `Val`, declared by `[Val]`.
+Here we see the generic type `[Val]`.
 We can read the above code as follows:
 
->`Fork` has a generic method `.choose` that forall types `Val` takes two parameters of type `Val` and returns a `Val`. Method `Fork.choose` is abstract.
+>`Fork` has a generic method `.choose` that forall types `Val` takes two arguments of type `Val` and returns a `Val`. Method `Fork.choose` is abstract.
 `Left` is a kind of `Fork` where the `.choose` method returns the first parameter.
 `Right` is a kind of `Fork` where the `.choose` method returns the second parameter.
 
@@ -56,7 +56,7 @@ firstChoice.choose("Option1",  secondChoice.choose("Option2", "Option3")  )
 where `firstChoice` and `secondChoice` are `Fork`s that we obtained somewhere.
 Note how we need the generic type `Val` so that our `Fork` can work on any type:
 We can write `someFork.choose("Hello","Hi")` but also `someFork.choose(1,5)`.
-However, `someFork.choose("Hello",5)` would be ill typed: `Val` needs to be instantiated with one type that fits both arguments, and the inference does not find one for a `Str` and a `Nat`.
+However, `someFork.choose("Hello",5)` would be ill typed: there needs to be a type that can be used to instantiate `Val`.
 Type inference usually takes care of finding the types that instantiate a generic method call.
 However, we can pass the type argument ourselves if we want, using syntax `someFork.choose[Str]("Hello","Hi")`.
 As you can see, we can add `[..]` after the method name and before the list of arguments,
@@ -71,7 +71,7 @@ On the other hand, when we declare a generic method, as in
 .choose[Val](leftVal: Val, rightVal: Val): Val;
 ```
 we need to specify all the generic types that we are introducing.
-If we omit the `[..]` in the method declaration, then the conventional sugar allowing us to omit any empty square brackets and parentheses applies. Thus, when we declared
+If we omit the `[..]` in the method declaration, then the conventional sugar allowing us to omit any empty parentheses applies. Thus, when we declared
 `.turn: Direction` at the start of our journey, we actually declared
 `.turn[](): Direction`: a method called `.turn` that takes zero generic types and zero parameters.
 
@@ -164,7 +164,9 @@ Right: Fork{::.right}
 
 The main difference is that instead of taking a `leftVal` and a `rightVal` parameter, we take a single parameter of type `LeftRight[Val]` that can compute the two original parameters when needed.
 
-`LeftRight[LR]:{ .left: LR; .right: LR }` is a generic type declaration, and `LeftRight[Val]` is one of the types it declares.
+Type `LeftRight[Val]` is a generic type.
+
+In the same way, `LeftRight[LR]:{ .left: LR; .right: LR }` is a generic type declaration.
 
 Earlier we saw generic methods as methods taking both type parameters and actual parameters. Alternatively, we can see generic methods as a way to define an infinite number of concrete methods; one for each possible type instantiation.
 
@@ -175,10 +177,10 @@ In this case there are `LeftRight[Str]`, `LeftRight[Int]` and so on.
 Even `LeftRight[LeftRight[Str]]` is a valid member of the `LeftRight` family.
 As you can see, a single generic type declaration actually declares an infinite number of types!
 
-While generic parameters are usually inferred for generic methods, they are always explicit for generic types.
+While generic parameters are inferred for generic methods, they are always explicit for generic types.
 When at the start we declared `Direction:{.turn:Direction;}`
 thanks to the sugar we were actually declaring `Direction[]:{.turn[]():Direction[];}`.
-Again, empty square brackets and empty parentheses can be omitted.
+Again, empty parentheses can be omitted.
 
 We can now understand the meaning of 
 ```
@@ -215,9 +217,7 @@ someFork.choose[Str]( SomeLeftRight[]:LeftRight[Str]{
 //OMIT_END
 """); }/*--------------------------------------------
 
-That is, the argument of `Fork.choose` is a literal of a fresh type (here called `SomeLeftRight`) that implements `LeftRight[Str]`, since that is the expected type for the argument of `Fork.choose`.
-The code above only shows the structure: `_Str1[]:"Hello"{}` is the expanded form of the string literal `"Hello"`, and a program is not allowed to write it, since the type `"Hello"` is sealed (we will see what that means in Chapter 3).
-In order to implement a `LeftRight[Str]`, we need to specify an implementation for the two abstract methods, `.left` and `.right`.
+That is, the argument of `Fork.choose` is a literal of a fresh type (here called `SomeLeftRight`) that implements `LeftRight[Str]`, since that is the expected type for the argument of `Fork.choose`.In order to implement a `LeftRight[Str]`, we need to specify an implementation for the two abstract methods, `.left` and `.right`.
 Another advantage of this new way is that we can now write complex and time consuming computations inside the body of methods `.left` and `.right`, and only one of those computations is going to be triggered.
 
 A good way to understand how generic types work is to do the same reasoning we did for generic methods; the code below can be understood as the following:
@@ -238,9 +238,9 @@ LeftRightPoint: { .left: Point; .right: Point }
 LeftRightDirection: { .left: Direction; .right: Direction }
 ...
 ```
-As you can see, `LeftRightInt` and `LeftRightPoint` are unrelated types (neither implements the other), so there is no subtyping relation between them.
-In the same way, 
-`LeftRight[Int]` and `LeftRight[Point]` are unrelated types, so there is no subtyping relation between them either.
+As you can see, `LeftRightInt` and `LeftRightPoint` are different types, and thus there is no subtyping relation between them.
+In the same way,
+`LeftRight[Int]` and `LeftRight[Point]` are different types, and thus there is no subtyping relation between them either.
 
 ### Recap
 

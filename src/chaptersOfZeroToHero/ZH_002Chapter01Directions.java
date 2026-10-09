@@ -62,7 +62,7 @@ Within this declaration
 
 - `North` is the type name.
 - `.turn` is a **method name**. The text `.turn` is a single token and includes the `.`
-- `.turn -> East;` is a **method implementation** (a method declaration with a body) and in this case
+- `.turn -> East;` is a **method declaration** and in this case
   the method body is just `East`.
 - The token `->` gives a body to a method. In the case of `.turn` the body
  is the new direction after turning 90&deg; clockwise.
@@ -74,7 +74,7 @@ specifically, an object literal expression.
 
 Programming is all about defining kinds of objects and the relations between them.
 Other terms for 'object' could be 'value', 'entity', 'instance' or 'element'.
-We will mostly use the term 'object' to talk about those; the terminology recap at the end of this chapter explains when the other names are used.
+We will use the term 'object' to talk about those.
 
 To understand expressions better, consider the English sentence "Stop."
 This sentence contains a single word; and yet, it is still a sentence.
@@ -94,13 +94,13 @@ Using the code above, a simple example of a method call is `North.turn`.
 We can write `North` to refer to the object `North`,
 which we are interpreting as representing the cardinal direction north.
 We can also write `North.turn` to refer to the object `East`, which we are interpreting as representing the cardinal direction east.
-In other words, so far there are two ways to refer to an object:
+In other words, there are exactly two ways to refer to an object:
 1. by directly mentioning it, or
 2. by mentioning some expression that returns it.
 
 We say that the `.turn` method of `North` returns the object `East`.
 In other words, `North.turn` is an expression which is equivalent to the object `East`.
-In the same way, `South.turn.turn` is an expression which is equivalent to the object `North`. This process of discovering the meaning of an expression is called evaluation; each step, replacing a call with what it returns, is called a reduction.
+In the same way, `South.turn.turn` is an expression which is equivalent to the object `North`. This process of discovering the meaning of an expression is called evaluation.
 
 The example we are discussing is still incomplete, and it
 would cause an error if we tried to compile it.

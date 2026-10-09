@@ -161,7 +161,7 @@ Is this extra verbosity worth it? It depends on the specific situation we are in
 
 Now, for the other issue: the user can confuse the meaning of the two points.
 How can we fix that? The two points are not top-left and bottom-right in an absolute sense, but just in relation to each other.
-Fearless offers good ways to handle this other case, but we will see them later in the guide (the section about offensive programming, in Chapter 4). The main idea is that we can check that the property we want holds just before creating the rectangle.
+Fearless offers good ways to handle this other case, but we will see them later in the guide. The main idea is that we can check that the property we want holds just before creating the rectangle.
 
 ### Types and the source of meaning
 
@@ -227,7 +227,6 @@ South: Direction {.turn -> West;  .point -> Points#(+1, +0); }
 West : Direction {.turn -> North; .point -> Points#(+0, -1); }
 """); }/*--------------------------------------------
 
-Here `.x` counts rows, growing towards the South, and `.y` counts columns, growing towards the East: heading North decreases `.x`.
 By adding a connection between points and directions, both types become more meaningful.
 This is how meaning emerges. Meaning is obtained by the network of connections between our data types.
 

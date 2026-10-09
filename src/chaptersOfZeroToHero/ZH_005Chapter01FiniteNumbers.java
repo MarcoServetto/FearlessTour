@@ -66,7 +66,7 @@ Number:{
    }
  /*... all other numbers as before*|/
 ```
-In each of them we simply call `.succ` the needed number of times.
+Where we simply call `.succ` a large number of times.
 
 This works, and for just 12 numbers, it's barely feasible. But imagine doing this for thousands or millions of numbers.
 Imagine writing a chain of `.succ` thousands or millions of calls long! It would be incredibly repetitive and impractical. We need a more general approach.
@@ -78,7 +78,7 @@ Imagine writing a chain of `.succ` thousands or millions of calls long! It would
 
 Instead of defining `+` for every single number, we can define it using just two rules that build upon each other. This powerful technique is called an inductive definition.
 
-**Base Case:** The simplest case is adding zero. Adding any number `a` to zero gives `a`: `0 + a = a`.
+**Base Case:** The simplest case is adding zero. Adding zero to any number `a` doesn't change it: `0 + a -> a`.
 
 **Inductive Step:** How do we add a non-zero number (let's call it `this`) to another number `other`?
 - We can think of `this` as being "one more than its predecessor": `this` = `this.pred + 1`.
@@ -220,7 +220,7 @@ However, look what happens when we reduce
 
 01. `1 + 2 * 3`
 02. `1.pred + (2.succ) * 3`
-03. `0 + (2.succ) * 3`
+03. `(0 + (2.succ)) * 3`
 04. `0 + 3 * 3`
 05. `3 * 3`
 06. `(3.pred * 3) + 3`
@@ -253,7 +253,7 @@ That is, if we want to get `7` we need to use
 12. `0 + 7`
 13. `7`
 
-In order to obtain `7` from `1 + 2 * 3`, the parentheses around `2 * 3` are needed.
+In order to obtain `7`, those parentheses are needed.
 Fearless does not have operator precedence: operators are just methods,
 and when parentheses are omitted,
 the method will eagerly capture the first piece of code that looks like an argument.
@@ -350,7 +350,7 @@ Some `Int`s: `+10`, `-25`, `+0`, `+12345`, `-987`.
 Crucially, `+10` or `-25` are treated as single tokens by the Fearless compiler. `Int` also provides methods like `+`, `-`, `*`, etc. For example: `+10 + -3` results in `+7`.
 
 Note how those tokens, `10`, `134`, `-987` are just type names.
-Remember how we said that type names *mostly* start with uppercase letters?
+Remember how we said that type names *mostly* start with upper case letters?
 Well, this is what we meant: there are some special type names that are used to directly represent numbers.
 Overall, all the type names starting with something other than a letter or `_` are defined by the Fearless standard library, and as such can
 not be defined by regular Fearless programmers. 
@@ -404,7 +404,7 @@ Of course, there isn't really a file containing billions of billions of lines li
 18446744070000000006: Nat{.pred-> 18446744070000000005; .succ->  18446744070000000007; }
 ...
 ```
-But let's imagine, just for fun. Picture "The Infinite Typist", a mythical programmer fuelled by pure
+But let's imagine, just for fun. Picture "The Infinite Typist", a mythical programmer fueled by pure
 determination and questionable amounts of coffee, who decided one day to manually define numbers,
 one after another. Day after day, century after century, they typed...
 If we printed their monumental work, using tiny font and three columns per page,
@@ -419,11 +419,6 @@ or planet-sized bookshelves. It uses highly optimised internal techniques,
 leveraging how computer hardware works, to represent these numbers efficiently
 in a small, fixed amount of memory. This allows mathematical operations on `Nat`
 to be incredibly fast.
-
-The number 2<sup>64</sup> is not arbitrary: a computer stores a number as a sequence of bits, where a bit is a digit that can only be `0` or `1`.
-A `Nat` uses exactly 64 bits (eight bytes), and there are 2<sup>64</sup> different sequences of 64 bits, one for each `Nat` from `0` to ( 2<sup>64</sup> ) - 1.
-Computer hardware directly supports adding, subtracting and multiplying numbers of exactly this size, and this is what makes `Nat` operations so fast.
-
 The Fearless standard library is internally optimised in ways that a library written
 by a regular programmer could not. In particular, the standard library can define
 a number of types that is out of the reach of what can realistically be coded by hand,
@@ -454,9 +449,8 @@ Int:{
 ...
 -9223372036854775808: Int{.pred-> +9223372036854775807; .succ->  -9223372036854775807; }
 ```
-As you can see, the predecessor of `+0` is `-1`, the successor of the biggest `Int` is the smallest `Int`,
-and the predecessor of the smallest `Int` is the biggest `Int`.
-Like a `Nat`, an `Int` uses 64 bits; since they are shared between negative and non negative numbers, the biggest `Int` is about half of the biggest `Nat`.
+As you can see, the predecessor of `+0` is `-1` and the successor and predecessor of
+the biggest numbers are linked together.
 
 Finally, `Float` and `Num` are numeric types useful to represent fractions.
 We will discuss them later.

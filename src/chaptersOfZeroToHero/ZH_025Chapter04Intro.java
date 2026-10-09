@@ -96,7 +96,7 @@ Now we could represent our `Tank` as follows:
 Infos.list("North","East",Infos.list("10","5"))
 ```
 
-However, we still do not know at a glance if the first element of the list represents the heading direction or the aiming direction.
+However, we still do not know at a glance if the first element of the list represents the aiming direction.
 We would like a list where every element is associated with a label.
 That is a `Map[Str,Info]`.
 If we add such a map component to `Info` we get the following.
@@ -139,11 +139,11 @@ With an `Info` object named `myInfo`, the real `.msg`/`.list`/`.map` accessors e
 
 Notably, strings, lists and maps are three kinds of objects that can conceptually be empty.
 Since `Info` can represent either a string, a list, or a map, only one of these properties can be non-empty and hold data at any given time, reflecting the contained type.
-There's also an empty `Info`: an empty string, an empty list and an empty map are all turned into it. For the common cases where the variant is assumed to be there, or a default is acceptable instead of an `Opt`, `Info` also offers `.getMsg`/`.getList`/`.getMap` (throwing if `myInfo` is not that variant) and `.softMsg`/`.softList`/`.softMap` (returning the empty string/list/map instead of throwing).
+There's also an empty `Info`. For the common cases where the variant is assumed to be there, or a default is acceptable instead of an `Opt`, `Info` also offers `.getMsg`/`.getList`/`.getMap` (throwing if `myInfo` is not that variant) and `.softMsg`/`.softList`/`.softMap` (returning the empty string/list/map instead of throwing).
 This structured approach to serialisation using `Info` not only simplifies data handling but also enhances the clarity and flexibility of your codebase, making it easier to manage and extend.
 
 Similarly, we can use the type `Infos` to programmatically create `Info` objects using methods `Infos.msg(Str)`, `Infos.list(/*..elements..*|/)` and `Infos.map(/*..keys and values..*|/)`.
-In the standard library `Infos.list` takes one or two elements, so the three elements of `Infos.list("North","East",Infos.list("10","5"))` above work only with the `Infos` sketched earlier; a longer list `myList` can be turned into an `Info` with `myList.info{::}`.
+In the standard library `Infos.list` takes one or two elements; a longer list `myList` can be turned into an `Info` with `myList.info{::}`.
 The empty `Info` object can be obtained by writing `Info` or just `{}`.
 
 >Note: tests that the 4 kinds of info work, and that empty list and empty map and empty string return the empty info, and that the other kind is returned otherwise.

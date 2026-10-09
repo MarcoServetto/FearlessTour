@@ -290,10 +290,6 @@ If `x` or `y` is not in the visualised range, we do not represent tank `t` on ou
 Otherwise, we write the three lines representing `t` on the appropriate position on `res`.
 Note how we call `.get(..).get(..).set(..)`
 to access two layers of `List` and then set a new value in our variable.
-`.forEach` runs a function returning `Void` on each element of a flow.
-`.if {cond} .done` ends the `Block` early when `cond` holds, so a tank outside the grid is skipped.
-`.flow` exists only on immutable lists; `res` is a `mut List`, so we use `.seqFlow`, its sequential version.
-
 What we are creating now is basically a 'text art' based game.
 Those were popular in the (far) past. Of course Fearless supports proper graphics, and we will see how to render nice looking images of tanks later on; but this way of printing the 'current screen' line by line is how those fancier graphic systems work too under the hood.
 Here we use characters as graphical symbols; modern screens use (much smaller) coloured pixels as graphical symbols.

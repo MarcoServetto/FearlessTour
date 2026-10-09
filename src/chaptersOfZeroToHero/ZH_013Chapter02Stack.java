@@ -115,7 +115,7 @@ Arguably, `Stack[Nat] + 1 + 2 + 3` was much clearer.
 Visualising reductions is great if it helps us to understand the semantics of the code. Getting stuck in the mud of redundant verbose value syntax would make visualising reductions less useful.
 To better visualise this method execution we will use a symbolic representation for stacks.
 
-We will represent the result of `Stack[Nat] + 1 + 2 + 3` as `[3,2,1]`, and the empty stack `Stack[Nat]` as `[]`.
+We will represent the result of `Stack[Nat] + 1 + 2 + 3` as `[3,2,1]`.
 
 
 With this representation problem sorted out, we can now reduce
@@ -128,9 +128,9 @@ With this representation problem sorted out, we can now reduce
 06. `3+ ({ 0; top,tail -> top+(Example.sum(tail))}.elem(2,[1]))`
 07. `3+(2+(Example.sum([1])))`
 08. `3+(2+([1].match{ 0; top,tail -> top+(Example.sum(tail))}))`
-09. `3+(2+({ 0; top,tail -> top+(Example.sum(tail))}.elem(1,[])))`
-10. `3+(2+(1+(Example.sum([]))))`
-11. `3+(2+(1+([].match{ 0; top,tail -> top+(Example.sum(tail))})))`
+09. `3+(2+({ 0; top,tail -> top+(Example.sum(tail))}.elem(1,Stack[Nat])))`
+10. `3+(2+(1+(Example.sum(Stack[Nat]))))`
+11. `3+(2+(1+(Stack[Nat].match{ 0; top,tail -> top+(Example.sum(tail))})))`
 12. `3+(2+(1+(0)))`
 13. `3+(2+(1.pred+(0.succ)))`
 14. `3+(2+(0+(0.succ)))`
@@ -146,7 +146,7 @@ This, again, is long and verbose. When we have methods like `.match`, or methods
 01. `Example.sum([3,2,1])`
 02. `3+( Example.sum([2,1]) )`
 03. `3+(2+( Example.sum([1]) ))`
-04. `3+(2+(1+( Example.sum([]) )))`
+04. `3+(2+(1+( Example.sum(Stack[Nat]) )))`
 05. `3+(2+(1+0))`
 06. `3+(2+1)`
 07. `3+3`
@@ -233,7 +233,7 @@ This represents more closely what a person could do if they had to merge two sta
 Note how this version produces a different ordering in the result.
 
 This is known in computer science as a **tail recursive** algorithm.
-Some languages optimise tail recursive algorithms, so that they can repeat for any number of steps without using more and more memory. Fearless does not do this: a recursion with several thousand calls nested inside each other, tail recursive or not, can run out of stack space and stop the program. The examples of this guide are small enough for this not to be a concern; it is still early to discuss how to repeat a computation many times (`Block` offers a `.loop` method for this purpose).
+Some older languages require tail recursive algorithms for optimisation reasons. This is usually not a concern in Fearless. It is still early to discuss **why and how** this is not a problem. Now we just clarify that we can avoid worrying about those ideas in a modern language like Fearless.
 
 Note how if we explicitly pass the empty stack as the second argument, we can use it as an empty initial accumulator, and we get a reverse:
 `[1,2,3] ++ []` reduces to `[3,2,1]`
@@ -266,12 +266,12 @@ Consider this other alternative body: `other ++ (this + e)`
 Oh no! This version loops back to the original form. This means that this algorithm would go on reducing forever.
 Intuitively, this is the case because we are now forcing immediate recomposition of the stack we just decomposed:
 by doing `this + e` early, we go back to our original value, instead of slowly navigating toward the end stack.
-For the same reason, the body variation `this + e ++ other` would not terminate either.
+For the same reason, also this following other body variation would not terminate:  `this + e ++ other`
 
-We have one last variation to consider: `other + e ++ this`
-
-This also does not terminate.
-The base case of `Stack[T]++` only applies when the receiver, the left operand, is the empty stack. Here the receiver is `other + e`, and the result of `Stack[T]+` is never empty.
+We have one last variation to consider:
+`other + e ++ this`
+This also does not terminate:
+Termination of `Stack[T]++` is only possible if the left operand is an empty stack, but the result of `Stack[T]+` is never empty.
 That is, this implementation of `Stack[T]++` calls `Stack[T]++` in a way that is guaranteed to call back the same `Stack[T]++` implementation over and over.
 
 As you can see, there are many ways to permute the `++` and `+` calls on `this`, `other` and `e`.

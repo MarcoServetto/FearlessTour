@@ -32,7 +32,7 @@ We call **magic methods** the methods from the standard library giving direct ac
 ### Var: the first bit of magic
 
 The following code introduces updatable local variables, and uses a few new features.
-It is a simplified version of the standard library `Var`, which has the same `.set` and `.get`, and also a `.swap` method.
+It is a simplified version of the standard library `Var`.
 -------------------------*/@Test void var1 () { run("""
 //OMIT_START
 _Magic: { ![R:**]: R -> base.Error.msg"magic"; }
@@ -106,7 +106,7 @@ In this simple example, when an `Animal` runs, it moves along the `x` axis.
 Note how to access the value inside of `loc` we need to use `.get`.
 
 While `loc` is a `mut Var[Point]`, the `Point` itself is immutable.
-As a sugar, a concrete type name without a modifier in front (like `Point` or `Nat`) is implicitly `imm`; a generic parameter like `E` stands for whatever capability it is instantiated with.
+As a sugar, any type name without a modifier in front is implicitly `imm`.
 To clarify this, here is the code from above with all the `imm` keywords explicitly added:
 
 -------------------------*/@Test void mdfsExplicit () { run("""
@@ -132,7 +132,7 @@ most types are just always `imm`, like `imm Void` and `imm Nat`, but also factor
 
 ### Aliasing
 
-Now that we have mutation, aliasing starts to matter.
+Now that we have mutation, we can have aliasing.
 Aliasing is both the best feature of mutation, and the very reason mutation needs to be kept under control.
 Aliasing is like a nuclear power plant:
 - Very powerful.

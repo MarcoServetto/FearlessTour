@@ -27,7 +27,7 @@ As for most type systems, RCs are a conservative approximation, where some objec
 
 Reference capabilities do not directly track mutable and immutable objects, but track the parameters/references to such objects.
 We will call a parameter with an `imm` type an `imm` parameter. Same for the other reference capabilities.
-An `imm` parameter refers to an immutable object. A `mut` parameter refers to an object that may be mutated through it.
+An `imm` parameter refers to an immutable object. A `mut` parameter refers to a mutable object.
 A `read` parameter may refer to either a mutable or an immutable object.
 That is, `read` parameters are useful to write code able to work on all kinds of objects.
 In addition to `imm`, `mut` and `read`, there are more kinds of reference capabilities, but we will see them later.

@@ -211,9 +211,8 @@ empty brackets.
 
 This newly shown method can be called with syntax:
 `Tanks.of(North, East)`
-Here `Tanks` is the first implicit parameter and it is called **the receiver** (inside the method it is the parameter `this`).
+Here `Tanks` is the first implicit parameter and it is called **the receiver**.
 The others are provided after the method name in parentheses.
-The expressions written inside the parentheses are called **arguments**: in `Tanks.of(North, East)` the receiver is `Tanks` and the arguments are `North` and `East`.
 
 The syntax `.of(heading: Direction, aiming: Direction): Tank`
 defines a method called `.of` with parameters `heading` and `aiming`.
@@ -389,8 +388,8 @@ Bar # ( Add |- )
 This is a call of the method called `#` on the receiver `Bar`, and the single argument is a call of the method called `|-` on the receiver `Add`.
 Method `|-` takes zero parameters.
 
-On the other hand, parameter names start with a lowercase letter, and
-type names mostly start with an uppercase letter.
+On the other hand, parameter names start with a lower-case letter, and
+type names mostly start with an upper-case letter.
 The rules for valid type names are a little more involved,
 and we will discuss them in detail later.
 

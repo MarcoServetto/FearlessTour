@@ -158,7 +158,7 @@ However, when elements are arranged in a specific sequence, accessing them via i
 - The fourth at index `3`,
 - The fifth and last at index `4`.
 
-This zero-based indexing system has beneficial mathematical properties. For example, it allows a single list to efficiently emulate a grid structure. Consider a 3x5 grid as depicted below, where `x` ranges from `0` to `4` (columns) and `y` from `0` to `2` (rows). Each cell `x, y` corresponds to the **single index** `y * 5 + x` in a flat list of length `15` (in the tank game `x` is the row and `y` the column; here it is the other way around):
+This zero-based indexing system has beneficial mathematical properties. For example, it allows a single list to efficiently emulate a grid structure. Consider a 3x5 grid as depicted below, where `x` ranges from `0` to `4` (columns) and `y` from `0` to `2` (rows). Each cell `x, y` corresponds to the **single index** `y * 5 + x` in a flat list of length `15`:
 
 ```
  x,y                          -->  index mapping
@@ -224,7 +224,7 @@ the capability of the list and the capability of the elements. This gives us a r
 Since reference capabilities impact the whole reachable object graph, an object storing mutable objects needs to be mutable too.
 Thus, we need to use `mut` twice.
 Using `.get` we can obtain `mut` references to the contained animals and mutate them.
-If we have a parameter `animals` containing `[bunny,bunny]` (where `bunny` is an `Animal` with `.run` and `.location`, like the one of the aliasing example); that is, the same bunny twice, we can call `animals.get(0).run(5)` and the bunny will mutate; it will now be in a new position. Since the same bunny is contained in the list twice, `animals.get(1).location` will also result in the same updated location.
+If we have a parameter `animals` containing `[bunny,bunny]`; that is, the same bunny twice, we can call `animals.get(0).run(5)` and the bunny will mutate; it will now be in a new position. Since the same bunny is contained in the list twice, `animals.get(1).location` will also result in the same updated location.
 You can think of it as a hard container of soft elements, for example a table with soft and malleable clay sculptures permanently glued into it.
 
 **Unclear and confusing options:**
@@ -256,9 +256,7 @@ Lists#(1,2) +> 3 +> 4
 Lists#(1,2) ++ (Lists#(3,4))
 Lists#(1) ++ (Lists#(2,3,4))
 ```
-As you can see, we use `+>` to concatenate a list and an element, and `++` to concatenate two lists.
-Since Fearless has no operator precedence, the argument of `++` needs the parentheses: without them, `Lists#(1,2) ++ Lists#(3,4)` would be read as `(Lists#(1,2) ++ Lists)#(3,4)`.
-Since `<+` is a method of `List`, the following code does not work:
+As you can see, we use `+>` to concatenate a list and an element, and `++` to concatenate two lists.Since `<+` is a method of `List`, the following code does not work:
 ```
 1 <+ Lists#(2,3,4)
 ```
@@ -269,7 +267,7 @@ Lists#(2,3,4) <+ 1
 ```
 where `<+` appends to the left and `+>` appends to the right.
 
-Finally, we can use `.subList(start,end)` to get a sub part of a list (`start` is included, `end` is excluded). Method `.subList` does not clone the list, but creates a minimal wrapper object referring to the transformed indexes; thus using `.subList` on a very, very long list is still a cheap operation.
+Finally, we can use `.subList(start,end)` to get a sub part of a list. Method `.subList` does not clone the list, but creates a minimal wrapper object referring to the transformed indexes; thus using `.subList` on a very, very long list is still a cheap operation.
 
 ### List and withers: `.with`, `.without`, `.withAlso`
 Suppose we have a list of 10 tanks, and we want to insert a new tank in the middle.
@@ -323,7 +321,7 @@ Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
 ````
 As you can see, now we have a `.cmp` method in `Point`, and we can use it to implement `==`.
 Crucially: `==` only uses `.cmp`. Great! This means we can move it into `Order[T]`.
-By moving methods up in the subtyping hierarchy, we achieve more code reuse: every type implementing `Order[T]` will also have `==`.
+By moving methods up in the subtyping hierarchy, we achieve more code reuse: every type implementing `Order` will also have `==`.
 
 ````
 Order[T]:{
@@ -453,7 +451,7 @@ If we have our iconic `Person:Order[Person]` with a `read .age:Nat`, we can writ
 `{::}` to get an `OrderBy[Person,Person]` and
 `{::.age}` to get an `OrderBy[Person,Nat]`.
 On the other hand, if we want to give a top level name for a specific way to order persons, we can do it by using `OrderBy[Person]`.
-Assuming `Cat` also has a `.weight: Nat` method and `Person` also has a `read .cats: List[Cat]` method (it has to be `read` because `p1` and `p2` are `read`), we can write:
+Assuming `Cat` also has a `.weight: Nat` method and `Person` a `read .cats: List[Cat]` method, we can write:
 ```
 ByCats:OrderBy[Person]{
   p1,p2 -> p1.cats.flow.map{::.weight}.sum 0 <=> (p2.cats.flow.map{::.weight}.sum 0);
@@ -478,8 +476,7 @@ OrderBy[T,K]:{
 Example usage: `{::.age}.then{::.name}` would compare a person by age first and name second. `{::.age}.then ByCats` would compare by age first and by total cats weight second.
 - Method `.view` allows us to compare entities of type `A` if we can convert them into a `T` for which we have an `OrderBy`.
 Example usage: `ByCats.view{::.driver}`
-would compare cars by the total cats weight of their `.driver`,
-assuming that `Car` has a `read .driver: Person` method (it has to be `read` because the functions given to `.view`, `.max` and the like see their argument as `read`, as we explain below for the parameters of `.cmp`).
+would compare cars by the total cats weight of their `.driver`.
 
 Here are some more boring examples:
 ```
@@ -525,7 +522,7 @@ Finding the max from some elements is not as obvious as it looks; there are two 
 
 Given this, the best design for `.max` and `.min` is to work as filters, and just remove all the elements that are not the max or the min.
 In this way, the empty flow would stay empty, and all the biggest/smallest elements would be preserved.
-Assuming a `Car` type with a `read .driver: Person` method, here you can see some interesting usage examples.
+Assuming a `Car` type with a `Person` driver, here you can see some interesting usage examples.
 ```
 myCars.flow
   .max{::}//if Car implements Order[Car]
@@ -550,7 +547,6 @@ myCars.flow
   .min {::} //to use the conventional comparator on the equally maximal cars
   .list
 ```
-`OrderByCaseInsensitive` is a ready-made `OrderBy[Str]` from the standard library, comparing strings while ignoring the difference between upper and lower case.
 
 Flows offer method `.sort` to sort the elements.
 It takes the same parameters as `.max`/`.min`.
@@ -597,7 +593,7 @@ OrderHash[T]:Order[T],ToStr{
   ...
 }
 ````
-By adding `ToStr` we are able to automatically derive 12 assert methods helping to check expectations over `T`; the conversion to string is needed for decent error messages. The second version of each assert takes `msg: read LazyInfo`, an extra message that is computed only if the assertion fails (we will see `LazyInfo` in Chapter 4).
+By adding `ToStr` we are able to automatically derive 12 assert methods helping to check expectations over `T`; the conversion to string is needed for decent error messages.
 Moreover this allows maps to be much more consistent with lists when it comes to printing: both need to just take a way to print the element; all the functionalities about map keys are provided once and for all at map initialisation time.
 Note how we also add `.close` in the other direction: earlier we saw
 `.close:T` allowing us to turn `Order[T]` into `T`. This one allows us to turn a `T` parameter into an `OrderHash[T]`. With this we can convert in both directions.
@@ -615,13 +611,13 @@ Persons: { #(age: Nat, name: Str): Person -> Person: OrderHash[Person]{'self
   }
 }
 ````
-In `.hash`, `a.hash.hashWith(b.hash)` combines two hash numbers into one, so the hash of a `Person` depends on both `age` and `name`.
 With such a `Person` type, we can define a map from persons to addresses:
 
 ```
 Maps#({::},   // this {::} is expanded as OrderHashBy[Person,Person]{x->x}
   Persons#(25,"Bob"),"Toronto 34b Warden St.",
-  Persons#(34,"Alice"),"Wellington 134 Kelburn Parade"
+  Persons#(34,"Alice"),"Wellington 134 Kelburn Parade",
+  ...
   )
 ```
 As you can see, maps take an `OrderHashBy` exactly like we have seen with `OrderBy` and `ToStrBy`.
@@ -702,7 +698,7 @@ To order a collection we need to reason about two generic types:
 - The type of the collection elements `E`.
 
 The idea is that by providing an `OrderBy` for the elements, we can produce an
-`Order[T]` for the collection.
+`Order` for the collection.
 ```
 Order[T,E:*]: {
   read .close: read T;

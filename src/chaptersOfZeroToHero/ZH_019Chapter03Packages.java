@@ -15,7 +15,7 @@ Up to now, we've shown Fearless code as individual text examples. However, a rea
 The project can contain any kind of files, but they must have portable lowercase file names that would be accepted by Windows, Linux and macOS.
 These files can be freely organised into subfolders within the project.
 
-Additionally, a Fearless project may contain libraries. Such libraries are simply zipped folders containing Fearless source files.
+Additionally, a Fearless project may contain pre-compiled libraries. Such libraries are simply zipped folders containing Fearless source files.
 
 Fearless source files are divided into **packages**.
 A package is a folder whose name starts with `_`.
@@ -26,8 +26,6 @@ Using those long-winded names everywhere would make the code repetitive and hard
 To mitigate this, Fearless supports **use directives**.
 Use directives need to be in the rank file.
 The rank file is a file in the package with name `_rank_app.fear`; other specific standard names are possible, but we will not discuss them here.
-The rank file can also contain ordinary type declarations.
-
 For example we can have the following:
 ```
 //inside file _test/_rank_app.fear

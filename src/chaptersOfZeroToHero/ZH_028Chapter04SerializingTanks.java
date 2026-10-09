@@ -79,8 +79,6 @@ InputCursorNode: ToIso[InputCursorNode], WidenTo[InputCursorNode]{
 ````
 - `sys.inputCursor` is the capability to observe the files intended as input.
 - `sys.inputCursor#` gets the first input node.
-- `sys.inputCursor.next` is the cursor for the following input.
-- `.label` is a best effort name of the file, to help debugging.
 - `sys.inputCursor# !` extracts the actual `InputCursorNode`, throwing an error if no input has been provided yet.
 - `this.in.text` then calls the `.text` method. If the file has text, the optional will not be empty.
 - With `this.in.text!` we extract the content from the optional with `!`.
@@ -91,7 +89,7 @@ There are three main kinds of error here:
 - 2 Deserialising the string into an `Info`
 - 3 Deserialising the info into a `List[Tank]`
 
-We may want to provide alternative behaviour when one of these three errors happens.
+We may want to provide alternative behaviour ...
 > not sure this would make for a good example.
 
 > should the input node have a method .info directly?
@@ -128,10 +126,6 @@ What errors just leak out?
 - The errors from (2) are always captured by the action.
 - The errors from (3) leak out when using `.map` and are captured when using `.andThen` + `Try#`.
 
-Here "errors" means deterministic errors, like a missing key or an unknown direction name.
-A non-deterministic error, like the failure of the `assertInRange` in `Points#`, is not captured by `Try#`.
-
-
 > An interesting corner of design would be to offer some way to go from `Flow[Action[T]]` into `Action[List[T]]` ? or `Action[R]` with a transformation function on the flow?
 
 
@@ -151,8 +145,6 @@ We can also add information to the error messages using code as below
         .context{"While deserialising tanks from Info"}}};
 ```
 Note how the indentation helps us see the context text becoming part of the action.
-Here the type argument `[List[Tank]]` of the second `Try#` is written explicitly: without it, the inference would conclude that the action produces the `mut List[Tank]` returned by `.list`, and the result would not be an `Action[List[Tank]]`.
-
 #### Graduation
 This is the end of Chapter 4.
 In these four chapters we used the tank game as an example of how to build simple behaviour.

@@ -47,12 +47,11 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 space and new line
 ```
 It is now 96 symbols. Those are all the symbols we can easily type on most keyboards.
-Each symbol stands for a number from 0 to 95, in the order listed above: `0` is zero, `a` is ten, `A` is thirty-six, the space is ninety-four and the new line is ninety-five. Thus `Q` is fifty-two.
-With this, we could express any text made of those symbols!
+With this, we could express any text!
 We call numbers expressed in this form (simple) strings.
 It is very compact to represent very large numbers in this notation. For example number 5,000 would be just `` "Q8" ``.
 1,000,030 in base-96 has a representation of `` "1cM " ``. Note the space after the `M`.
-If we did not put our base-96 numbers between double quotes (`` " ``) it would be very hard to spot trailing spaces in them.
+If we did not use the double quote character (`` " ``) it would be very hard to spot trailing spaces in our base-96 numbers.
 
 
 //OMIT_START
@@ -80,10 +79,10 @@ That is, when working with text, there is absolutely no reason to think about th
 For example we can write `` "Hello".size`` to get `5`.
 We will discuss those methods when they become relevant in the rest of the guide.
 
-Strings and comments can contain brackets of any kind, thus they can contain unbalanced brackets. For example, the following is a valid string: `` "A(B" ``.
-If we ignore brackets in strings and comments, a Fearless program always has balanced brackets.
+Strings and comments can contain any character, thus they can contain unbalanced parentheses. For example, the following is a valid string: `` "A(B" ``.
+If we ignore parentheses in strings and comments, a Fearless program always has balanced parentheses.
 For example: ``A:{ .foo:Str->"B}"}``
-is a valid type declaration, with balanced brackets. The `}` inside of the string literal does not matter.
+is a valid type declaration, with balanced parentheses. The `}` inside of the string literal does not matter.
 
 If we use those gigantic numbers to represent text,
 we had better define some ways to concatenate text.

@@ -66,7 +66,7 @@ The meaning of the terms emerges from how the terms connect with each other.
 A Fearless program consists of a specific form of text, called (source) code.
 Fearless code is text designed to be read by both humans and a program called Fearless.
 
-When you read text, your brain separates words from punctuation. Reading the sentence below
+When you read text, your brain separates words from punctuation. Reading this sentence below
 
 ```
 Pizza, again?
@@ -76,7 +76,7 @@ you see two words: `Pizza` and `again`,
 and two punctuation marks: `,` and `?`.
 
 Code works similarly, but everything is just a "token". Fearless would just see four tokens: `Pizza`, `,`, `again` and `?`.
-From the point of view of Fearless newlines and spaces between tokens are irrelevant (text in quotes, which we meet later, is the exception); any amount of spacing is equally effective at separating pieces of code, and sometimes no spacing is needed, as for the comma after `Pizza`.
+From the point of view of Fearless newlines and spaces are irrelevant; any amount of spacing is equally effective at separating pieces of code, and sometimes no spacing is needed, as for the comma after `Pizza`.
 This means that we can freely use more or less spacing to make the code more understandable for humans.
 
 Additionally, brackets are kinds of tokens that work in pairs: we use round brackets `(..)`, square brackets `[..]` and curly brackets `{..}` to group concepts together.
@@ -98,11 +98,9 @@ slash would close that comment early and break the build, so write it as
 MarkDownTest.lineToCode replaces `*|/` with the real asterisk-slash before
 the guide is rendered, so readers still see the real thing. Do not "fix"
 a `*|/` back into a real asterisk-slash on sight: it is not a stray
-duplicate character, it is required. This note does not apply inside a
-block of omitted lines (between the omit start and omit end markers) that
-intentionally closes this comment for real, to hold actual compiled code.
-Never write the marker words themselves inside this note: a line containing
-the omit end marker ends the omitted block.
+duplicate character, it is required. This note does not apply inside an
+OMIT_START/OMIT_END block that intentionally closes this comment for real,
+to hold actual compiled code.
 //OMIT_END
 
 Comments are the first crucial abstraction step we are seeing. Comments are not unique to Fearless and you can use them in any kind of text.
@@ -129,7 +127,7 @@ Kind regards, // or Sincerely?
 Bob Snoozeman
 ```
 
-As you can see, even comments can have their little language inside: `TODO:` is a short 5 character annotation meaning that there is an open task.
+As you can see, even comments can have their little language inside: `TODO:` is a short 5 symbol annotation meaning that there is an open task.
 
 On the next page we will see our first example of code.
 
