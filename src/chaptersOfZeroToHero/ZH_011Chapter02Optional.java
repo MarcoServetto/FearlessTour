@@ -17,15 +17,15 @@ We can think of optionals as a kind of boolean where `True` holds some extra inf
 
 You should now be able to read the code below and understand it.
 -------------------------*/@Test void opt1 () { run("""
-Opt[T]: {
-  .match[R](m: OptMatch[T,R]): R -> m.empty
+Opt[E]: {
+  .match[R](m: OptMatch[E,R]): R -> m.empty
   }
-OptMatch[T,R]: {
+OptMatch[E,R]: {
   .empty: R;
-  .some(t: T): R;
+  .some(t: E): R;
   }
 Opts: {
-  #[T](t: T): Opt[T] -> { .match m -> m.some(t) }
+  #[E](t: E): Opt[E] -> { .match m -> m.some(t) }
   }
 """); }/*--------------------------------------------
 
@@ -33,15 +33,15 @@ The code above can be used as follows:
 -------------------------*/@Test void opt2 () { run("""
 //OMIT_START
 use base.Nat as Nat;
-Opt[T]: {
-  .match[R](m: OptMatch[T,R]): R -> m.empty
+Opt[E]: {
+  .match[R](m: OptMatch[E,R]): R -> m.empty
   }
-OptMatch[T,R]: {
+OptMatch[E,R]: {
   .empty: R;
-  .some(t: T): R;
+  .some(t: E): R;
   }
 Opts: {
-  #[T](t: T): Opt[T] -> { .match(m) -> m.some(t) }
+  #[E](t: E): Opt[E] -> { .match(m) -> m.some(t) }
   }
 Person:{ .age:Nat }
 A:{#(bob:Person):Opt[Person]->
@@ -81,9 +81,9 @@ To get more comfortable with the various shortcuts Fearless offers, consider the
 //OMIT_START
 use base.Nat as Nat;
 //OMIT_END
-Opt[T]: { .match[R](m: OptMatch[T,R]): R -> m.empty }
-OptMatch[T,R]: { .empty: R; .some(t: T): R; }
-Opts: { #[T](t: T): Opt[T] -> { ::.some t } }
+Opt[E]: { .match[R](m: OptMatch[E,R]): R -> m.empty }
+OptMatch[E,R]: { .empty: R; .some(t: E): R; }
+Opts: { #[E](t: E): Opt[E] -> { ::.some t } }
 //OMIT_START
 Person:{ .age:Nat }
 A:{#(bob:Person):Opt[Person]->

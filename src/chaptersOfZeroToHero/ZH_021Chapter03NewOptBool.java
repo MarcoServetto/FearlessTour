@@ -165,7 +165,7 @@ False:Bool{
 Finally, the declarations for `True` and `False` are what we have seen before, plus `.toOpt` and `.imm`.
 Note how we can implement the `read .imm: imm Bool` method by just returning `True` or `False`. An object literal summoned by name can be of any RC, of course including `imm`.
 
-### Core code for `Opt[T]`
+### Core code for `Opt[E]`
 
 Below we show the core standard library code for optionals.
 
@@ -352,7 +352,7 @@ As you can see, designing generic container types supporting a range of referenc
 
 ### The Reality of Production Code
 
-You may have noticed a shift in tone. The code for `_Opt[E]` looks significantly more intimidating than the conceptual `Opt[T]` we wrote in Chapter 2.
+You may have noticed a shift in tone. The code for `_Opt[E]` looks significantly more intimidating than the conceptual `Opt[E]` we wrote in Chapter 2.
 
 We are crossing the bridge from **conceptual logic** to **production engineering**.
 The logic remains identical: an optional is still just "something or nothing." However, a production-grade library seamlessly handles `mut`, `imm` and `read` data.

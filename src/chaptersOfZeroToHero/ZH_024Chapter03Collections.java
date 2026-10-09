@@ -10,7 +10,7 @@ class ZH_024Chapter03Collections {
 
 ## Flows and related data types
 
-As you can see, in Chapter 2 we showed how to build our own `Stack[T]` by hand and how to make the tank game using our own stack and `.map` methods. Here in Chapter 3 we have shown `List[E]` and how to make the tank game using `Flow[E]`.
+As you can see, in Chapter 2 we showed how to build our own `Stack[E]` by hand and how to make the tank game using our own stack and `.map` methods. Here in Chapter 3 we have shown `List[E]` and how to make the tank game using `Flow[E]`.
 We will conclude Chapter 3 showing many useful examples of flows and related data types, and many nice ways they can be used.
 
 ### Method `.map`
@@ -145,7 +145,7 @@ That is a big but not unlimited number, and flows could in principle contain man
 
 ### Core List methods for Random Access: .size, .isEmpty and .get
 
-With our homemade `Stack[T]`, the only way to compute the number of elements in the stack is to explore the whole stack and manually count the elements one by one.
+With our homemade `Stack[E]`, the only way to compute the number of elements in the stack is to explore the whole stack and manually count the elements one by one.
 Lists offer a method `List[E].size` that can return the number of elements in the list without the need of counting them. The size information is simply stored directly. For convenience, there is also a method `.isEmpty` equivalent to calling `myList.size == 0`.
 
 The method `List.get(i: Nat)` either returns the element in index `i` or uses `Error.msg(..)` to report the lookup failure.

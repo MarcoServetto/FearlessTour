@@ -246,7 +246,7 @@ This code will print
  \ _ /
 ```
 
-We can now rewrite `NextState` using features from the standard library instead of our poor man's `Stack[T]`.
+We can now rewrite `NextState` using features from the standard library instead of our poor man's `Stack[E]`.
 
 ```
 //File _tank_game/next_state.fear

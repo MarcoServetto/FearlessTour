@@ -53,7 +53,7 @@ Action[R:*]: {
   mut .run[RR:*](mut ActionMatch[R,RR]): RR;
   }
 ```
-The `ActionMatch[R,RR]` type is unsurprising. Very similar to `OptMatch[T,R]` or `StackMatch[T,R]`.
+The `ActionMatch[R,RR]` type is unsurprising. Very similar to `OptMatch[E,R]` or `StackMatch[E,R]`.
 As we discussed before, remember that `R:*` stands for `R:imm,mut,read` and `R:**` includes all of the reference capabilities.
 At its core, `Action` has a very simple implementation.
 We call the generic parameters `R` and `RR` to suggest that `R` is the result of the action, while `RR` is the result of processing either the action result or the `Info`.

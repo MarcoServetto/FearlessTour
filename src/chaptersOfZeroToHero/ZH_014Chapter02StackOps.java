@@ -34,11 +34,11 @@ use base.F as F;
 use base.Nat as Nat;
 use base.Bool as Bool;
 //OMIT_END
-StackMatch[T,R]: { .empty: R; .elem(top: T, tail: Stack[T]): R; }
-Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty;
-  .fold[R](start: R, f: F[T,R,R]): R -> start;
-  +(e: T): Stack[T] -> {
+StackMatch[E,R]: { .empty: R; .elem(top: E, tail: Stack[E]): R; }
+Stack[E]: {
+  .match[R](m: StackMatch[E,R]): R -> m.empty;
+  .fold[R](start: R, f: F[E,R,R]): R -> start;
+  +(e: E): Stack[E] -> {
     .match m  -> m.elem(e, this);
     .fold start, f -> f#(e, this.fold(start, f));
     };
@@ -53,11 +53,11 @@ Of course this can be implemented with the match as shown below:
 //OMIT_START
 use base.F as F;
 use base.Nat as Nat;
-StackMatch[T,R]: { .empty: R; .elem(top: T, tail: Stack[T]): R; }
-Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty;
-  .fold[R](start: R, f: F[T,R,R]): R -> start;
-  +(e: T): Stack[T] -> {
+StackMatch[E,R]: { .empty: R; .elem(top: E, tail: Stack[E]): R; }
+Stack[E]: {
+  .match[R](m: StackMatch[E,R]): R -> m.empty;
+  .fold[R](start: R, f: F[E,R,R]): R -> start;
+  +(e: E): Stack[E] -> {
     .match m  -> m.elem(e, this);
     .fold start, f -> f#(e, this.fold(start, f));
     };
@@ -77,12 +77,12 @@ Operations like this one are going to be very common, so we had better define ge
 use base.F as F;
 use base.Nat as Nat;
 //OMIT_END
-StackMatch[T,R]: { .empty: R; .elem(top:T, tail: Stack[T]): R; }
-Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty;
-  .fold[R](start:R, f: F[R,T,R]): R -> start;
-  .map[R](f: F[T, R]): Stack[R] -> {};
-  +(e: T): Stack[T] -> {
+StackMatch[E,R]: { .empty: R; .elem(top:E, tail: Stack[E]): R; }
+Stack[E]: {
+  .match[R](m: StackMatch[E,R]): R -> m.empty;
+  .fold[R](start:R, f: F[R,E,R]): R -> start;
+  .map[R](f: F[E, R]): Stack[R] -> {};
+  +(e: E): Stack[E] -> {
     .match m       -> m.elem(e, this);
     .fold start, f -> f#(this.fold(start, f), e);
     .map f         -> this.map(f) + ( f#(e) );
@@ -92,7 +92,7 @@ ExampleSum5: {   #(ns: Stack[Nat]): Stack[Nat] -> ns.map { n -> n + 5 }  }
 ExampleTimes2: { #(ns: Stack[Nat]): Stack[Nat] -> ns.map { n -> n * 2 }  }
 """); }/*--------------------------------------------
 
-Note how we also swapped the order of the arguments of the `.fold` function: now the accumulator comes first, as in `F[R,T,R]`.
+Note how we also swapped the order of the arguments of the `.fold` function: now the accumulator comes first, as in `F[R,E,R]`.
 
 By adding fold and map to stacks, we have now unlocked a surprising amount of expressive power.
 Do you want to add 10 to all the numbers, multiply the result by 3 and then get the sum of all of them?
@@ -101,12 +101,12 @@ Easy!
 //OMIT_START
 use base.F as F;
 use base.Nat as Nat;
-StackMatch[T,R]: { .empty: R; .elem(top:T, tail: Stack[T]): R; }
-Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty;
-  .fold[R](start:R, f: F[R,T,R]): R -> start;
-  .map[R](f: F[T, R]): Stack[R] -> {};
-  +(e: T): Stack[T] -> {
+StackMatch[E,R]: { .empty: R; .elem(top:E, tail: Stack[E]): R; }
+Stack[E]: {
+  .match[R](m: StackMatch[E,R]): R -> m.empty;
+  .fold[R](start:R, f: F[R,E,R]): R -> start;
+  .map[R](f: F[E, R]): Stack[R] -> {};
+  +(e: E): Stack[E] -> {
     .match m       -> m.elem(e, this);
     .fold start, f -> f#(this.fold(start, f), e);
     .map f         -> this.map(f) + ( f#(e) );
@@ -144,12 +144,12 @@ Now as an exercise, we try to define a method `.filter` that removes elements fr
 
 Since operations like this one are also going to be very common, we define generic support for it directly in the `Stack` type:
 ```
-Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty;
-  .fold[R](start:R, f: F[R,T,R]): R -> start;
-  .map[R](f: F[T, R]): Stack[R] -> {};
+Stack[E]: {
+  .match[R](m: StackMatch[E,R]): R -> m.empty;
+  .fold[R](start:R, f: F[R,E,R]): R -> start;
+  .map[R](f: F[E, R]): Stack[R] -> {};
   .filter ???; //Base case
-  +(e: T): Stack[T] -> {
+  +(e: E): Stack[E] -> {
     .match(m) -> m.elem(e, this);
     .fold(start, f) -> f#(this.fold(start, f), e);
     .map(f) -> this.map(f) + ( f#(e) );
@@ -163,12 +163,12 @@ So, what do we write instead of ??? in the code above?
   ...
     .filter ???; //Inductive case
 ```
-Well, first we need to figure out the type. Method `Stack[T].filter` does not transform the elements, it just selects which ones to keep. Thus the return type is going to be the same: `Stack[T]`.
+Well, first we need to figure out the type. Method `Stack[E].filter` does not transform the elements, it just selects which ones to keep. Thus the return type is going to be the same: `Stack[E]`.
 As a parameter, we need to take a function that tells `.filter` if the element should be kept or removed.
 We can use a function returning a `Bool`: `True` will mean "keep the element" and `False` will mean "discard the element".
 So, the first filter is going to be
 ```
-  .filter(f: F[T,Bool]): Stack[T]-> {};
+  .filter(f: F[E,Bool]): Stack[E]-> {};
 ```
 We return the empty stack because there are no elements to remove from the empty stack... it is already as empty as it can be.
 What about the second `.filter`? There we have `this` and `e` in scope.
@@ -189,16 +189,16 @@ Here is the full code again.
 use base.F as F;
 use base.Bool as Bool;
 //OMIT_END
-StackMatch[T,R]: {
+StackMatch[E,R]: {
   .empty: R;
-  .elem(top:T, tail: Stack[T]): R;
+  .elem(top:E, tail: Stack[E]): R;
   }
-Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty;
-  .fold[R](start:R, f: F[R,T,R]): R -> start;
-  .map[R](f: F[T, R]): Stack[R] -> {};
-  .filter(f: F[T,Bool]): Stack[T]-> {};
-  +(e: T): Stack[T] -> {
+Stack[E]: {
+  .match[R](m: StackMatch[E,R]): R -> m.empty;
+  .fold[R](start:R, f: F[R,E,R]): R -> start;
+  .map[R](f: F[E, R]): Stack[R] -> {};
+  .filter(f: F[E,Bool]): Stack[E]-> {};
+  +(e: E): Stack[E] -> {
     .match m       -> m.elem(e, this);
     .fold start, f -> f#(this.fold(start, f), e);
     .map f         -> this.map(f) + ( f#(e) );
@@ -238,16 +238,16 @@ Test: Main{s-> Block#
   .do{Debug#(Examples.sum(Stack[Nat]))}
   .do{Debug#(Examples.times(Stack[Nat]))}
   .return{Void}}
-StackMatch[T,R]: {
+StackMatch[E,R]: {
   .empty: R;
-  .elem(top:T, tail: Stack[T]): R;
+  .elem(top:E, tail: Stack[E]): R;
   }
-Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty;
-  .fold[R](start:R, f: F[R,T,R]): R -> start;
-  .map[R](f: F[T, R]): Stack[R] -> {};
-  .filter(f: F[T,Bool]): Stack[T]-> {};
-  +(e: T): Stack[T] -> {
+Stack[E]: {
+  .match[R](m: StackMatch[E,R]): R -> m.empty;
+  .fold[R](start:R, f: F[R,E,R]): R -> start;
+  .map[R](f: F[E, R]): Stack[R] -> {};
+  .filter(f: F[E,Bool]): Stack[E]-> {};
+  +(e: E): Stack[E] -> {
     .match m       -> m.elem(e, this);
     .fold start, f -> f#(this.fold(start, f), e);
     .map f         -> this.map(f) + ( f#(e) );
