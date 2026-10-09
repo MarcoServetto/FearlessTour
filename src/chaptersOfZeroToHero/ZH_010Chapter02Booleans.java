@@ -321,8 +321,11 @@ Generics ensure that the outcomes of different branches are type-compatible.
 Note how the generics are explicitly needed when **defining** the `.if` method but they are all inferred when **using** the `.if` method.
 
 This is where our journey of learning Fearless programming starts to intersect with concepts common to most other programming languages.
-This ability to represent decisions and conditional logic purely through objects and methods like `.if` is a cornerstone of the pure object-oriented style we are learning in Fearless. Where other languages use special 'if statements', Fearless uses method calls on boolean objects. In principle, objects, method calls and `.if` are enough to express every computation.
 
+I still vividly remember the moment it struck me: every possible computation can be represented as just an enormous pile of ifs invoking each other. Mind blowing!
+
+Where other languages use special 'if statements', Fearless uses method calls on boolean objects.
+In principle, objects, method calls and `.if` are enough to express every computation.
 But just because something can be done, doesn't mean it's the best approach. While you could build complex logic entirely out of nested `.if` calls, a program built only from binary decisions quickly becomes brittle and hard to evolve. Fearless offers more specialised ways to handle different kinds of decisions, which often lead to clearer code. We'll explore them later, and we'll learn to select the right tool for each job.
 
 But for now, let's pause to appreciate what we've accomplished. Understanding the `.if` is a big achievement.
