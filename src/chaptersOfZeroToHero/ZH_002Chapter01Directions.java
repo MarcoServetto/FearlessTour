@@ -57,7 +57,9 @@ West : {.turn-> North;}
 
 In the example above,
 - `North: { .turn -> East; }` is a type declaration.
+
 Within this declaration
+
 - `North` is the type name.
 - `.turn` is a **method name**. The text `.turn` is a single token and includes the `.`
 - `.turn -> East;` is a **method declaration** and in this case
@@ -72,9 +74,9 @@ specifically, an object literal expression.
 
 Programming is all about defining kinds of objects and the relations between them.
 Other terms for 'object' could be 'value', 'entity', 'instance' or 'element'.
-We will use the term 'object' consistently to talk about those.
+We will use the term 'object' to talk about those.
 
-To understand this better, consider the English sentence "Stop."
+To understand expressions better, consider the English sentence "Stop."
 This sentence contains a single word; and yet, it is still a sentence.
 An English sentence is a collection of words and punctuation with at least one word. In the same way, some expressions in Fearless are simply
 a single type name. However, just as sophisticated sentences in English are fundamental to effective communication, more elaborate expressions are crucial in programming.
@@ -134,7 +136,7 @@ Missing return type for method ".turn".
 The method `.turn` does not know what type it returns.
 
 >**Errors are good things:**
->errors help us be precise and to avoid more mistakes later.
+>errors help us be precise and avoid more mistakes later.
 
 Types help reasoning and they are used to ensure that
 our program is safe to use.

@@ -394,5 +394,192 @@ Test:Main {sys -> sys.out.println(  Tanks#(North, West, Points#(1, 2))  )}
 //PRINT| \\ _ / \n\
 //PRINT|
 """); }/*--------------------------------------------
+OMIT_START
+-------------------------*/@Test void aimingRepr2AsFactory() { run("""
+//File _tank_game/_rank_app.fear
+use base.Main as Main;
+use base.Str as Str;
+use base.Nat as Nat;
+use base.Bool as Bool;
+use base.F as F;
+use base.ToStr as ToStr;
+use base.List as List;
+use base.Block as Block;
+use base.Sealed as Sealed;
+use base.WidenTo as WidenTo;
+// ----------------------------------
+//File _tank_game/point.fear
+Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{
+  .x: Nat -> x;
+  .y: Nat -> y;
+  +(other: Point): Point -> Points#(other.x + x, other.y + y);
+  .move(d: Direction): Point -> d.match{
+    .north -> Points#(x - 1, y    );
+    .east  -> Points#(x,     y + 1);
+    .south -> Points#(x + 1, y    );
+    .west  -> Points#(x,     y - 1);
+    };
+  ==(other:Point): Bool -> other.x == x  .and (other.y == y );
+  .str -> "[x=" + x + ", y=" + y + "]";
+  }}
+// ----------------------------------
+//File _tank_game/direction.fear
+North: Direction {::.north}
+East : Direction {::.east}
+South: Direction {::.south}
+West : Direction {::.west}
+DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
+Direction: ToStr, Sealed, WidenTo[Direction] {
+  read .match[R: **](mut DirectionMatch[R]): R;
+  .turn: Direction -> this.match{
+    .north -> East;
+    .east  -> South;
+    .south -> West;
+    .west  -> North;
+    };
+  .str -> this.match{
+    .north -> "North";
+    .east  -> "East";
+    .south -> "South";
+    .west  -> "West";
+    };
+  }
+// ----------------------------------
+//File _tank_game/tank.fear
+Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank -> {'self
+  .heading -> heading; .aiming -> aiming; .position -> position;
+  .str -> ""| (self.repr1) | (self.repr2) | (self.repr3) |;
+  }}
+AimingRepr1: DirectionMatch[Str]{
+  .north -> " / | \\ ";
+  .east  -> " / - \\ ";
+  .south -> " / - \\ ";
+  .west  -> " / - \\ ";
+  }
+AimingRepr3: DirectionMatch[Str]{
+  .north -> " \\ _ / ";
+  .east  -> " \\ _ / ";
+  .south -> " \\ | / ";
+  .west  -> " \\ _ / ";
+  }
+AimingRepr2: F[Str, mut DirectionMatch[Str]]{ centre->{
+  .north -> " | " + centre + " | ";
+  .east  -> " | " + centre + " - ";
+  .south -> " | " + centre + " | ";
+  .west  -> " - " + centre + " | ";
+  }}
+HeadingChar: DirectionMatch[Str]{
+  .north -> "A";
+  .east  -> ">";
+  .south -> "V";
+  .west  -> "<";
+  }
+Tank: ToStr {
+  .heading:  Direction;
+  .aiming:   Direction;
+  .position: Point;
+  .move:     Tank -> Tanks#(this.heading, this.aiming, this.position.move(this.heading));
+  .repr1:    Str  -> this.aiming .match AimingRepr1;
+  .repr2:    Str  -> this.aiming .match (AimingRepr2#(this.heading .match HeadingChar));
+  .repr3:    Str  -> this.aiming .match AimingRepr3;
+  }
+// ----------------------------------
+//File _tank_game/next_state.fear
+NextState:{
+  #(tanks: List[Tank]): List[Tank] ->Block#
+    .let[List[Point]] danger= { tanks.flow.map{ t -> t.position.move(t.aiming) }.list }
+    .let[List[Tank]] survivors= { tanks.flow.filter{t -> danger.flow.filter{::==(t.position)}.isEmpty } .list }
+    .let[List[Point]] occupied= {
+      (survivors.flow.map{::.position}) ++ (survivors.flow.map{::.move.position}.list) .list }
+    .return { survivors.flow.map{t -> this.moveIfFree(t,occupied)} .list };
+
+  read .moveIfFree(t: Tank, occupied: List[Point]): Tank-> occupied.flow
+    .filter{::==(t.move.position)}
+    .size == 1 .if{
+      .then -> t.move;
+      .else -> t;
+    };
+  }
+// ----------------------------------
+//File _tank_game/print_one.fear
+Test:Main {sys -> sys.out.println(  Tanks#(North, West, Points#(1, 2))  )}
+//PRINT|
+//PRINT| / - \\ \n\
+//PRINT| - A | \n\
+//PRINT| \\ _ / \n\
+//PRINT|
+"""); }/*--------------------------------------------
+-------------------------*/@Test void widenToNotNeededWithDeclaredReturnType() { run("""
+use base.Main as Main;
+use base.Str as Str;
+use base.ToStr as ToStr;
+use base.Sealed as Sealed;
+use base.Debug as Debug;
+North: Direction {::.north}
+East : Direction {::.east}
+South: Direction {::.south}
+West : Direction {::.west}
+DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
+Direction: ToStr, Sealed {
+  read .match[R: **](mut DirectionMatch[R]): R;
+  .turn: Direction -> this.match{
+    .north -> East;
+    .east  -> South;
+    .south -> West;
+    .west  -> North;
+    };
+  .str -> this.match{ .north -> "North"; .east -> "East"; .south -> "South"; .west -> "West"; };
+  }
+Test: Main{s-> Debug#(North.turn)}
+//PRINT|East
+"""); }/*--------------------------------------------
+-------------------------*/@Test void widenToNeededWithoutDeclaredReturnType() { run("""
+use base.Block as Block;
+use base.Str as Str;
+use base.ToStr as ToStr;
+use base.Sealed as Sealed;
+North: Direction {::.north}
+East : Direction {::.east}
+South: Direction {::.south}
+West : Direction {::.west}
+DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
+Direction: ToStr, Sealed {
+  read .match[R: **](mut DirectionMatch[R]): R;
+  .turn2: Direction -> Block#
+    .let d= {this.match{ .north -> East; .east -> South; .south -> West; .west -> North; }}
+    .return{d};
+  .str -> this.match{ .north -> "North"; .east -> "East"; .south -> "South"; .west -> "West"; };
+  }
+//ERROR|In file: [###]_test/_rank_app111.fear
+//ERROR|[###]
+//ERROR|Method ".east" inside the object literal instance of "iso DirectionMatch[East]" (line 13)
+//ERROR|is implemented with an expression returning "iso South".
+//ERROR|Object literal is of type "South" instead of a subtype of "East".
+//ERROR|[###]
+"""); }/*--------------------------------------------
+-------------------------*/@Test void widenToFixesTheInferredType() { run("""
+use base.Main as Main;
+use base.Block as Block;
+use base.Str as Str;
+use base.ToStr as ToStr;
+use base.Sealed as Sealed;
+use base.WidenTo as WidenTo;
+use base.Debug as Debug;
+North: Direction {::.north}
+East : Direction {::.east}
+South: Direction {::.south}
+West : Direction {::.west}
+DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
+Direction: ToStr, Sealed, WidenTo[Direction] {
+  read .match[R: **](mut DirectionMatch[R]): R;
+  .turn2: Direction -> Block#
+    .let d= {this.match{ .north -> East; .east -> South; .south -> West; .west -> North; }}
+    .return{d};
+  .str -> this.match{ .north -> "North"; .east -> "East"; .south -> "South"; .west -> "West"; };
+  }
+Test: Main{s-> Debug#(North.turn2)}
+//PRINT|East
+"""); }/*--------------------------------------------
+OMIT_END
 END*/
 }

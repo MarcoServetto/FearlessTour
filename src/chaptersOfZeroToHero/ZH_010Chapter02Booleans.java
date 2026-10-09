@@ -87,7 +87,7 @@ All of those lines reduce in a single step:
 - <code class="ws">False .and True  --&gt; False</code> because `False.and` returns `this`
 
 The code above shows that we can combine booleans to get more booleans. This is similar to what we have seen with `Nat` and `Rotation`. But the real power comes when we use them to make decisions: to execute different pieces of code depending on whether something is `True` or `False`. Crucially, booleans are a better form of `Fork`.
-- There are two kinds of `Bool` in the same way there are two kinds of `Fork`,
+- There are two kinds of `Bool` in the same way there are two kinds of `Fork`.
 - We can compose `Bool`s with `.and`, `.or` and `.not`.
 - We can obtain `Bool`s from many other data types using `==` and `!=`.
 
@@ -321,9 +321,13 @@ Generics ensure that the outcomes of different branches are type-compatible.
 Note how the generics are explicitly needed when **defining** the `.if` method but they are all inferred when **using** the `.if` method.
 
 This is where our journey of learning Fearless programming starts to intersect with concepts common to most other programming languages.
-I still vividly remember the moment it struck me: every possible computation can be represented as just an enormous pile of ifs invoking each other. Mind blowing!
 
-But just because something can be done, doesn't mean it's the best approach. Solving problems by throwing a massive heap of binary decisions at them (like firing wildly with a machine gun) rarely leads to elegant, maintainable code. A program built this way quickly becomes brittle and hard to evolve. Soon, we'll explore specialised decision-making constructs, each tailored to different scenarios, and we'll learn to select the right tool for each job.
+I still vividly remember the moment it struck me: every possible computation can be represented as just an enormous pile of ifs invoking each other. Mind blowing!
+But just because something can be done, doesn't mean it's the best approach.
+Solving problems by throwing a massive heap of binary decisions at them (like firing wildly with a machine gun) rarely leads to elegant,
+maintainable code.
+A program built this way quickly becomes brittle and hard to evolve.
+Soon, we'll explore specialised decision-making constructs, each tailored to different scenarios, and we'll learn to select the right tool for each job.
 
 But for now, let's pause to appreciate what we've accomplished. Understanding the `.if` is a big achievement.
 
@@ -503,7 +507,7 @@ The full version would be:
 ```
 Anon1[]:F[Bool] { #[](): Bool[] -> Anon2[]:Slow[]{}.code[](); }
 ```
-That is, since the method `F[Bool]#` has exactly zero parameters, we can omit both the method name `#` and the arrow `->` when implementing it.
+That is, since `#` is the only abstract method of `F[Bool]` we can omit its name, and since it has exactly zero parameters we can also omit the arrow `->` when implementing it.
 
 We can now compare and contrast the above with the syntax
 ```
@@ -532,7 +536,7 @@ For example, what if `Slow` were defined as follows:
 ```
 Slow:{.code: Bool -> this.code; }
 ```
-The method call `Slow.code` reduces in one step to `Slow.code`, that reduces in itself again, and again, and again. This reduction never stops!
+The method call `Slow.code` reduces in one step to `Slow.code`, which reduces to itself again, and again, and again. This reduction never stops!
 Executing `Slow.code` would either never terminate or produce some kind of error.
 In that case, if `Much.code` reduces to `False`, the first line simply reduces to `False`, while the second line would either never terminate or produce an error.
 That is, while `Slow.code` never terminates, `{Slow.code}` is a value of type `F[Bool]`. Non-termination only happens when and if method `#` is called on that value.

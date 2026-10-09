@@ -30,13 +30,13 @@ Stacks adhere to a last-in, first-out (LIFO) principle, making them ideal for ta
 We will now see how to define stacks of any kind of entities.
 
 -------------------------*/@Test void stack1 () { run("""
-Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty;
-  +(e: T): Stack[T] -> { .match m -> m.elem(e, this) };
+Stack[E]: {
+  .match[R](m: StackMatch[E,R]): R -> m.empty;
+  +(e: E): Stack[E] -> { .match m -> m.elem(e, this) };
   }
-StackMatch[T,R]: {
+StackMatch[E,R]: {
   .empty: R;
-  .elem(top:T, tail: Stack[T]): R;
+  .elem(top:E, tail: Stack[E]): R;
   }
 """); }/*--------------------------------------------
 As you can see, this code is similar to both Peano numbers and optionals. It is kind of a hybrid.
@@ -45,15 +45,15 @@ The `.match` method and the `StackMatch` type are very similar to `.match` and `
 The method `+` is similar to the method `.succ` on Peano numbers, and the implementation is similar to the method `Opts#`.
 Look again at the code of `Opt` and `Number` from before to see the similarities:
 -------------------------*/@Test void optPeano () { run("""
-Opt[T]: {
-  .match[R](m: OptMatch[T,R]): R -> m.empty
+Opt[E]: {
+  .match[R](m: OptMatch[E,R]): R -> m.empty
   }
-OptMatch[T,R]: {
+OptMatch[E,R]: {
   .empty: R;
-  .some(t: T): R;
+  .some(t: E): R;
   }
 Opts: {
-  #[T](t: T): Opt[T] -> { .match m-> m.some(t) }
+  #[E](t: E): Opt[E] -> { .match m-> m.some(t) }
   }
 Number: {
   .pred: Number;
@@ -71,19 +71,20 @@ We can use the stack in many different ways. Some usage examples below:
 - `Stack[Nat] + 1 + 2 + 3` is a stack of `Nat`. It contains `3`,`2`,`1`. Yes, in this order. `3` is the last element we inserted in the stack so it is the first element.
 - `Stack[Opt[Nat]] + {} + {} + ( Opts#(3) )` is a stack of `Opt[Nat]`. It contains the optional containing `3`, and then two empty optionals.
 - `Stack[Stack[Nat]] + {} + {} + ( Stack[Nat] + 3 )` is a stack of `Stack[Nat]`. It contains a stack with just the element `3`, and then two empty stacks.
-Note how we can use `{}` both for the empty stack and the empty optional. The inference recognises that the method `Stack[T]+` takes an optional in one case and a stack in another. Thus it infers that `{}` is an empty optional or an empty stack depending on the surrounding code.
+
+Note how we can use `{}` both for the empty stack and the empty optional. The inference recognises that the method `Stack[E]+` takes an optional in one case and a stack in another. Thus it infers that `{}` is an empty optional or an empty stack depending on the surrounding code.
 
 Here we show how to use match to sum all the elements in a `Stack[Nat]`.
 -------------------------*/@Test void stack2 () { run("""
 //OMIT_START
 use base.Nat as Nat;
-Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty;
-  +(e: T): Stack[T] -> { .match(m) -> m.elem(e, this) };
+Stack[E]: {
+  .match[R](m: StackMatch[E,R]): R -> m.empty;
+  +(e: E): Stack[E] -> { .match(m) -> m.elem(e, this) };
   }
-StackMatch[T,R]: {
+StackMatch[E,R]: {
   .empty: R;
-  .elem(top:T, tail: Stack[T]): R;
+  .elem(top:E, tail: Stack[E]): R;
   }
 //OMIT_END
 Example: {
@@ -156,18 +157,18 @@ An obvious operation to add to the stack is concatenation.
 We can add a concatenation operation `++` between stacks as follows:
 
 -------------------------*/@Test void stack3 () { run("""
-Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty;
-  ++(other: Stack[T]): Stack[T] -> other;
-  +(e: T): Stack[T] -> {
+Stack[E]: {
+  .match[R](m: StackMatch[E,R]): R -> m.empty;
+  ++(other: Stack[E]): Stack[E] -> other;
+  +(e: E): Stack[E] -> {
     .match m -> m.elem(e, this);
     ++ other -> this ++ other  + e;
     };
   }
 //OMIT_START
-StackMatch[T,R]: {
+StackMatch[E,R]: {
   .empty: R;
-  .elem(top:T, tail: Stack[T]): R;
+  .elem(top:E, tail: Stack[E]): R;
   }
 //OMIT_END
 """); }/*--------------------------------------------
@@ -176,19 +177,19 @@ Note how in the same way `+` adds the element at the top of the stack,
 `++` adds all the elements of the receiver at the top of the argument stack.
 
 This code shows an interesting use of `this`.
-Inside method `Stack[T]+` we define a stack composed of the outer stack `this` and the top element `e`.
-This means that the `this` binding in the body of `Stack[T]+` refers to the tail of the stack we are returning.
+Inside method `Stack[E]+` we define a stack composed of the outer stack `this` and the top element `e`.
+This means that the `this` binding in the body of `Stack[E]+` refers to the tail of the stack we are returning.
 Thus, as before, we write `.match(m) -> m.elem(e, this);` to implement the match method.
-However, we use `e` and `this` also to implement the `Stack[T]++` method.
+However, we use `e` and `this` also to implement the `Stack[E]++` method.
 
 Consider the method body `this ++ other  + e`.
-This code first calls `Stack[T]++` with code `this ++ other`.
-Then, `Stack[T]+` is called on the result of `this ++ other`. This adds `e` at the top of the result of `this ++ other`.
+This code first calls `Stack[E]++` with code `this ++ other`.
+Then, `Stack[E]+` is called on the result of `this ++ other`. This adds `e` at the top of the result of `this ++ other`.
 That is, the ultimate result will contain `e` as the first element. Remember that `e` was the first element of the current stack.
 
 Is `this ++ other` a recursive call?
 If `this` is a non-empty stack, the call runs this very same `++` implementation again;
-if `this` is the empty stack, the call runs the other `++` implementation, the one declared directly in `Stack[T]`.
+if `this` is the empty stack, the call runs the other `++` implementation, the one declared directly in `Stack[E]`.
 Which implementation runs is only decided by the receiver while the code executes.
 This is why the terminology of recursion is not really that well defined.
 
@@ -215,7 +216,7 @@ That is, we replace `[2,3] ++ [4,5,6]` with `[3] ++ [4,5,6] + 2`
 inside the expression `[2,3] ++ [4,5,6] + 1`.
 
 Note that there are many alternative ways to write that body.
-All of those ways would compile, but they do conceptually different operations. Some produce different ordering in the result, and some do not even terminate.
+All of those ways would compile, but they do conceptually different operations. Some produce a different ordering in the result, and some do not even terminate.
 
 One obvious variant is to add parentheses: `this ++ (other  + e)`.
 1. `[1,2,3] ++ [4,5,6]`
@@ -270,8 +271,8 @@ For the same reason, also this following other body variation would not terminat
 We have one last variation to consider:
 `other + e ++ this`
 This also does not terminate:
-Termination of `Stack[T]++` is only possible if the left operand is an empty stack, but the result of `Stack[T]+` is never empty.
-That is, this implementation of `Stack[T]++` calls `Stack[T]++` in a way that is guaranteed to call back the same `Stack[T]++` implementation over and over.
+Termination of `Stack[E]++` is only possible if the left operand is an empty stack, but the result of `Stack[E]+` is never empty.
+That is, this implementation of `Stack[E]++` calls `Stack[E]++` in a way that is guaranteed to call back the same `Stack[E]++` implementation over and over.
 
 As you can see, there are many ways to permute the `++` and `+` calls on `this`, `other` and `e`.
 In order to learn to code, you need to learn to visualise the results of those calls.
@@ -279,7 +280,7 @@ In order to learn to code, you need to learn to visualise the results of those c
 We will soon see how **Testing** can be used to supplement the miserable visualisation skills of most humans.
 
 
-Conceptually, `Stack[T]++` is similar to the Peano `Number+` operation, and the whole stack concept can be seen as a Peano number where some information is stored near each successor call.
+Conceptually, `Stack[E]++` is similar to the Peano `Number+` operation, and the whole stack concept can be seen as a Peano number where some information is stored near each successor call.
 
 //OMIT_START
 -------------------------*/@Test void concatenationOrders() { run("""
@@ -302,49 +303,49 @@ Test: Main{s-> Block#
   .do{Debug#((StackA[Opt[Nat]] + {} + {} + ( Opts#(3) )).match{.empty->"none"; .elem top, tail -> top.str{::}})}
   .do{Debug#((StackA[StackA[Nat]] + {} + {} + ( StackA[Nat] + 3 )).match{.empty->"none"; .elem top, tail -> ShowA#(top)})}
   .return{Void}}
-StackA[T]: {
-  .match[R](m: StackMatchA[T,R]): R -> m.empty;
-  ++(other: StackA[T]): StackA[T] -> other;
-  +(e: T): StackA[T] -> {
+StackA[E]: {
+  .match[R](m: StackMatchA[E,R]): R -> m.empty;
+  ++(other: StackA[E]): StackA[E] -> other;
+  +(e: E): StackA[E] -> {
     .match m -> m.elem(e, this);
     ++ other -> this ++ other  + e;
     };
   }
-StackMatchA[T,R]: {
+StackMatchA[E,R]: {
   .empty: R;
-  .elem(top:T, tail: StackA[T]): R;
+  .elem(top:E, tail: StackA[E]): R;
   }
 ShowA:{ #(s: StackA[Nat]): Str -> s.match{
   .empty -> "";
   .elem top, tail -> top.str + (this#(tail));
   }}
-StackB[T]: {
-  .match[R](m: StackMatchB[T,R]): R -> m.empty;
-  ++(other: StackB[T]): StackB[T] -> other;
-  +(e: T): StackB[T] -> {
+StackB[E]: {
+  .match[R](m: StackMatchB[E,R]): R -> m.empty;
+  ++(other: StackB[E]): StackB[E] -> other;
+  +(e: E): StackB[E] -> {
     .match m -> m.elem(e, this);
     ++ other -> this ++ (other  + e);
     };
   }
-StackMatchB[T,R]: {
+StackMatchB[E,R]: {
   .empty: R;
-  .elem(top:T, tail: StackB[T]): R;
+  .elem(top:E, tail: StackB[E]): R;
   }
 ShowB:{ #(s: StackB[Nat]): Str -> s.match{
   .empty -> "";
   .elem top, tail -> top.str + (this#(tail));
   }}
-StackC[T]: {
-  .match[R](m: StackMatchC[T,R]): R -> m.empty;
-  ++(other: StackC[T]): StackC[T] -> other;
-  +(e: T): StackC[T] -> {
+StackC[E]: {
+  .match[R](m: StackMatchC[E,R]): R -> m.empty;
+  ++(other: StackC[E]): StackC[E] -> other;
+  +(e: E): StackC[E] -> {
     .match m -> m.elem(e, this);
     ++ other -> other ++ this + e;
     };
   }
-StackMatchC[T,R]: {
+StackMatchC[E,R]: {
   .empty: R;
-  .elem(top:T, tail: StackC[T]): R;
+  .elem(top:E, tail: StackC[E]): R;
   }
 ShowC:{ #(s: StackC[Nat]): Str -> s.match{
   .empty -> "";

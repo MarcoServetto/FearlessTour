@@ -266,7 +266,7 @@ The extrinsic meaning is **supposed** to be a superset of the intrinsic meaning.
 The program is capturing a part of the full semantics of the names.
 A bug is a situation where the intrinsic meaning expresses behaviour outside of the extrinsic meaning.
 
-For example, if `North.turn` was returning `North`, this would be a situation where the intrinsic semantics is different from the expected behaviour.
+For example, if `North.turn` returned `North`, this would be a situation where the intrinsic semantics is different from the expected behaviour.
 
 By the way, using the syntactic sugar to the maximum, this is the most compact version of the code we just discussed:
 

@@ -16,7 +16,7 @@ We will conclude Chapter 3 showing many useful examples of flows and related dat
 ### Method `.map`
 Flows can be used to transform lists into other lists.
 When focusing on this aspect, it is important to keep in mind the size of the lists:
-If the output list is supposed to be of the same size as the input list, we can use map.
+If the output list is supposed to be of the same size as the input list, we can use `.map`.
 For example:
 ```
 Person: { .name: Str }
@@ -253,11 +253,10 @@ The expressions below are all equivalent:
 ```
 Lists#(1,2,3,4)
 Lists#(1,2) +> 3 +> 4
-Lists#(1,2) ++ Lists#(3,4)
-Lists#(1) ++ Lists#(2,3,4)
+Lists#(1,2) ++ (Lists#(3,4))
+Lists#(1) ++ (Lists#(2,3,4))
 ```
-As you can see, we use `+>` to concatenate a list and an element, and `++` to concatenate two lists.
-Since `<+` is a method of `List`, the following code does not work:
+As you can see, we use `+>` to concatenate a list and an element, and `++` to concatenate two lists.Since `<+` is a method of `List`, the following code does not work:
 ```
 1 <+ Lists#(2,3,4)
 ```
@@ -368,7 +367,7 @@ Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
   }}
 ````
 Now we can implement `==` on `Order[T]` and `Point` will automatically get an `==` method.
-Right now it does not look like a great result, we implement one method `.cmp` to get one method `==`.
+Right now it does not look like a great result: we implement one method `.cmp` to get one method `==`.
 But... there are many more convenience operators we can define on top of `.cmp`.
 `==` equal, `!=` different, `<` less than, `<=` less or equal, `>` greater than, `>=` greater or equal.
 As you can see, this is already 6 methods.
@@ -419,6 +418,7 @@ Points:{#(x: Nat, y: Nat): Point -> Point: Order[Point]{ 'self
 And here we have it.
 - Method `Order&&` makes it easier to compose outcomes by only replacing the `eq` case.
 - Method `Order[T]<=>` is easy to use, while `Order[T].cmp` is easy to define.
+
 With both, we can define `.cmp` by using `<=>` on the sub components.
 
 With this implementation strategy, it is easy to define combinations of multiple orderings. In this example, if the `x` coordinates are the same, the `y` coordinate is used.
@@ -451,7 +451,7 @@ If we have our iconic `Person:Order[Person]` with a `read .age:Nat`, we can writ
 `{::}` to get an `OrderBy[Person,Person]` and
 `{::.age}` to get an `OrderBy[Person,Nat]`.
 On the other hand, if we want to give a top level name for a specific way to order persons, we can do it by using `OrderBy[Person]`.
-Assuming `Cat` also has a `.weight: Nat` method, we can write:
+Assuming `Cat` also has a `.weight: Nat` method and `Person` a `read .cats: List[Cat]` method, we can write:
 ```
 ByCats:OrderBy[Person]{
   p1,p2 -> p1.cats.flow.map{::.weight}.sum 0 <=> (p2.cats.flow.map{::.weight}.sum 0);
@@ -531,7 +531,7 @@ myCars.flow
   .max{::.driver}//comparing drivers. Ok since Person implements Order[Person]
   .get //this requires that there is exactly one max
 myCars.flow
-  .max({::.driver}.then Older) //here we check using the Older comparator
+  .max(Older.view{::.driver}) //here we check using the Older comparator
   .getOpt//this requires that there is at most one max
 myCars.flow
   .max(OrderByCaseInsensitive.view{::.driver.name}.then {::.driver.age}) //here names ignoring case
@@ -543,7 +543,7 @@ myCars.flow
   .first//like with .filter: we can split two conditions into two calls if we prefer
 
 myCars.flow
-  .max OrderBy[Car]{c1,c2,m->...}// to write a comparator by hand
+  .max OrderBy[Car]{c1,c2->...}// to write a comparator by hand
   .min {::} //to use the conventional comparator on the equally maximal cars
   .list
 ```
@@ -660,7 +660,7 @@ myPersons.flow
 ```
 Here we pass two parameters: an `OrderHashBy`, that as usual can be the identity if our keys implement `OrderHash[K]`, and a literal specifying how to create the key and the element from the objects inside the flow.
 
-Finally, sets of type `Set[K]` are another application of hashing. Instead of mapping keys to elements, they simply remember whether a key is present or not. That is, `Set[K]`'s most important methods are `.size`, `.isEmpty` and `.contains`.
+Finally, sets of type `Set[E]` are another application of hashing. Instead of mapping keys to elements, they simply remember whether an element is present or not. That is, `Set[E]`'s most important methods are `.size`, `.isEmpty` and `.contains`.
 Sets also support `.flow`, but unlike lists and maps, a set's flow order follows the sorted order given by its `OrderHash`, not the insertion order.
 See below some examples of using sets.
 ```
@@ -696,6 +696,7 @@ However, how can we sort a list of lists?
 To order a collection we need to reason about two generic types:
 - The type of the current collection `T`.
 - The type of the collection elements `E`.
+
 The idea is that by providing an `OrderBy` for the elements, we can produce an
 `Order` for the collection.
 ```
@@ -1345,6 +1346,60 @@ TestByCatsNamedComparator:F[Tests,Tests]{::
     )
   }
 
+"""); }/*--------------------------------------------
+-------------------------*/@Test void carAndListExamplesAsShown() { run("""
+use base.Nat as Nat;
+use base.Str as Str;
+use base.List as List;
+use base.Lists as Lists;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.OrderHash as OrderHash;
+use base.OrderBy as OrderBy;
+use base.OrderByCaseInsensitive as OrderByCaseInsensitive;
+Cats:{ #(weight: Nat): Cat -> Cat:{ .weight: Nat -> weight; } }
+Persons:{
+  #(age: Nat, name: Str, cats: List[Cat]): Person ->
+    Person: OrderHash[Person]{ 'self
+      read .name: Str -> name;
+      read .age: Nat -> age;
+      read .cats: List[Cat] -> cats;
+      .cmp p1,p2 -> p1.age <=> (p2.age) && {p1.name <=> (p2.name)};
+      .hash: Nat -> age.hash.hashWith(name.hash);
+      .str: Str -> "P"+name;
+      .close -> self;
+      .close -> ::;
+      }
+  }
+Older:OrderBy[Person]{ p1,p2 -> p1.age <=> (p2.age) }
+ByCats:OrderBy[Person]{
+  p1,p2 -> p1.cats.flow.map{::.weight}.sum 0 <=> (p2.cats.flow.map{::.weight}.sum 0);
+  }
+Cars:{ #(driver: Person): Car -> Car:{ read .driver: Person -> driver; } }
+Data:{ .cars: List[Car] -> Lists#(
+  Cars#(Persons#(30,"bob",Lists#(Cats#(3)))),
+  Cars#(Persons#(40,"Ann",List[Cat])),
+  Cars#(Persons#(20,"Zed",Lists#(Cats#(1),Cats#(5)))) );
+  }
+Test: Main{s-> Block#
+  .do{Debug#(Data.cars.flow.max{::.driver}.get.driver.name)}
+  .do{Debug#(Data.cars.flow.max(Older.view{::.driver}).get.driver.name)}
+  .do{Debug#(Data.cars.flow.max(ByCats.view{::.driver}).get.driver.name)}
+  .do{Debug#(Data.cars.flow.max(OrderByCaseInsensitive.view{::.driver.name}.then {::.driver.age}).first.match{.empty->"none"; .some c->c.driver.name})}
+  .do{Debug#((Lists#(1,2) ++ (Lists#(3,4))).str{::})}
+  .do{Debug#((Lists#(1) ++ (Lists#(2,3,4))).str{::})}
+  .do{Debug#((Lists#(1,2) +> 3 +> 4).str{::})}
+  .do{Debug#((Lists#(2,3,4) <+ 1).str{::})}
+  .return{base.Void}}
+//PRINT|Ann
+//PRINT|Ann
+//PRINT|Zed
+//PRINT|Zed
+//PRINT|[1, 2, 3, 4]
+//PRINT|[1, 2, 3, 4]
+//PRINT|[1, 2, 3, 4]
+//PRINT|[1, 2, 3, 4]
 """); }/*--------------------------------------------
 OMIT_END
 END*/

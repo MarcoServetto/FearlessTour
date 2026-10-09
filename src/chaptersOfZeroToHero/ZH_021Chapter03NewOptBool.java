@@ -64,7 +64,7 @@ First, two matcher types:
 ThenElse[R:**]: { mut .then: R; mut .else: R; }
 BoolMatch[R:**]:{ mut .true: R; mut .false: R; }
 ````
-We have seen `ThenElse[R]` before; `BoolMatch[R]` is the same but with names for the two cases. They work in the same way, but sometimes one of the two is more readable than the other.
+We have seen `ThenElse[R]` before; `BoolMatch[R]` is the same but with different names for the two cases. They work in the same way, but sometimes one of the two is more readable than the other.
 Note how we take any kind of `R` by using `R:**` and the methods require a `mut` receiver.
 We are not requiring the boolean to be `mut`. This is about the `ThenElse` object that is usually created in order to call the `.if` (or `?`) method.
 With `mut .then` and `mut .else`, the operation inside the `.if` is able to mutate external state if need be.
@@ -165,7 +165,7 @@ False:Bool{
 Finally, the declarations for `True` and `False` are what we have seen before, plus `.toOpt` and `.imm`.
 Note how we can implement the `read .imm: imm Bool` method by just returning `True` or `False`. An object literal summoned by name can be of any RC, of course including `imm`.
 
-### Core code for `Opt[T]`
+### Core code for `Opt[E]`
 
 Below we show the core standard library code for optionals.
 
@@ -208,7 +208,7 @@ Opt[E:*]: _Opt[E]{
 
   .seqFlow    -> this.match{.empty -> Flows#; .some x -> Flows#(x)};
 
-  .mapSome[R:*] f -> this.match{.some x->Opts#(f#x); .empty->{}};
+  .mapSome f -> this.match{.some x->Opts#(f#x); .empty->{}};
 
   .ifSome  f  -> this.match{.some x -> f#x; .empty -> {}};
   .ifEmpty f  -> this.match{.some _ -> {}; .empty -> f#};
@@ -222,7 +222,7 @@ Calling this method is equivalent to claiming
 > I, the programmer, know that in this case the optional will definitely have a value inside.
 > If not, this is an observed bug.
 
-Note how this is conceptually similar to the `.assertTrue` method we have seen before. Indeed, the internal call `Error.msg ".."` is pretty much what the body of `.assertEq` from `DataType` does.
+Note how this is conceptually similar to the `.assertTrue` method we have seen before. Indeed, a failing `.assertEq` from `DataType` also stops the program with an error message, just like the internal call `Error.msg ".."`.
 
 A Fearless method can indicate failure by throwing an error.
 Errors are not part of the basic semantics of Fearless, and they can be thrown using magic methods or convenience methods using magic methods internally.
@@ -352,10 +352,10 @@ As you can see, designing generic container types supporting a range of referenc
 
 ### The Reality of Production Code
 
-You may have noticed a shift in tone. The code for `_Opt[E]` looks significantly more intimidating than the conceptual `Opt[T]` we wrote in Chapter 2.
+You may have noticed a shift in tone. The code for `_Opt[E]` looks significantly more intimidating than the conceptual `Opt[E]` we wrote in Chapter 2.
 
 We are crossing the bridge from **conceptual logic** to **production engineering**.
-The logic remains identical: an optional is still just "something or nothing." However, a production-grade library seamlessly handles `mut`,`imm` and `read` data.
+The logic remains identical: an optional is still just "something or nothing." However, a production-grade library seamlessly handles `mut`, `imm` and `read` data.
 
 Up to now we made sure to explain every single detail when first used. We will eventually provide all the details and teach you the ins and outs of every corner; but there is no longer a clear linear path to follow.
 Here we are showing you the real implementation of those very useful types, and by their nature of being used in all contexts of the language, they are interconnected with every aspect of the language.
@@ -458,7 +458,7 @@ Opt[E:*]: _Opt[E]{
 
   .seqFlow    -> this.match{.empty -> Flows#; .some x -> Flows#(x)};
 
-  .mapSome[R:*] f -> this.match{.some x->Opts#(f#x); .empty->{}};
+  .mapSome f -> this.match{.some x->Opts#(f#x); .empty->{}};
 
   .ifSome  f  -> this.match{.some x -> f#x; .empty -> {}};
   .ifEmpty f  -> this.match{.some _ -> {}; .empty -> f#};
@@ -619,7 +619,7 @@ DataTypeBy[E,K,K0]:ToInfoBy[E],ToImmBy[E,K0],OrderHashBy[E,K]{ #(e: read E): rea
 Method `ToStr.str` represents an object as a string.
 Method `ToInfo.info` represents an object in a structured data format (similar to JSON) useful for communication across programs.
 Type `OrderHash[T]` provides hashing and comparison methods to a type `T` extending it. Objects extending `OrderHash[T]` can easily be organised in efficient data structures.
-Method `ToImm[T].imm` converts an object of any reference capability into an immutable version of the same object. For objects that can only ever be immutable, this method simply returns the object itself.
+Method `ToImm[T0].imm` converts an object of any reference capability into an immutable version of the same object. For objects that can only ever be immutable, this method simply returns the object itself.
 
 Note how many of those types have a generic variant, like `ToStr` and `ToStr[E]`. As we will see later, this is because for generic containers we need a way to convert the contained objects to be able to convert the container itself.
 

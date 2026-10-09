@@ -53,7 +53,7 @@ Action[R:*]: {
   mut .run[RR:*](mut ActionMatch[R,RR]): RR;
   }
 ```
-The `ActionMatch[R,RR]` type is unsurprising. Very similar to `OptMatch[T,R]` or `StackMatch[T,R]`.
+The `ActionMatch[R,RR]` type is unsurprising. Very similar to `OptMatch[E,R]` or `StackMatch[E,R]`.
 As we discussed before, remember that `R:*` stands for `R:imm,mut,read` and `R:**` includes all of the reference capabilities.
 At its core, `Action` has a very simple implementation.
 We call the generic parameters `R` and `RR` to suggest that `R` is the result of the action, while `RR` is the result of processing either the action result or the `Info`.
@@ -150,6 +150,7 @@ Action[R:*]: {
 ```
 Method `.map` takes another mutating function `f` and returns a `mut Action[RR]` object that, when a matcher `m` is provided, calls the `.run` method on the outer `Action[R]` and delegates the behaviour of `.ok` and `.info` to `m.ok` and `m.info`.
 - `m.ok` will take as input not the original value `x`, but the result of applying `f` to `x`.
+
 Method `.map` is useful to transform the type of actions without actually executing any code at that moment.
 For example 
 ```
@@ -176,7 +177,7 @@ Action[R:*]: {
 
 We can see `.andThen` as a version of `.map` allowing more control over how the resulting `Action[RR]` is created.
 
-The `.map` method takes a function that transforms a value of type `R` into a new value of type `RR`. This transformation is straightforward and direct. If `Action[R]` contains a value, that value is transformed using the provided function to produce an `Action[RR]`.
+The `.map` method takes a function that transforms a value of type `R` into a new value of type `RR`. This transformation is straightforward and direct.
 If the original `Action[R]` is successful (i.e., produces a value), `.map` applies the function to this value and wraps the result in a new `Action[RR]`. If the original `Action[R]` is a failure (i.e., produces an `Info` object), `.map` does nothing to the failure information—it simply carries it forward unchanged.
 
 `.andThen` extends the functionality of `.map` by allowing the transformation function itself to produce the new `Action[RR]`. This is useful when the transformation's outcome isn't just a value, but a new computation or action that might itself succeed or fail.
@@ -186,21 +187,21 @@ Method `.andThen` is particularly useful in scenarios where subsequent actions d
 For example, the code below
 ```
 persons.tryGet(3).andThen{p->
-  jobs.tryGet(p.name).map{ j->"Person "+p+" works as a "+j } }
+  jobs.tryGet(p.name).map{ j->"Person "+(p.name)+" works as a "+j } }
 ```
 
-does two different actions: extracts the person at index `3` and connects their name with their job using `jobs: Map[Str,Job]`.
+does two different actions: extracts the person at index `3` and connects their name with their job using `jobs: Map[Str,Str]`.
 Finally it uses the job `j` and the person `p` to produce an `Action[Str]`. Note how this is only needed if we want to get a detailed error message in case of failure. We can encode the same idea with optionals with the more conventional flow code below:
 ```
 persons.opt(3).flow.flatMap{p->
-  jobs.opt(p.name).mapSome{ j->"Person " + p + " works as a " + j } }.getOpt
+  jobs.opt(p.name).mapSome{ j->"Person " + (p.name) + " works as a " + j } }.getOpt
 ```
 Here, if the person or the job is not present, we would simply get an empty optional.
 Note: if we expect the person and the job to be there, and it should be an observed bug if this is not the case, then we should write the simpler code
 ```
   Block#
     .let p= {persons.get(3)}
-    .return { "Person " + p + " works as a "+ jobs.get(p.name) }
+    .return { "Person " + (p.name) + " works as a " + (jobs.get(p.name)) }
 ```
 In this way our code will correctly fail as soon as an error is detected.
 
@@ -243,8 +244,7 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
       }}}
 ```
 
-Here `Points` has a `.fromInfo` method creating a point using the `"x"` and `"y"` coordinates stored in an `Info` object.
-Then, method `Points#` takes the `x` and `y` `Nat` coordinates and creates the resulting `Point`.
+Here `Points` has a `.fromInfo` method creating a point using the `"x"` and `"y"` coordinates stored in an `Info` object.Then, method `Points#` takes the `x` and `y` `Nat` coordinates and creates the resulting `Point`.
 However, before the point is created, we use `Nat.assertInRange` to check that `x` and `y` are in the desired range.
 `Nat.assertInRange` will throw an error if the number is not in the range.
 In `.cmp`, the parameters `{.imm.x,.imm.y}1` and `{.imm.x,.imm.y}2` are patterns taking the two points apart:
@@ -259,7 +259,6 @@ The idea is that most of the code can create points assuming that the creation w
 From the perspective of that code, a failure to create a `Point` object is an observed bug.
 
 Then, if the program as a whole does not want to consider failing to create points an observed bug, it can wrap a function making a lot of computations about points into a `Try#{..}`, thus producing an action that can be safely handled.
-
 In a complex program we can have a few layers of responsibility like this, where some code works as a supervisor of some other code that is allowed to fail.
 
 ### Try, CapTry and exact shape of error messages.
@@ -270,11 +269,9 @@ But... what happens next?
 Another `Try#{...}` can turn the leaked error into another `Action[R]`, or the whole program could fail. How does this failure look?
 It will look something like this:
 ````
-Error info: {.msg:"...."}
-stack trace:
-...//TODO: complete example with correct code.
-...
-...
+List.get: List index 5 out of range for List of length 3
+imm Foo.bar(_) error line: 4 in file //.../_rank_app.fear
+imm Test.main(_) error line: 7 in file //.../_rank_app.fear
 ````
 The first chunk prints the info.
 It could be just `.msg` or could be richer if the info contained more data.
@@ -282,38 +279,41 @@ But we also get these **stack trace** details.
 What is that about?
 It is about the set of active calls when the error leaked.
 
+We can capture this information programmatically with the capability `System.try`.
+Code `sys.try#{...}` creates an `Action[R]` whose `Info` is going to be the sum of the
+normal `Info` and the info containing the stack trace: a map where `"msg"` holds the message and `"list"` holds the stack trace, with one element for each active call.
+
 For example
 ````
 Stuff:{
-  .foo -> Lists#(1,2,3).get(5);
-  .bar -> Try#{this.foo};
-  .beer1 -> this.bar!;
-  .beer2 -> this.bar.context{"InBeer2"}!;
+  .foo: Nat -> Lists#(1,2,3).get(5);
+  .bar: mut Action[Nat] -> Try#{this.foo};
+  .beer0: Nat -> this.foo;
+  .beer1: Nat -> this.bar!;
+  .beer2: Nat -> this.bar.context{"InBeer2"}!;
   }
 ````
 
-`this.beer1` would have
-`list too short`
-stack trace `Stuff.beer1, Stuff.foo, List.get`.
+`sys.try#{Stuff.beer0}` would have
+`List.get: List index 5 out of range for List of length 3`
+stack trace `Stuff.foo, Stuff.beer0`.
 
-`this.beer2` would have
+`sys.try#{Stuff.beer1}` would have the same message, but
+stack trace `Stuff.beer1`.
+
+`sys.try#{Stuff.beer2}` would have
 ```
 InBeer2
-list too short
+List.get: List index 5 out of range for List of length 3
 ```
-stack trace `Stuff.beer2`
-As you can see, the call to context added custom text but removed information from the stack trace.
->Is this what we want? big design decision. The other implementation where we keep the original stack trace must also be possible. (mutate the exception obj and re-throw it)
+stack trace `Stuff.beer2`.
 
-We can capture this information programmatically with the capability `System.try`
-
-````
-example.
-````
-
-Code `capTry#{...}` creates an `Action[R]` whose `Info` is going to be the sum of the
-normal `Info` and the info containing the stack trace.
-> How? list of string or structured?
+Where did `Stuff.foo` go?
+The `Info` of a `Try#` action holds just the message, and `!` throws it again as a brand new error, whose stack trace starts where `!` is called.
+The call to `.context` only added custom text.
+This is crucial: `Try#` needs no capability, so all it can observe must be deterministic.
+The same operation called from two different places produces two different stack traces: if `Try#` could see them, the code would have evidence of where it was called from.
+Only `System.try` can observe stack traces.
 
 Moreover, `System.try` allows us to capture some sneaky errors, known as **non-deterministic errors**.
 Non-deterministic errors are errors that may change depending on the specific system limitations and set up.
@@ -542,6 +542,98 @@ Pts:{ #(x: Nat, y: Nat): Nat -> Block#
 //PRINT|bad
 
 
+"""); }/*--------------------------------------------
+-------------------------*/@Test void infoSumLiftsDifferentKindsToMaps() { run("""
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Infos as Infos;
+Test: base.Main{s-> Block#
+  .do{Debug#((Infos.msg("a") + (Infos.list("x"))).str)}
+  .do{Debug#((Infos.msg("a") + (Infos.msg("b"))).str)}
+  .do{Debug#((Infos.list("x") + (Infos.list("y"))).str)}
+  .do{Debug#((Infos.map("k","v") + (Infos.map("k","w","j","z"))).str)}
+  .return{base.Void}}
+//PRINT|{"msg":"a","list":["x"]}
+//PRINT|"a\\nb"
+//PRINT|["x","y"]
+//PRINT|{"k":"v\\nw","j":"z"}
+"""); }/*--------------------------------------------
+-------------------------*/@Test void optionalFlowVersionOfAndThen() { run("""
+use base.Block as Block;
+use base.Debug as Debug;
+use base.List as List;
+use base.Lists as Lists;
+use base.Map as Map;
+use base.Maps as Maps;
+use base.Opt as Opt;
+use base.Str as Str;
+Person:{ .name: Str }
+Persons:{ #(n: Str): Person -> { .name -> n } }
+Jobs:{ .map: Map[Str,Str] -> Maps#({::},"a","baker","b","cook"); }
+Ex:{
+  #(persons: List[Person], jobs: Map[Str,Str]): Opt[Str] ->
+    persons.opt(1).flow.flatMap{p->
+      jobs.opt(p.name).mapSome{ j->"Person " + (p.name) + " works as a " + j } }.getOpt
+  }
+Test: base.Main{s-> Block#
+  .do{Debug#(Ex#(Lists#(Persons#("a"),Persons#("b")),Jobs.map).str{::})}
+  .do{Debug#(Ex#(Lists#(Persons#("a"),Persons#("z")),Jobs.map).str{::})}
+  .do{Debug#(Ex#(Lists#(Persons#("a")),Jobs.map).str{::})}
+  .return{base.Void}}
+//PRINT|Opt[Person b works as a cook]
+//PRINT|Opt[]
+//PRINT|Opt[]
+"""); }/*--------------------------------------------
+-------------------------*/@Test void tryDoesNotCaptureAssertionFailures() { run("""
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Try as Try;
+Test: base.Main{s-> Block#
+  .do{Debug#(s.try#{5 .assertInRange(1=~~=4)}.info.isSome)}
+  .do{Debug#(s.try#{Try#{5 .assertInRange(1=~~=4)}.info.isSome}.info.isSome)}
+  .return{base.Void}}
+//PRINT|True
+//PRINT|True
+"""); }/*--------------------------------------------
+-------------------------*/@Test void capTryInfoIsAMap() { run("""
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Error as Error;
+use base.Nat as Nat;
+Test: base.Main{s-> Block#
+  .do{Debug#(s.try#{ Error.msg[Nat] "boom" }.info!.getMap.get("msg").getMsg)}
+  .do{Debug#(s.try#{ Error.msg[Nat] "boom" }.info!.getMap.get("list").getList.isEmpty.not)}
+  .return{base.Void}}
+//PRINT|boom
+//PRINT|True
+"""); }/*--------------------------------------------
+-------------------------*/@Test void stackTraceStartsAtBang() { run("""
+use base.Nat as Nat;
+use base.Lists as Lists;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Try as Try;
+use base.Action as Action;
+Stuff:{
+  .foo: Nat -> Lists#(1,2,3).get(5);
+  .bar: mut Action[Nat] -> Try#{this.foo};
+  .beer0: Nat -> this.foo;
+  .beer1: Nat -> this.bar!;
+  .beer2: Nat -> this.bar.context{"InBeer2"}!;
+  }
+Test: base.Main{s-> Block#
+  .do{Debug#(Stuff.bar.info!.str)}
+  .do{Debug#(s.try#{Stuff.beer0}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
+  .do{Debug#(s.try#{Stuff.beer1}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
+  .do{Debug#(s.try#{Stuff.beer2}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
+  .do{Debug#(s.try#{Stuff.beer2}.info!.getMap.get("msg").getMsg)}
+  .return{base.Void}}
+//PRINT|"List.get: List index 5 out of range for List of length 3"
+//PRINT|imm .foo
+//PRINT|imm .beer1
+//PRINT|imm .beer2
+//PRINT|InBeer2
+//PRINT|List.get: List index 5 out of range for List of length 3
 """); }/*--------------------------------------------
 OMIT_END
 END*/

@@ -38,18 +38,18 @@ Tank: {
   }
 Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank->
   { .heading -> heading; .aiming -> aiming; .position -> position } }
-StackMatch[T,R]: {
+StackMatch[E,R]: {
   .empty: R;
-  .elem(top:T, tail: Stack[T]): R;
+  .elem(top:E, tail: Stack[E]): R;
   }
-Stack[T]: {
-  .match[R](m: StackMatch[T,R]): R -> m.empty;
-  .fold[R](start:R, f: F[R,T,R]): R -> start;
-  .map[R](f: F[T, R]): Stack[R] -> {};
-  .filter(f: F[T,Bool]): Stack[T]-> {};
+Stack[E]: {
+  .match[R](m: StackMatch[E,R]): R -> m.empty;
+  .fold[R](start:R, f: F[R,E,R]): R -> start;
+  .map[R](f: F[E, R]): Stack[R] -> {};
+  .filter(f: F[E,Bool]): Stack[E]-> {};
   .size:Nat->0;
-  ++(other: Stack[T]): Stack[T] -> other;
-  +(e: T): Stack[T] -> {
+  ++(other: Stack[E]): Stack[E] -> other;
+  +(e: E): Stack[E] -> {
     .match(m) -> m.elem(e, this);
     ++(other) -> this ++ other  + e;
     .fold(start, f) -> f#(this.fold(start, f), e);

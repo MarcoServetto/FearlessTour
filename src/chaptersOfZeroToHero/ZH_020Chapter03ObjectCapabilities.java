@@ -13,7 +13,7 @@ class ZH_020Chapter03ObjectCapabilities {
 Finally, we have discussed all of the knowledge needed to make our first Fearless program.
 
 -------------------------*/@Test void finallyMain() { run("""
-//in file _test/_rank_app.fear
+//in file _demo/_rank_app.fear
 use base.Main as Main;
 use base.Output as Output;
 
@@ -39,10 +39,11 @@ That is the Fearless compiler. Congrats, now you have it on your machine.
 Then, click on the executable whose name starts with `fearless` and ends with `w`, like `fearlessBin0_001w` or `fearlessBin0_001w.exe` (the exact name depends on the version).
 
 You will see a window asking to create a demo project in a location of your choice. Choose anywhere you like, for example a new folder on your Desktop.
-This new folder will contain the following files:
+This new folder will contain the following files and folders:
 - `start.fearless`
 - `_demo`
 - `_demo/_rank_app.fear`
+
 You should right click on `start.fearless` and associate files with extension `*.fearless` with 
 that same executable.
 That is it, you are all set to use Fearless on your machine.

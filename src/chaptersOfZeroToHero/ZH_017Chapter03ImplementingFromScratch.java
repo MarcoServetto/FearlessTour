@@ -25,13 +25,14 @@ All that we discussed lives in the world of the language itself. If we want our 
 For example, no matter how many generics, types and methods we write from scratch, we will not be able to draw an image on the screen, or to save a file, or to read information from the internet.
 Those are examples of **external side effects**.
 
-Similarly, there are a few cases where we want to modify the behaviour of our code itself. This is possible using **internal side effects**.
+Similarly, there are cases where we want a value to change while the program runs. This is possible using **internal side effects**.
 
 We call **magic methods** the methods from the standard library giving direct access to operations that would not be possible in plain Fearless.
 
 ### Var: the first bit of magic
 
 The following code introduces updatable local variables, and uses a few new features.
+It is a simplified version of the standard library `Var`.
 -------------------------*/@Test void var1 () { run("""
 //OMIT_START
 _Magic: { ![R:**]: R -> base.Error.msg"magic"; }
@@ -54,11 +55,11 @@ It is a marker used internally by the compiler to annotate certain method bodies
 All such methods are already part of the standard library, so no user program would ever write `_Magic!`.
 
 The description below explains how the code above works, but will only mention `mut`, `imm`, `read` and `read/imm` without explaining how they work in detail yet.
-First we define a type `Void:{}`. Nothing special here, just a type that does nothing. `Void` is often used to represent an operation that has no meaningful result, and simply performs side effects, and to do so it will have to use magic methods internally.
+First we define a type `Void:{}`. Nothing special here, just a type that does nothing. `Void` is often used to represent an operation that has no meaningful result, and simply performs side effects, and the operations returning it will have to use magic methods internally.
 Then we define `Var[E]` as a generic type.
-The type `E` has a constraint: it can only be `imm`,`mut` or `read`.
+The type `E` has a constraint: it can only be `imm`, `mut` or `read`.
 Those are keywords called reference capabilities: they describe how values can interact with magic.
-An instance of `Var` will store an object of type `E`. The crucial bit is that such a value can change over time.
+An instance of `Var` will store an object of type `E`. The crucial bit is that such a value can change over time: this is called **mutation**.
 Method `.set` takes a new value, and magically changes the current object to store that new value instead of the old one.
 Note how this method starts with the `mut` keyword.
 In Fearless, types and methods can have a keyword in front to track how they interact with magic.

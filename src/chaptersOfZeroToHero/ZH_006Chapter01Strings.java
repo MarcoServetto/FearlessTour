@@ -96,7 +96,7 @@ In the same way `10` is an object literal extending the standard library type `N
 `` "bo"+"b" `` reduces to ``"bob"``.
 
 Similarly, `` "Hello " + "world" `` will reduce to `` "Hello world" ``.
-Note the space after the `"o"` in `` "Hello " ``.
+Note the space after the `o` in `` "Hello " ``.
 
 That is, the `+` method does not sum the two strings as numbers but just concatenates them.
 
@@ -125,7 +125,8 @@ and `` "Zb2A" `` is the rest of the string.
 `|` works exactly like `+`, but also jams a new line in the middle.
 Similarly, `^` is the concatenation operator with double quote.
 `^` works exactly like `+`, but also jams a `` " `` in the middle.
- 
+Both can also be written without a right operand: `` "Hi"| `` is `` "Hi" `` followed by a new line, and `` "Hi"^ `` is `` "Hi" `` followed by a `` " ``.
+
 Thus `` "Hi, "^"John"^", are you really John?" `` contains `John` in double quotes.
 Alternatively, Fearless allows strings to be delimited by backticks `` ` ``, allowing us to write the string above as
 `` `Hi, "John", are you really John?` ``.
@@ -138,6 +139,14 @@ Test:base.Main {sys -> base.Debug#("Hello " + "world")}//OK
 -------------------------*/@Test void exampleStringsEscape () { run("""
 Test:base.Main {sys -> base.Debug#("He"^"ll"^"o " + "wor\\ld")}//OK
 //PRINT|He"ll"o wor\\ld
+"""); }/*--------------------------------------------
+-------------------------*/@Test void exampleStringsWithoutRightOperand () { run("""
+Test:base.Main {sys -> base.Block#
+  .do{base.Debug#(("Hi"|).size)}
+  .do{base.Debug#(("Hi"^) == `Hi"`)}
+  .return{base.Void}}
+//PRINT|3
+//PRINT|True
 """); }/*--------------------------------------------
 
 //OMIT_END

@@ -9,7 +9,7 @@ class ZH_005Chapter01FiniteNumbers {
 --SECTION-- Finite numbers
 
 ### Finite Numbers and Modulo Arithmetic.
-The example of the four cardinal directions is intriguing but limited, given there are only four options. Many things, including numbers, come in much larger, even seemingly unlimited quantities. Before exploring sets with infinite elements, let's discuss arithmetic within a finite set of numbers.
+The example of the four cardinal directions is intriguing but limited, given there are only four options. Many things, including numbers, come in much larger, even seemingly unlimited quantities. Before exploring sets with infinitely many elements, let's discuss arithmetic within a finite set of numbers.
 
 Consider a set of numbers that functions like the hours on a clock. Typically, a clock displays 12 hours. After 12 o'clock, the next hour doesn't advance to 13; instead, it cycles back to 1. In this system, each number has a predefined position, and upon reaching the highest number, the sequence loops back to the start.
 
@@ -166,7 +166,7 @@ object-oriented languages like Fearless.
 #### Implementing multiplication inductively in Fearless:
 
 Building on those ideas, we can encode the other operations of numbers.
-We now show with multiplication:
+We now show multiplication:
 ```
 Number: { 
   .pred: Number; .succ: Number;
@@ -316,7 +316,7 @@ We had to introduce a method `._rightSub` since we can only reason inductively o
 Later we will show ways to actually hide the existence of those auxiliary methods.
 
 
-This section introduced modulo arithmetic and showed how fundamental operations like addition, multiplication, and subtraction can be implemented from scratch using inductive definitions (base cases and recursive steps) purely with types and methods.
+This section introduced modulo arithmetic and showed how fundamental operations like addition, multiplication, and subtraction can be implemented from scratch using inductive definitions (base cases and inductive steps) purely with types and methods.
 
 ### Numbers as a Common Resource
 
@@ -357,7 +357,7 @@ not be defined by regular Fearless programmers.
 
 #### How do they work? Like our clock, just... BIGGER!
 
-*(A quick warning before we start: for the next few paragraphs we describe `Nat` and `Int` exactly as if they always silently wrapped around like a clock. This is a simplification, in the same spirit as saying `1 + 1` is `2` without dwelling on every way a computation could instead fail. We come back to this, and to what actually happens, at the end of this section.)*
+*(A quick warning before we start: until the last part of this section we describe `Nat` and `Int` exactly as if they always silently wrapped around like a clock. This is a simplification, in the same spirit as saying `1 + 1` is `2` without dwelling on every way a computation could instead fail. We come back to this, and to what actually happens, at the end of this section.)*
 
 Crucially, `Nat` and `Int` work exactly like our `Number` example, using **modulo arithmetic**. The key difference is the size of the "clock face". Instead of wrapping around after `11`, they wrap around after reaching an enormously large value.
 `Nat` behaves like a massive clock counting from `0` up to this huge maximum.

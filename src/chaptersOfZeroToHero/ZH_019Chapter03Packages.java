@@ -26,7 +26,6 @@ Using those long-winded names everywhere would make the code repetitive and hard
 To mitigate this, Fearless supports **use directives**.
 Use directives need to be in the rank file.
 The rank file is a file in the package with name `_rank_app.fear`; other specific standard names are possible, but we will not discuss them here.
-
 For example we can have the following:
 ```
 //inside file _test/_rank_app.fear

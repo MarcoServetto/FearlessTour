@@ -19,6 +19,7 @@ A `get` method promises a precise, correct answer, but only for the cases where 
 Instead of making up an arbitrary answer, `get` methods stop the whole execution.
 A `soft` method takes the opposite approach: it never stops the execution, and instead gives back the closest reasonable answer it
 can, even when an exact one is not possible.
+
 Going back to repetitive code, we show below a difficult to read method computing the distance between two points;
 using the square root function (`.softSqrt`) present on `Nat`. Most numbers (like `2`)
 do not have a whole-number, or even a neat fractional, square root, so `.softSqrt` gives back the closest `Float` it can find.
@@ -37,11 +38,11 @@ A:{
 """); }/*--------------------------------------------
 
 Note that those are the needed parentheses:
-     `p1.x - p2.x` would be interpreted as `(p1.x - p2).x`
+     `p1.x - p2.x` would be interpreted as `(p1.x - p2).x`.
+
 This method uses the Pythagorean theorem, but it is not ideal:
   - we duplicate code for `p1.x - (p2.x)` and `p1.y - (p2.y)`
   - all the code is in a single hard to read line.
-
 What if we want to introduce more names?
 We can define a function on the fly and call it, as shown below:
 -------------------------*/@Test void distance2 () { run("""
@@ -262,6 +263,44 @@ D5:{
 //PRINT|0
 //PRINT|1
 
+"""); }/*--------------------------------------------
+-------------------------*/@Test void distanceStopsOnNatUnderflow() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Nat as Nat;
+Test: Main{s-> Block#
+  .do{Debug#(s.try#{D1.distance(Points#(4,5),Points#(7,9))}.info.isSome)}
+  .do{Debug#(s.try#{D1.distance(Points#(7,9),Points#(4,5))}.info.isSome)}
+  .return{Void}}
+Point:{ .x: Nat; .y: Nat }
+Points:{ #(x: Nat, y: Nat): Point -> { .x -> x; .y -> y } }
+D1:{
+.distance(p1: Point, p2: Point): Nat->
+  p1.x - (p2.x) * (p1.x - (p2.x)) + (p1.y - (p2.y) * (p1.y - (p2.y)))  .softSqrt .softNat
+}
+//PRINT|True
+//PRINT|False
+"""); }/*--------------------------------------------
+-------------------------*/@Test void getStopsAndSoftClamps() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Try as Try;
+Test: Main{s-> Block#
+  .do{Debug#(Try#{3.5 .getNat}.info.isSome)}
+  .do{Debug#(3.5 .softNat)}
+  .do{Debug#((-1.0) .softNat)}
+  .do{Debug#(2 .softSqrt .softNat)}
+  .do{Debug#(Try#{3.0 .getNat}.info.isSome)}
+  .return{Void}}
+//PRINT|True
+//PRINT|3
+//PRINT|0
+//PRINT|1
+//PRINT|False
 """); }/*--------------------------------------------
 //OMIT_END
 END*/

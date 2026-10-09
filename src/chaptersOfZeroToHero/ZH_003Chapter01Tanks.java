@@ -40,7 +40,7 @@ type inference, syntactic sugar is also designed to avoid redundant code.
 
 Syntactic sugar allows representing specific well known coding patterns using more concise and more readable syntax.
 
-Syntactic sugar does not change the meaning, it just provides a shorter way to write the exact same thing. Think of it like a contraction in English: "don't" instead of "do not". It is shorter, but the underlying meaning is identical.
+Syntactic sugar does not change the meaning; it just provides a shorter way to write the exact same thing. Think of it like a contraction in English: "don't" instead of "do not". It is shorter, but the underlying meaning is identical.
 
 We will now see how a combination of syntactic sugar and inference can make the
 code for `Direction` even more compact.
@@ -290,7 +290,7 @@ via the `Tanks.of` method or via a top level declaration, like `TankNN`.
 
 To do so, we introduced the name `MadeTank`,
 to indicate tanks originating from that point in the code.
-The name `MadeTank` is not very useful, we will probably never want to
+The name `MadeTank` is not very useful: we will probably never want to
 talk only about tanks made with the `Tanks.of` method,
 so we can rely on the sugar and type inference to choose a name for us and to infer that the literal we are creating is extending `Tank`.
 In this case, the name for our literal is going to be some fresh name
@@ -322,7 +322,7 @@ That is, there are three different kinds of object literals:
   `MadeTank: Tank { .heading -> heading; .aiming -> aiming;}`<br/> 
   and `Tank: { .heading: Direction -> heading; .aiming: Direction -> aiming }`, as we have seen before
   are named object literals: we do explicitly choose the name for this new type we are declaring.
-  It is the most complete form of literal; it is a top level declaration that doubles as an object creation. 
+  It is the most complete form of literal; it is a type declaration that doubles as an object creation.
  
 #### The three kinds of expressions, revisited.
 
@@ -330,10 +330,10 @@ We have now seen more examples for the three kinds of expressions:
 
 - Parameters: `this`, `heading`, `aiming`
 - Method calls: `North.turn`, `Tanks.of(North,East)`, `Tanks.of(North,East.reverse)`
-- Object literals `North`, `East`, `Tank: { ... -> heading; ... }`, `{..}`
+- Object literals: `North`, `East`, `Tank: { ... -> heading; ... }`, `{..}`
 
-Method bodies are expressions, so any method body will be exactly one expression. Expressions can have sub expressions:
-`Tanks.of(North,East.reverse)` has sub expressions
+Method bodies are expressions, so any method body will be exactly one expression. Expressions can have sub-expressions:
+`Tanks.of(North,East.reverse)` has sub-expressions
 `Tanks`, `North` and `East.reverse`. In turn `East.reverse` has sub-expression `East`.
 
 Object literal expressions are also type declarations, and
@@ -519,7 +519,7 @@ Tanks#(
 It is important to learn to visualise how the code reduces in your mind, so that you can predict code behaviour.
 Note how we wrote `Tank{.heading -> North; .aiming -> South }`.
 - Should we just write `{.heading ->North; .aiming ->South }` and rely more on the inference?
-- Should we write `Anon27: Tank{.heading -> North; .aiming -> South }` and write the whole object literal explicitly?
+- Should we write `SomeName27: Tank{.heading -> North; .aiming -> South }` and write the whole object literal explicitly?
 
 Inference works on source code: the code we write.
 Code under reduction is not source code, but just a tool for us to understand the code behaviour. Since it is just a tool,
@@ -571,6 +571,17 @@ Makers: { .of(heading: Direction, aiming: Direction): Tank -> MadeTank: Tank { .
 //PRINT|West
 
 
+"""); }/*--------------------------------------------
+-------------------------*/@Test void typeDeclaredInsideAMethodIsLocal() { run("""
+Direction:{}
+Tanks:{ .of(heading: Direction, aiming: Direction): Tank -> Tank:{ .heading: Direction -> heading; .aiming: Direction -> aiming } }
+X:{ .t: Tank -> Tank }
+//ERROR|In file: [###]_test/_rank_app111.fear
+//ERROR|[###]
+//ERROR|The type "Tank" is declared inside a method body.
+//ERROR|A type declared inside a method can capture any parameter name in scope,
+//ERROR|so it cannot be extended or instantiated.
+//ERROR|[###]
 """); }/*--------------------------------------------
 //OMIT_END
 END*/

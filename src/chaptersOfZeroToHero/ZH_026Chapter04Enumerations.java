@@ -249,6 +249,35 @@ West:  Direction{.imm->West;  "West" }
 //PRINT|True
 //PRINT|North
 """); }/*--------------------------------------------
+-------------------------*/@Test void mapGetMessage() { run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Lists as Lists;
+use base.Debug as Debug;
+use base.Enums as Enums;
+use base.Enum as Enum;
+use base.Maps as Maps;
+use base.Try as Try;
+Test: Main{s-> Block#
+  .do{Debug#(Try#{Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).get("Nope")}.info!.getMsg)}
+  .return{Void}}
+
+Directions: Enums[Direction]{
+  .list -> Lists#(North,East,South,West);
+  .strBy -> {::};
+  }
+Direction: Enum[Direction]{
+  .enums->Directions;
+  .close->this; .close->::;
+  }
+North: Direction{.imm->North; "North"}
+East:  Direction{.imm->East;  "East" }
+South: Direction{.imm->South; "South"}
+West:  Direction{.imm->West;  "West" }
+//PRINT|Map.get: Tried to get key Nope that is not contained in this map.
+//PRINT| Consider using `Map.opt` to properly handle the failure case.
+"""); }/*--------------------------------------------
 OMIT_END
 END*/
 }

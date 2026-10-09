@@ -30,7 +30,7 @@ Note how `.turn1` is the only abstract method in `Direction`.
 The syntactic sugar helps us make this code more compact: it is clear that we want to implement the method `.turn1`, because it is the only abstract method. Thus as discussed before we can write just `East` in `North` instead of the more verbose (but equivalent) `.turn1->East`.
 
 Having names like `.turn0`, `.turn1`, `.turn2`, etc., often signals that we're missing some abstraction.
-These aren't fundamentally different actions, they are different degrees of the same action: `Rotation`.
+These aren't fundamentally different actions; they are different degrees of the same action: `Rotation`.
 In the same way `North`, `East`, `South` and `West` are all `Direction`, those methods are all kinds of `Rotation`.
 
 We can define `Rotation` as a type that represents **something that knows how to rotate a `Direction`**.
@@ -71,6 +71,7 @@ This is ok: when implementing a method, the name of the parameters is irrelevant
   At your stage of learning, you may be surprised that syntactic sugar
   supports this specific case in particular, but with more experience you will see that
   this apparently oddly specific case is actually very common in Fearless code.
+
 Using this compact syntax, here is how we would define all the rotations:
 -------------------------*/@Test void colonColon1() { run("""
   //OMIT_START
@@ -125,10 +126,11 @@ Under this lens, we can describe programming as **Naming Parametric Abstractions
 We have now seen two kinds of abstractions:
 - Methods allow us to abstract away the specific implementation of a method body: we can simply call the method again instead of typing again the full body.
 - Subtyping allows us to abstract types into categories: when mentioning `Direction` as a type we mean any of the values implementing `Direction`.
+
 We will see other forms of abstraction later on.
 
 Note how `Tanks` and `Rotation` are kind of similar: they are both top level types with a `#` method. We call types like those **functions**.
-In the common mathematical notation, a function can be directly applied to the arguments doing `f(x,y)`. In Fearless we need to add the extra `#` symbol, and we get `f#(x,y)`.
+In the common mathematical notation, a function is applied to its arguments by writing `f(x,y)`. In Fearless we need to add the extra `#` symbol, and we get `f#(x,y)`.
 
 ### Composing rotations
 
@@ -167,7 +169,7 @@ As you can see, we can define `+` as a method. As we have seen with `#`, we can 
 Method `Rotation+` has two parameters: `this` and `r`; the two `Rotation`s we want to compose.
 For example `this` could be `Turn90` and `r` could be `Turn180`.
 
-Using syntax
+Using the syntax
 `(Turn90+(Turn180))#(North)`
 method `Rotation+` will combine those two parameters to produce a new `Rotation` object, equivalent to `Turn270`.
 Then it is going to rotate `North` 270 degrees producing `West`.
@@ -200,11 +202,10 @@ The method `Rotation+` is considered very elegant code.
 Inside it, `this` refers to the first `Rotation` (`Turn90` in `Turn90 +(Turn180)`).
 `r` refers to the second rotation (`Turn180`).
 The object literal `{ d -> this#( r#(d) ) }` creates a new `Rotation` object. When this new object's `#` method is called later, it will use the `this` and `r` that were captured when it was created.
-
 Thanks to our syntactic sugar and inference, the body of method `Rotation+` is very compact.
 The expression `{ d-> this#(r#(d)) }` is equivalent to
 `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }`.
-Before we discussed how `North` is a literal.
+Earlier we discussed how `North` is a literal.
 `North` is just sugar for `SomeName147:North{}`. Exactly in the same way and via the same process `SomeName156:Rotation{#(d: Direction): Direction-> this#(r#(d)) }` can be shortened by the sugar to `{ d-> this#(r#(d)) }`.
 
 At first look, you may think that the body `this#(r#(d))`
@@ -214,7 +215,7 @@ However, that `this` is the outer rotation object (the receiver of the call `Rot
 that must be some `Rotation` object defined before `Rotation+`
 was called, thus the behaviour of method `this#` was fully determined before `Rotation+` was called
 and the return value of `Rotation+` created.
-We are sure that the method `Rotation#` of `this` is implemented because all literals have no abstract methods, and parameters (like `this`) are replaced with literals when methods are called.
+We are sure that the method `Rotation#` of `this` is implemented because a literal never has abstract methods, and parameters (like `this`) are replaced with literals when methods are called.
 
 A common source of confusion when looking at code like
 -------------------------*/@Test void rotationPlus2() { run("""
@@ -236,7 +237,7 @@ Turn270: Rotation{::.turn.turn.turn}
 is to assume that the method `Rotation#` will have the behaviour that we can see in `Rotation`.
 Here `Rotation#` is abstract. Thus, there is no way that the calls `this#` or `r#` would ever resolve into the non-existent code of `Rotation#`; they will always resolve to some concrete implementation of it.
 
-While this is self evident in `Rotation#`, since there is no body, this holds also when a body is present; since methods can be overridden in other literals.
+While this is self evident in `Rotation#`, since there is no body, this holds also when a body is present, since methods can be overridden in other literals.
 
 The code of `Rotation+` is similar to the code of `Tanks#`: it is creating a new kind of object by capturing the method parameters inside of the returned literal.
 With the `+` method we are able to create all kinds of `Rotation`s by using only `Turn90`:
