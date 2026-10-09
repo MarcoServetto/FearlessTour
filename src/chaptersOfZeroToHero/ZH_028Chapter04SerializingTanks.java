@@ -96,35 +96,37 @@ We may want to provide alternative behaviour ...
 > If so, what should happen if the file is valid text but not valid info? Opt empty or error? why? similar questions may pop up for malformed images.
 
 For example, `ReadGame` could return an `Action[List[Tank]]` instead of leaking the errors, so that its caller can choose what to do with them.
-The first point of error is reading the text of the file: `this.in.text!` is not inside any `Try#`, thus an error here still leaks out when `.read` is called.
-For the other two points we can use `Try#` to forge an action. Using `.map` we get
+We can use `Try#` to forge an action. Using `.map` we get
 ```
 ReadGame: {..
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.text!}
-    .return {Try#{Infos.fromStr(text)}                                  //mut Action[Info]
-      .map{info -> info.getList.flow.map{i->Tanks.fromInfo(i)}.list}};  //mut Action[List[Tank]]
+    .let[Str] text= {this.in.text!}                                     //(1)
+    .return {Try#{Infos.fromStr(text)}                                  //(2) mut Action[Info]
+      .map{info -> info.getList.flow.map{i->Tanks.fromInfo(i)}.list}};  //(3) mut Action[List[Tank]]
   }
 ```
 > Note: could we have `Flow.tryMap`, and make it work also for `Action[mut T]`?  
 > Also, should we have a variant of .andThen/.map that uses Try# on the argument, since it seems common?  
 
-Here the errors from (2) are captured by the action, but the errors from (3) happen inside the function passed to `.map`: as we have seen, they are not captured by the action and they just leak out when the action is run.
 Instead of `.map` we can use `.andThen` + `Try#`:
 ```
 ReadGame: {..
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.text!}
-    .return {Try#{Infos.fromStr(text)}                                            //mut Action[Info]
-      .andThen{info -> Try#{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}}};  //mut Action[List[Tank]]
+    .let[Str] text= {this.in.text!}                                               //(1)
+    .return {Try#{Infos.fromStr(text)}                                            //(2) mut Action[Info]
+      .andThen{info -> Try#{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}}};  //(3) mut Action[List[Tank]]
   }
 ```
 The type is the same, but the error management is now very different.
 What errors are captured inside the `Info` of the `Action[List[Tank]]` returned by `.read`?
 What errors just leak out?
-- The errors from (1) always leak out, as soon as `.read` is called.
-- The errors from (2) are always captured by the action.
-- The errors from (3) leak out when using `.map` and are captured when using `.andThen` + `Try#`.
+The key is that `Try#{..}` and `.map{..}` are lazy: their bodies run only when someone runs the action, for example with `!`.
+- (1) The `Block` runs `this.in.text!` right away, inside `.read` and outside any `Try#`. If there is no text, that `!` throws immediately: `.read` never even returns an action.
+- (2) `Infos.fromStr` runs inside a `Try#`. When the action runs and the text is not a valid `Info`, `Try#` turns the error into the `Info` of the action.
+- (3) With `.map`, the function runs when the action runs, after `Try#` has already succeeded, and nothing captures its errors: a missing key or an unknown direction leaks out of `!` as a real error.
+  With `.andThen`, the function returns a `Try#` action, so the error becomes the `Info` of that action, and `.andThen` passes it on as the `Info` of the result.
+
+In short: an error becomes an `Info` only if it is thrown inside the body of a `Try#`.
 
 > An interesting corner of design would be to offer some way to go from `Flow[Action[T]]` into `Action[List[T]]` ? or `Action[R]` with a transformation function on the flow?
 

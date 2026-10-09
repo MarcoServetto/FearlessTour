@@ -279,38 +279,41 @@ But we also get these **stack trace** details.
 What is that about?
 It is about the set of active calls when the error leaked.
 
+We can capture this information programmatically with the capability `System.try`.
+Code `sys.try#{...}` creates an `Action[R]` whose `Info` is going to be the sum of the
+normal `Info` and the info containing the stack trace: a map where `"msg"` holds the message and `"list"` holds the stack trace, with one element for each active call.
+
 For example
 ````
 Stuff:{
   .foo: Nat -> Lists#(1,2,3).get(5);
   .bar: mut Action[Nat] -> Try#{this.foo};
+  .beer0: Nat -> this.foo;
   .beer1: Nat -> this.bar!;
   .beer2: Nat -> this.bar.context{"InBeer2"}!;
   }
 ````
 
-`this.beer1` would have
+`sys.try#{Stuff.beer0}` would have
 `List.get: List index 5 out of range for List of length 3`
-stack trace `Stuff.beer1, Stuff.foo, List.get`.
+stack trace `Stuff.foo, Stuff.beer0`.
 
-`this.beer2` would have
+`sys.try#{Stuff.beer1}` would have the same message, but
+stack trace `Stuff.beer1`.
+
+`sys.try#{Stuff.beer2}` would have
 ```
 InBeer2
 List.get: List index 5 out of range for List of length 3
 ```
-stack trace `Stuff.beer2`
-As you can see, the call to context added custom text but removed information from the stack trace.
->Is this what we want? big design decision. The other implementation where we keep the original stack trace must also be possible. (mutate the exception obj and re-throw it)
+stack trace `Stuff.beer2`.
 
-We can capture this information programmatically with the capability `System.try`
-
-````
-sys.try#{ Error.msg[Nat] "boom" }.info!.getMap.get("msg").getMsg
-````
-
-Code `sys.try#{...}` creates an `Action[R]` whose `Info` is going to be the sum of the
-normal `Info` and the info containing the stack trace.
-> How? list of string or structured?
+Where did `Stuff.foo` go?
+The `Info` of a `Try#` action holds just the message, and `!` throws it again as a brand new error, whose stack trace starts where `!` is called.
+The call to `.context` only added custom text.
+This is crucial: `Try#` needs no capability, so all it can observe must be deterministic.
+The same operation called from two different places produces two different stack traces: if `Try#` could see them, the code would have evidence of where it was called from.
+Only `System.try` can observe stack traces.
 
 Moreover, `System.try` allows us to capture some sneaky errors, known as **non-deterministic errors**.
 Non-deterministic errors are errors that may change depending on the specific system limitations and set up.
@@ -603,6 +606,34 @@ Test: base.Main{s-> Block#
   .return{base.Void}}
 //PRINT|boom
 //PRINT|True
+"""); }/*--------------------------------------------
+-------------------------*/@Test void stackTraceStartsAtBang() { run("""
+use base.Nat as Nat;
+use base.Lists as Lists;
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Try as Try;
+use base.Action as Action;
+Stuff:{
+  .foo: Nat -> Lists#(1,2,3).get(5);
+  .bar: mut Action[Nat] -> Try#{this.foo};
+  .beer0: Nat -> this.foo;
+  .beer1: Nat -> this.bar!;
+  .beer2: Nat -> this.bar.context{"InBeer2"}!;
+  }
+Test: base.Main{s-> Block#
+  .do{Debug#(Stuff.bar.info!.str)}
+  .do{Debug#(s.try#{Stuff.beer0}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
+  .do{Debug#(s.try#{Stuff.beer1}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
+  .do{Debug#(s.try#{Stuff.beer2}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
+  .do{Debug#(s.try#{Stuff.beer2}.info!.getMap.get("msg").getMsg)}
+  .return{base.Void}}
+//PRINT|"List.get: List index 5 out of range for List of length 3"
+//PRINT|imm .foo
+//PRINT|imm .beer1
+//PRINT|imm .beer2
+//PRINT|InBeer2
+//PRINT|List.get: List index 5 out of range for List of length 3
 """); }/*--------------------------------------------
 OMIT_END
 END*/
