@@ -119,7 +119,7 @@ Squares: {
 Test: Main {sys -> Block#
   .let[Nat] result= {Squares.of(5)}
   .do {sys.out.println(result)}
-  .return {sys.out.println(Events.reader(sys).consume.get(0))}
+  .return {sys.out.println(sys.readLog(Events).consume.get(0))}
   }
 //PRINT|25
 //PRINT|squaring 5
