@@ -20,7 +20,7 @@ We will keep showing you the full code of concepts that can be expressed concise
 For those, we will only show you how to use them.
 
 Moreover, certain operations simply can not be done in the language directly.
-All that we discussed lives in the world of the language itself. If we want our code to have any impact at all on the world outside of the program itself, we need something more.
+All that we discussed lives in the world of the language itself. If we want our code to have any contact at all with the world outside of the program itself, we need something more.
 
 For example, no matter how many generics, types and methods we write from scratch, we will not be able to draw an image on the screen, or to save a file, or to read information from the internet.
 Those are examples of **external side effects**.

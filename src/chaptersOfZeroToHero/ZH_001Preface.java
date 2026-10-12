@@ -15,7 +15,7 @@ class ZH_001Preface {
 Let's start with a cryptic definition:
 
 >Fearless is a minimalist, nominally-typed, object-oriented programming language.
->Fearless gives the programmer fine control of side effects using Reference and Object Capabilities instead of an Effect System.
+>Fearless gives the programmer fine control of which side effects code can observe, using Reference and Object Capabilities instead of an Effect System.
 
 If you are new to programming, the sentence above was probably incomprehensible. Don't worry - we will unpack these ideas piece by piece and build understanding through examples.
 
