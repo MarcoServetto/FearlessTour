@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-final class ZH_009Chapter02GenericTypes {
+final class ZH_009Chapter02GenericTypes{
 /*START
 --CHAPTER-- Chapter 2
 --SECTION-- Generic Types
@@ -30,7 +30,7 @@ generics abstract over types, and are specified in square brackets `[..]`.
 Generics allow us to encode decisions on arbitrary data. For example, consider the concept of `Fork`s in the road, where the road can choose to go either `Left` or `Right`.
 We could have a method `.choose` that took two parameters and returned either the one on the left or the one on the right.
 
--------------------------*/@Test void fork1 () { run("""
+-------------------------*/@Test void fork1 (){ run("""
 Fork : { .choose[Val](leftVal: Val, rightVal: Val): Val }
 Left : Fork{ l,r -> l }
 Right: Fork{ l,r -> r }
@@ -136,7 +136,7 @@ We think this is for the same reason the original `Rectangles#` was cryptic: the
 We can make it more readable by introducing a literal forcing us to name the two branches.
 In this way, a call to `Fork.choose` could look as follows:
 
--------------------------*/@Test void fork2 () { run("""
+-------------------------*/@Test void fork2 (){ run("""
 //OMIT_START
 use base.Str as Str;
 use base.Int as Int;
@@ -155,7 +155,7 @@ someFork.choose{
 //OMIT_END
 """); }/*--------------------------------------------
 To this end we could declare `Fork` as follows:
--------------------------*/@Test void forkDecl() { run("""
+-------------------------*/@Test void forkDecl(){ run("""
 Fork : { .choose[Val](leftRight: LeftRight[Val]): Val }
 LeftRight[LR]: { .left: LR; .right: LR }
 Left : Fork{::.left}
@@ -190,7 +190,7 @@ someFork.choose{
 }
 ```
 Without the sugar and the type inference, the code would look as follows:
--------------------------*/@Test void fork3 () { run("""
+-------------------------*/@Test void fork3 (){ run("""
 //OMIT_START
 use base.Str as Str;
 use base.Int as Int;
@@ -254,7 +254,7 @@ In Fearless, there are many types that look like `Fork`; we will see them next.
 Overall, `Fork` itself is not really used in Fearless, but it is a really interesting type, and it should open your mind to the next big topic: Booleans.
 
 //OMIT_START
--------------------------*/@Test void forkBehaviour() { run("""
+-------------------------*/@Test void forkBehaviour(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -285,7 +285,7 @@ Right: Fork{ l,r -> r }
 """); }/*--------------------------------------------
 //OMIT_END
 //OMIT_START
--------------------------*/@Test void leftRightBehaviour() { run("""
+-------------------------*/@Test void leftRightBehaviour(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -327,7 +327,7 @@ Slow:{ .code: Nat -> this.code; }
 //PRINT|1
 
 """); }/*--------------------------------------------
--------------------------*/@Test void forkNeedsOneTypeForBothValues() { run("""
+-------------------------*/@Test void forkNeedsOneTypeForBothValues(){ run("""
 Fork : { .choose[Val](leftVal: Val, rightVal: Val): Val }
 Left : Fork{ l,r -> l }
 Test: base.Main{s-> base.Debug#(Left.choose("Hello",5))}

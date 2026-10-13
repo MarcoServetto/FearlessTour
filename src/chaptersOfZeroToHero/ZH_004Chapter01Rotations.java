@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-final class ZH_004Chapter01Rotations {
+final class ZH_004Chapter01Rotations{
 /*START
 --CHAPTER-- Chapter 1
 --SECTION-- Rotations
@@ -13,7 +13,7 @@ In the example before, the turret could only rotate one step at a time.
 How can we rotate the turret a variable number of times?
 Conceptually there are a few more options: we can turn zero, one, two or three times.
 A simple way to encode this idea would be to simply add those methods:
--------------------------*/@Test void badDirection() { run("""
+-------------------------*/@Test void badDirection(){ run("""
   Direction: {
     .turn0: Direction-> this;
     .turn1: Direction;                   //called .turn before
@@ -37,7 +37,7 @@ We can define `Rotation` as a type that represents **something that knows how to
 
 We can define the concept of rotations as follows:
 
--------------------------*/@Test void badDirection2() { run("""
+-------------------------*/@Test void badDirection2(){ run("""
   Direction: { .turn: Direction }
   North: Direction {East}
   East : Direction {South}
@@ -73,7 +73,7 @@ This is ok: when implementing a method, the name of the parameters is irrelevant
   this apparently oddly specific case is actually very common in Fearless code.
 
 Using this compact syntax, here is how we would define all the rotations:
--------------------------*/@Test void colonColon1() { run("""
+-------------------------*/@Test void colonColon1(){ run("""
   //OMIT_START
   Direction:{ /*..as before..*/ .turn: Direction}
   //OMIT_END
@@ -100,7 +100,7 @@ We can also write more complex expressions, like `Turn180#(Turn180#(South))`. Th
 
 Now that we have both `Direction` and `Rotation` we can rewrite `Tank` to rotate the turret parametrically!
 
--------------------------*/@Test void tankParameter1() { run("""
+-------------------------*/@Test void tankParameter1(){ run("""
 //OMIT_START
 Direction:{ /*..as before..*/ .turn: Direction}
 Rotation: { #(d: Direction): Direction }
@@ -174,7 +174,7 @@ Using the syntax
 method `Rotation+` will combine those two parameters to produce a new `Rotation` object, equivalent to `Turn270`.
 Then it is going to rotate `North` 270 degrees producing `West`.
 Here is the full code:
--------------------------*/@Test void rotationPlus() { run("""
+-------------------------*/@Test void rotationPlus(){ run("""
 //OMIT_START
 Direction:{ /*..as before..*/ .turn: Direction}
 //OMIT_END
@@ -218,7 +218,7 @@ and the return value of `Rotation+` created.
 We are sure that the method `Rotation#` of `this` is implemented because a literal never has abstract methods, and parameters (like `this`) are replaced with literals when methods are called.
 
 A common source of confusion when looking at code like
--------------------------*/@Test void rotationPlus2() { run("""
+-------------------------*/@Test void rotationPlus2(){ run("""
 //OMIT_START
 Direction:{ /*..as before..*/ .turn: Direction}
 //OMIT_END
@@ -248,7 +248,7 @@ Thus, we can write `Turn90 + Turn90 + Turn90 + Turn90` to obtain the same result
 We will discuss Fearless operator precedence, or the Fearless lack thereof, when we introduce numbers in the next section.
 
 //OMIT_START
--------------------------*/@Test void rotationsBehave() { run("""
+-------------------------*/@Test void rotationsBehave(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;

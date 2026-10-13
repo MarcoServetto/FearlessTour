@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-final class ZH_006Chapter01Strings {
+final class ZH_006Chapter01Strings{
 /*START
 --CHAPTER-- Chapter 1
 --SECTION-- Strings
@@ -132,15 +132,15 @@ Alternatively, Fearless allows strings to be delimited by backticks `` ` ``, all
 `` `Hi, "John", are you really John?` ``.
 
 //OMIT_START
--------------------------*/@Test void exampleStrings () { run("""
+-------------------------*/@Test void exampleStrings (){ run("""
 Test:base.Main {sys -> base.Debug#("Hello " + "world")}//OK
 //PRINT|Hello world
 """); }/*--------------------------------------------
--------------------------*/@Test void exampleStringsEscape () { run("""
+-------------------------*/@Test void exampleStringsEscape (){ run("""
 Test:base.Main {sys -> base.Debug#("He"^"ll"^"o " + "wor\\ld")}//OK
 //PRINT|He"ll"o wor\\ld
 """); }/*--------------------------------------------
--------------------------*/@Test void exampleStringsWithoutRightOperand () { run("""
+-------------------------*/@Test void exampleStringsWithoutRightOperand (){ run("""
 Test:base.Main {sys -> base.Block#
   .do{base.Debug#(("Hi"|).size)}
   .do{base.Debug#(("Hi"^) == `Hi"`)}

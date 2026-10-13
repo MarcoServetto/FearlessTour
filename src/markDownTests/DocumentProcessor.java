@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-public final class DocumentProcessor {
+public final class DocumentProcessor{
   private final List<Chapter> chapters= new ArrayList<>();
   static List<Path> walk(Path root, String extension){
     try (var s= Files.walk(root)){ return s.filter(ends(extension)).sorted().toList(); }
@@ -19,7 +19,7 @@ public final class DocumentProcessor {
 
   public List<Chapter> processFiles(Path root){ return processFiles(walk(root, ".java")); }
   
-  public List<Chapter> processFiles(List<Path> filePaths) {
+  public List<Chapter> processFiles(List<Path> filePaths){
     filePaths.stream()
       .map(MarkDownTest::new)
       .map(MarkDownTest::extractMarkdownLines)
@@ -28,7 +28,7 @@ public final class DocumentProcessor {
       .forEach(this::processLine);
     return Collections.unmodifiableList(chapters);
   }
-  private void processLine(String line) {
+  private void processLine(String line){
     if (TextTag.Chapter.match(line)){ newChapter(line); return;}
     if (TextTag.Section.match(line)){ newSection(line); return;}
     var s= chapters.getLast().sections().getLast();

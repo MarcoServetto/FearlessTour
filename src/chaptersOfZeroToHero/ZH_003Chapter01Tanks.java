@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-final class ZH_003Chapter01Tanks {
+final class ZH_003Chapter01Tanks{
 /*START
 --CHAPTER-- Chapter 1
 --SECTION-- Basic code reuse
@@ -52,7 +52,7 @@ Of course this is a more general concept, and there
 are many other situations where we can omit the method name (and sometimes also the arrow)
 when we implement a method.
 
--------------------------*/@Test void dirCompact() { run("""
+-------------------------*/@Test void dirCompact(){ run("""
 Direction: {
   .turn: Direction;
   .reverse: Direction -> this.turn.turn;
@@ -99,7 +99,7 @@ Now that we have the abstract type `Direction` we can make a simple
 - `.aiming`: the direction the tank gun is aiming.
 
 
--------------------------*/@Test void tankBase() { run("""
+-------------------------*/@Test void tankBase(){ run("""
 //OMIT_START
 Direction: {
   .turn: Direction;
@@ -136,7 +136,7 @@ We give it the details (heading and aiming), and it gives us back the specific `
 > This pattern of having one type create instances of another is common.
 > Naming the maker type by pluralising the product type (`Tanks` for `Tank`) is a concise Fearless convention.
 
--------------------------*/@Test void tanks1() { run("""
+-------------------------*/@Test void tanks1(){ run("""
 //OMIT_START
 Direction:{ /*..as before..*/ .turn: Direction}
 //OMIT_END
@@ -273,7 +273,7 @@ In the code above we defined `Tank` directly in the `Tanks.of` method.
 In this way, the only way to create `Tank` objects is to call `Tanks.of`.
 Alternatively, we can keep the `Tank` declaration outside and use
 inheritance as shown below:
--------------------------*/@Test void tanks2() { run("""
+-------------------------*/@Test void tanks2(){ run("""
 //OMIT_START
 Direction:{ /*..as before..*/ .turn: Direction}
 North:Direction{North}
@@ -296,7 +296,7 @@ so we can rely on the sugar and type inference to choose a name for us and to in
 In this case, the name for our literal is going to be some fresh name
 that never appears anywhere in the code.
 That is, the code below is an equivalent but shorter version of the code above.
--------------------------*/@Test void tanks3() { run("""
+-------------------------*/@Test void tanks3(){ run("""
 //OMIT_START
 Direction:{ /*..as before..*/ .turn: Direction}
 North:Direction{North}
@@ -404,7 +404,7 @@ The operator `#` is much more compact to call than the method `.of`.
 
 Rewriting our last code example using `#` we get the following:
 
--------------------------*/@Test void tanksHash() { run("""
+-------------------------*/@Test void tanksHash(){ run("""
 Direction: {
   .turn: Direction;
   .reverse: Direction -> this.turn.turn;
@@ -431,7 +431,7 @@ When coding it is important to distinguish the intended/ideal state of the code 
 We can now consider adding some methods to `Tank`:
 for example the ability to turn the turret!
 To do so, we only need to update the code of the type declaration for `Tank`:
--------------------------*/@Test void tanksHashUse() { run("""
+-------------------------*/@Test void tanksHashUse(){ run("""
 //OMIT_START
 Direction: {
   .turn: Direction;
@@ -527,7 +527,7 @@ we can afford to relax and to rely on inference as much, or as little, as we wan
 We can even make up our own notation to represent code in a more compact way.
 
 //OMIT_START
--------------------------*/@Test void tanksBehave() { run("""
+-------------------------*/@Test void tanksBehave(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -572,7 +572,7 @@ Makers: { .of(heading: Direction, aiming: Direction): Tank -> MadeTank: Tank { .
 
 
 """); }/*--------------------------------------------
--------------------------*/@Test void typeDeclaredInsideAMethodIsLocal() { run("""
+-------------------------*/@Test void typeDeclaredInsideAMethodIsLocal(){ run("""
 Direction:{}
 Tanks:{ .of(heading: Direction, aiming: Direction): Tank -> Tank:{ .heading: Direction -> heading; .aiming: Direction -> aiming } }
 X:{ .t: Tank -> Tank }

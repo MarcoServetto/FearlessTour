@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-final class ZH_015Chapter02LocalParameters {
+final class ZH_015Chapter02LocalParameters{
 /*START
 --CHAPTER-- Chapter 2
 --SECTION-- Locals
@@ -24,7 +24,7 @@ Going back to repetitive code, we show below a difficult to read method computin
 using the square root function (`.softSqrt`) present on `Nat`. Most numbers (like `2`)
 do not have a whole-number, or even a neat fractional, square root, so `.softSqrt` gives back the closest `Float` it can find.
 Then `.softNat` turns that `Float` back into a `Nat`, again taking the closest reasonable value: it truncates towards `0`, and clamps negative numbers to `0`.
--------------------------*/@Test void distance1 () { run("""
+-------------------------*/@Test void distance1 (){ run("""
 //OMIT_START
 use base.Nat as Nat;
 Point:{ .x: Nat; .y: Nat }
@@ -45,7 +45,7 @@ This method uses the Pythagorean theorem, but it is not ideal:
   - all the code is in a single hard to read line.
 What if we want to introduce more names?
 We can define a function on the fly and call it, as shown below:
--------------------------*/@Test void distance2 () { run("""
+-------------------------*/@Test void distance2 (){ run("""
 //OMIT_START
 use base.Nat as Nat;
 use base.F as F;
@@ -74,7 +74,7 @@ Let:{ #[T,R](x: T, f: F[T,R]): R -> f#x }
 ```
 With this `Let` type we can define our `.distance` method as follows:
 
--------------------------*/@Test void distance3 () { run("""
+-------------------------*/@Test void distance3 (){ run("""
 //|OMIT_START
 use base.Nat as Nat;
 use base.Void as Void;
@@ -101,7 +101,7 @@ Also, this code does not follow the 'fluent' pattern we discussed before.
 In particular, while most lines start by telling you what that line is doing (`Let#`) the last one just computes an expression.
 We will now refactor our Let to follow the fluent pattern:
 
--------------------------*/@Test void letFull () { run("""
+-------------------------*/@Test void letFull (){ run("""
 //|OMIT_START
 use base.Nat as Nat;
 use base.Void as Void;
@@ -149,7 +149,7 @@ With the `=` sugar we can rewrite that call as follows:
 
 The distance method can use this sugar three times and becomes as follows:
 
--------------------------*/@Test void letFullSugar () { run("""
+-------------------------*/@Test void letFullSugar (){ run("""
 //|OMIT_START
 use base.Nat as Nat;
 use base.Void as Void;
@@ -196,7 +196,7 @@ In other languages they are often known by one (or more) of the following names:
 local bindings, bindings, let-bindings, lets, constants, local variables, (final) variables.
 
 //OMIT_START
--------------------------*/@Test void distancesAgree() { run("""
+-------------------------*/@Test void distancesAgree(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -264,7 +264,7 @@ D5:{
 //PRINT|1
 
 """); }/*--------------------------------------------
--------------------------*/@Test void distanceStopsOnNatUnderflow() { run("""
+-------------------------*/@Test void distanceStopsOnNatUnderflow(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -283,7 +283,7 @@ D1:{
 //PRINT|True
 //PRINT|False
 """); }/*--------------------------------------------
--------------------------*/@Test void getStopsAndSoftClamps() { run("""
+-------------------------*/@Test void getStopsAndSoftClamps(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;

@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-final class ZH_005Chapter01FiniteNumbers {
+final class ZH_005Chapter01FiniteNumbers{
 /*START
 --CHAPTER-- Chapter 1
 --SECTION-- Finite numbers
@@ -495,7 +495,7 @@ Accepting this reality is step one to writing robust code.
 
  
 //OMIT_START
--------------------------*/@Test void fullNumber() { run("""
+-------------------------*/@Test void fullNumber(){ run("""
 Number:{
   .pred:Number; .succ:Number;
   +(other: Number): Number -> this.pred + (other.succ);
@@ -528,7 +528,7 @@ HasPredSucc:{
   .hasSuccInt(a:base.Int):base.Int->a.succ;
 }
 """); }/*--------------------------------------------
--------------------------*/@Test void numberArithmetic() { run("""
+-------------------------*/@Test void numberArithmetic(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -587,7 +587,7 @@ N11: Number{.pred-> N10; .succ->  N0; }
 //PRINT|0
 
 """); }/*--------------------------------------------
--------------------------*/@Test void standardNumbers() { run("""
+-------------------------*/@Test void standardNumbers(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;

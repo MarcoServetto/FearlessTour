@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-final class ZH_026Chapter04Enumerations {
+final class ZH_026Chapter04Enumerations{
 /*START
 --CHAPTER-- Chapter 4
 --SECTION-- Enumerations
@@ -35,7 +35,7 @@ and `West.index` is `3`, `North < East` is `True`, `Directions.map.get("North")`
 `Directions.fromInfo(North.info)` round-trips back to `North`:
 
 OMIT_START
--------------------------*/@Test void withoutMatch () { run("""
+-------------------------*/@Test void withoutMatch (){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -96,7 +96,7 @@ every value still gets `.list`/`.map`/`.index`/`.info`/`.fromInfo` for free from
 of its own `.match`:
 
 OMIT_START
--------------------------*/@Test void withMatch () { run("""
+-------------------------*/@Test void withMatch (){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -198,7 +198,7 @@ That is, the code will stop running and the program will report that it failed i
 Next we will see how to handle those errors.
 
 OMIT_START
--------------------------*/@Test void lookups() { run("""
+-------------------------*/@Test void lookups(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -249,7 +249,7 @@ West:  Direction{.imm->West;  "West" }
 //PRINT|True
 //PRINT|North
 """); }/*--------------------------------------------
--------------------------*/@Test void mapGetMessage() { run("""
+-------------------------*/@Test void mapGetMessage(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;

@@ -23,9 +23,9 @@ public final class LoadFile{
     return Fs.readUtf8(name);
     }
 }
-final class DirectoryStructure {
+final class DirectoryStructure{
   public static String of(Path startPath){
-    try (Stream<Path> paths= Files.walk(startPath)) {
+    try (Stream<Path> paths= Files.walk(startPath)){
       return paths
         .filter(pi -> !pi.equals(startPath))
         .map(pi -> startPath.relativize(pi))
@@ -34,7 +34,7 @@ final class DirectoryStructure {
     }
     catch (IOException ioe){ throw new UncheckedIOException(ioe); }
   }
-  private static void single(Path rel, Consumer<String> c) {
+  private static void single(Path rel, Consumer<String> c){
     int depth= rel.getNameCount() - 1;
     assert depth>=0;
     c.accept("--|".repeat(depth));
@@ -43,7 +43,7 @@ final class DirectoryStructure {
     c.accept(formatPath(rel));
     c.accept("\")\n");
   }
-  private static String formatPath(Path rel) {
+  private static String formatPath(Path rel){
     return StreamSupport.stream(rel.spliterator(), false)
       .map(Path::toString)
       .collect(Collectors.joining("\", \"", "", ""));

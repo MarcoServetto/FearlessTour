@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-final class ZH_018Chapter03Promotions {
+final class ZH_018Chapter03Promotions{
 /*START
 --CHAPTER-- Chapter 3
 --SECTION-- Promotions
@@ -44,7 +44,7 @@ One easy detail to miss the first time around: the receiver is parameter number 
 A method with no explicit parameters at all can still fail this rule, if its own receiver (parameter zero) is `mut` or `read`.
 
 For example
--------------------------*/@Test void promotion () { run("""
+-------------------------*/@Test void promotion (){ run("""
 //OMIT_START
 use base.Void as Void;
 use base.Nat as Nat;
@@ -76,7 +76,7 @@ Code `PromotionExample#.run(10)` would not compile because method `PromotionExam
 > Ideally we should expand and talk more about promotions and their interactions with inference.
 
 //OMIT_START
--------------------------*/@Test void promotionResult() { run("""
+-------------------------*/@Test void promotionResult(){ run("""
 use base.Void as Void;
 use base.Nat as Nat;
 use base.Block as Block;
@@ -98,7 +98,7 @@ Test: base.Main{s-> base.Debug#(PromotionExample#.location.x)}
 """); }/*--------------------------------------------
 //OMIT_END
 //OMIT_START
--------------------------*/@Test void promotionRunRejected() { run("""
+-------------------------*/@Test void promotionRunRejected(){ run("""
 use base.Void as Void;
 use base.Nat as Nat;
 use base.Block as Block;

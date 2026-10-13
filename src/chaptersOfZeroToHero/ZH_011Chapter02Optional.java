@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-final class ZH_011Chapter02Optional {
+final class ZH_011Chapter02Optional{
 /*START
 --CHAPTER-- Chapter 2
 --SECTION-- Optionals
@@ -16,7 +16,7 @@ An optional represents the presence or absence of a certain unit of data.
 We can think of optionals as a kind of boolean where `True` holds some extra information.
 
 You should now be able to read the code below and understand it.
--------------------------*/@Test void opt1 () { run("""
+-------------------------*/@Test void opt1 (){ run("""
 Opt[E]: {
   .match[R](m: OptMatch[E,R]): R -> m.empty
   }
@@ -30,7 +30,7 @@ Opts: {
 """); }/*--------------------------------------------
 
 The code above can be used as follows:
--------------------------*/@Test void opt2 () { run("""
+-------------------------*/@Test void opt2 (){ run("""
 //OMIT_START
 use base.Nat as Nat;
 Opt[E]: {
@@ -77,7 +77,7 @@ the implementation we have just seen is a very good mental model to conceptualis
 
 To get more comfortable with the various shortcuts Fearless offers, consider the code below, that works identically to the code shown above but uses shortcuts and less indentation to be more compact:
 
--------------------------*/@Test void opt3 () { run("""
+-------------------------*/@Test void opt3 (){ run("""
 //OMIT_START
 use base.Nat as Nat;
 //OMIT_END

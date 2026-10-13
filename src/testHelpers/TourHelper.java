@@ -17,7 +17,7 @@ import tools.Fs;
 import tools.JavacTool;
 import utils.Err;
 
-public final class TourHelper {
+public final class TourHelper{
   static{
     Err.setUp(AssertionFailedError.class, Assertions::assertEquals, Assertions::assertTrue);
     System.setProperty(JavacTool.appDirKey, appDir().toString());

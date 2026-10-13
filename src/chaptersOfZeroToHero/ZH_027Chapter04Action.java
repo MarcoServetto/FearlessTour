@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-final class ZH_027Chapter04Action {
+final class ZH_027Chapter04Action{
 /*START
 --CHAPTER-- Chapter 4
 --SECTION-- Action
@@ -444,7 +444,7 @@ Many different kinds of software are produced depending on the assertion profile
 > Discuss the various forms of match: match with datatype, match without data type (.cmp), match over data that exists (stack etc), match over computations (action); note how composing those two kinds of match is different; Finally matchers can carry extra parameters and pass / wire them around; consider CapTry with iso.
 
 OMIT_START
--------------------------*/@Test void actions() { run("""
+-------------------------*/@Test void actions(){ run("""
 use base.Action as Action;
 use base.Void as Void;
 use base.Main as Main;
@@ -543,7 +543,7 @@ Pts:{ #(x: Nat, y: Nat): Nat -> Block#
 
 
 """); }/*--------------------------------------------
--------------------------*/@Test void infoSumLiftsDifferentKindsToMaps() { run("""
+-------------------------*/@Test void infoSumLiftsDifferentKindsToMaps(){ run("""
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Infos as Infos;
@@ -558,7 +558,7 @@ Test: base.Main{s-> Block#
 //PRINT|["x","y"]
 //PRINT|{"k":"v\\nw","j":"z"}
 """); }/*--------------------------------------------
--------------------------*/@Test void optionalFlowVersionOfAndThen() { run("""
+-------------------------*/@Test void optionalFlowVersionOfAndThen(){ run("""
 use base.Block as Block;
 use base.Debug as Debug;
 use base.List as List;
@@ -584,7 +584,7 @@ Test: base.Main{s-> Block#
 //PRINT|Opt[]
 //PRINT|Opt[]
 """); }/*--------------------------------------------
--------------------------*/@Test void tryDoesNotCaptureAssertionFailures() { run("""
+-------------------------*/@Test void tryDoesNotCaptureAssertionFailures(){ run("""
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Try as Try;
@@ -595,7 +595,7 @@ Test: base.Main{s-> Block#
 //PRINT|True
 //PRINT|True
 """); }/*--------------------------------------------
--------------------------*/@Test void capTryInfoIsAMap() { run("""
+-------------------------*/@Test void capTryInfoIsAMap(){ run("""
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Error as Error;
@@ -607,7 +607,7 @@ Test: base.Main{s-> Block#
 //PRINT|boom
 //PRINT|True
 """); }/*--------------------------------------------
--------------------------*/@Test void stackTraceStartsAtBang() { run("""
+-------------------------*/@Test void stackTraceStartsAtBang(){ run("""
 use base.Nat as Nat;
 use base.Lists as Lists;
 use base.Block as Block;

@@ -2,7 +2,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-final class ZH_999StillToDiscuss {
+final class ZH_999StillToDiscuss{
 /*START
 --CHAPTER-- Still to discuss
 --SECTION-- Still to discuss
@@ -159,7 +159,7 @@ The inference is going to improve over time, so the guide talks about it in term
 The discussion has to cover the ways to help it:
 explicit type arguments (`Foo#[Bar](bar)`), literals with an explicit type (`OrderBy[Tank,Direction]{::.imm.heading}`), and the difference between arguments, where an expected type is known, and receivers, where it may not be.
 OMIT_START
--------------------------*/@Test void blockRejectsResultWithHygienicReferences() { run("""
+-------------------------*/@Test void blockRejectsResultWithHygienicReferences(){ run("""
 use base.Nat as Nat;
 use base.Block as Block;
 use base.OrderMatch as OrderMatch;
@@ -187,7 +187,7 @@ Point:{ .x: Nat; .y: Nat;
 //ERROR|Block#[imm,R]
 //ERROR|Error 8 TypeError
 """); }/*--------------------------------------------
--------------------------*/@Test void blockComputesAnOrderThatIsAppliedToTheMatcher() { run("""
+-------------------------*/@Test void blockComputesAnOrderThatIsAppliedToTheMatcher(){ run("""
 use base.Nat as Nat;
 use base.Block as Block;
 use base.Order as Order;
@@ -209,7 +209,7 @@ Test:base.Main {sys -> Block#
 //PRINT|gt
 //PRINT|eq
 """); }/*--------------------------------------------
--------------------------*/@Test void matchShapes() { run("""
+-------------------------*/@Test void matchShapes(){ run("""
 use base.Nat as Nat;
 use base.Block as Block;
 use base.Debug as Debug;
@@ -237,7 +237,7 @@ Test:base.Main {sys -> Block#
 //PRINT|gt
 //PRINT|eq
 """); }/*--------------------------------------------
--------------------------*/@Test void matcherCannotCaptureHygienicReferences() { run("""
+-------------------------*/@Test void matcherCannotCaptureHygienicReferences(){ run("""
 use base.Nat as Nat;
 use base.Error as Error;
 Exp:{ .val: Nat }
@@ -273,7 +273,7 @@ Parser:{
 //ERROR|l
 //ERROR|Error 8 TypeError
 """); }/*--------------------------------------------
--------------------------*/@Test void matcherCarriesHygienicReferencesAsParameters() { run("""
+-------------------------*/@Test void matcherCarriesHygienicReferencesAsParameters(){ run("""
 use base.Nat as Nat;
 use base.Error as Error;
 Exp:{ .val: Nat }
