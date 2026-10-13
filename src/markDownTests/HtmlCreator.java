@@ -58,7 +58,7 @@ public record HtmlCreator(Path rootPath){
   public void generateHtmlPages(List<Chapter> chapters) {
     List<SectionInfo> allSections= collectSections(chapters);
     String sideBar= generateSidebar(allSections);
-    for (int i : Range.of(allSections)){ generatePage(i,sideBar,allSections);}
+    for (int i : Range.of(allSections)){ generatePage(i, sideBar, allSections);}
   }
   private void generatePage(int i, String sideBar, List<SectionInfo> allSections){
     var title=   allSections.get(i).pageTitle();

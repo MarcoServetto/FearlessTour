@@ -34,7 +34,7 @@ final class DirectoryStructure {
     }
     catch (IOException ioe){ throw new UncheckedIOException(ioe); }
   }
-  private static void single(Path rel,Consumer<String> c) {
+  private static void single(Path rel, Consumer<String> c) {
     int depth= rel.getNameCount() - 1;
     assert depth>=0;
     c.accept("--|".repeat(depth));

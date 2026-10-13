@@ -11,13 +11,13 @@ import java.util.function.Predicate;
 
 public final class DocumentProcessor {
   private final List<Chapter> chapters= new ArrayList<>();
-  static List<Path> walk(Path root,String extension){
+  static List<Path> walk(Path root, String extension){
     try (var s= Files.walk(root)){ return s.filter(ends(extension)).sorted().toList(); }
     catch (IOException e){ throw new UncheckedIOException(e); }
   }
   static Predicate<Path> ends(String extension){ return p -> (p+"").endsWith(extension); }
 
-  public List<Chapter> processFiles(Path root){ return processFiles(walk(root,".java")); }
+  public List<Chapter> processFiles(Path root){ return processFiles(walk(root, ".java")); }
   
   public List<Chapter> processFiles(List<Path> filePaths) {
     filePaths.stream()
@@ -35,11 +35,11 @@ public final class DocumentProcessor {
     s.lines().add(line);
   }
   private void newChapter(String line){
-    var title= line.replace(TextTag.Chapter.token(),"").trim();
+    var title= line.replace(TextTag.Chapter.token(), "").trim();
     chapters.add(new Chapter(title));
   }
   private void newSection(String line){
-    var title= line.replace(TextTag.Section.token(),"").trim();
+    var title= line.replace(TextTag.Section.token(), "").trim();
     chapters.getLast().sections().add(new Chapter.Section(title));
   }
 }

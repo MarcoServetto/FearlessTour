@@ -36,16 +36,16 @@ public final class TourHelper {
   protected static void strCmp(String expected, String got){ Err.strCmp(expected, got); }
   static public final Path stdBase= ResolveResource.stLibPath;
   static public final Path stdRt= ResolveResource.stLibRTPath;
-  static public final Path out= ResolveResource.stLibPath.getParent().getParent().resolve("FearlessTour","tmpOut");
+  static public final Path out= ResolveResource.stLibPath.getParent().getParent().resolve("FearlessTour", "tmpOut");
 
   public static void run(String code){
     String expectedPrint= printRequirement(code);
     String expectedErr= errRequirement(code);
     if (noMain(code)){ code += "\nSomeAnonMain:base.Main{s->base.Void}\n"; }
     var m= new mainCoordinator.ProgrammaticMain(
-      new StringBuilder(),new StringBuilder(),
-      "_test/_rank_app111.fear",code,
-      stdBase,stdRt,out
+      new StringBuilder(), new StringBuilder(),
+      "_test/_rank_app111.fear", code,
+      stdBase, stdRt, out
       );
     m.runFearless();
     System.err.println("Err was: "+m.err());
@@ -53,7 +53,7 @@ public final class TourHelper {
     //var a=strView(expectedPrint+"\n");
     //var b=strView(m.out().toString());
     //assertEquals(a,b);
-    strCmp(expectedErr, m.err().toString().replace('\\','/'));
+    strCmp(expectedErr, m.err().toString().replace('\\', '/'));
     //assertEquals(expectedPrint.length(), m.out().length());//+1 for new line
     strCmp("||"+expectedPrint+"||", "||"+m.out().toString()+"||");
   }
@@ -63,13 +63,13 @@ public final class TourHelper {
       .mapToObj(i -> bytes[i]).toList();
   }
   static boolean noMain(String content){
-    return List.of(":Main",": Main",":TestMain",": TestMain")
+    return List.of(":Main", ": Main", ":TestMain", ": TestMain")
       .stream().noneMatch(e -> content.contains(e));
   }
-  private static String printRequirement(String text){ return tagRequirement(text,TextTag.PrintReq); }
-  private static String errRequirement(String text){ return tagRequirement(text,TextTag.ErrorReq); }
+  private static String printRequirement(String text){ return tagRequirement(text, TextTag.PrintReq); }
+  private static String errRequirement(String text){ return tagRequirement(text, TextTag.ErrorReq); }
 
-  private static String tagRequirement(String text,TextTag tag){
+  private static String tagRequirement(String text, TextTag tag){
     return text.lines()
       .filter(l -> l.startsWith(tag.token()))
       .map(l -> l.substring(tag.token().length())+"\n")
@@ -77,9 +77,9 @@ public final class TourHelper {
   }
   public static void run(String pkgName, String rank, String code){
     var m= new mainCoordinator.ProgrammaticMain(
-      new StringBuilder(),new StringBuilder(),
-      "_"+pkgName+"/"+rank+".fear",code,
-      stdBase,stdRt,out
+      new StringBuilder(), new StringBuilder(),
+      "_"+pkgName+"/"+rank+".fear", code,
+      stdBase, stdRt, out
       );
     m.runFearless();
   }
