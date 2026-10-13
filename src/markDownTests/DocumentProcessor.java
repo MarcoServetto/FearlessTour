@@ -24,7 +24,7 @@ public final class DocumentProcessor {
       .map(MarkDownTest::new)
       .map(MarkDownTest::extractMarkdownLines)
       .flatMap(List::stream)
-      .peek(l->System.out.println(l))
+      .peek(l -> System.out.println(l))
       .forEach(this::processLine);
     return Collections.unmodifiableList(chapters);
   }

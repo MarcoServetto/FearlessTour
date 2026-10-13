@@ -25,10 +25,10 @@ public final class TourHelper {
   }
   private static Path appDir(){
     var artefactRoot= ResolveResource.stLibPath.getParent().resolve("fearlessArtefact");
-    var found= Fs.walk(artefactRoot, s->s
+    var found= Fs.walk(artefactRoot, s -> s
       .filter(Files::isDirectory)
-      .filter(p->p.getFileName().toString().equals(JavacTool.deployedModsDirName))
-      .filter(p->!Fs.walk(p, s2->s2.filter(f->f.toString().endsWith(".jar")).toList()).isEmpty())
+      .filter(p -> p.getFileName().toString().equals(JavacTool.deployedModsDirName))
+      .filter(p -> !Fs.walk(p, s2 -> s2.filter(f -> f.toString().endsWith(".jar")).toList()).isEmpty())
       .toList());
     assert found.size()==1: "Expected exactly one non-empty '"+JavacTool.deployedModsDirName+"' dir under "+artefactRoot+", found: "+found;
     return found.getFirst().getParent();
@@ -64,15 +64,15 @@ public final class TourHelper {
   }
   static boolean noMain(String content){
     return List.of(":Main",": Main",":TestMain",": TestMain")
-      .stream().noneMatch(e->content.contains(e));
+      .stream().noneMatch(e -> content.contains(e));
   }
   private static String printRequirement(String text){ return tagRequirement(text,TextTag.PrintReq); }
   private static String errRequirement(String text){ return tagRequirement(text,TextTag.ErrorReq); }
 
   private static String tagRequirement(String text,TextTag tag){
     return text.lines()
-      .filter(l->l.startsWith(tag.token()))
-      .map(l->l.substring(tag.token().length())+"\n")
+      .filter(l -> l.startsWith(tag.token()))
+      .map(l -> l.substring(tag.token().length())+"\n")
       .collect(Collectors.joining());
   }
   public static void run(String pkgName, String rank, String code){

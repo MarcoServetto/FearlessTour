@@ -22,6 +22,6 @@ public enum TextTag {
   public boolean notMatch(String line){ return !line.contains(token); }
   public static Optional<TextTag> fromLine(String line) {
     return Stream.of(TextTag.values())
-      .filter(t->line.contains(t.token)).findFirst();
+      .filter(t -> line.contains(t.token)).findFirst();
   }
 }
