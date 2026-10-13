@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_012Chapter02Peano {
+final class ZH_012Chapter02Peano {
 /*START
 --CHAPTER-- Chapter 2
 --SECTION-- Peano numbers

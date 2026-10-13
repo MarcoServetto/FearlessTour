@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_010Chapter02Booleans {
+final class ZH_010Chapter02Booleans {
 /*START
 --CHAPTER-- Chapter 2
 --SECTION-- Booleans

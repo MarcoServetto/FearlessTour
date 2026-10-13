@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_016Chapter02ThanksGame {
+final class ZH_016Chapter02ThanksGame {
   public static final String fullPreface= """
 use base.Void as Void;
 use base.Int as Int;

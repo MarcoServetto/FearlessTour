@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_009Chapter02GenericTypes {
+final class ZH_009Chapter02GenericTypes {
 /*START
 --CHAPTER-- Chapter 2
 --SECTION-- Generic Types

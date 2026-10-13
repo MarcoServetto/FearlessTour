@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
 
-class ZH_001Preface {
+final class ZH_001Preface {
 /*START
 --CHAPTER-- Preface
 --SECTION-- Fearless: Zero to Hero

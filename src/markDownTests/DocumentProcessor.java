@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class DocumentProcessor {
+public final class DocumentProcessor {
   private final List<Chapter> chapters = new ArrayList<>();
   static List<Path> walk(Path root,String extension){
     try (var s = Files.walk(root)){ return s.filter(ends(extension)).sorted().toList(); }

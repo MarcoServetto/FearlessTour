@@ -12,7 +12,7 @@ import java.util.stream.StreamSupport;
 
 import tools.Fs;
 
-public class LoadFile{
+public final class LoadFile{
   public List<String> loadLines(Path name){
     return loadText(name).lines().toList();
   }
@@ -23,7 +23,7 @@ public class LoadFile{
     return Fs.readUtf8(name);
     }
 }
-class DirectoryStructure {
+final class DirectoryStructure {
   public static String of(Path startPath){
     try (Stream<Path> paths= Files.walk(startPath)) {
       return paths

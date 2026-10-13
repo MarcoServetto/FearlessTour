@@ -2,7 +2,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_999StillToDiscuss {
+final class ZH_999StillToDiscuss {
 /*START
 --CHAPTER-- Still to discuss
 --SECTION-- Still to discuss

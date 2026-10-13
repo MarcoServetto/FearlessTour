@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_024Chapter03Collections {
+final class ZH_024Chapter03Collections {
 /*START
 --CHAPTER-- Chapter 3
 --SECTION-- Collections

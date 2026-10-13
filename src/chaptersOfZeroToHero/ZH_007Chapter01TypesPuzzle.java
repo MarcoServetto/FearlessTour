@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_007Chapter01TypesPuzzle {
+final class ZH_007Chapter01TypesPuzzle {
 /*START
 --CHAPTER-- Chapter 1
 --SECTION-- Types and Meaning

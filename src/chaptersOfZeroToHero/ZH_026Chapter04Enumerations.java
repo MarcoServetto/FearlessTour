@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_026Chapter04Enumerations {
+final class ZH_026Chapter04Enumerations {
 /*START
 --CHAPTER-- Chapter 4
 --SECTION-- Enumerations

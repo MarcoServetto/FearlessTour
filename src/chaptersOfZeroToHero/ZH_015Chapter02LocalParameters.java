@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_015Chapter02LocalParameters {
+final class ZH_015Chapter02LocalParameters {
 /*START
 --CHAPTER-- Chapter 2
 --SECTION-- Locals

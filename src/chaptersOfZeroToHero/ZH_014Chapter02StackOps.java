@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_014Chapter02StackOps {
+final class ZH_014Chapter02StackOps {
 /*START
 --CHAPTER-- Chapter 2
 --SECTION-- Operations on Sequences

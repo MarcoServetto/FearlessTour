@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_028Chapter04SerializingTanks {
+final class ZH_028Chapter04SerializingTanks {
 /*START
 --CHAPTER-- Chapter 4
 --SECTION-- Serialising Tanks

@@ -7,7 +7,7 @@ import resources.ResolveResource;
 import java.io.IOException;
 import markDownTests.DocumentProcessor;
 import markDownTests.HtmlCreator;
-public class CompileHtml {
+public final class CompileHtml {
   public static void main(String[] args) throws IOException{
     Path root=
       ResolveResource.commonsSrc.getParent().getParent().resolve("FearlessTour","src","chaptersOfZeroToHero"); 

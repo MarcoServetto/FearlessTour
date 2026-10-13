@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_021Chapter03NewOptBool {
+final class ZH_021Chapter03NewOptBool {
 /*START
 --CHAPTER-- Chapter 3
 --SECTION-- Opt and Bool, as Declared

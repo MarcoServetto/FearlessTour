@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_004Chapter01Rotations {
+final class ZH_004Chapter01Rotations {
 /*START
 --CHAPTER-- Chapter 1
 --SECTION-- Rotations

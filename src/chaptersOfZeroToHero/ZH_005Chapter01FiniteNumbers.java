@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_005Chapter01FiniteNumbers {
+final class ZH_005Chapter01FiniteNumbers {
 /*START
 --CHAPTER-- Chapter 1
 --SECTION-- Finite numbers

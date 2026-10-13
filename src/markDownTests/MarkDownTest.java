@@ -3,7 +3,7 @@ package markDownTests;
 import java.nio.file.Path;
 import java.util.List;
 
-public class MarkDownTest {
+public final class MarkDownTest {
   public final Path path;
   public final List<String> content;
   private boolean omitting= false;

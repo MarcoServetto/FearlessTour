@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_020Chapter03ObjectCapabilities {
+final class ZH_020Chapter03ObjectCapabilities {
 /*START
 --CHAPTER-- Chapter 3
 --SECTION-- Object Capabilities

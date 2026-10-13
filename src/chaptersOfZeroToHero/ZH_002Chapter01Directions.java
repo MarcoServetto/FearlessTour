@@ -2,7 +2,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_002Chapter01Directions {
+final class ZH_002Chapter01Directions {
 /*START
 --CHAPTER-- Chapter 1
 --SECTION-- Directions
