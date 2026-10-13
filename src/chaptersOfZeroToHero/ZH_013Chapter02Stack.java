@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_013Chapter02Stack {
+final class ZH_013Chapter02Stack{
 /*START
 --CHAPTER-- Chapter 2
 --SECTION-- Stack
@@ -29,7 +29,7 @@ All kinds of stacks work just like chairs: the last chair added is the first one
 Stacks adhere to a last-in, first-out (LIFO) principle, making them ideal for tasks like undo mechanisms.
 We will now see how to define stacks of any kind of entities.
 
--------------------------*/@Test void stack1 () { run("""
+-------------------------*/@Test void stack1 (){ run("""
 Stack[E]: {
   .match[R](m: StackMatch[E,R]): R -> m.empty;
   +(e: E): Stack[E] -> { .match m -> m.elem(e, this) };
@@ -44,7 +44,7 @@ The `.match` method and the `StackMatch` type are very similar to `.match` and `
 
 The method `+` is similar to the method `.succ` on Peano numbers, and the implementation is similar to the method `Opts#`.
 Look again at the code of `Opt` and `Number` from before to see the similarities:
--------------------------*/@Test void optPeano () { run("""
+-------------------------*/@Test void optPeano (){ run("""
 Opt[E]: {
   .match[R](m: OptMatch[E,R]): R -> m.empty
   }
@@ -75,7 +75,7 @@ We can use the stack in many different ways. Some usage examples below:
 Note how we can use `{}` both for the empty stack and the empty optional. The inference recognises that the method `Stack[E]+` takes an optional in one case and a stack in another. Thus it infers that `{}` is an empty optional or an empty stack depending on the surrounding code.
 
 Here we show how to use match to sum all the elements in a `Stack[Nat]`.
--------------------------*/@Test void stack2 () { run("""
+-------------------------*/@Test void stack2 (){ run("""
 //OMIT_START
 use base.Nat as Nat;
 Stack[E]: {
@@ -156,7 +156,7 @@ This, again, is long and verbose. When we have methods like `.match`, or methods
 An obvious operation to add to the stack is concatenation.
 We can add a concatenation operation `++` between stacks as follows:
 
--------------------------*/@Test void stack3 () { run("""
+-------------------------*/@Test void stack3 (){ run("""
 Stack[E]: {
   .match[R](m: StackMatch[E,R]): R -> m.empty;
   ++(other: Stack[E]): Stack[E] -> other;
@@ -283,7 +283,7 @@ We will soon see how **Testing** can be used to supplement the miserable visuali
 Conceptually, `Stack[E]++` is similar to the Peano `Number+` operation, and the whole stack concept can be seen as a Peano number where some information is stored near each successor call.
 
 //OMIT_START
--------------------------*/@Test void concatenationOrders() { run("""
+-------------------------*/@Test void concatenationOrders(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;

@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_020Chapter03ObjectCapabilities {
+final class ZH_020Chapter03ObjectCapabilities{
 /*START
 --CHAPTER-- Chapter 3
 --SECTION-- Object Capabilities
@@ -12,7 +12,7 @@ class ZH_020Chapter03ObjectCapabilities {
 
 Finally, we have discussed all of the knowledge needed to make our first Fearless program.
 
--------------------------*/@Test void finallyMain() { run("""
+-------------------------*/@Test void finallyMain(){ run("""
 //in file _demo/_rank_app.fear
 use base.Main as Main;
 use base.Output as Output;
@@ -75,7 +75,7 @@ You may think that capabilities are there to stop our code from **doing** things
 I find the real story much more interesting: capabilities decide what our code can **observe**.
 
 Look at this method:
--------------------------*/@Test void squares() { run("""
+-------------------------*/@Test void squares(){ run("""
 //OMIT_START
 use base.Nat as Nat;
 //OMIT_END
@@ -102,7 +102,7 @@ Even a call that never ends needs no permission: nobody can observe that it does
 
 Logs follow the same rule: anybody can write to a log, but reading it back is observing.
 In the following example `Squares.of` leaves a note in an in-memory log, and only the `Test`, holding `sys`, can read the notes:
--------------------------*/@Test void logsCanBeWrittenAnywhere() { run("""
+-------------------------*/@Test void logsCanBeWrittenAnywhere(){ run("""
 //OMIT_START
 use base.Main as Main;
 use base.Block as Block;
@@ -139,7 +139,7 @@ That is why reference capabilities restrict both who can change an object and wh
 
 
 OMIT_START
--------------------------*/@Test void outputCapability() { run("""
+-------------------------*/@Test void outputCapability(){ run("""
 use base.Main as Main;
 use base.Output as Output;
 use base.Block as Block;

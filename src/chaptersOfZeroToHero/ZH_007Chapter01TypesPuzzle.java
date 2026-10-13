@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_007Chapter01TypesPuzzle {
+final class ZH_007Chapter01TypesPuzzle{
 /*START
 --CHAPTER-- Chapter 1
 --SECTION-- Types and Meaning
@@ -60,7 +60,7 @@ This perspective might seem unconventional, but it underscores the fluid roles a
 We now explore a new example and the related type system choices.
 We want to encode a `Rectangle`, defined by the coordinates of the top-left and bottom-right points.
 We could just write
--------------------------*/@Test void rect1 () { run("""
+-------------------------*/@Test void rect1 (){ run("""
 //OMIT_START
 use base.Int as Int;
 //OMIT_END
@@ -78,7 +78,7 @@ Can they remember the role of each of the four numbers?
 What if they accidentally swap two numbers? The type system will not be able to help: this version of `Rectangle` is simply made of four `Int`s.
 
 Consider the following alternative solution:
--------------------------*/@Test void rect2 () { run("""
+-------------------------*/@Test void rect2 (){ run("""
 //OMIT_START
 use base.Int as Int;
 //OMIT_END
@@ -101,7 +101,7 @@ There are still ways the user can get it wrong: they can confuse `x` and `y` coo
 We now address the first issue.
 We can declare types `X` and `Y`, so that the type system can guide us.
 
--------------------------*/@Test void rect3 () { run("""
+-------------------------*/@Test void rect3 (){ run("""
 //OMIT_START
 use base.Int as Int;
 //OMIT_END
@@ -120,7 +120,7 @@ As we just showed, by introducing more types we enable the type system to make m
 However, this is a delicate balance. Consider what happens if we want to have an `.area` method giving us the area of the rectangle.
 With the first style, the code would be the following:
 
--------------------------*/@Test void rect4 () { run("""
+-------------------------*/@Test void rect4 (){ run("""
 //OMIT_START
 use base.Int as Int;
 //OMIT_END
@@ -135,7 +135,7 @@ Rectangles:{#(x1: Int, y1: Int, x2: Int, y2: Int): Rectangle -> Rectangle:{
 
 But with the new style with more types the code becomes
 
--------------------------*/@Test void rect5 () { run("""
+-------------------------*/@Test void rect5 (){ run("""
 //OMIT_START
 use base.Int as Int;
 //OMIT_END
@@ -167,7 +167,7 @@ Fearless offers good ways to handle this other case, but we will see them later 
 
 Consider again the code for `Point` and the code for `Direction`:
 
--------------------------*/@Test void pointA () { run("""
+-------------------------*/@Test void pointA (){ run("""
 //OMIT_START
 use base.Int as Int;
 //OMIT_END
@@ -185,7 +185,7 @@ Sure, as humans we have a lot of knowledge in our head, so we know what `North` 
 Same for `Point`: we know what a `Point` is and we understand what `x` and `y` mean in this context.
 But, the program does not know anything about this background knowledge.
 The program does not give any external meaning to names. We could have written the code using abstract names and nothing would change for the program. That is, the code below is equivalent to the code above:
--------------------------*/@Test void pointB () { run("""
+-------------------------*/@Test void pointB (){ run("""
 //OMIT_START
 use base.Int as Int;
 //OMIT_END
@@ -208,7 +208,7 @@ We can use more precise terminology:
 However, by adding more and more connections between our units of code, the meaning starts to emerge.
 
 For example, we can make it so that points can be moved according to directions:
--------------------------*/@Test void pointC () { run("""
+-------------------------*/@Test void pointC (){ run("""
 //OMIT_START
 use base.Int as Int;
 //OMIT_END
@@ -232,7 +232,7 @@ This is how meaning emerges. Meaning is obtained by the network of connections b
 
 We can now add a position to our `Tank`s, and make them move in the direction indicated by their `.heading`.
 
--------------------------*/@Test void pointD () { run("""
+-------------------------*/@Test void pointD (){ run("""
 //OMIT_START
 use base.Int as Int;
 Point: {
@@ -270,7 +270,7 @@ For example, if `North.turn` returned `North`, this would be a situation where t
 
 By the way, using the syntactic sugar to the maximum, this is the most compact version of the code we just discussed:
 
--------------------------*/@Test void pointCompact () { run("""
+-------------------------*/@Test void pointCompact (){ run("""
 //OMIT_START
 use base.Int as Int;
 //OMIT_END
@@ -301,7 +301,7 @@ The difference is that we have consistently omitted the method name for one of t
 This is unambiguous since that would be the only remaining abstract method that we need to implement; thus the conventional sugar applies.
 
 //OMIT_START
--------------------------*/@Test void areaFourInts() { run("""
+-------------------------*/@Test void areaFourInts(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -327,7 +327,7 @@ Rectangles:{#(x1: Int, y1: Int, x2: Int, y2: Int): Rectangle -> Rectangle:{
 """); }/*--------------------------------------------
 //OMIT_END
 //OMIT_START
--------------------------*/@Test void areaTypedPoints() { run("""
+-------------------------*/@Test void areaTypedPoints(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -359,7 +359,7 @@ Rectangles:{#(topLeft: Point, bottomRight: Point): Rectangle -> Rectangle:{
 """); }/*--------------------------------------------
 //OMIT_END
 //OMIT_START
--------------------------*/@Test void tanksMoveCompact() { run("""
+-------------------------*/@Test void tanksMoveCompact(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -406,7 +406,7 @@ Tanks: { #(h: Direction, a: Direction, p: Point): Tank->{ h; .aiming->a; .positi
 """); }/*--------------------------------------------
 //OMIT_END
 //OMIT_START
--------------------------*/@Test void intsAreNotDirections() { run("""
+-------------------------*/@Test void intsAreNotDirections(){ run("""
 use base.Int as Int;
 Direction:{ .turn: Direction }
 North: Direction {East}

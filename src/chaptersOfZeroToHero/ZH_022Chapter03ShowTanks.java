@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_022Chapter03ShowTanks {
+final class ZH_022Chapter03ShowTanks{
 /*START
 --CHAPTER-- Chapter 3
 --SECTION-- Show Tanks
@@ -279,7 +279,7 @@ We will see many operations on flows by example in the next few pages.
 
 Here you can see all the code of this section packed together.
 
--------------------------*/@Test void allCode() { run("""
+-------------------------*/@Test void allCode(){ run("""
 //File _tank_game/_rank_app.fear
 use base.Main as Main;
 use base.Str as Str;
@@ -395,7 +395,7 @@ Test:Main {sys -> sys.out.println(  Tanks#(North, West, Points#(1, 2))  )}
 //PRINT|
 """); }/*--------------------------------------------
 OMIT_START
--------------------------*/@Test void aimingRepr2AsFactory() { run("""
+-------------------------*/@Test void aimingRepr2AsFactory(){ run("""
 //File _tank_game/_rank_app.fear
 use base.Main as Main;
 use base.Str as Str;
@@ -509,7 +509,7 @@ Test:Main {sys -> sys.out.println(  Tanks#(North, West, Points#(1, 2))  )}
 //PRINT| \\ _ / \n\
 //PRINT|
 """); }/*--------------------------------------------
--------------------------*/@Test void widenToNotNeededWithDeclaredReturnType() { run("""
+-------------------------*/@Test void widenToNotNeededWithDeclaredReturnType(){ run("""
 use base.Main as Main;
 use base.Str as Str;
 use base.ToStr as ToStr;
@@ -533,7 +533,7 @@ Direction: ToStr, Sealed {
 Test: Main{s-> Debug#(North.turn)}
 //PRINT|East
 """); }/*--------------------------------------------
--------------------------*/@Test void widenToNeededWithoutDeclaredReturnType() { run("""
+-------------------------*/@Test void widenToNeededWithoutDeclaredReturnType(){ run("""
 use base.Block as Block;
 use base.Str as Str;
 use base.ToStr as ToStr;
@@ -557,7 +557,7 @@ Direction: ToStr, Sealed {
 //ERROR|Object literal is of type "South" instead of a subtype of "East".
 //ERROR|[###]
 """); }/*--------------------------------------------
--------------------------*/@Test void widenToFixesTheInferredType() { run("""
+-------------------------*/@Test void widenToFixesTheInferredType(){ run("""
 use base.Main as Main;
 use base.Block as Block;
 use base.Str as Str;

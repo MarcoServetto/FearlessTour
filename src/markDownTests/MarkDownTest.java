@@ -3,21 +3,21 @@ package markDownTests;
 import java.nio.file.Path;
 import java.util.List;
 
-public class MarkDownTest {
+public final class MarkDownTest{
   public final Path path;
   public final List<String> content;
   private boolean omitting= false;
-  private boolean notOmit(String line) {
+  private boolean notOmit(String line){
     if (TextTag.OmitStart.match(line)){ omitting = true; }
     try{ return !omitting; }
     finally{ if (TextTag.OmitEnd.match(line)){ omitting = false; } }
   }
 
-  public MarkDownTest(Path path) {
-    this.path = path;
-    this.content = new LoadFile().loadLines(path);
+  public MarkDownTest(Path path){
+    this.path= path;
+    this.content= new LoadFile().loadLines(path);
   }
-  public List<String> extractMarkdownLines() {
+  public List<String> extractMarkdownLines(){
     return content.stream()
       .dropWhile(TextTag.Start::notMatch)
       .skip(1)
@@ -27,7 +27,7 @@ public class MarkDownTest {
       .toList();
   }
   String lineToCode(String line){
-    line= line.replace("*|/", "*/").replace("\\\\","\\").replace("\\n\\","");
+    line = line.replace("*|/", "*/").replace("\\\\", "\\").replace("\\n\\", "");
     boolean code= TextTag.CodeStart.match(line) || TextTag.CodeEnd.match(line);
     if (code){ return "````"; }
     return line;

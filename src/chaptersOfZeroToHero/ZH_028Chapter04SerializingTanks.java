@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_028Chapter04SerializingTanks {
+final class ZH_028Chapter04SerializingTanks{
 /*START
 --CHAPTER-- Chapter 4
 --SECTION-- Serialising Tanks
@@ -156,7 +156,7 @@ We are now going to move forward, toward other interesting examples.
 
 
 OMIT_START
--------------------------*/@Test void serialiseTanks() { run("""
+-------------------------*/@Test void serialiseTanks(){ run("""
 use base.Main as Main;
 use base.Str as Str;
 use base.Nat as Nat;
@@ -260,7 +260,7 @@ Test: Main{s-> Block#
 //PRINT|False
 
 """); }/*--------------------------------------------
--------------------------*/@Test void pointAndTankAsShown() { run("""
+-------------------------*/@Test void pointAndTankAsShown(){ run("""
 use base.Main as Main;
 use base.Nat as Nat;
 use base.F as F;
@@ -340,7 +340,7 @@ Test: Main{s-> Block#
 //PRINT|True
 //PRINT|[3, 3]
 """); }/*--------------------------------------------
--------------------------*/@Test void readGameAsAction() { run("""
+-------------------------*/@Test void readGameAsAction(){ run("""
 
 use base.Main as Main;
 use base.Str as Str;

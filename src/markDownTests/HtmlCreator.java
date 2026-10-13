@@ -15,7 +15,7 @@ import com.vladsch.flexmark.ext.tables.TablesExtension;
 import utils.Range;
 
 public record HtmlCreator(Path rootPath){
-  private static final String HTML_HEADER = """
+  private static final String HTML_HEADER= """
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -29,7 +29,7 @@ public record HtmlCreator(Path rootPath){
       </div>
       <div id="content" class="markdown-content">
     """;
-  private static final String HTML_FOOTER = """
+  private static final String HTML_FOOTER= """
           <div class="nav-links">
           %s %s
           </div>
@@ -37,12 +37,12 @@ public record HtmlCreator(Path rootPath){
       </body>
     </html>
     """;
-  private List<SectionInfo> collectSections(List<Chapter> chapters) {
+  private List<SectionInfo> collectSections(List<Chapter> chapters){
     List<SectionInfo> sections= new ArrayList<>();
     int chapterNum= 1;
     for (var chapter : chapters){
       int sectionNum= 1;
-      for (var section : chapter.sections()) {
+      for (var section : chapter.sections()){
         sections.add(new SectionInfo(chapter.title(), section.title(), chapterNum, sectionNum, section.lines()));
         sectionNum++;
       }
@@ -50,15 +50,15 @@ public record HtmlCreator(Path rootPath){
     }
     return sections;
   }
-  private String generateSidebar(List<SectionInfo> sections) {
+  private String generateSidebar(List<SectionInfo> sections){
     StringBuilder sideBar= new StringBuilder();
     for (var s : sections){ sideBar.append(s.sideBarEntry()); }
     return sideBar.toString();
   }
-  public void generateHtmlPages(List<Chapter> chapters) {
-    List<SectionInfo> allSections = collectSections(chapters);
-    String sideBar = generateSidebar(allSections);
-    for(int i : Range.of(allSections)){ generatePage(i,sideBar,allSections);}
+  public void generateHtmlPages(List<Chapter> chapters){
+    List<SectionInfo> allSections= collectSections(chapters);
+    String sideBar= generateSidebar(allSections);
+    for (int i : Range.of(allSections)){ generatePage(i, sideBar, allSections);}
   }
   private void generatePage(int i, String sideBar, List<SectionInfo> allSections){
     var title=   allSections.get(i).pageTitle();
@@ -76,7 +76,7 @@ public record HtmlCreator(Path rootPath){
   }
   private void writeFile(String fileName, String content){
     Path filePath= rootPath.resolve(fileName);
-    try {
+    try{
       Files.createDirectories(filePath.getParent());
       Files.writeString(filePath, content);
     }
@@ -92,9 +92,9 @@ record SectionInfo(
   }
   public String fileName(){ return String.format("%02d_%02d.html", chapterNumber, sectionNumber); }
   public String pageTitle(){ return chapterTitle + " :: " + sectionTitle; }
-  public String sideBarEntry() {
-    String displayName = pageTitle();
-    String fileName = fileName();
+  public String sideBarEntry(){
+    String displayName= pageTitle();
+    String fileName= fileName();
     String sideBar= "<div class=\"sidebar-entry\"><a href=\"%s\">%s</a></div>\n";
     return String.format(sideBar, fileName, displayName);
   }
@@ -103,9 +103,9 @@ record SectionInfo(
 
   public String generatePage(){
     String text= lines.stream().collect(Collectors.joining("\n"));
-    List<Parser.ParserExtension> extensions = List.of(TablesExtension.create());
-    Parser parser = Parser.builder().extensions(extensions).build();
-    HtmlRenderer renderer = HtmlRenderer.builder().extensions(extensions).build();
+    List<Parser.ParserExtension> extensions= List.of(TablesExtension.create());
+    Parser parser= Parser.builder().extensions(extensions).build();
+    HtmlRenderer renderer= HtmlRenderer.builder().extensions(extensions).build();
     return renderer.render(parser.parse(text));    
   }
 

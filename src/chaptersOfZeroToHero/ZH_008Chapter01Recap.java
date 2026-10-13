@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_008Chapter01Recap {
+final class ZH_008Chapter01Recap{
 /*START
 --CHAPTER-- Chapter 1
 --SECTION-- Terminology Recap
@@ -103,7 +103,7 @@ That is,
 - when we write a type inside an expression, we are implicitly using it to summon a value of that type.
   
 OMIT_START
--------------------------*/@Test void emptySquareOk () { run("""
+-------------------------*/@Test void emptySquareOk (){ run("""
 use base.Int as Int;
 Direction:{.point: Point->Points#(+0,+1)}
 Points:{#(x: Int, y: Int): Point -> Point[]:{'self
@@ -116,7 +116,7 @@ Points:{#(x: Int, y: Int): Point -> Point[]:{'self
 //OMIT_END
 
 //OMIT_START
--------------------------*/@Test void namesAndLambdas() { run("""
+-------------------------*/@Test void namesAndLambdas(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;

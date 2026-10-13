@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_010Chapter02Booleans {
+final class ZH_010Chapter02Booleans{
 /*START
 --CHAPTER-- Chapter 2
 --SECTION-- Booleans
@@ -15,7 +15,7 @@ If you have done some logic at school, you will be familiar with the concepts of
 Anyway, we are going to recall them now:
 In the same way we have only the four cardinal `Direction`s, we only have two fundamental truth values: `True` and `False`. They are called the `Bool`s or the booleans, in honour of George Boole, who laid the groundwork for what is now known as Boolean algebra.
 We can easily encode booleans in Fearless as follows:
--------------------------*/@Test void bool1 () { run("""
+-------------------------*/@Test void bool1 (){ run("""
 //|OMIT_START
 use base.Str as Str;
 use base.Int as Int;
@@ -96,7 +96,7 @@ Can we add a concept of choice on our booleans, as we did for `Fork`?
 This is where the generics we saw earlier become essential. We need a way to represent the two possible code paths (what to do if `True`, what to do if `False`) and the result they produce. Remember the `Fork` example where `.choose[Val]` worked with any type `Val`? We need something similar here. Let's define a method `Bool.if`, that can produce a result of any type, let's call that type `R`, for Result.
 To provide the two code paths we need a container object. We can define a generic type called `ThenElse[R]`. The `[R]` is a type parameter, just like `[Val]` was in `Fork`. It stands for the Result type that both code paths must ultimately produce.
 
--------------------------*/@Test void bool2 () { run("""
+-------------------------*/@Test void bool2 (){ run("""
 //|OMIT_START
 use base.Str as Str;
 use base.Int as Int;
@@ -146,7 +146,7 @@ This is a crucial abstraction step. We can now write a lot of example code.
 
 As an example, we will define a simple `Bot` type that can respond to a few specific messages. It will have one method, `.message`, which takes an input `Str` and returns a response `Str`.
 
--------------------------*/@Test void example1 () { run("""
+-------------------------*/@Test void example1 (){ run("""
 //OMIT_START
 use base.Str as Str;
 use base.Int as Int;
@@ -337,7 +337,7 @@ But for now, let's pause to appreciate what we've accomplished. Understanding th
 Generics are very common in Fearless.
 
 Possibly the most important generic types in the Fearless standard library are the function types, which look similar to the following:
--------------------------*/@Test void fun1 () { run("""
+-------------------------*/@Test void fun1 (){ run("""
 F[R]: { #: R }
 F[A,R]: { #(a: A): R }
 F[A,B,R]: { #(a: A, b: B): R }
@@ -350,7 +350,7 @@ the presence of different numbers of generic arguments disambiguates their names
 
 Fearless allows us to simply omit the names of parameters that are not used; since those are abstract methods, their parameters are all unused: there is no body at all.
 Thus we can also just write:
--------------------------*/@Test void fun1b () { run("""
+-------------------------*/@Test void fun1b (){ run("""
 F[R]: { #: R }
 F[A,R]: { #(A): R }
 F[A,B,R]: { #(A, B): R }
@@ -360,7 +360,7 @@ F[A,B,C,R]: { #(A, B, C): R }
 
 With `F`, we can rewrite much of the code we showed in the beginning.
 For example:
--------------------------*/@Test void f2 () { run("""
+-------------------------*/@Test void f2 (){ run("""
 //OMIT_START
 Direction:{}
 //OMIT_END
@@ -370,7 +370,7 @@ Tanks: { #(heading: Direction, aiming: Direction): Tank->
   }
 """); }/*--------------------------------------------
 could be rewritten as
--------------------------*/@Test void f3 () { run("""
+-------------------------*/@Test void f3 (){ run("""
 //OMIT_START
 use base.Str as Str;
 use base.Int as Int;
@@ -403,7 +403,7 @@ If the computation for the second part of the `.and` / `.or` was very intricate 
 We can define **short-circuited** versions for `.and` and `.or`, called `&&` and `||` as shown below:
 
 
--------------------------*/@Test void bool3 () { run("""
+-------------------------*/@Test void bool3 (){ run("""
 //OMIT_START
 use base.Str as Str;
 use base.Int as Int;
@@ -444,7 +444,7 @@ Much:   {.code: Bool -> ... }
 Slow:   {.code: Bool -> ... }
 ATonOf: {.code: Bool -> ... }
 ```
--------------------------*/@Test void bool4 () { run("""
+-------------------------*/@Test void bool4 (){ run("""
 //|OMIT_START
 use base.Str as Str;
 use base.Int as Int;
@@ -547,7 +547,7 @@ When programming we often need to **keep in mind multiple levels of abstraction 
 At a coarser level of precision, `.and` and `&&` are equivalent; at a finer level of precision, we can see differences. Occasionally, fine behavioural details can bubble up the ladder of abstractions and become relevant.
 
 //OMIT_START
--------------------------*/@Test void truthTables() { run("""
+-------------------------*/@Test void truthTables(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -619,7 +619,7 @@ Much:{ .code: Bool -> False; }
 """); }/*--------------------------------------------
 //OMIT_END
 //OMIT_START
--------------------------*/@Test void botMessages() { run("""
+-------------------------*/@Test void botMessages(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;

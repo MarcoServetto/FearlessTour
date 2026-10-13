@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_024Chapter03Collections {
+final class ZH_024Chapter03Collections{
 /*START
 --CHAPTER-- Chapter 3
 --SECTION-- Collections
@@ -802,7 +802,7 @@ By learning and repeating the usage patterns we get more aware of the code struc
 Basically, it is much easier to solve a puzzle once you remember what all the pieces are and do.
 
 OMIT_START
--------------------------*/@Test void tests() { run("""
+-------------------------*/@Test void tests(){ run("""
 use base.F as F;
 
 use base.Void as Void;
@@ -1347,7 +1347,7 @@ TestByCatsNamedComparator:F[Tests,Tests]{::
   }
 
 """); }/*--------------------------------------------
--------------------------*/@Test void carAndListExamplesAsShown() { run("""
+-------------------------*/@Test void carAndListExamplesAsShown(){ run("""
 use base.Nat as Nat;
 use base.Str as Str;
 use base.List as List;

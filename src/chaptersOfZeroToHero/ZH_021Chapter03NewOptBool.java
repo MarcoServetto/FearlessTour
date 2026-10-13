@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_021Chapter03NewOptBool {
+final class ZH_021Chapter03NewOptBool{
 /*START
 --CHAPTER-- Chapter 3
 --SECTION-- Opt and Bool, as Declared
@@ -511,7 +511,7 @@ _Opt[E:*]:DataType[Opt[E],Opt[imm E],E,imm E]{
   read .mapSome[R:*](mut MF[read/imm E, R]): mut Opt[R];
 }
 """); }/*--------------------------------------------
--------------------------*/@Test void realBoolAndOpt() { run("""
+-------------------------*/@Test void realBoolAndOpt(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;

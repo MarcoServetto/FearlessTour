@@ -1,4 +1,4 @@
-module my.fearlessTour {
+module my.fearlessTour{
     requires flexmark;
     requires flexmark.util.ast;
     requires org.junit.jupiter.api;

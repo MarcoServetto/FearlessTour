@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_016Chapter02ThanksGame {
+final class ZH_016Chapter02ThanksGame{
   public static final String fullPreface= """
 use base.Void as Void;
 use base.Int as Int;
@@ -78,7 +78,7 @@ Now we have enough understanding about Fearless that we can implement a simple g
 
 We start by repeating and improving some of the code we discussed above:
 
--------------------------*/@Test void oldCode1 () { run("""
+-------------------------*/@Test void oldCode1 (){ run("""
 //OMIT_START
 use base.Void as Void;
 use base.Int as Int;
@@ -143,7 +143,7 @@ The idea is that first all the tanks shoot, and every tank standing one step in 
 Then, all the surviving tanks move in their heading direction, but only if that position is free.
 A position is free if it is neither the current position nor the destination of another tank.
 
--------------------------*/@Test void newCode1 () { run("""
+-------------------------*/@Test void newCode1 (){ run("""
 //OMIT_START
 """+fullPreface+"""
 //OMIT_END
@@ -201,7 +201,7 @@ Thus, we can fix the bug by counting the number of points present in our desired
 Note how we used the word "our" there. By doing so, we are imagining ourselves to be the tank that is moving. This is a useful psychological technique we can use as programmers to better visualise code execution.
 
 To fix this bug we can simply edit the `.moveIfFree` method as follows:
--------------------------*/@Test void newCode2 () { run("""
+-------------------------*/@Test void newCode2 (){ run("""
 //OMIT_START
 """+fullPreface+"""
 NextState: F[Stack[Tank],Stack[Tank]]{
@@ -225,7 +225,7 @@ NextState: F[Stack[Tank],Stack[Tank]]{
 
 Or, with two methods:
 
--------------------------*/@Test void newCode3 () { run("""
+-------------------------*/@Test void newCode3 (){ run("""
 //OMIT_START
 """+fullPreface+"""
 NextState: F[Stack[Tank],Stack[Tank]]{
@@ -252,7 +252,7 @@ NextState: F[Stack[Tank],Stack[Tank]]{
 """); }/*--------------------------------------------
 
 There are many other ways to check this, and if the stack has a `.size` method, we can just do
--------------------------*/@Test void newCode4 () { run("""
+-------------------------*/@Test void newCode4 (){ run("""
 //OMIT_START
 """+fullPreface+"""
 NextState: F[Stack[Tank],Stack[Tank]]{
@@ -300,7 +300,7 @@ This chapter marks a milestone: You have begun to see the beauty in the minimali
 Let's keep going.
 
 //OMIT_START
--------------------------*/@Test void gameBehaviour() { run(fullPreface+"""
+-------------------------*/@Test void gameBehaviour(){ run(fullPreface+"""
 NS1: F[Stack[Tank],Stack[Tank]]{
   #(tanks) -> Let#
     .let[Stack[Point]] danger    = { tanks.map{ t -> t.position.move(t.aiming) } }

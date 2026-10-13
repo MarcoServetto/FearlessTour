@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_014Chapter02StackOps {
+final class ZH_014Chapter02StackOps{
 /*START
 --CHAPTER-- Chapter 2
 --SECTION-- Operations on Sequences
@@ -28,7 +28,7 @@ As you can see, there could be many different operations done following the same
 Repeating this pattern over and over would make the code quite long.
 We can abstract over this pattern with the idea of folding values on top of each other starting from a beginning point:
 
--------------------------*/@Test void fold1 () { run("""
+-------------------------*/@Test void fold1 (){ run("""
 //OMIT_START
 use base.F as F;
 use base.Nat as Nat;
@@ -49,7 +49,7 @@ ExampleTimes: { #(ns: Stack[Nat]): Nat -> ns.fold(1, { n1,n2 -> n1 * n2 })  }
 
 Another iconic operation over sequences is to map all the values to the result of an operation, for example adding 5 to all the numbers.
 Of course this can be implemented with the match as shown below:
--------------------------*/@Test void fold1b () { run("""
+-------------------------*/@Test void fold1b (){ run("""
 //OMIT_START
 use base.F as F;
 use base.Nat as Nat;
@@ -72,7 +72,7 @@ Example:{
 """); }/*--------------------------------------------
 
 Operations like this one are going to be very common, so we had better define generic support for it in the `Stack` type:
--------------------------*/@Test void map1 () { run("""
+-------------------------*/@Test void map1 (){ run("""
 //OMIT_START
 use base.F as F;
 use base.Nat as Nat;
@@ -97,7 +97,7 @@ Note how we also swapped the order of the arguments of the `.fold` function: now
 By adding fold and map to stacks, we have now unlocked a surprising amount of expressive power.
 Do you want to add 10 to all the numbers, multiply the result by 3 and then get the sum of all of them?
 Easy!
--------------------------*/@Test void fluent1 () { run("""
+-------------------------*/@Test void fluent1 (){ run("""
 //OMIT_START
 use base.F as F;
 use base.Nat as Nat;
@@ -184,7 +184,7 @@ In the `.else` case, we just propagate the operation to the stack tail.
 
 Here is the full code again.
 
--------------------------*/@Test void stackFull () { run("""
+-------------------------*/@Test void stackFull (){ run("""
 //OMIT_START
 use base.F as F;
 use base.Bool as Bool;
@@ -219,7 +219,7 @@ What you're looking at is a mental blueprint. One that can become a key part of 
 This snippet is foundational for a powerful mental model, that will guide you toward cleaner solutions, clearer abstractions, and more maintainable code.
 
 //OMIT_START
--------------------------*/@Test void stackBehaviour() { run("""
+-------------------------*/@Test void stackBehaviour(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;

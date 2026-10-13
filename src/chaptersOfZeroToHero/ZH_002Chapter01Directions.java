@@ -2,7 +2,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_002Chapter01Directions {
+final class ZH_002Chapter01Directions{
 /*START
 --CHAPTER-- Chapter 1
 --SECTION-- Directions
@@ -18,7 +18,7 @@ In Fearless we have three main concepts:
 To demonstrate these concepts, let's consider an example expressing
 the four cardinal directions:
 
--------------------------*/@Test void compile4() { run("""
+-------------------------*/@Test void compile4(){ run("""
 North:{}
 East: {}
 South:{}
@@ -33,7 +33,7 @@ Those types are not very useful because they are unconnected.
 We can create connections between those types by adding **methods**
 to our directions:
 
--------------------------*/@Test void error1() { run("""
+-------------------------*/@Test void error1(){ run("""
 North: {.turn-> East; }
 East : {.turn-> South;}
 South: {.turn-> West; }
@@ -105,7 +105,7 @@ In the same way, `South.turn.turn` is an expression which is equivalent to the o
 The example we are discussing is still incomplete, and it
 would cause an error if we tried to compile it.
 Note how we are using comments to show the error together with the code.
--------------------------*/@Test void error2() { run("""
+-------------------------*/@Test void error2(){ run("""
 North: {.turn-> East; }
 East : {.turn-> South;}
 South: {.turn-> West; }
@@ -143,7 +143,7 @@ our program is safe to use.
 Many programmers rely on types to understand code.
 
 So, what does the `North.turn` method return? `East`. So we can write:
--------------------------*/@Test void noError() { run("""
+-------------------------*/@Test void noError(){ run("""
 North: {.turn: East  -> East; }
 East : {.turn: South -> South;}
 South: {.turn: West  -> West; }
@@ -160,7 +160,7 @@ clockwise direction.
 
 We can capture this intention with the following code:
 
--------------------------*/@Test void dir1() { run("""
+-------------------------*/@Test void dir1(){ run("""
 Direction: { .turn: Direction; }
 North: Direction { .turn -> East;  }
 East : Direction { .turn -> South; }
@@ -192,7 +192,7 @@ This process is called type inference and is an important concept in Fearless.
 We can now imagine a method `.reverse` that turns 180 degrees.
 A naive approach would hard code the method result in all the cases, as shown below.
 
--------------------------*/@Test void reverse1() { run("""
+-------------------------*/@Test void reverse1(){ run("""
 Direction: { .turn: Direction; .reverse: Direction;  }
 North: Direction { .turn -> East;  .reverse -> South; }
 East : Direction { .turn -> South; .reverse -> West;  }
@@ -207,7 +207,7 @@ twice and get the desired result:
 rotating 180 degrees clockwise is the same as rotating 90 degrees clockwise, twice.
 
 If we simply follow this intuition and we add `.turn.turn` in all the directions, we get even more verbose code.
--------------------------*/@Test void reverse2() { run("""
+-------------------------*/@Test void reverse2(){ run("""
 Direction: { .turn: Direction; .reverse: Direction; }
 North: Direction { .turn -> East;  .reverse -> North.turn.turn; }
 East : Direction { .turn -> South; .reverse -> East.turn.turn;  }
@@ -245,7 +245,7 @@ That is, `???` should be `North` inside of `North.reverse` and `South` inside of
 We need a way to refer to the current direction within the `.reverse` method. If we're calculating `North.reverse`, we need `North.turn.turn`. If we're calculating `East.reverse`, we need `East.turn.turn`.
 
 We can indeed access the current direction by using `this`, as shown below.
--------------------------*/@Test void directionReverse() { run("""
+-------------------------*/@Test void directionReverse(){ run("""
 Direction: {
   .turn: Direction;
   .reverse: Direction -> this.turn.turn;
@@ -296,7 +296,7 @@ We will call types with abstract methods **abstract types**.
 
 
 //OMIT_START
--------------------------*/@Test void directionsBehave() { run("""
+-------------------------*/@Test void directionsBehave(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;

@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_017Chapter03ImplementingFromScratch {
+final class ZH_017Chapter03ImplementingFromScratch{
 /*START
 --CHAPTER-- Chapter 3
 --SECTION-- Implementing from Scratch
@@ -33,7 +33,7 @@ We call **magic methods** the methods from the standard library giving direct ac
 
 The following code introduces updatable local variables, and uses a few new features.
 It is a simplified version of the standard library `Var`.
--------------------------*/@Test void var1 () { run("""
+-------------------------*/@Test void var1 (){ run("""
 //OMIT_START
 _Magic: { ![R:**]: R -> base.Error.msg"magic"; }
 //OMIT_END
@@ -76,7 +76,7 @@ However, the magic `.set` will impact those methods: when `.set` is called, the 
 
 With `Var[E]` we can now encode mutable objects, like in the following `Animal` example:
 
--------------------------*/@Test void mdfsImplicit () { run("""
+-------------------------*/@Test void mdfsImplicit (){ run("""
 //OMIT_START
 use base.Nat as Nat;
 use base.Void as Void;
@@ -109,7 +109,7 @@ While `loc` is a `mut Var[Point]`, the `Point` itself is immutable.
 As a sugar, any type name without a modifier in front is implicitly `imm`.
 To clarify this, here is the code from above with all the `imm` keywords explicitly added:
 
--------------------------*/@Test void mdfsExplicit () { run("""
+-------------------------*/@Test void mdfsExplicit (){ run("""
 //OMIT_START
 use base.Nat as Nat;
 use base.Void as Void;
@@ -145,7 +145,7 @@ Using aliasing in the appropriate way can make our code much more efficient, and
 However, when aliasing and mutation are misused or run outside of our control, the code will behave in ways that most humans find very hard to predict.
 
 Consider the code below, showing a simple example of aliasing.
--------------------------*/@Test void aliasing1 () { run("""
+-------------------------*/@Test void aliasing1 (){ run("""
 //OMIT_START
 use base.Nat as Nat;
 use base.Void as Void;
@@ -183,7 +183,7 @@ Note how we use `.let` and not `.var`.
 `bunny` and `mammal` are not variables. They are local parameters referring to objects that (indirectly) contain a variable inside.
 
 //OMIT_START
--------------------------*/@Test void aliasingBehaviour() { run("""
+-------------------------*/@Test void aliasingBehaviour(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;

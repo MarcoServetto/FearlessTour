@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
 
-class ZH_001Preface {
+final class ZH_001Preface{
 /*START
 --CHAPTER-- Preface
 --SECTION-- Fearless: Zero to Hero
@@ -133,7 +133,7 @@ On the next page we will see our first example of code.
 
 
 OMIT_START
--------------------------*/@Test void helloWorldPreface() { run("""
+-------------------------*/@Test void helloWorldPreface(){ run("""
       use base.Main as Main;
       Test:Main {sys -> base.Debug#("Hello, World!")}//OK
       //PRINT|Hello, World!

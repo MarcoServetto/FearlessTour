@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_025Chapter04Intro {
+final class ZH_025Chapter04Intro{
 /*START
 --CHAPTER-- Chapter 4
 --SECTION-- Errors are good!
@@ -150,7 +150,7 @@ The empty `Info` object can be obtained by writing `Info` or just `{}`.
 >Add examples showing this behaviour
 
 OMIT_START
--------------------------*/@Test void infoKinds() { run("""
+-------------------------*/@Test void infoKinds(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;

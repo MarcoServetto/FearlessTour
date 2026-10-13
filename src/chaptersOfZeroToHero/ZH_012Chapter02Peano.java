@@ -3,7 +3,7 @@ package chaptersOfZeroToHero;
 
 import org.junit.jupiter.api.Test;
 import static testHelpers.TourHelper.run;
-class ZH_012Chapter02Peano {
+final class ZH_012Chapter02Peano{
 /*START
 --CHAPTER-- Chapter 2
 --SECTION-- Peano numbers
@@ -28,7 +28,7 @@ Below, you can see an implementation for Peano numbers.
 Peano numbers are a number representation where numbers are represented as a **Zero** or a **Successor** of another number.
 We can encode Peano numbers in Fearless as follows:
 
--------------------------*/@Test void peano1 () { run("""
+-------------------------*/@Test void peano1 (){ run("""
 Number:{
   .pred: Number;
   .succ: Number -> {this}; // equivalent to .pred->this
@@ -51,7 +51,7 @@ Numbers are created as needed using the `Number.succ` method.
 
 We can add operations to our Peano numbers as follows:
 
--------------------------*/@Test void peano2 () { run("""
+-------------------------*/@Test void peano2 (){ run("""
 Number:{
   .pred: Number;
   .succ:Number->{ this };
@@ -85,7 +85,7 @@ For example `(18446744073709551615/1) * (18446744073709551615/1)` is a very larg
 `Num` has no literal syntax of its own: a `Num` whose numerator or denominator is too large to be written as a `Nat` or `Int` literal is obtained by parsing a string with `.getNum`.
 For example `"123456789012345678901234567891/7".getNum` is a `Num` whose numerator is far beyond the largest `Nat`.
 OMIT_START
--------------------------*/@Test void num1 () { run("""
+-------------------------*/@Test void num1 (){ run("""
 use base.Void as Void;
 use base.Num as Num;
 use base.Main as Main;
@@ -96,7 +96,7 @@ Test:Main{s->base.Debug#(+23/4)}
 //OMIT_END
 
 //OMIT_START
--------------------------*/@Test void peanoBehaviour() { run("""
+-------------------------*/@Test void peanoBehaviour(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
@@ -139,7 +139,7 @@ Zero:Number {
 """); }/*--------------------------------------------
 //OMIT_END
 //OMIT_START
--------------------------*/@Test void numLiterals() { run("""
+-------------------------*/@Test void numLiterals(){ run("""
 use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;

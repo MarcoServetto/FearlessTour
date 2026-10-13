@@ -12,7 +12,7 @@ import java.util.stream.StreamSupport;
 
 import tools.Fs;
 
-public class LoadFile{
+public final class LoadFile{
   public List<String> loadLines(Path name){
     return loadText(name).lines().toList();
   }
@@ -23,19 +23,19 @@ public class LoadFile{
     return Fs.readUtf8(name);
     }
 }
-class DirectoryStructure {
+final class DirectoryStructure{
   public static String of(Path startPath){
-    try (Stream<Path> paths= Files.walk(startPath)) {
+    try (Stream<Path> paths= Files.walk(startPath)){
       return paths
-        .filter(pi->!pi.equals(startPath))
-        .map(pi->startPath.relativize(pi))
+        .filter(pi -> !pi.equals(startPath))
+        .map(pi -> startPath.relativize(pi))
         .mapMulti(DirectoryStructure::single)
         .collect(Collectors.joining());
     }
-    catch(IOException ioe){ throw new UncheckedIOException(ioe); }
+    catch (IOException ioe){ throw new UncheckedIOException(ioe); }
   }
-  private static void single(Path rel,Consumer<String> c) {
-    int depth = rel.getNameCount() - 1;
+  private static void single(Path rel, Consumer<String> c){
+    int depth= rel.getNameCount() - 1;
     assert depth>=0;
     c.accept("--|".repeat(depth));
     c.accept(rel.getFileName().toString());
@@ -43,7 +43,7 @@ class DirectoryStructure {
     c.accept(formatPath(rel));
     c.accept("\")\n");
   }
-  private static String formatPath(Path rel) {
+  private static String formatPath(Path rel){
     return StreamSupport.stream(rel.spliterator(), false)
       .map(Path::toString)
       .collect(Collectors.joining("\", \"", "", ""));
