@@ -193,7 +193,7 @@ persons.tryGet(3).andThen{p->
 does two different actions: extracts the person at index `3` and connects their name with their job using `jobs: Map[Str,Str]`.
 Finally it uses the job `j` and the person `p` to produce an `Action[Str]`. Note how this is only needed if we want to get a detailed error message in case of failure. We can encode the same idea with optionals with the more conventional flow code below:
 ```
-persons.opt(3).flow.flatMap{p->
+persons.opt(3).seqFlow.flatMap{p->
   jobs.opt(p.name).mapSome{ j->"Person " + (p.name) + " works as a " + j } }.getOpt
 ```
 Here, if the person or the job is not present, we would simply get an empty optional.
@@ -572,7 +572,7 @@ Persons:{ #(n: Str): Person -> { .name -> n } }
 Jobs:{ .map: Map[Str,Str] -> Maps#({::},"a","baker","b","cook"); }
 Ex:{
   #(persons: List[Person], jobs: Map[Str,Str]): Opt[Str] ->
-    persons.opt(1).flow.flatMap{p->
+    persons.opt(1).seqFlow.flatMap{p->
       jobs.opt(p.name).mapSome{ j->"Person " + (p.name) + " works as a " + j } }.getOpt
   }
 Test: base.Main{s-> Block#
