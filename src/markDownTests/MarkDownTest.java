@@ -14,8 +14,8 @@ public final class MarkDownTest {
   }
 
   public MarkDownTest(Path path) {
-    this.path = path;
-    this.content = new LoadFile().loadLines(path);
+    this.path= path;
+    this.content= new LoadFile().loadLines(path);
   }
   public List<String> extractMarkdownLines() {
     return content.stream()
@@ -27,7 +27,7 @@ public final class MarkDownTest {
       .toList();
   }
   String lineToCode(String line){
-    line= line.replace("*|/", "*/").replace("\\\\","\\").replace("\\n\\","");
+    line = line.replace("*|/", "*/").replace("\\\\","\\").replace("\\n\\","");
     boolean code= TextTag.CodeStart.match(line) || TextTag.CodeEnd.match(line);
     if (code){ return "````"; }
     return line;

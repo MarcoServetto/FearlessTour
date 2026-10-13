@@ -15,7 +15,7 @@ import com.vladsch.flexmark.ext.tables.TablesExtension;
 import utils.Range;
 
 public record HtmlCreator(Path rootPath){
-  private static final String HTML_HEADER = """
+  private static final String HTML_HEADER= """
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -29,7 +29,7 @@ public record HtmlCreator(Path rootPath){
       </div>
       <div id="content" class="markdown-content">
     """;
-  private static final String HTML_FOOTER = """
+  private static final String HTML_FOOTER= """
           <div class="nav-links">
           %s %s
           </div>
@@ -56,8 +56,8 @@ public record HtmlCreator(Path rootPath){
     return sideBar.toString();
   }
   public void generateHtmlPages(List<Chapter> chapters) {
-    List<SectionInfo> allSections = collectSections(chapters);
-    String sideBar = generateSidebar(allSections);
+    List<SectionInfo> allSections= collectSections(chapters);
+    String sideBar= generateSidebar(allSections);
     for(int i : Range.of(allSections)){ generatePage(i,sideBar,allSections);}
   }
   private void generatePage(int i, String sideBar, List<SectionInfo> allSections){
@@ -93,8 +93,8 @@ record SectionInfo(
   public String fileName(){ return String.format("%02d_%02d.html", chapterNumber, sectionNumber); }
   public String pageTitle(){ return chapterTitle + " :: " + sectionTitle; }
   public String sideBarEntry() {
-    String displayName = pageTitle();
-    String fileName = fileName();
+    String displayName= pageTitle();
+    String fileName= fileName();
     String sideBar= "<div class=\"sidebar-entry\"><a href=\"%s\">%s</a></div>\n";
     return String.format(sideBar, fileName, displayName);
   }
@@ -103,9 +103,9 @@ record SectionInfo(
 
   public String generatePage(){
     String text= lines.stream().collect(Collectors.joining("\n"));
-    List<Parser.ParserExtension> extensions = List.of(TablesExtension.create());
-    Parser parser = Parser.builder().extensions(extensions).build();
-    HtmlRenderer renderer = HtmlRenderer.builder().extensions(extensions).build();
+    List<Parser.ParserExtension> extensions= List.of(TablesExtension.create());
+    Parser parser= Parser.builder().extensions(extensions).build();
+    HtmlRenderer renderer= HtmlRenderer.builder().extensions(extensions).build();
     return renderer.render(parser.parse(text));    
   }
 

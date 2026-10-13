@@ -16,7 +16,7 @@ public enum TextTag {
   CodeEnd("/*-----");
 
   private final String token;
-  TextTag(String token){ this.token = token; }
+  TextTag(String token){ this.token= token; }
   public String token(){ return token; }
   public boolean match(String line){ return line.contains(token); }
   public boolean notMatch(String line){ return !line.contains(token); }

@@ -58,7 +58,7 @@ public final class TourHelper {
     strCmp("||"+expectedPrint+"||", "||"+m.out().toString()+"||");
   }
   static List<Byte> strView(String str){
-    byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
+    byte[] bytes= str.getBytes(StandardCharsets.UTF_8);
     return IntStream.range(0, bytes.length)
       .mapToObj(i -> bytes[i]).toList();
   }
