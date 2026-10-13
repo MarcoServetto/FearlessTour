@@ -32,7 +32,7 @@ final class DirectoryStructure {
         .mapMulti(DirectoryStructure::single)
         .collect(Collectors.joining());
     }
-    catch(IOException ioe){ throw new UncheckedIOException(ioe); }
+    catch (IOException ioe){ throw new UncheckedIOException(ioe); }
   }
   private static void single(Path rel,Consumer<String> c) {
     int depth= rel.getNameCount() - 1;
