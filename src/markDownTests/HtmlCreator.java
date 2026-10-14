@@ -44,9 +44,9 @@ public record HtmlCreator(Path rootPath){
       int sectionNum= 1;
       for (var section : chapter.sections()){
         sections.add(new SectionInfo(chapter.title(), section.title(), chapterNum, sectionNum, section.lines()));
-        sectionNum++;
+        sectionNum += 1;
       }
-      chapterNum++;
+      chapterNum += 1;
     }
     return sections;
   }
