@@ -404,7 +404,7 @@ Of course, there isn't really a file containing billions of billions of lines li
 18446744070000000006: Nat{.pred-> 18446744070000000005; .succ->  18446744070000000007; }
 ...
 ```
-But let's imagine, just for fun. Picture "The Infinite Typist", a mythical programmer fueled by pure
+But let's imagine, just for fun. Picture "The Infinite Typist", a mythical programmer fuelled by pure
 determination and questionable amounts of coffee, who decided one day to manually define numbers,
 one after another. Day after day, century after century, they typed...
 If we printed their monumental work, using tiny font and three columns per page,
@@ -534,7 +534,7 @@ use base.Main as Main;
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Nat as Nat;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(N10.succ.succ.succ.n)}
   .do{Debug#(N11.succ.n)}
   .do{Debug#(N0.pred.n)}
@@ -592,7 +592,7 @@ use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
 use base.Debug as Debug;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(5 + 3)}
   .do{Debug#(+10 + -3)}
   .do{Debug#(+0 == -0)}

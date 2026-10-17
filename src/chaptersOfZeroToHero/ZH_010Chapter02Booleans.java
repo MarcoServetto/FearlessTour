@@ -554,7 +554,7 @@ use base.Block as Block;
 use base.Debug as Debug;
 use base.Str as Str;
 use base.F as F;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Show#(True.and(True)))}
   .do{Debug#(Show#(True.and(False)))}
   .do{Debug#(Show#(False.and(True)))}
@@ -625,7 +625,7 @@ use base.Main as Main;
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Str as Str;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Bot.message("hello"))}
   .do{Debug#(Bot.message("bye"))}
   .do{Debug#(Bot.message("test"))}

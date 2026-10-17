@@ -292,7 +292,7 @@ use base.Str as Str;
 use base.Nat as Nat;
 use base.Opt as Opt;
 use base.Opts as Opts;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(ShowA#(StackA[Nat] + 1 + 2 + 3))}
   .do{Debug#(Sum#(StackA[Nat] + 1 + 2 + 3))}
   .do{Debug#(ShowA#((StackA[Nat] + 3 + 2 + 1) ++ (StackA[Nat] + 6 + 5 + 4)))}

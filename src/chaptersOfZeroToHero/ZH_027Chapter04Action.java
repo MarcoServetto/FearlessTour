@@ -244,7 +244,8 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
       }}}
 ```
 
-Here `Points` has a `.fromInfo` method creating a point using the `"x"` and `"y"` coordinates stored in an `Info` object.Then, method `Points#` takes the `x` and `y` `Nat` coordinates and creates the resulting `Point`.
+Here `Points` has a `.fromInfo` method creating a point using the `"x"` and `"y"` coordinates stored in an `Info` object.
+Then, method `Points#` takes the `x` and `y` `Nat` coordinates and creates the resulting `Point`.
 However, before the point is created, we use `Nat.assertInRange` to check that `x` and `y` are in the desired range.
 `Nat.assertInRange` will throw an error if the number is not in the range.
 In `.cmp`, the parameters `{.imm.x,.imm.y}1` and `{.imm.x,.imm.y}2` are patterns taking the two points apart:
@@ -461,7 +462,7 @@ use base.Str as Str;
 use base.Try as Try;
 use base.Actions as Actions;
 use base.Nat as Nat;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Try#{Directions.map.get("Nope")}.info!.getMsg.startsWith("Map.get: Tried to get key Nope"))}
   .do{Debug#(Directions.map.tryGet("Nope").info!.getMsg.startsWith("Map.get: Tried to get key Nope"))}
   .do{Debug#(Try#{Directions.map.get("North")}.ok.str{::})}
@@ -547,7 +548,7 @@ Pts:{ #(x: Nat, y: Nat): Nat -> Block#
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Infos as Infos;
-Test: base.Main{s-> Block#
+Test: base.Main{sys-> Block#
   .do{Debug#((Infos.msg("a") + (Infos.list("x"))).str)}
   .do{Debug#((Infos.msg("a") + (Infos.msg("b"))).str)}
   .do{Debug#((Infos.list("x") + (Infos.list("y"))).str)}
@@ -575,7 +576,7 @@ Ex:{
     persons.opt(1).seqFlow.flatMap{p->
       jobs.opt(p.name).mapSome{ j->"Person " + (p.name) + " works as a " + j } }.getOpt
   }
-Test: base.Main{s-> Block#
+Test: base.Main{sys-> Block#
   .do{Debug#(Ex#(Lists#(Persons#("a"),Persons#("b")),Jobs.map).str{::})}
   .do{Debug#(Ex#(Lists#(Persons#("a"),Persons#("z")),Jobs.map).str{::})}
   .do{Debug#(Ex#(Lists#(Persons#("a")),Jobs.map).str{::})}
@@ -588,9 +589,9 @@ Test: base.Main{s-> Block#
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Try as Try;
-Test: base.Main{s-> Block#
-  .do{Debug#(s.try#{5 .assertInRange(1=~~=4)}.info.isSome)}
-  .do{Debug#(s.try#{Try#{5 .assertInRange(1=~~=4)}.info.isSome}.info.isSome)}
+Test: base.Main{sys-> Block#
+  .do{Debug#(sys.try#{5 .assertInRange(1=~~=4)}.info.isSome)}
+  .do{Debug#(sys.try#{Try#{5 .assertInRange(1=~~=4)}.info.isSome}.info.isSome)}
   .return{base.Void}}
 //PRINT|True
 //PRINT|True
@@ -600,9 +601,9 @@ use base.Block as Block;
 use base.Debug as Debug;
 use base.Error as Error;
 use base.Nat as Nat;
-Test: base.Main{s-> Block#
-  .do{Debug#(s.try#{ Error.msg[Nat] "boom" }.info!.getMap.get("msg").getMsg)}
-  .do{Debug#(s.try#{ Error.msg[Nat] "boom" }.info!.getMap.get("list").getList.isEmpty.not)}
+Test: base.Main{sys-> Block#
+  .do{Debug#(sys.try#{ Error.msg[Nat] "boom" }.info!.getMap.get("msg").getMsg)}
+  .do{Debug#(sys.try#{ Error.msg[Nat] "boom" }.info!.getMap.get("list").getList.isEmpty.not)}
   .return{base.Void}}
 //PRINT|boom
 //PRINT|True
@@ -621,12 +622,12 @@ Stuff:{
   .beer1: Nat -> this.bar!;
   .beer2: Nat -> this.bar.context{"InBeer2"}!;
   }
-Test: base.Main{s-> Block#
+Test: base.Main{sys-> Block#
   .do{Debug#(Stuff.bar.info!.str)}
-  .do{Debug#(s.try#{Stuff.beer0}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
-  .do{Debug#(s.try#{Stuff.beer1}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
-  .do{Debug#(s.try#{Stuff.beer2}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
-  .do{Debug#(s.try#{Stuff.beer2}.info!.getMap.get("msg").getMsg)}
+  .do{Debug#(sys.try#{Stuff.beer0}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
+  .do{Debug#(sys.try#{Stuff.beer1}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
+  .do{Debug#(sys.try#{Stuff.beer2}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
+  .do{Debug#(sys.try#{Stuff.beer2}.info!.getMap.get("msg").getMsg)}
   .return{base.Void}}
 //PRINT|"List.get: List index 5 out of range for List of length 3"
 //PRINT|imm .foo

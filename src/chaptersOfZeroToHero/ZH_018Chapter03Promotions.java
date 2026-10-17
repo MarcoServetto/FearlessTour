@@ -92,7 +92,7 @@ Animals: {
 PromotionExample: {
   #: imm Animal -> Animals#(Points#(10,20))
   }
-Test: base.Main{s-> base.Debug#(PromotionExample#.location.x)}
+Test: base.Main{sys-> base.Debug#(PromotionExample#.location.x)}
 //PRINT|10
 
 """); }/*--------------------------------------------

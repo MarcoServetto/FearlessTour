@@ -311,7 +311,7 @@ Finally, here we can see in the type `_Opt[E:*]` a good sample of the gory type 
 The real `_Opt[E]` keeps growing over time, with more combinator methods (like `.or`, `|` and `||`, mirroring the `Bool` operators) and assertion helpers (`.assertSome`, `.assertEmpty`); we only show a representative subset here.
 
 ````
-_Opt[E:*]:BaseContainer[E],DataType[Opt[E],Opt[imm E],E,imm E]{
+_Opt[E:*]:ToFlow[E],BaseContainer[E],DataType[Opt[E],Opt[imm E],E,imm E]{
   mut  .match[R:**](mut OptMatch[E, R]): R;
   read .match[R:**](mut OptMatch[read/imm E, R]): R;
   imm  .match[R:**](mut OptMatch[imm E, R]): R;
@@ -344,6 +344,7 @@ _Opt[E:*]:BaseContainer[E],DataType[Opt[E],Opt[imm E],E,imm E]{
 
 As you can see, this is where the major difference lies with respect to the optional seen in Chapter 2: here most methods come in two or three variants, one for `E`, one for `read/imm E` and one for `imm E`.
 The core idea is that when we implement `.match` in `Opt[E]` we are using the same implementation to satisfy all 3 type signatures.
+From `ToFlow[E]`, `_Opt[E]` gets the two `.seqFlow` methods.
 
 
 `Opt[E]` is an example of a generic container type: a type whose main goal is to contain any kind of `E`, where `E` can be `read,imm,mut`.
@@ -523,7 +524,7 @@ use base.Str as Str;
 use base.True as True;
 use base.False as False;
 use base.Bool as Bool;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(True & False)}
   .do{Debug#(True && {False})}
   .do{Debug#(False || {True})}

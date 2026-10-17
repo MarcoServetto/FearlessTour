@@ -370,7 +370,7 @@ Game:{
   .sumX(ts: Stack[Tank]): Int -> ts.fold(+0, {acc, t -> acc + (t.position.x)});
   .count(ts: Stack[Tank]): Nat -> ts.size;
   }
-Test: base.Main{s-> base.Block#
+Test: base.Main{sys-> base.Block#
   .do{base.Debug#(Game.sumX(Game.start))}
   .do{base.Debug#(Game.sumX(NS1#(Game.start)))}
   .do{base.Debug#(Game.sumX(NS2#(Game.start)))}

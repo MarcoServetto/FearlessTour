@@ -160,7 +160,7 @@ use base.Infos as Infos;
 use base.Info as Info;
 use base.Str as Str;
 use base.List as List;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Infos.map("heading","North",  "aiming","East",  "position",Infos.map("x","10",  "y","5")).str)}
   .do{Debug#(Infos.list("North",Infos.list("10","5")).str)}
   .do{Debug#(Infos.msg("hi").str)}

@@ -217,7 +217,8 @@ someFork.choose[Str]( SomeLeftRight[]:LeftRight[Str]{
 //OMIT_END
 """); }/*--------------------------------------------
 
-That is, the argument of `Fork.choose` is a literal of a fresh type (here called `SomeLeftRight`) that implements `LeftRight[Str]`, since that is the expected type for the argument of `Fork.choose`.In order to implement a `LeftRight[Str]`, we need to specify an implementation for the two abstract methods, `.left` and `.right`.
+That is, the argument of `Fork.choose` is a literal of a fresh type (here called `SomeLeftRight`) that implements `LeftRight[Str]`, since that is the expected type for the argument of `Fork.choose`.
+In order to implement a `LeftRight[Str]`, we need to specify an implementation for the two abstract methods, `.left` and `.right`.
 Another advantage of this new way is that we can now write complex and time consuming computations inside the body of methods `.left` and `.right`, and only one of those computations is going to be triggered.
 
 A good way to understand how generic types work is to do the same reasoning we did for generic methods; the code below can be understood as the following:
@@ -261,7 +262,7 @@ use base.Block as Block;
 use base.Debug as Debug;
 use base.Str as Str;
 use base.Nat as Nat;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Left.choose("Hello","Hi"))}
   .do{Debug#(Right.choose("Hello","Hi"))}
   .do{Debug#(Left.choose(1,5))}
@@ -292,7 +293,7 @@ use base.Block as Block;
 use base.Debug as Debug;
 use base.Str as Str;
 use base.Nat as Nat;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(A#(Left))}
   .do{Debug#(A#(Right))}
   .do{Debug#(B#(Left))}
@@ -330,7 +331,7 @@ Slow:{ .code: Nat -> this.code; }
 -------------------------*/@Test void forkNeedsOneTypeForBothValues(){ run("""
 Fork : { .choose[Val](leftVal: Val, rightVal: Val): Val }
 Left : Fork{ l,r -> l }
-Test: base.Main{s-> base.Debug#(Left.choose("Hello",5))}
+Test: base.Main{sys-> base.Debug#(Left.choose("Hello",5))}
 //ERROR|In file: [###]_test/_rank_app111.fear
 //ERROR|[###]
 //ERROR|This call to method "Left.choose(_,_)" cannot typecheck.

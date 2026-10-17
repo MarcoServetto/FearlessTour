@@ -227,7 +227,7 @@ use base.Debug as Debug;
 use base.Nat as Nat;
 use base.Bool as Bool;
 use base.F as F;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Examples.sum(Examples.nums))}
   .do{Debug#(Examples.times(Examples.nums))}
   .do{Debug#(Examples.matchSum(Examples.nums))}
