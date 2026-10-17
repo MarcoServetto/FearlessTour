@@ -189,7 +189,7 @@ use base.Main as Main;
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Nat as Nat;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(AliasingExample#)}
   .do{Debug#(Separate#)}
   .do{Debug#(Counter#)}

@@ -123,7 +123,7 @@ use base.Block as Block;
 use base.Debug as Debug;
 use base.Nat as Nat;
 use base.F as F;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Names.foo)}
   .do{Debug#(Names._bar)}
   .do{Debug#(Names._b12)}

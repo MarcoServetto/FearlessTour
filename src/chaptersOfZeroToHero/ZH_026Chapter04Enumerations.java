@@ -43,7 +43,7 @@ use base.Lists as Lists;
 use base.Debug as Debug;
 use base.Enums as Enums;
 use base.Enum as Enum;
-Test: Main{s-> Block#(
+Test: Main{sys-> Block#(
   Block#(
     Debug#(Directions.list.size),
     Debug#(North.index),
@@ -105,7 +105,7 @@ use base.Str as Str;
 use base.Debug as Debug;
 use base.Enums as Enums;
 use base.Enum as Enum;
-Test: Main{s-> Block#(
+Test: Main{sys-> Block#(
   Debug#(North.match(DirectionMatch[Str]{ .north->"n"; .east->"e"; .south->"s"; .west->"w"; })),
   Void
   )}
@@ -209,7 +209,7 @@ use base.Enum as Enum;
 use base.Maps as Maps;
 use base.Infos as Infos;
 use base.Str as Str;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).opt("North").str{::})}
   .do{Debug#(Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).opt("Nope").str{::})}
   .do{Debug#(Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).get("North"))}
@@ -259,7 +259,7 @@ use base.Enums as Enums;
 use base.Enum as Enum;
 use base.Maps as Maps;
 use base.Try as Try;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Try#{Maps#({::},"North",North,  "East",East,  "South",South,  "West",West).get("Nope")}.info!.getMsg)}
   .return{Void}}
 

@@ -235,7 +235,7 @@ ReadGame: {
     .return {info.getList.flow.map{i->Tanks.fromInfo(i)}.list};
   }
 
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Tanks#(North,East,Points#(1,2)).info.str)}
   .do{Debug#(Tanks.fromInfo(Infos.fromStr(Tanks#(North,East,Points#(1,2)).info.str)) == (Tanks#(North,East,Points#(1,2))))}
   .do{Debug#(Tanks.fromInfo(Infos.fromStr(Tanks#(North,East,Points#(1,2)).info.str)) == (Tanks#(North,East,Points#(1,3))))}
@@ -327,7 +327,7 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     Points.fromInfo(i.getMap.get("position"))
     );
   }
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Tanks#(North,East,Points#(1,2)).info.str)}
   .do{Debug#(Tanks.fromInfo(Infos.fromStr(Tanks#(North,East,Points#(1,2)).info.str)) == (Tanks#(North,East,Points#(1,2))))}
   .do{Debug#(Tanks.fromInfo(Infos.fromStr(Tanks#(North,East,Points#(1,2)).info.str)) == (Tanks#(North,East,Points#(1,3))))}
@@ -450,7 +450,7 @@ ReadContext: {
 Good:{ .t: Str -> `[{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}}]`; }
 BadInfo:{ .t: Str -> "["; }
 BadTank:{ .t: Str -> `[{"heading":"North"}]`; }
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(mut ReadMap{Nodes#(Good.t)}.read!.size)}
   .do{Debug#(mut ReadMap{Nodes#(BadInfo.t)}.read.info.isSome)}
   .do{Debug#(Try#{mut ReadMap{Nodes#(BadTank.t)}.read.info.isSome}.info.isSome)}

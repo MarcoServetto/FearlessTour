@@ -41,7 +41,7 @@ public final class TourHelper{
   public static void run(String code){
     String expectedPrint= printRequirement(code);
     String expectedErr= errRequirement(code);
-    if (noMain(code)){ code += "\nSomeAnonMain:base.Main{s->base.Void}\n"; }
+    if (noMain(code)){ code += "\nSomeAnonMain:base.Main{sys->base.Void}\n"; }
     var m= new mainCoordinator.ProgrammaticMain(
       new StringBuilder(), new StringBuilder(),
       "_test/_rank_app111.fear", code,

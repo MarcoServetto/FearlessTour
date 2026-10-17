@@ -203,7 +203,7 @@ use base.Block as Block;
 use base.Debug as Debug;
 use base.Nat as Nat;
 use base.F as F;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(D1.distance(Points#(7,9),Points#(4,5)))}
   .do{Debug#(D2.distance(Points#(7,9),Points#(4,5)))}
   .do{Debug#(D3.distance(Points#(7,9),Points#(4,5)))}
@@ -270,9 +270,9 @@ use base.Main as Main;
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Nat as Nat;
-Test: Main{s-> Block#
-  .do{Debug#(s.try#{D1.distance(Points#(4,5),Points#(7,9))}.info.isSome)}
-  .do{Debug#(s.try#{D1.distance(Points#(7,9),Points#(4,5))}.info.isSome)}
+Test: Main{sys-> Block#
+  .do{Debug#(sys.try#{D1.distance(Points#(4,5),Points#(7,9))}.info.isSome)}
+  .do{Debug#(sys.try#{D1.distance(Points#(7,9),Points#(4,5))}.info.isSome)}
   .return{Void}}
 Point:{ .x: Nat; .y: Nat }
 Points:{ #(x: Nat, y: Nat): Point -> { .x -> x; .y -> y } }
@@ -289,7 +289,7 @@ use base.Main as Main;
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Try as Try;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Try#{3.5 .getNat}.info.isSome)}
   .do{Debug#(3.5 .softNat)}
   .do{Debug#((-1.0) .softNat)}

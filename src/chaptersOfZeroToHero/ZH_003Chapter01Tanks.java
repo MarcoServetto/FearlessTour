@@ -532,7 +532,7 @@ use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
 use base.Debug as Debug;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(TankNN.heading)}
   .do{Debug#(TankNN.aiming)}
   .do{Debug#(Tanks#(North,East).heading)}

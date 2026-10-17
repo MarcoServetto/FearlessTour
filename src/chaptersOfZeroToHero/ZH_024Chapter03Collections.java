@@ -132,6 +132,8 @@ All the numeric types implement `SumNumber[_]`, so we can use any numeric value 
 This pattern allows us to limit what parameter types we can pass to a generic entity.
 The parameter type and the receiver generic type can cooperate to accept each other.
 Method `.join` works in the same conceptual way.
+`Nat` also implements `InfoKey`: a `Nat` can select an element inside an `Info` list.
+We will see `Info` in Chapter 4.
 
 ## Lists
 We have seen that we can call `.list` to produce a list out of our flows.
@@ -836,7 +838,7 @@ Tests: {
   .done: Void -> {};
   }
 
-AllTest:base.Main{s->
+AllTest:base.Main{sys->
   Tests
     .testSuite TestFlowsBasics
     .testSuite TestListsBasics
@@ -1383,7 +1385,7 @@ Data:{ .cars: List[Car] -> Lists#(
   Cars#(Persons#(40,"Ann",List[Cat])),
   Cars#(Persons#(20,"Zed",Lists#(Cats#(1),Cats#(5)))) );
   }
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Data.cars.flow.max{::.driver}.get.driver.name)}
   .do{Debug#(Data.cars.flow.max(Older.view{::.driver}).get.driver.name)}
   .do{Debug#(Data.cars.flow.max(ByCats.view{::.driver}).get.driver.name)}

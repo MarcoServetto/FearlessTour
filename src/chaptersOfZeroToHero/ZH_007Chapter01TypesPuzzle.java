@@ -307,7 +307,7 @@ use base.Main as Main;
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Int as Int;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Rectangles#(+1,+3,+10,+25).area)}
   .do{Debug#(Rectangles#(+1,+3,+10,+25).x2)}
   .do{Debug#(Rectangles#(+0,+0,+4,+5).area)}
@@ -333,7 +333,7 @@ use base.Main as Main;
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Int as Int;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Rectangles#(Points#(Xs#(+1),Ys#(+3)),Points#(Xs#(+10),Ys#(+25))).area.val)}
   .do{Debug#(Points#(Xs#(+2),Ys#(+5)).y.val)}
   .return{Void}}
@@ -365,7 +365,7 @@ use base.Main as Main;
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Int as Int;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Tanks#(North,East,Points#(+5,+5)).move.position.x)}
   .do{Debug#(Tanks#(North,East,Points#(+5,+5)).move.position.y)}
   .do{Debug#(Tanks#(East,North,Points#(+5,+5)).move.position.y)}

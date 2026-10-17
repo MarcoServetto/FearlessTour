@@ -523,7 +523,7 @@ use base.Str as Str;
 use base.True as True;
 use base.False as False;
 use base.Bool as Bool;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(True & False)}
   .do{Debug#(True && {False})}
   .do{Debug#(False || {True})}

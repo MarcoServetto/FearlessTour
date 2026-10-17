@@ -530,7 +530,7 @@ Direction: ToStr, Sealed {
     };
   .str -> this.match{ .north -> "North"; .east -> "East"; .south -> "South"; .west -> "West"; };
   }
-Test: Main{s-> Debug#(North.turn)}
+Test: Main{sys-> Debug#(North.turn)}
 //PRINT|East
 """); }/*--------------------------------------------
 -------------------------*/@Test void widenToNeededWithoutDeclaredReturnType(){ run("""
@@ -577,7 +577,7 @@ Direction: ToStr, Sealed, WidenTo[Direction] {
     .return{d};
   .str -> this.match{ .north -> "North"; .east -> "East"; .south -> "South"; .west -> "West"; };
   }
-Test: Main{s-> Debug#(North.turn2)}
+Test: Main{sys-> Debug#(North.turn2)}
 //PRINT|East
 """); }/*--------------------------------------------
 OMIT_END

@@ -90,7 +90,7 @@ use base.Void as Void;
 use base.Num as Num;
 use base.Main as Main;
 use base.Block as Block;
-Test:Main{s->base.Debug#(+23/4)}
+Test:Main{sys->base.Debug#(+23/4)}
 //PRINT|+23/4
 """); }/*--------------------------------------------
 //OMIT_END
@@ -103,7 +103,7 @@ use base.Block as Block;
 use base.Debug as Debug;
 use base.Str as Str;
 use base.Nat as Nat;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Zero.n)}
   .do{Debug#(Zero.succ.n)}
   .do{Debug#(Zero.succ.succ.n)}
@@ -147,7 +147,7 @@ use base.Debug as Debug;
 use base.Str as Str;
 use base.Nat as Nat;
 use base.Num as Num;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(+12/1)}
   .do{Debug#(1/3)}
   .do{Debug#(-13/75)}

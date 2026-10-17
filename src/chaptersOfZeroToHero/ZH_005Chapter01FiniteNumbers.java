@@ -534,7 +534,7 @@ use base.Main as Main;
 use base.Block as Block;
 use base.Debug as Debug;
 use base.Nat as Nat;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(N10.succ.succ.succ.n)}
   .do{Debug#(N11.succ.n)}
   .do{Debug#(N0.pred.n)}
@@ -592,7 +592,7 @@ use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
 use base.Debug as Debug;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(5 + 3)}
   .do{Debug#(+10 + -3)}
   .do{Debug#(+0 == -0)}

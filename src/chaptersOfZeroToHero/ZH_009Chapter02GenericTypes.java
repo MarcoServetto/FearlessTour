@@ -262,7 +262,7 @@ use base.Block as Block;
 use base.Debug as Debug;
 use base.Str as Str;
 use base.Nat as Nat;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(Left.choose("Hello","Hi"))}
   .do{Debug#(Right.choose("Hello","Hi"))}
   .do{Debug#(Left.choose(1,5))}
@@ -293,7 +293,7 @@ use base.Block as Block;
 use base.Debug as Debug;
 use base.Str as Str;
 use base.Nat as Nat;
-Test: Main{s-> Block#
+Test: Main{sys-> Block#
   .do{Debug#(A#(Left))}
   .do{Debug#(A#(Right))}
   .do{Debug#(B#(Left))}
@@ -331,7 +331,7 @@ Slow:{ .code: Nat -> this.code; }
 -------------------------*/@Test void forkNeedsOneTypeForBothValues(){ run("""
 Fork : { .choose[Val](leftVal: Val, rightVal: Val): Val }
 Left : Fork{ l,r -> l }
-Test: base.Main{s-> base.Debug#(Left.choose("Hello",5))}
+Test: base.Main{sys-> base.Debug#(Left.choose("Hello",5))}
 //ERROR|In file: [###]_test/_rank_app111.fear
 //ERROR|[###]
 //ERROR|This call to method "Left.choose(_,_)" cannot typecheck.
