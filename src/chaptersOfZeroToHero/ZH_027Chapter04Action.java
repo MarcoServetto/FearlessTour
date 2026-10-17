@@ -39,42 +39,42 @@ When we want to consciously extract an element that may or may not be there, wit
 Using `Try#` or `.tryGet` means that we suspect that the value may not be there because of some buggy logic or input.
 
 ## Actions
-`Action[R]` is conceptually similar to `Opt[E]`, but
+`Action[T]` is conceptually similar to `Opt[E]`, but
 - the empty case has an associated `Info` object.
-- the contained value has not been computed yet. While an `Opt[E]` stores an element of type `E`, an `Action[R]` stores a computation that can create such an `R` result.
+- the contained value has not been computed yet. While an `Opt[E]` stores an element of type `E`, an `Action[T]` stores a computation that can create such a `T` result.
 
-The code of `Action[R]` is not very long and it uses Fearless in interesting ways, thus we will read and explain the implementation of `Action[R]` as present in the standard library:
+The code of `Action[T]` is not very long and it uses Fearless in interesting ways, thus we will read and explain the implementation of `Action[T]` as present in the standard library:
 ```
-ActionMatch[R:*,RR:*]: {
-  mut .ok(R): RR;
-  mut .info(Info): RR;
+ActionMatch[T:*,R:*]: {
+  mut .ok(x: T): R;
+  mut .info(info: Info): R;
   }
-Action[R:*]: {
-  mut .run[RR:*](mut ActionMatch[R,RR]): RR;
+Action[T:*]: {
+  mut .run[R:*](m: mut ActionMatch[T,R]): R;
   }
 ```
-The `ActionMatch[R,RR]` type is unsurprising. Very similar to `OptMatch[E,R]` or `StackMatch[E,R]`.
-As we discussed before, remember that `R:*` stands for `R:imm,mut,read` and `R:**` includes all of the reference capabilities.
+The `ActionMatch[T,R]` type is unsurprising. Very similar to `OptMatch[E,R]` or `StackMatch[E,R]`.
+As we discussed before, remember that `T:*` stands for `T:imm,mut,read` and `T:**` includes all of the reference capabilities.
 At its core, `Action` has a very simple implementation.
-We call the generic parameters `R` and `RR` to suggest that `R` is the result of the action, while `RR` is the result of processing either the action result or the `Info`.
+We call the generic parameters `T` and `R` to suggest that `T` is the result of the action, while `R` is the result of processing either the action result or the `Info`.
 
-`Action[R]` has a single abstract `.run` method that takes an `ActionMatch[R,RR]`.
+`Action[T]` has a single abstract `.run` method that takes an `ActionMatch[T,R]`.
 Note how all the methods are `mut` and all the generic parameters accept `imm`, `mut` and `read`. This is because actions are often used together with side effects and mutations.
-The actual implementation of `Action[R]` also offers some convenience methods (`.map`, `.mapInfo`, `.andThen`, `!`, `.context`, `.recover`, `.catch` and a few more).
+The actual implementation of `Action[T]` also offers some convenience methods (`.map`, `.mapInfo`, `.andThen`, `!`, `.context`, `.recover`, `.catch` and a few more).
 Methods `!` and `.context` are widely used and beginner-friendly, while methods `.map` and `.andThen` are used more rarely.
 Here we examine those methods one by one:
 
 >Note: Action.mapInfo is also present, but we do not discuss it in the guide
 
-#### Method `Action[R]!`
+#### Method `Action[T]!`
 ```
-Action[R:*]: {
-  mut .run[RR:*](mut ActionMatch[R,RR]): RR;
+Action[T:*]: {
+  mut .run[R:*](m: mut ActionMatch[T,R]): R;
   ..
-  mut !: R -> this.run{.ok x -> x; .info i -> Error!i};
+  mut !: T -> this.run{.ok x -> x; .info i -> Error!i};
   }
 ```
-Method `Action!` returns the `R` value, or throws an error with the provided info.
+Method `Action!` returns the `T` value, or throws an error with the provided info.
 That is, `!` is actually the opposite of `Try#`.
 For example, 
 - `Try#{ Directions.map.get("Nope") }!`
@@ -98,13 +98,13 @@ myAction.run{ .ok v->Actions.ok(v); .info i-> Actions.info(i); }
 Where `Actions.ok` and `Actions.info` create an always succeeding or always failing action.
 However, actions that do no actions when called are misleading, so the code above is better avoided.
 
-#### Method `Action[R].context`
+#### Method `Action[T].context`
 
 ```
-Action[R:*]: {
-  mut .run[RR:*](mut ActionMatch[R,RR]): RR;
+Action[T:*]: {
+  mut .run[R:*](m: mut ActionMatch[T,R]): R;
   ..
-  mut .context(msg: read LazyInfo): mut Action[R] -> {m -> this.run{
+  mut .context(msg: read LazyInfo): mut Action[T] -> {m -> this.run{
     .ok x   -> m.ok(x);
     .info i -> m.info(msg#.info + i);
     }};
@@ -133,22 +133,22 @@ This code would add the information that we were looking into the list of person
 >  The list persons was too small when  
 >  List.get: List index 5 out of range for List of length 3
 
-Note that the computation required to format this extra information will only be executed if the `Action[R]` actually fails. This is often a big win in terms of performance, since nicely formatted error messages may be quite slow to compute.
+Note that the computation required to format this extra information will only be executed if the `Action[T]` actually fails. This is often a big win in terms of performance, since nicely formatted error messages may be quite slow to compute.
 
 
-#### Method `Action[R].map`
+#### Method `Action[T].map`
 ```
 MF[A:**,R:**]: { mut #(a: A): R } //mutable function, seen before
-Action[R:*]: {
-  mut .run[RR:*](mut ActionMatch[R,RR]): RR;
-  mut .map[RR:*](f: mut MF[R,RR]): mut Action[RR] -> {m -> this.run{
+Action[T:*]: {
+  mut .run[R:*](m: mut ActionMatch[T,R]): R;
+  mut .map[R:*](f: mut MF[T,R]): mut Action[R] -> {m -> this.run{
     .ok x   -> m.ok(f#x);
     .info i -> m.info(i);
     }};
   ...
   }
 ```
-Method `.map` takes another mutating function `f` and returns a `mut Action[RR]` object that, when a matcher `m` is provided, calls the `.run` method on the outer `Action[R]` and delegates the behaviour of `.ok` and `.info` to `m.ok` and `m.info`.
+Method `.map` takes another mutating function `f` and returns a `mut Action[R]` object that, when a matcher `m` is provided, calls the `.run` method on the outer `Action[T]` and delegates the behaviour of `.ok` and `.info` to `m.ok` and `m.info`.
 - `m.ok` will take as input not the original value `x`, but the result of applying `f` to `x`.
 
 Method `.map` is useful to transform the type of actions without actually executing any code at that moment.
@@ -162,12 +162,12 @@ Note that if the function passed to `.map` fails by calling `Error.msg`,
 that error would not turn the action into a failed action with the `.info` containing the error; it would just leak out when we attempt to `.run` our action.
 >TODO: should we design this alternative behaviour too and see how it looks?
 
-#### Method `Action[R].andThen`
+#### Method `Action[T].andThen`
 ```
 MF[A:**,R:**]: { mut #(a: A): R } //mutable function, seen before
-Action[R:*]: {
-  mut .run[RR:*](mut ActionMatch[R,RR]): RR;
-  mut .andThen[RR:*](f: mut MF[R,mut Action[RR]]): mut Action[RR] -> {m -> this.run{
+Action[T:*]: {
+  mut .run[R:*](m: mut ActionMatch[T,R]): R;
+  mut .andThen[R:*](f: mut MF[T,mut Action[R]]): mut Action[R] -> {m -> this.run{
     .ok x   -> f#x.run(m);
     .info i -> m.info(i);
     }};
@@ -175,14 +175,14 @@ Action[R:*]: {
   }
 ```
 
-We can see `.andThen` as a version of `.map` allowing more control over how the resulting `Action[RR]` is created.
+We can see `.andThen` as a version of `.map` allowing more control over how the resulting `Action[R]` is created.
 
-The `.map` method takes a function that transforms a value of type `R` into a new value of type `RR`. This transformation is straightforward and direct.
-If the original `Action[R]` is successful (i.e., produces a value), `.map` applies the function to this value and wraps the result in a new `Action[RR]`. If the original `Action[R]` is a failure (i.e., produces an `Info` object), `.map` does nothing to the failure information—it simply carries it forward unchanged.
+The `.map` method takes a function that transforms a value of type `T` into a new value of type `R`. This transformation is straightforward and direct.
+If the original `Action[T]` is successful (i.e., produces a value), `.map` applies the function to this value and wraps the result in a new `Action[R]`. If the original `Action[T]` is a failure (i.e., produces an `Info` object), `.map` does nothing to the failure information—it simply carries it forward unchanged.
 
-`.andThen` extends the functionality of `.map` by allowing the transformation function itself to produce the new `Action[RR]`. This is useful when the transformation's outcome isn't just a value, but a new computation or action that might itself succeed or fail.
-The function used in `.andThen` takes a value of type `R` and returns a new `Action[RR]`.
-Method `.andThen` is designed to handle nested actions. If the original `Action[R]` is successful, `.andThen` uses the value to generate a new `Action[RR]` using the provided function. This new action is then executed as part of the overall computation. If the original `Action[R]` is a failure, both `.map` and `.andThen` simply propagate the failure information.
+`.andThen` extends the functionality of `.map` by allowing the transformation function itself to produce the new `Action[R]`. This is useful when the transformation's outcome isn't just a value, but a new computation or action that might itself succeed or fail.
+The function used in `.andThen` takes a value of type `T` and returns a new `Action[R]`.
+Method `.andThen` is designed to handle nested actions. If the original `Action[T]` is successful, `.andThen` uses the value to generate a new `Action[R]` using the provided function. This new action is then executed as part of the overall computation. If the original `Action[T]` is a failure, both `.map` and `.andThen` simply propagate the failure information.
 Method `.andThen` is particularly useful in scenarios where subsequent actions depend on the results of previous ones.
 For example, the code below
 ```
@@ -244,7 +244,8 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
       }}}
 ```
 
-Here `Points` has a `.fromInfo` method creating a point using the `"x"` and `"y"` coordinates stored in an `Info` object.Then, method `Points#` takes the `x` and `y` `Nat` coordinates and creates the resulting `Point`.
+Here `Points` has a `.fromInfo` method creating a point using the `"x"` and `"y"` coordinates stored in an `Info` object.
+Then, method `Points#` takes the `x` and `y` `Nat` coordinates and creates the resulting `Point`.
 However, before the point is created, we use `Nat.assertInRange` to check that `x` and `y` are in the desired range.
 `Nat.assertInRange` will throw an error if the number is not in the range.
 In `.cmp`, the parameters `{.imm.x,.imm.y}1` and `{.imm.x,.imm.y}2` are patterns taking the two points apart:

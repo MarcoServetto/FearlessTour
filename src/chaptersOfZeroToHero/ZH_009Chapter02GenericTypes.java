@@ -217,7 +217,8 @@ someFork.choose[Str]( SomeLeftRight[]:LeftRight[Str]{
 //OMIT_END
 """); }/*--------------------------------------------
 
-That is, the argument of `Fork.choose` is a literal of a fresh type (here called `SomeLeftRight`) that implements `LeftRight[Str]`, since that is the expected type for the argument of `Fork.choose`.In order to implement a `LeftRight[Str]`, we need to specify an implementation for the two abstract methods, `.left` and `.right`.
+That is, the argument of `Fork.choose` is a literal of a fresh type (here called `SomeLeftRight`) that implements `LeftRight[Str]`, since that is the expected type for the argument of `Fork.choose`.
+In order to implement a `LeftRight[Str]`, we need to specify an implementation for the two abstract methods, `.left` and `.right`.
 Another advantage of this new way is that we can now write complex and time consuming computations inside the body of methods `.left` and `.right`, and only one of those computations is going to be triggered.
 
 A good way to understand how generic types work is to do the same reasoning we did for generic methods; the code below can be understood as the following:

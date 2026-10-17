@@ -138,7 +138,7 @@ The code of `Enum[E]` and `Enums[E]` is actually quite simple and educational:
 
 ```
 //Code from the Fearless standard library
-FromInfo[E]: { .fromInfo(i: Info): E }
+FromInfo[T]: { .fromInfo(i: Info): T }
 
 Enums[E]: FromInfo[E]{
   .list: List[E];

@@ -121,7 +121,7 @@ Flow[E:*]:{
   }
 SumNumber[E:*]:{ .sumNumber(mut Flow[E]): E }
 
-Nat:Sealed,DataType[Nat,Nat],SumNumber[Nat]{
+Nat:Sealed,DataType[Nat,Nat],SumNumber[Nat],InfoKey{
   ...
   .sumNumber xs -> xs.fold( {this}, {acc,e -> acc + e} );
   }
@@ -240,7 +240,7 @@ This code creates a list by repeatedly using the mutable function `f`.
 When calling this code with `X=Num`, we would produce a `mut List[Num]`.
 If we can not promote this result to `imm`, we can convert it to `imm` by doing `myList.as{::}`.
 There `{::}` will be desugared as `BaseId[Num,Num]{a->a}`. That is, a simple identity function, mapping the elements to themselves. Since method `.as` returns an `imm List`, we are effectively converting the `mut List[E]` into an `imm List[E]`.
-This and a few other patterns are also optimised by the compiler to not create a new object but reuse the old one. Basically by calling this method we are guiding the type system to recognise that a `mut List[Num]` is really just an `imm List[Num]`.
+As we have seen, `.as` does not create a new list: it reuses the old one. Basically by calling this method we are guiding the type system to recognise that a `mut List[Num]` is really just an `imm List[Num]`.
 
 - `List[mut Animal]`, also written as `imm List[mut Animal]`, behaves exactly like a `List[Animal]`, that is, an immutable list of immutable elements, but the type system does not know about this: `mut Animal` and `imm Animal` are different types.
 This is `.greetAll` from above: `pets.as{::}` is how we tell the type system that a `List[mut Dog]` is fine to also use as a `List[Dog]`.
@@ -256,7 +256,8 @@ Lists#(1,2) +> 3 +> 4
 Lists#(1,2) ++ (Lists#(3,4))
 Lists#(1) ++ (Lists#(2,3,4))
 ```
-As you can see, we use `+>` to concatenate a list and an element, and `++` to concatenate two lists.Since `<+` is a method of `List`, the following code does not work:
+As you can see, we use `+>` to concatenate a list and an element, and `++` to concatenate two lists.
+Since `<+` is a method of `List`, the following code does not work:
 ```
 1 <+ Lists#(2,3,4)
 ```

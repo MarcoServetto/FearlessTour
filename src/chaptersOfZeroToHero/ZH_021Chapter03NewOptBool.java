@@ -311,7 +311,7 @@ Finally, here we can see in the type `_Opt[E:*]` a good sample of the gory type 
 The real `_Opt[E]` keeps growing over time, with more combinator methods (like `.or`, `|` and `||`, mirroring the `Bool` operators) and assertion helpers (`.assertSome`, `.assertEmpty`); we only show a representative subset here.
 
 ````
-_Opt[E:*]:BaseContainer[E],DataType[Opt[E],Opt[imm E],E,imm E]{
+_Opt[E:*]:ToFlow[E],BaseContainer[E],DataType[Opt[E],Opt[imm E],E,imm E]{
   mut  .match[R:**](mut OptMatch[E, R]): R;
   read .match[R:**](mut OptMatch[read/imm E, R]): R;
   imm  .match[R:**](mut OptMatch[imm E, R]): R;

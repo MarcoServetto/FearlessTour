@@ -58,7 +58,7 @@ Try to write a different message instead of `Hello, World!` and rerun the projec
 Any type implementing `base.Main` can be the starting point for the execution.
 `Main` is declared in `base` as follows:
 ```
-Main:{ .main(sys: mut System): Void }
+Main:{ .main(s: mut System): Void }
 ```
 
 The parameter of type `mut System` refers to an **object capability**: an object giving access to the world outside of the program.

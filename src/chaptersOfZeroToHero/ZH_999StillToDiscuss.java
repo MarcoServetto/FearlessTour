@@ -98,7 +98,7 @@ Thus code matching on a value while holding a `mutH` or an `iso` reference may n
 For example, in a parser consuming a `mutH Lexer` and building an `iso Exp`:
 ````
 .parsePlus(l: mutH Lexer, left: iso Exp): iso Exp -> l.nextToken.match{
-  .plus   -> Exps.sum(Vars#(left), Vars#(this.parseNum(l)));
+  .plus   -> Exps.sum(left, this.parseNum(l));
   .eof    -> left;
   .num(n) -> Error.msg "unexpected num";
   }
@@ -121,7 +121,7 @@ CaseTokens: { #[A,B,R:**](t: Token): mut CaseToken[A,B,R] -> t.match{
 ````
 .parsePlus(l: mutH Lexer, left: iso Exp): iso Exp ->
   CaseTokens#(l.nextToken).match(left, l, {
-    .plus(left', l') -> Exps.sum(Vars#(left'), Vars#(this.parseNum(l')));
+    .plus(left', l') -> Exps.sum(left', this.parseNum(l'));
     .eof(left', _)   -> left';
     .num(_, _, n)    -> Error.msg "unexpected num";
     })
@@ -145,7 +145,8 @@ The discussion has to cover:
 - How the checks on numbers, like overflow and underflow, can be tuned (Chapter 1, finite numbers).
 - Ways to hide auxiliary methods, like `._rightSub` (Chapter 1, finite numbers).
 - Fluent libraries where the continuation changes the receiver to a different value or type (Chapter 2, locals).
-- Testing, to supplement the visualisation of how code reduces (Chapter 2, stack).- `DataType` in detail (Chapter 3).
+- Testing, to supplement the visualisation of how code reduces (Chapter 2, stack).
+- `DataType` in detail (Chapter 3).
 - `Try` in detail (Chapter 3).
 - Flows in detail, including parallel flows and the difference between `.flow` and `.seqFlow` (Chapter 3).
 - `EList[E]` and `ESet[E]` (Chapter 3, collections).
