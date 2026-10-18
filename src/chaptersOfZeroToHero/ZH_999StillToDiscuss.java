@@ -44,15 +44,15 @@ The discussion has to cover when a case deserves a name and when a factory metho
 ### Match as in `Action`: the match runs a computation
 
 ````
-Action[T:*]: {
-  mut .run[R:*](m: mut ActionMatch[T,R]): R;
-  mut .map[R:*](f: mut MF[T,R]): mut Action[R] -> {m -> this.run{
+Action[R:*]: {
+  mut .run[RR:*](m: mut ActionMatch[R,RR]): RR;
+  mut .map[RR:*](f: mut MF[R,RR]): mut Action[RR] -> {m -> this.run{
     .ok   x -> m.ok(f#x);
     .info i -> m.info(i);
     }};
   ...
   }
-ActionMatch[T:*,R:*]: { mut .ok(x: T): R; mut .info(info: Info): R; }
+ActionMatch[R:*,RR:*]: { mut .ok(x: R): RR; mut .info(info: Info): RR; }
 ````
 An `Action` is not a value that already is in one of its cases: it is a computation, and the case is decided only when `.run` executes it.
 Methods like `.map` and `.andThen` return new actions without running anything.
