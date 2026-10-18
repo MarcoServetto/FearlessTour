@@ -53,10 +53,11 @@ Now we can show such code!
 ReadGame: {
   mut .in: mut InputCursorNode;
   mut .read : List[Tank] -> Block#
-    .let[Str] text= {this.in.text!}
+    .let[Str] text= {this.in.readStrUtf8 NotText}
     .let[Info] info= {Infos.fromStr(text)}
     .return {info.getList.flow.map{i->Tanks.fromInfo(i)}.list};
   }
+NotText: BadStrUnitRecover{_, byteOffset, _, _ -> Error.msg("The file is not text: look at byte "+byteOffset)}
 ```
 
 As you can see, the no-args `.read` method takes the text of the file, parses it as an `Info` and then parses that `Info` as a list of `Tank`s.
@@ -74,14 +75,17 @@ InputCursor: ToIso[InputCursor], WidenTo[InputCursor]{
   }
 InputCursorNode: ToIso[InputCursorNode], WidenTo[InputCursorNode]{
   mut .label: Str; /// best effort portable name to help debugging
-  mut .text: Opt[Str]; /// fresh read+decode each call; throws on I/O failure
+  mut .readStrUtf8(recover: mut BadStrUnitRecover): Str;
+  mut .readUStrUtf8(recover: mut BadUStrUnitRecover): UStr;
+  ...//the same for Utf16Le, Utf32Le, Utf16Be, Utf32Be, Ascii and Latin1
+  mut .readImage(maxPixels: Nat): Image;
   }
 ````
 - `sys.inputCursor` is the capability to observe the files intended as input.
 - `sys.inputCursor#` gets the first input node.
 - `sys.inputCursor# !` extracts the actual `InputCursorNode`, throwing an error if no input has been provided yet.
-- `this.in.text` then calls the `.text` method. If the file has text, the optional will not be empty.
-- With `this.in.text!` we extract the content from the optional with `!`.
+- `this.in.readStrUtf8 NotText` reads the file and turns its bytes into a `Str` with the UTF-8 encoding.
+- When some bytes are not a valid character of a `Str`, `.readStrUtf8` asks the `BadStrUnitRecover` what to put in their place. `NotText` never answers: it throws an error saying where the bad bytes are.
 
 Note how this code simply leaks any error, wherever it is raised.
 There are three main kinds of error here:
@@ -100,7 +104,7 @@ We can use `Try#` to forge an action. Using `.map` we get
 ```
 ReadGame: {..
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.text!}                                     //(1)
+    .let[Str] text= {this.in.readStrUtf8 NotText}                       //(1)
     .return {Try#{Infos.fromStr(text)}                                  //(2) mut Action[Info]
       .map{info -> info.getList.flow.map{i->Tanks.fromInfo(i)}.list}};  //(3) mut Action[List[Tank]]
   }
@@ -112,7 +116,7 @@ Instead of `.map` we can use `.andThen` + `Try#`:
 ```
 ReadGame: {..
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.text!}                                               //(1)
+    .let[Str] text= {this.in.readStrUtf8 NotText}                                 //(1)
     .return {Try#{Infos.fromStr(text)}                                            //(2) mut Action[Info]
       .andThen{info -> Try#{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}}};  //(3) mut Action[List[Tank]]
   }
@@ -121,7 +125,7 @@ The type is the same, but the error management is now very different.
 What errors are captured inside the `Info` of the `Action[List[Tank]]` returned by `.read`?
 What errors just leak out?
 The key is that `Try#{..}` and `.map{..}` are lazy: their bodies run only when someone runs the action, for example with `!`.
-- (1) The `Block` runs `this.in.text!` right away, inside `.read` and outside any `Try#`. If there is no text, that `!` throws immediately: `.read` never even returns an action.
+- (1) The `Block` runs `this.in.readStrUtf8 NotText` right away, inside `.read` and outside any `Try#`. If the file can not be read, or is not text, the error is thrown immediately: `.read` never even returns an action.
 - (2) `Infos.fromStr` runs inside a `Try#`. When the action runs and the text is not a valid `Info`, `Try#` turns the error into the `Info` of the action.
 - (3) With `.map`, the function runs when the action runs, after `Try#` has already succeeded, and nothing captures its errors: a missing key or an unknown direction leaks out of `!` as a real error.
   With `.andThen`, the function returns a `Try#` action, so the error becomes the `Info` of that action, and `.andThen` passes it on as the `Info` of the result.
@@ -177,6 +181,8 @@ use base.Enums as Enums;
 use base.Enum as Enum;
 use base.OrderHash as OrderHash;
 use base.InputCursorNode as InputCursorNode;
+use base.BadStrUnitRecover as BadStrUnitRecover;
+use base.Error as Error;
 use base.Void as Void;
 use base.Debug as Debug;
 use base.Try as Try;
@@ -230,10 +236,11 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
 ReadGame: {
   mut .in: mut InputCursorNode;
   mut .read : List[Tank] -> Block#
-    .let[Str] text= {this.in.text!}
+    .let[Str] text= {this.in.readStrUtf8 NotText}
     .let[Info] info= {Infos.fromStr(text)}
     .return {info.getList.flow.map{i->Tanks.fromInfo(i)}.list};
   }
+NotText: BadStrUnitRecover{_, byteOffset, _, _ -> Error.msg("The file is not text: look at byte "+byteOffset)}
 
 Test: Main{sys-> Block#
   .do{Debug#(Tanks#(North,East,Points#(1,2)).info.str)}
@@ -362,6 +369,8 @@ use base.Enums as Enums;
 use base.Enum as Enum;
 use base.OrderHash as OrderHash;
 use base.InputCursorNode as InputCursorNode;
+use base.BadStrUnitRecover as BadStrUnitRecover;
+use base.Error as Error;
 use base.Void as Void;
 use base.Debug as Debug;
 use base.Try as Try;
@@ -412,41 +421,56 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     Points.fromInfo(i.getMap.get("position"))
     );
   }
-Nodes:{ #(t: Str): mut InputCursorNode -> {'self
+FakeNode: InputCursorNode{
+  .readUStrUtf8 _ -> base.Error.msg "unused";
+  .readStrUtf16Le _ -> base.Error.msg "unused";
+  .readUStrUtf16Le _ -> base.Error.msg "unused";
+  .readStrUtf32Le _ -> base.Error.msg "unused";
+  .readUStrUtf32Le _ -> base.Error.msg "unused";
+  .readStrUtf16Be _ -> base.Error.msg "unused";
+  .readUStrUtf16Be _ -> base.Error.msg "unused";
+  .readStrUtf32Be _ -> base.Error.msg "unused";
+  .readUStrUtf32Be _ -> base.Error.msg "unused";
+  .readStrAscii _ -> base.Error.msg "unused";
+  .readUStrAscii _ -> base.Error.msg "unused";
+  .readStrLatin1 _ -> base.Error.msg "unused";
+  .readUStrLatin1 _ -> base.Error.msg "unused";
+  .readImage _ -> base.Error.msg "unused";
+  .close -> this;
+  .iso -> base.Error.msg "unused";
+  }
+Nodes:{ #(t: Str): mut InputCursorNode -> mut FakeNode{
   .label -> "fake";
-  .text -> base.Opts#t;
-  .close -> self;
-  .iso -> base.Error.msg "unused";
+  .readStrUtf8 _ -> t;
   } }
-BadNode:{ #: mut InputCursorNode -> {'self
+BadNode:{ #: mut InputCursorNode -> mut FakeNode{
   .label -> "bad";
-  .text -> base.Error.msg "cannot read the file";
-  .close -> self;
-  .iso -> base.Error.msg "unused";
+  .readStrUtf8 _ -> base.Error.msg "cannot read the file";
   } }
 ReadMap: {
   mut .in: mut InputCursorNode;
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.text!}
+    .let[Str] text= {this.in.readStrUtf8 NotText}
     .return {Try#{Infos.fromStr(text)}
       .map{info -> info.getList.flow.map{i->Tanks.fromInfo(i)}.list}};
   }
 ReadThen: {
   mut .in: mut InputCursorNode;
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.text!}
+    .let[Str] text= {this.in.readStrUtf8 NotText}
     .return {Try#{Infos.fromStr(text)}
       .andThen{info -> Try#{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}}};
   }
 ReadContext: {
   mut .in: mut InputCursorNode;
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.text!}
+    .let[Str] text= {this.in.readStrUtf8 NotText}
     .return {Try#{Infos.fromStr(text)}
         .context{"While deserialising Info from string"}
       .andThen{info -> Try#[List[Tank]]{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}
         .context{"While deserialising tanks from Info"}}};
   }
+NotText: BadStrUnitRecover{_, byteOffset, _, _ -> Error.msg("The file is not text: look at byte "+byteOffset)}
 Good:{ .t: Str -> `[{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}}]`; }
 BadInfo:{ .t: Str -> "["; }
 BadTank:{ .t: Str -> `[{"heading":"North"}]`; }
