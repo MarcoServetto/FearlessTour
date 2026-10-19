@@ -436,6 +436,7 @@ FakeNode: InputCursorNode{
   .readStrLatin1 _ -> base.Error.msg "unused";
   .readUStrLatin1 _ -> base.Error.msg "unused";
   .readImage _ -> base.Error.msg "unused";
+  .readBytes -> base.Error.msg "unused";
   .close -> this;
   .iso -> base.Error.msg "unused";
   }
