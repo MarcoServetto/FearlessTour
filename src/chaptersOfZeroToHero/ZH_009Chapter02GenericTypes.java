@@ -56,7 +56,8 @@ firstChoice.choose("Option1",  secondChoice.choose("Option2", "Option3")  )
 where `firstChoice` and `secondChoice` are `Fork`s that we obtained somewhere.
 Note how we need the generic type `Val` so that our `Fork` can work on any type:
 We can write `someFork.choose("Hello","Hi")` but also `someFork.choose(1,5)`.
-However, `someFork.choose("Hello",5)` would be ill typed: there needs to be a type that can be used to instantiate `Val`.
+However, `someFork.choose("Hello",TankNN)` would be ill typed.
+There needs to be a type that can be used to instantiate `Val`: a type that both `Str` and `Tank` are subtypes of, and there is none.
 Type inference usually takes care of finding the types that instantiate a generic method call.
 However, we can pass the type argument ourselves if we want, using syntax `someFork.choose[Str]("Hello","Hi")`.
 As you can see, we can add `[..]` after the method name and before the list of arguments,
@@ -88,13 +89,13 @@ Right: Fork{ l,r -> r }
 ```
 Where basically anything goes.
 In this set up, `someFork.choose("Hello","Hi")` would work as before, but
-`someFork.choose("Hello",23)` would also pass type checking.
+`someFork.choose(TankNN,23)` would also pass type checking.
 What would happen at run time? Consider for example:
 ```
-someFork.choose("Hello",23) * 2
+someFork.choose(TankNN,23) * 2
 ```
 If `someFork` is `Right`, we would get `23 * 2` and then `46`.
-However, if `someFork` is `Left` we would get `"Hello" * 2` and since `Str` does not have a `*` method, then the reduction would get stuck, unable to proceed.
+However, if `someFork` is `Left` we would get `TankNN * 2` and since `Tank` does not have a `*` method, then the reduction would get stuck, unable to proceed.
 
 Ok,... that was bad.
 Let's not consider this broken Fearless variant any more.
@@ -331,12 +332,14 @@ Slow:{ .code: Nat -> this.code; }
 -------------------------*/@Test void forkNeedsOneTypeForBothValues(){ run("""
 Fork : { .choose[Val](leftVal: Val, rightVal: Val): Val }
 Left : Fork{ l,r -> l }
-Test: base.Main{sys-> base.Debug#(Left.choose("Hello",5))}
+Tank: {}
+TankNN: Tank{}
+Use: { .any[X](x: X): base.Void -> base.Void }
+Test: base.Main{sys-> Use.any(Left.choose("Hello",TankNN))}
 //ERROR|In file: [###]_test/_rank_app111.fear
 //ERROR|[###]
-//ERROR|This call to method "Left.choose(_,_)" cannot typecheck.
-//ERROR|Argument 1 has type "iso base.Str".
-//ERROR|That is not a subtype of "base.Nat" (the type required by the method signature).
+//ERROR|The type argument "Val" of ".choose" is inferred from the arguments, but they disagree: some need "base.Str", some need "TankNN".
+//ERROR|No type is a supertype of all of them.
 //ERROR|[###]
 """); }/*--------------------------------------------
 //OMIT_END
