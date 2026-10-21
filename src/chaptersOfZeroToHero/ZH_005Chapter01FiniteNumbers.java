@@ -29,7 +29,7 @@ Number:{ .pred:Number; .succ:Number;}
  8: Number{.pred->  7; .succ->  9; }
  9: Number{.pred->  8; .succ-> 10; }
 10: Number{.pred->  9; .succ-> 11; }
-11: Number{.pred-> 10; .succ->  0; } //before 11 is 10, after 11  wraps to 0
+11: Number{.pred-> 10; .succ->  0; } //before 11 is 10, after 11 wraps to 0
 ```
 The code above is very similar to the code of `Direction`.
 Method `.succ` works like the method `.turn` and method `.pred` is just turning in the other way. Thus, the predecessor of `0` is `11` and the successor of `11` is `0`.

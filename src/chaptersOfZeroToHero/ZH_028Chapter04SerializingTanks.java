@@ -78,6 +78,7 @@ InputCursorNode: ToIso[InputCursorNode], WidenTo[InputCursorNode]{
   mut .readStrUtf8(recover: mut BadStrUnitRecover): Str;
   mut .readUStrUtf8(recover: mut BadUStrUnitRecover): UStr;
   ...//the same for Utf16Le, Utf32Le, Utf16Be, Utf32Be, Ascii and Latin1
+  mut .readBytes: List[Byte];
   mut .readImage(maxPixels: Nat): Image;
   }
 ````

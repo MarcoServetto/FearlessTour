@@ -325,20 +325,13 @@ They include:
 - Arithmetic errors (since they can be disabled? Discuss)
 - Other? Discuss
 
->TODO: Right now _Throw does
->  .msg[R:**](msg: Str): R -> _Throw.deterministic(Infos.msg msg + (_Throw.stackTrace));
->  .nonDeterministic[R:**](msg: Str): R -> _Throw.nonDeterministic(Infos.msg msg + (_Throw.stackTrace));
->Instead, it should be in the catch:
-> catch(Deterministic d){ return m.mut$info$1(d.i); }
-> catch(NonDeterministic d){ return m.mut$info$1(d.i); }
-
 
 As you can imagine, it is quite rare to have to capture non-deterministic errors; but there are many reasonable examples:
 - Testing framework: this is code that runs and supervises tests.
   Any kind of failure should be captured and handled/recorded/logged in some way.
 - Web server: It must run many different pieces of code serving web pages, and a page error, no matter how severe, should not terminate the whole web server.
 - Try different strategies from a database of options to solve a problem. Then record statistical data about what option solved the problem better and faster to produce self-improving programs.
-- Airplane or nuclear plant supervision system: you probably do not want it to terminate, no matter the error.
+- Aeroplane or nuclear plant supervision system: you probably do not want it to terminate, no matter the error.
 - Video game where users can somehow forge code either directly or by combining magic objects with standard effects.
 
 > need a Cap that gives you current line number and file name!
