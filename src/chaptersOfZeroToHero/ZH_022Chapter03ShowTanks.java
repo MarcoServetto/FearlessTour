@@ -104,12 +104,12 @@ Direction: ToStr, Sealed, WidenTo[Direction] {
 ````
 Note how now `Direction` implements `ToStr`, `Sealed` and the mysterious `WidenTo[Direction]`.
 
-Type `WidenTo[S]` is defined in the standard library and is similar to `Sealed`.
+Type `WidenTo[T]` is defined in the standard library and is similar to `Sealed`.
 - `Sealed` means that code in other packages would not be able to define new kinds of `Direction`. Implementing `Sealed` makes the type system check this extra condition.
 - `WidenTo[Direction]` means that the type inference will always
 infer `Direction` instead of any type implementing `Direction`.
 Basically, `WidenTo[Direction]` makes it so that the inference would never infer `North`.
->`DataType` does use `WidenTo[S]` internally, and this is why
+>`DataType` does use `WidenTo[T]` internally, and this is why
 > the inference will always infer `Bool` instead of `True`/`False` and `Nat` instead of `42`.
 
 Here, if we were to omit `WidenTo[Direction]`, the code
