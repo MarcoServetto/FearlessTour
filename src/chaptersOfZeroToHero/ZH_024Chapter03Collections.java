@@ -1228,7 +1228,7 @@ TestOrderingCollections:F[Tests,Tests]{::
     Lists#(1,2,3).orderHash{::} != (Lists#(1,2,4)).assertTrue
     )
   }
-//--more tests
+// more tests
 Cars2:{
   #(id: Nat, driver: Person): Car2 ->
     Car2:{ 'self
