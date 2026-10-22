@@ -308,7 +308,7 @@ Here below you can see the other `Opt[E]` methods. Note how `.info`, `.imm` and 
 ````
 
 Finally, here we can see in the type `_Opt[E:*]` a good sample of the gory type signatures. You might find them quite surprising.
-The real `_Opt[E]` keeps growing over time, with more combinator methods (like `.or`, `|` and `||`, mirroring the `Bool` operators) and assertion helpers (`.assertSome`, `.assertEmpty`); we only show a representative subset here.
+The real `_Opt[E]` has more methods, like the combinators `.or`, `|` and `||` (mirroring the `Bool` operators) and the assertion helpers `.assertSome` and `.assertEmpty`; we only show a representative subset here.
 
 ````
 _Opt[E:*]:ToFlow[E],BaseContainer[E],DataType[Opt[E],Opt[imm E],E,imm E]{

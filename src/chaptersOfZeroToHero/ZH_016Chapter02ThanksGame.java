@@ -141,7 +141,7 @@ The game is implemented by a `NextState` function.
 
 The idea is that first all the tanks shoot, and every tank standing one step in front of another tank's turret (in its aiming direction) is eliminated.
 Then, all the surviving tanks move in their heading direction, but only if that position is free.
-A position is free if it is neither the current position nor the destination of another tank.
+A position is free if it is neither the current position of a tank nor the destination of another tank.
 
 -------------------------*/@Test void newCode1 (){ run("""
 //OMIT_START
