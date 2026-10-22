@@ -202,19 +202,11 @@ Right: Fork{ :: .right }
 A : { # ( someFork: Fork): Str ->
 //OMIT_END
 someFork.choose[Str]( SomeLeftRight[]:LeftRight[Str]{
-  .left[](): Str -> _Str1[]:"Hello"{};
-  .right[](): Str-> _Str2[]:"Hi"{};
+  .left[](): Str -> "Hello";
+  .right[](): Str -> "Hi";
 })
 //OMIT_START
 }
-//ERROR|In file: [###]
-//ERROR|011|   .left[](): Str -> _Str1[]:"Hello"{};
-//ERROR|   |                     ^^^^^^^^^^^^^^^^^
-//ERROR|
-//ERROR|While inspecting object literal "_Str1"
-//ERROR|Object literal "_Str1" implements sealed type [###]
-//ERROR|Sealed types can only be implemented in their own package.
-//ERROR|[###]
 //OMIT_END
 """); }/*--------------------------------------------
 

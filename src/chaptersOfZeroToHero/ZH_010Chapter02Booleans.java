@@ -125,9 +125,9 @@ False:Bool{
   }
 //OMIT_START
 A:{#:Bool ->
-True .and False .if[Bool] ThenElse[Bool]{//[Bool] needed since this Bool does not implement WidenTo
-  .then:Bool -> True.not.not;//TODO: all those annotations are needed,
-  .else:Bool -> False.not.not;//this is because inference can temporarily override user defined annotations
+True .and False .if{
+  .then -> True.not.not;
+  .else -> False.not.not;
   }
 }
 //OMIT_END
