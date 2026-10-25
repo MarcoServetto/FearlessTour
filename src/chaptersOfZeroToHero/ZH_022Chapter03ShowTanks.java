@@ -154,11 +154,11 @@ Tanks: { #(heading: Direction, aiming: Direction, position: Point): Tank ->
 The code above is wrong in two different ways:
 - We do not check our aiming/heading direction and simply show a predefined representation. This is intentional at this point, so that we could show the structure of the code before going into the details. Writing a skeleton of the code is often a good technique to start our coding tasks.
 - The code as written does not compile. The method `.str` has 3 type errors:
-   We can not call `this.repr1`, `this.repr2` and `this.repr3` from `.str`.
+   We cannot call `this.repr1`, `this.repr2` and `this.repr3` from `.str`.
 
 This is because the `.str` method is `read` and we declared those repr methods as `imm`.
 This is a common inconvenience in Fearless: we expect that all kinds of tanks will be immutable, but this may not be the case.
-From the point of view of the type system, future programmers may write new types extending `Tank`; and those may mutate state, so we can not call an immutable method from a `read` receiver.
+From the point of view of the type system, future programmers may write new types extending `Tank`; and those may mutate state, so we cannot call an immutable method from a `read` receiver.
 
 However, inside of `Tanks`, we explicitly create an immutable tank. Thus, we can simply move the implementation of `.str` inside of `Tanks`!
 We remove the line implementing `.str` in `Tank` and we write `Tanks` as follows:

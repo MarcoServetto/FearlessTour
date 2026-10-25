@@ -113,7 +113,7 @@ Fork : {
 ```
 
 As you can see this is quite repetitive and error prone. Moreover, it is never enough.
-When programming we will add new types over and over again, and we can not realistically add a variant for each type we will ever declare.
+When programming we will add new types over and over again, and we cannot realistically add a variant for each type we will ever declare.
 
 However, if you squint at the code, you can see a clear pattern.
 ```

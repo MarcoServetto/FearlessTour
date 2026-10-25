@@ -120,7 +120,7 @@ Some changes in `Point`:
 - We added an `==` method, comparing two points using their coordinates.
 - Both `.move` and `==` use `self` instead of `this`.
 
-To refer to the current `Point` in `.move` and `==` we can not use `this` any more:
+To refer to the current `Point` in `.move` and `==` we cannot use `this` any more:
 Since `Point` is now defined inside of `Points`,
 the `this` in scope would be an instance of `Points`,
 not `Point`.

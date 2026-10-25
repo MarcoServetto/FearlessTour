@@ -79,7 +79,7 @@ This is also used for code reuse.
 - Value: used to focus on the idea that the literal is produced by a computation
   - Example: `Points#(+4,+5)` returns a value.
 
-- Constant: used when type names are used directly to make instances. Constants can not capture state, so all the instances of `North` are conceptually identical; they are conceptually all the same `North`.
+- Constant: used when type names are used directly to make instances. Constants cannot capture state, so all the instances of `North` are conceptually identical; they are conceptually all the same `North`.
   - Examples: `North`, `12`, `45`, `+34`, `-13`, `` `Foo` ``, `` `foo dd` ``, `{}`
 (the last one will have the type name inferred by the type system)
 

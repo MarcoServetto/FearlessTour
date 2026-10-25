@@ -15,7 +15,7 @@ This can encourage us to write repetitive and hard to read code.
 
 A quick note on two naming conventions you will keep running into: methods starting with `get` and methods starting with `soft`.
 A `get` method promises a precise, correct answer, but only for the cases where one actually exists; the name warns that such a precise answer may not exist.
-`3.5 .getNat` can not return `3.5` as a `Nat`. There is no `Nat` precisely representing `3.5`.
+`3.5 .getNat` cannot return `3.5` as a `Nat`. There is no `Nat` precisely representing `3.5`.
 Instead of making up an arbitrary answer, `get` methods stop the whole execution.
 A `soft` method takes the opposite approach: it never stops the execution, and instead gives back the closest reasonable answer it
 can, even when an exact one is not possible.

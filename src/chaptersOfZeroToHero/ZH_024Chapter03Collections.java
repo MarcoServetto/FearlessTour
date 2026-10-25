@@ -143,7 +143,7 @@ Lists are similar to the stacks we discussed before, but they have different fun
 
 ### Limited size and failures:
 Lists contain any number of elements, from 0 up to 2,147,483,639.
-That is a big but not unlimited number, and flows could in principle contain many more elements than that. This means that some operations may fail when we can not make a list with a number of elements bigger than that limit. For example `myFlow.list` may fail to create a list big enough to store all the elements of the flow.
+That is a big but not unlimited number, and flows could in principle contain many more elements than that. This means that some operations may fail when we cannot make a list with a number of elements bigger than that limit. For example `myFlow.list` may fail to create a list big enough to store all the elements of the flow.
 
 ### Core List methods for Random Access: .size, .isEmpty and .get
 
@@ -240,7 +240,7 @@ Consider the following code:
 ```
 This code creates a list by repeatedly using the mutable function `f`.
 When calling this code with `X=Num`, we would produce a `mut List[Num]`.
-If we can not promote this result to `imm`, we can convert it to `imm` by doing `myList.as{::}`.
+If we cannot promote this result to `imm`, we can convert it to `imm` by doing `myList.as{::}`.
 There `{::}` will be desugared as `BaseId[Num,Num]{a->a}`. That is, a simple identity function, mapping the elements to themselves. Since method `.as` returns an `imm List`, we are effectively converting the `mut List[E]` into an `imm List[E]`.
 As we have seen, `.as` does not create a new list: it reuses the old one. Basically by calling this method we are guiding the type system to recognise that a `mut List[Num]` is really just an `imm List[Num]`.
 
@@ -685,7 +685,7 @@ In the same way there is an `EList[E]` type that is an editable variant of `List
 ### List, Opt and ordering.
 
 Finally, `List[E]` and `Opt[E]` do not implement `Order[List[E]]`/`Order[Opt[E]]` or `OrderHash[List[E]]`/`OrderHash[Opt[E]]`.
-They can not, since their elements may not be ordered.
+They cannot, since their elements may not be ordered.
 If we want to sort a list of ordered elements we can do
 ````
 myList.flow
@@ -766,10 +766,10 @@ Opt[E:*]: _Opt[E]{
     };
   .close->this; .close->::;
 ````
-- We can not conceptually define `.str` on an optional without arguments.
+- We cannot conceptually define `.str` on an optional without arguments.
 `OrderHash[T,E:*]` implements `ToStr[E]`, guiding us to implement `.str by`
 using the `by` argument to turn the optional content into a `ToStr`.
-- Similarly, we can not conceptually define `.hash` on an optional without arguments.
+- Similarly, we cannot conceptually define `.hash` on an optional without arguments.
 `OrderHash[T,E:*]`
 guides us to implement `read .hash[K](by: OrderHashBy[imm E,K]): Nat`
 using the `by` argument to turn the optional content into an `OrderHash`, so that we can call `.hash` on it.

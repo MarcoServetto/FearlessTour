@@ -425,7 +425,7 @@ a number of types that is out of the reach of what can realistically be coded by
 or even stored on your hard drive.
 However, those types do exist and we can code in Fearless using them.
 This also means that the type names `0`, `1`, `2` and so on are already taken,
-and thus we can not actually define our numbers called `0`-`11` as we did before.
+and thus we cannot actually define our numbers called `0`-`11` as we did before.
 Crucially, even though the implementation is optimised, the conceptual model of that
 massive, wrap-around clock face still holds: every number has a well defined predecessor
 and successor, wrapping from the highest value back to `0`.

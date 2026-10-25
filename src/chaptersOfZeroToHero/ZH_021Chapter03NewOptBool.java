@@ -23,7 +23,7 @@ This means that with the type `F` as we defined it before:
   F[A,R]:{ #(a: A): R }
   F[A,B,R]:{ #(a: A,b:B): R } //and a few more overloads
 ```
-Method `F#` can not capture `mut` and `read` parameters.
+Method `F#` cannot capture `mut` and `read` parameters.
 
 To work flexibly with RCs, we need to modify `F` as below:
 ```
@@ -45,9 +45,9 @@ Those two types are present in the Fearless standard library.
 A method requiring a function as a parameter can leverage RCs to enforce different guarantees
 on it.
 
-1. The behaviour of `imm F[X]` can not observe or perform any mutation.
+1. The behaviour of `imm F[X]` cannot observe or perform any mutation.
 2. The behaviour of
-`read F[X]` can not cause mutation, but could observe mutation in the outer scope.
+`read F[X]` cannot cause mutation, but could observe mutation in the outer scope.
 3. The behaviour
 of `mut MF[X]` can actively mutate captured references.
 
@@ -72,7 +72,7 @@ With `mut .then` and `mut .else`, the operation inside the `.if` is able to muta
 
 Then we can see the `Bool` type declaration itself.
 It is implementing `Sealed` and `DataType[Bool,Bool]`.
-We discussed `Sealed` before: it just means that user code can not define new kinds of booleans like `MayBe`, `NotToday`, etc.
+We discussed `Sealed` before: it just means that user code cannot define new kinds of booleans like `MayBe`, `NotToday`, etc.
 ````
 Bool:Sealed,DataType[Bool,Bool]{
   .and(b: Bool): Bool;
@@ -258,7 +258,7 @@ We have a `.str` method, allowing us to easily turn optionals into a string.
 ````
 The code above shows `.str` taking a parameter `by`.
 Then we match on the `this` optional; on `.empty` we return a constant string, but on `.some x` we need to turn `x` into a string and then join some other strings before and after to forge the expected output.
-Crucially, `x` is of type `E`; thus we do not know anything about `x` and we can not call any method on it to turn it into a string.
+Crucially, `x` is of type `E`; thus we do not know anything about `x` and we cannot call any method on it to turn it into a string.
 This is where `by` comes into play. `by` takes the `x` and turns it, not into a `Str` but into a `ToStr`.
 
 String concatenation operations like `+` take a `ToStr` and call `.str` internally.

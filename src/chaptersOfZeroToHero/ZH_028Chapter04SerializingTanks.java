@@ -126,7 +126,7 @@ The type is the same, but the error management is now very different.
 What errors are captured inside the `Info` of the `Action[List[Tank]]` returned by `.read`?
 What errors just leak out?
 The key is that `Try#{..}` and `.map{..}` are lazy: their bodies run only when someone runs the action, for example with `!`.
-- (1) The `Block` runs `this.in.readStrUtf8 NotText` right away, inside `.read` and outside any `Try#`. If the file can not be read, or is not text, the error is thrown immediately: `.read` never even returns an action.
+- (1) The `Block` runs `this.in.readStrUtf8 NotText` right away, inside `.read` and outside any `Try#`. If the file cannot be read, or is not text, the error is thrown immediately: `.read` never even returns an action.
 - (2) `Infos.fromStr` runs inside a `Try#`. When the action runs and the text is not a valid `Info`, `Try#` turns the error into the `Info` of the action.
 - (3) With `.map`, the function runs when the action runs, after `Try#` has already succeeded, and nothing captures its errors: a missing key or an unknown direction leaks out of `!` as a real error.
   With `.andThen`, the function returns a `Try#` action, so the error becomes the `Info` of that action, and `.andThen` passes it on as the `Info` of the result.
