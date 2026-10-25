@@ -190,8 +190,7 @@ use base.Try as Try;
 use base.Action as Action;
 DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
 Directions: Enums[Direction]{
-  .list -> Lists#(North,East,South,West);
-  .strBy -> {::};
+  .list -> Lists#(North,East,South,West).as{::};
   }
 Direction: Enum[Direction]{
   .enums->Directions;
@@ -283,8 +282,7 @@ use base.Void as Void;
 use base.Debug as Debug;
 DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
 Directions: Enums[Direction]{
-  .list -> Lists#(North,East,South,West);
-  .strBy -> {::};
+  .list -> Lists#(North,East,South,West).as{::};
   }
 Direction: Enum[Direction]{
   .enums->Directions;
@@ -378,8 +376,7 @@ use base.Try as Try;
 use base.Action as Action;
 DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
 Directions: Enums[Direction]{
-  .list -> Lists#(North,East,South,West);
-  .strBy -> {::};
+  .list -> Lists#(North,East,South,West).as{::};
   }
 Direction: Enum[Direction]{
   .enums->Directions;
