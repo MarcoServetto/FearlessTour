@@ -481,8 +481,7 @@ Test: Main{sys-> Block#
   .do{Debug#(Actions.msg[Nat]("bad").info!.getMsg)}
   .return{Void}}
 Directions: Enums[Direction]{
-  .list -> Lists#(North,East,South,West);
-  .strBy -> {::};
+  .enumList -> Lists#(North,East,South,West).as{::};
   }
 Direction: Enum[Direction]{
   .enums->Directions;
