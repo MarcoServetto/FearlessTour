@@ -15,7 +15,7 @@ Finally, we have discussed all of the knowledge needed to make our first Fearles
 -------------------------*/@Test void finallyMain(){ run("""
 //in file _demo/_rank_app.fear
 use base.Main as Main;
-use base.Output as Output;
+use base.CapOutput as CapOutput;
 
 Test:Main {sys -> sys.out.println("Hello, World!")}
 //PRINT|Hello, World!
@@ -63,7 +63,7 @@ Main:{ .main(sys: mut System): Void }
 
 The parameter of type `mut System` refers to an **object capability**: an object giving access to the world outside of the program.
 `sys.out` is a method creating a restricted object capability from the system capability.
-The result of `sys.out` is an object of type `mut base.Output`: an object that can print text out.
+The result of `sys.out` is an object of type `mut base.CapOutput`: an object that can print text out.
 
 That is, object capabilities and reference capabilities are two different concepts.
 - **Reference capabilities** are a type system feature, while
@@ -71,7 +71,7 @@ That is, object capabilities and reference capabilities are two different concep
 
 ### What are object capabilities for?
 
-You may think that capabilities are there to stop our code from **doing** things: no `Output`, no printing.
+You may think that capabilities are there to stop our code from **doing** things: no `CapOutput`, no printing.
 I find the real story much more interesting: capabilities decide what our code can **observe**.
 
 Look at this method:
@@ -130,8 +130,8 @@ Whoever reads the notes, instead, can tell how many times and in which order `Sq
 Observing has a price, and `sys` is where we pay it.
 
 So why does `sys.out.println("Hello, World!")` ask for a capability, if printing cannot be observed?
-Because in an object oriented language, to do something we ask an object able to do it; and a method receiving an `Output` announces that it prints.
-An `Output` gives our code no new way to observe anything, so it is transparent: the results of a method do not depend on whether the text is printed, ignored or sent somewhere else.
+Because in an object oriented language, to do something we ask an object able to do it; and a method receiving an `CapOutput` announces that it prints.
+An `CapOutput` gives our code no new way to observe anything, so it is transparent: the results of a method do not depend on whether the text is printed, ignored or sent somewhere else.
 
 Mutation inside the program is a different story.
 After `set` the program can read the new value of a `Var` with `get`, so the change can be observed.
@@ -141,11 +141,11 @@ That is why reference capabilities restrict both who can change an object and wh
 OMIT_START
 -------------------------*/@Test void outputCapability(){ run("""
 use base.Main as Main;
-use base.Output as Output;
+use base.CapOutput as CapOutput;
 use base.Block as Block;
 use base.System as System;
 Test:Main {sys -> Block#
-  .let[mut Output] out= {sys.out}
+  .let[mut CapOutput] out= {sys.out}
   .do {out.println("one")}
   .return {out.println("two")}
   }
