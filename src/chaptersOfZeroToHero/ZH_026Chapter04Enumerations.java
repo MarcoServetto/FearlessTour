@@ -17,7 +17,7 @@ The standard library offers a simple way to add those common features to our enu
 
 ```
 Directions: Enums[Direction]{
-  .enumList -> Lists#(North,East,South,West).as{::};
+  .enumList -> Lists#(North,East,South,West);
   }
 Direction: Enum[Direction]{
   .enums->Directions;
@@ -55,7 +55,7 @@ Test: Main{sys-> Block#(
   )}
 
 Directions: Enums[Direction]{
-  .enumList -> Lists#(North,East,South,West).as{::};
+  .enumList -> Lists#(North,East,South,West);
   }
 Direction: Enum[Direction]{
   .enums->Directions;
@@ -110,7 +110,7 @@ Test: Main{sys-> Block#(
 
 DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
 Directions: Enums[Direction]{
-  .enumList -> Lists#(North,East,South,West).as{::};
+  .enumList -> Lists#(North,East,South,West);
   }
 Direction: Enum[Direction]{
   .enums->Directions;
@@ -141,10 +141,10 @@ FromInfo[T]: { .fromInfo(i: Info): T }
 Enums[E]: FromInfo[E]{
   .enumList: List[Enum[E]];
   .list: List[E] -> this.enumList.flow.map{::.imm}.list;
-  .map: Map[Str,E] -> this.enumList.flow.mapping({::},{.key e->e.str; .elem e->e.imm;}).as{::};
+  .map: Map[Str,E] -> this.enumList.flow.mapping({::},{.key e->e.str; .elem e->e.imm;});
   .indexMap: Map[Str,Nat] -> this.enumList.flow.fold(
-    {Maps#[Str,Str,Nat]{::}.as{::}},
-    {acc,e->acc.with(e.str,acc.size).as{::}}
+    {Maps#[Str,Str,Nat]{::}},
+    {acc,e->acc.with(e.str,acc.size)}
     );
   .fromInfo i -> this.map.get(i.getMsg);
   }
@@ -169,7 +169,7 @@ Thanks to `Enums[Direction]` we get a `.map` method mapping names to directions.
  (`North`, `East`, etc.) to their corresponding `Direction` objects. This allows us to look up a `Direction` by its name. This is computed by using the method `.mapping`; taking a literal with a `.key` method and an `.elem` method, converting the flow elements into the key and element values for the newly created map.
 `E` is a bare generic parameter, so it carries no methods of its own - not even `.str` - which is why
 `.enumList` holds `Enum[E]` values: `.map` takes `.str` and `.imm` from each element.
-`Lists#(North,East,South,West)` is a `List[Direction]`, and `.as{::}` retypes it as a `List[Enum[Direction]]` at no cost, since every `Direction` is an `Enum[Direction]`.
+In `Directions`, `Lists#(North,East,South,West)` builds a `List[Enum[Direction]]`, since that is the result type of `.enumList`.
 `.list` maps `.imm` over `.enumList`, so `Directions.list` is a `List[Direction]`.
 That is, the result of `.map` will be equivalent to the result of `Maps#({::},"North",North,  "East",East,  "South",South,  "West",West)`.
 
@@ -230,7 +230,7 @@ Test: Main{sys-> Block#
   .return{Void}}
 
 Directions: Enums[Direction]{
-  .enumList -> Lists#(North,East,South,West).as{::};
+  .enumList -> Lists#(North,East,South,West);
   }
 Direction: Enum[Direction]{
   .enums->Directions;
@@ -268,7 +268,7 @@ Test: Main{sys-> Block#
   .return{Void}}
 
 Directions: Enums[Direction]{
-  .enumList -> Lists#(North,East,South,West).as{::};
+  .enumList -> Lists#(North,East,South,West);
   }
 Direction: Enum[Direction]{
   .enums->Directions;
