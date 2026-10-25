@@ -22,12 +22,12 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  .close->this; .close->::;
+  read .close->this; .close->::;
   }
-North: Direction{.imm->North; "North"}
-East:  Direction{.imm->East;  "East" }
-South: Direction{.imm->South; "South"}
-West:  Direction{.imm->West;  "West" }
+North: Direction{}
+East:  Direction{}
+South: Direction{}
+West:  Direction{}
 ```
 
 With this alone, `Directions.list` is the four directions in declaration order, `North.index` is `0`
@@ -61,12 +61,12 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  .close->this; .close->::;
+  read .close->this; .close->::;
   }
-North: Direction{.imm->North; "North"}
-East:  Direction{.imm->East;  "East" }
-South: Direction{.imm->South; "South"}
-West:  Direction{.imm->West;  "West" }
+North: Direction{}
+East:  Direction{}
+South: Direction{}
+West:  Direction{}
 //PRINT|4
 //PRINT|0
 //PRINT|3
@@ -83,12 +83,12 @@ DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  .close->this; .close->::;
+  read .close->this; .close->::;
   }
-North: Direction{::.north; .imm->North; "North"}
-East:  Direction{::.east;  .imm->East;  "East" }
-South: Direction{::.south; .imm->South; "South"}
-West:  Direction{::.west;  .imm->West;  "West" }
+North: Direction{::.north}
+East:  Direction{::.east}
+South: Direction{::.south}
+West:  Direction{::.west}
 ```
 
 Now `North.match(DirectionMatch[Str]{ .north->"n"; .east->"e"; .south->"s"; .west->"w"; })` is `"n"`;
@@ -118,18 +118,19 @@ Directions: Enums[Direction]{
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  .close->this; .close->::;
+  read .close->this; .close->::;
   }
-North: Direction{::.north; .imm->North; "North"}
-East:  Direction{::.east;  .imm->East;  "East" }
-South: Direction{::.south; .imm->South; "South"}
-West:  Direction{::.west;  .imm->West;  "West" }
+North: Direction{::.north}
+East:  Direction{::.east}
+South: Direction{::.south}
+West:  Direction{::.west}
 //PRINT|n
 """); }/*--------------------------------------------
 OMIT_END
 
 As you can see, we list our directions and we define the matcher listing the directions in method form.
-Finally, we connect the direction-type with the direction-match-method and their string representation.
+Finally, we connect the direction-type with the direction-match-method.
+The string representation of each direction is the simple name of its type: `North.str` is `"North"`.
 
 Admittedly, many other languages require significantly less code for enumerations.
 However, in Fearless you can see how the whole mechanism works, and how simple method calls encode all the needed logic. In turn, this makes it more natural to extend enumerations with other useful methods and features.
@@ -150,8 +151,10 @@ Enums[E]: FromInfo[E]{
     );
   .fromInfo i -> this.map.get(i.getMsg);
   }
-Enum[E]: DataType[E,E]{
+Enum[E]: DataType[E,E], Named, CaptureFree{
   read .enums: Enums[E];
+  .str -> this.name.split "." .get 1;
+  .imm -> this.close;
   .info -> Infos.msg(this.str);
   read .index: Nat -> this.enums.indexMap.get(this.str);
   read .close(t: read E): read Enum[E];
@@ -159,6 +162,11 @@ Enum[E]: DataType[E,E]{
   .hash -> this.index;
   }
 ```
+A type implementing `Named` gets `.name`: the qualified name of the type of the object, like `"pkg.North"`.
+`Enum[E]` takes `.str` from `.name`, keeping the part after the dot: `"North"`.
+`Enum[E]` is `CaptureFree`, so inside `Enum[E]` the receiver `this` is `imm`, and `.imm -> this.close` returns the value itself.
+For the same reason, the `.close` of `Direction` is `read .close->this`: an `imm` `this` cannot be the result of `mut .close: mut Direction`, offered by `Pipe[Direction]`, so that method stays abstract, and a `Direction` value is never `mut`.
+
 Thanks to `Enums[Direction]` we get a `.map` method mapping names to directions.
 - Method `.map` returns a `Map[Str,Direction]` linking the string names of directions
  (`North`, `East`, etc.) to their corresponding `Direction` objects. This allows us to look up a `Direction` by its name. This is computed by using the method `.mapping`; taking a literal with a `.key` method and an `.elem` method, converting the flow elements into the key and element values for the newly created map.
@@ -230,12 +238,12 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  .close->this; .close->::;
+  read .close->this; .close->::;
   }
-North: Direction{.imm->North; "North"}
-East:  Direction{.imm->East;  "East" }
-South: Direction{.imm->South; "South"}
-West:  Direction{.imm->West;  "West" }
+North: Direction{}
+East:  Direction{}
+South: Direction{}
+West:  Direction{}
 //PRINT|Opt[North]
 //PRINT|Opt[]
 //PRINT|North
@@ -269,12 +277,12 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  .close->this; .close->::;
+  read .close->this; .close->::;
   }
-North: Direction{.imm->North; "North"}
-East:  Direction{.imm->East;  "East" }
-South: Direction{.imm->South; "South"}
-West:  Direction{.imm->West;  "West" }
+North: Direction{}
+East:  Direction{}
+South: Direction{}
+West:  Direction{}
 //PRINT|Map.get: Tried to get key Nope that is not contained in this map.
 //PRINT| Consider using `Map.opt` to properly handle the failure case.
 """); }/*--------------------------------------------

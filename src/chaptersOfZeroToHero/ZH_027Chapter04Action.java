@@ -486,12 +486,12 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  .close->this; .close->::;
+  read .close->this; .close->::;
   }
-North: Direction{.imm->North; "North"}
-East:  Direction{.imm->East;  "East" }
-South: Direction{.imm->South; "South"}
-West:  Direction{.imm->West;  "West" }
+North: Direction{}
+East:  Direction{}
+South: Direction{}
+West:  Direction{}
 
 
 
