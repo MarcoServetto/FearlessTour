@@ -196,12 +196,12 @@ Directions: Enums[Direction]{
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  .close->this; .close->::;
+  read .close->this; .close->::;
   }
-North: Direction{::.north; .imm->North}
-East:  Direction{::.east;  .imm->East}
-South: Direction{::.south; .imm->South}
-West:  Direction{::.west;  .imm->West}
+North: Direction{::.north}
+East:  Direction{::.east}
+South: Direction{::.south}
+West:  Direction{::.west}
 Points: F[Nat,Nat,Point], FromInfo[Point] {
   .fromInfo(i) -> Points#(i.getMap.get("x").getMsg.getNat, i.getMap.get("y").getMsg.getNat);
   # x, y ->Block#
@@ -289,12 +289,12 @@ Directions: Enums[Direction]{
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  .close->this; .close->::;
+  read .close->this; .close->::;
   }
-North: Direction{::.north; .imm->North}
-East:  Direction{::.east;  .imm->East}
-South: Direction{::.south; .imm->South}
-West:  Direction{::.west;  .imm->West}
+North: Direction{::.north}
+East:  Direction{::.east}
+South: Direction{::.south}
+West:  Direction{::.west}
 Points: F[Nat,Nat,Point], FromInfo[Point] {
 
   .fromInfo(i) -> Points#(i.getMap.get("x").getMsg.getNat, i.getMap.get("y").getMsg.getNat);
@@ -384,12 +384,12 @@ Directions: Enums[Direction]{
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  .close->this; .close->::;
+  read .close->this; .close->::;
   }
-North: Direction{::.north; .imm->North}
-East:  Direction{::.east;  .imm->East}
-South: Direction{::.south; .imm->South}
-West:  Direction{::.west;  .imm->West}
+North: Direction{::.north}
+East:  Direction{::.east}
+South: Direction{::.south}
+West:  Direction{::.west}
 Points: F[Nat,Nat,Point], FromInfo[Point] {
   .fromInfo(i) -> Points#(i.getMap.get("x").getMsg.getNat, i.getMap.get("y").getMsg.getNat);
   # x, y ->Block#
