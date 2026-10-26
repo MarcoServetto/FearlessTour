@@ -35,8 +35,8 @@ use base.List as List;
 use base.Block as Block;
 use base.Sealed as Sealed;
 use base.WidenTo as WidenTo;
-use base.Output as Output;
-use base.InputCursorNode as InputCursorNode;
+use base.CapOutput as CapOutput;
+use base.CapInputCursorNode as CapInputCursorNode;
 //File _tank_game/point.fear
 Points:{#(x: Nat, y: Nat): Point -> Point: ToStr{
   .x: Nat -> x;
@@ -132,7 +132,7 @@ NextState:{
   }
 // ----------------------------------
 //File _tank_game/read_game.fear
-ReadGame: { mut .in: mut InputCursorNode; mut .read:List[Tank]->{};}
+ReadGame: { mut .in: mut CapInputCursorNode; mut .read:List[Tank]->{};}
 //OMIT_END
 // ----------------------------------
 //File _tank_game/print_game.fear
@@ -152,7 +152,7 @@ TanksToS: F[List[Tank],Str]{ ts -> Block#
   read .newLine: mut List[mut Var[Str]] -> 0 =~~ 10 .flow.map{ _ -> Vars#("       ")}.list;
   }
 PrintGame: {
-  mut .out: mut Output;
+  mut .out: mut CapOutput;
   mut .singleLine(ts: List[Tank]): Void -> this.out.println(TanksToS#(ts));
   mut .lines(rounds: Nat, ts: List[Tank]): Void -> Block#
     .var current= {ts}

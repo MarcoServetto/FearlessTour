@@ -51,7 +51,7 @@ Where we did not discuss how to write `ReadGame`.
 Now we can show such code!
 ```
 ReadGame: {
-  mut .in: mut InputCursorNode;
+  mut .in: mut CapInputCursorNode;
   mut .read : List[Tank] -> Block#
     .let[Str] text= {this.in.readStrUtf8 NotText}
     .let[Info] info= {Infos.fromStr(text)}
@@ -67,13 +67,13 @@ We are not specifying an actual operation like read the file called `"input.txt"
 It turns out that every single OS has ways to capture files intended as input, and 
 this is exactly what `sys.inputCursor# !` is doing.
 The idea is that there can be many files intended as input, and more may be added at any time.
-This is the code of `InputCursor`.
+This is the code of `CapInputCursor`.
 ````
-InputCursor: ToIso[InputCursor], WidenTo[InputCursor]{
-  mut #: mut Opt[mut InputCursorNode];
-  mut .next: mut InputCursor;
+CapInputCursor: ToIso[CapInputCursor], WidenTo[CapInputCursor]{
+  mut #: mut Opt[mut CapInputCursorNode];
+  mut .next: mut CapInputCursor;
   }
-InputCursorNode: ToIso[InputCursorNode], WidenTo[InputCursorNode]{
+CapInputCursorNode: ToIso[CapInputCursorNode], WidenTo[CapInputCursorNode]{
   mut .label: Str; /// best effort portable name to help debugging
   mut .readStrUtf8(recover: mut BadStrUnitRecover): Str;
   mut .readUStrUtf8(recover: mut BadUStrUnitRecover): UStr;
@@ -84,7 +84,7 @@ InputCursorNode: ToIso[InputCursorNode], WidenTo[InputCursorNode]{
 ````
 - `sys.inputCursor` is the capability to observe the files intended as input.
 - `sys.inputCursor#` gets the first input node.
-- `sys.inputCursor# !` extracts the actual `InputCursorNode`, throwing an error if no input has been provided yet.
+- `sys.inputCursor# !` extracts the actual `CapInputCursorNode`, throwing an error if no input has been provided yet.
 - `this.in.readStrUtf8 NotText` reads the file and turns its bytes into a `Str` with the UTF-8 encoding.
 - When some bytes are not a valid character of a `Str`, `.readStrUtf8` asks the `BadStrUnitRecover` what to put in their place. `NotText` never answers: it throws an error saying where the bad bytes are.
 
@@ -181,7 +181,7 @@ use base.Info as Info;
 use base.Enums as Enums;
 use base.Enum as Enum;
 use base.OrderHash as OrderHash;
-use base.InputCursorNode as InputCursorNode;
+use base.CapInputCursorNode as CapInputCursorNode;
 use base.BadStrUnitRecover as BadStrUnitRecover;
 use base.Error as Error;
 use base.Void as Void;
@@ -234,7 +234,7 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     );
   }
 ReadGame: {
-  mut .in: mut InputCursorNode;
+  mut .in: mut CapInputCursorNode;
   mut .read : List[Tank] -> Block#
     .let[Str] text= {this.in.readStrUtf8 NotText}
     .let[Info] info= {Infos.fromStr(text)}
@@ -367,7 +367,7 @@ use base.Info as Info;
 use base.Enums as Enums;
 use base.Enum as Enum;
 use base.OrderHash as OrderHash;
-use base.InputCursorNode as InputCursorNode;
+use base.CapInputCursorNode as CapInputCursorNode;
 use base.BadStrUnitRecover as BadStrUnitRecover;
 use base.Error as Error;
 use base.Void as Void;
@@ -419,7 +419,7 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     Points.fromInfo(i.getMap.get("position"))
     );
   }
-FakeNode: InputCursorNode{
+FakeNode: CapInputCursorNode{
   .readUStrUtf8 _ -> base.Error.msg "unused";
   .readStrUtf16Le _ -> base.Error.msg "unused";
   .readUStrUtf16Le _ -> base.Error.msg "unused";
@@ -438,30 +438,30 @@ FakeNode: InputCursorNode{
   .close -> this;
   .iso -> base.Error.msg "unused";
   }
-Nodes:{ #(t: Str): mut InputCursorNode -> mut FakeNode{
+Nodes:{ #(t: Str): mut CapInputCursorNode -> mut FakeNode{
   .label -> "fake";
   .readStrUtf8 _ -> t;
   } }
-BadNode:{ #: mut InputCursorNode -> mut FakeNode{
+BadNode:{ #: mut CapInputCursorNode -> mut FakeNode{
   .label -> "bad";
   .readStrUtf8 _ -> base.Error.msg "cannot read the file";
   } }
 ReadMap: {
-  mut .in: mut InputCursorNode;
+  mut .in: mut CapInputCursorNode;
   mut .read: mut Action[List[Tank]] -> Block#
     .let[Str] text= {this.in.readStrUtf8 NotText}
     .return {Try#{Infos.fromStr(text)}
       .map{info -> info.getList.flow.map{i->Tanks.fromInfo(i)}.list}};
   }
 ReadThen: {
-  mut .in: mut InputCursorNode;
+  mut .in: mut CapInputCursorNode;
   mut .read: mut Action[List[Tank]] -> Block#
     .let[Str] text= {this.in.readStrUtf8 NotText}
     .return {Try#{Infos.fromStr(text)}
       .andThen{info -> Try#{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}}};
   }
 ReadContext: {
-  mut .in: mut InputCursorNode;
+  mut .in: mut CapInputCursorNode;
   mut .read: mut Action[List[Tank]] -> Block#
     .let[Str] text= {this.in.readStrUtf8 NotText}
     .return {Try#{Infos.fromStr(text)}
