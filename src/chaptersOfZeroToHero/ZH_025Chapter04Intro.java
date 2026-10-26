@@ -145,6 +145,19 @@ This structured approach to serialisation using `Info` not only simplifies data 
 Similarly, we can use the type `Infos` to programmatically create `Info` objects using methods `Infos.msg(Str)`, `Infos.list(/*..elements..*|/)` and `Infos.map(/*..keys and values..*|/)`.
 In the standard library `Infos.list` takes one or two elements; a longer list `myList` can be turned into an `Info` with `myList.info{::}`.
 The empty `Info` object can be obtained by writing `Info` or just `{}`.
+Each line below creates an `Info`, and the comment under it is the JSON text that `.str` gives for that `Info`:
+```
+Infos.map("heading","North",  "aiming","East",  "position",Infos.map("x","10",  "y","5"))
+//{"heading":"North","aiming":"East","position":{"x":"10","y":"5"}}
+Infos.list("North",Infos.list("10","5"))
+//["North",["10","5"]]
+Infos.msg("hi")
+//"hi"
+Info
+//null
+```
+The first `Info` holds a tank: a map with its heading, its aiming and its position, where the position is itself a map.
+The last one is the empty `Info`.
 
 >Note: tests that the 4 kinds of info work, and that empty list and empty map and empty string return the empty info, and that the other kind is returned otherwise.
 >Add examples showing this behaviour
