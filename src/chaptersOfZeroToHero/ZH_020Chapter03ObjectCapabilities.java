@@ -130,9 +130,8 @@ Whoever reads the notes, instead, can tell how many times and in which order `Sq
 Observing has a price, and `sys` is where we pay it.
 
 So why does `sys.out.println("Hello, World!")` ask for a capability, if printing cannot be observed?
-Because `base.Debug#` and `sys.out` print for different reasons.
-`Debug#` helps us look inside a computation: if the result of `Squares.of(5)` is remembered instead of computed again, a `Debug#` inside `Squares.of` prints only once.
-`sys.out.println` is what the program says to its user: `println` is a `mut` method, so it runs every time the code reaches it, and the text is printed every time.
+Because in an object oriented language, to do something we ask an object able to do it; and a method receiving a `CapOutput` announces that it prints.
+A `CapOutput` gives our code no new way to observe anything, so it is transparent: the results of a method do not depend on whether the text is printed, ignored or sent somewhere else.
 
 Mutation inside the program is a different story.
 After `set` the program can read the new value of a `Var` with `get`, so the change can be observed.

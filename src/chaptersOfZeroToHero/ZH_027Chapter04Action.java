@@ -325,9 +325,6 @@ They include:
 - Arithmetic errors (since they can be disabled? Discuss)
 - Other? Discuss
 
-An error reached through a capability is a different story.
-Only the code holding the capability can cause it, so the error can be deterministic even when the world decides it.
-For example, downloading a web page through a capability may fail, and that failure is a deterministic error.
 
 As you can imagine, it is quite rare to have to capture non-deterministic errors; but there are many reasonable examples:
 - Testing framework: this is code that runs and supervises tests.
