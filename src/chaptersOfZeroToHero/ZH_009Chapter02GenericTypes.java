@@ -240,7 +240,7 @@ In the same way,
 
 - Generic methods and generic types are ways to declare an infinite number of methods and types.
 
-- Dynamic dispatch (the receiver object decides which implementation of the called method runs) is used to make decisions. Here `Fork` has an abstract method `.choose`.
+- Dynamic dispatch is used to make decisions. Here `Fork` has an abstract method `.choose`.
 The `Left.choose` implementation chooses the `.left` option, while the
 `Right.choose` implementation chooses the `.right` option.
 

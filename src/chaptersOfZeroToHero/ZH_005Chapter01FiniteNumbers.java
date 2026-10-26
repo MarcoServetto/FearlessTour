@@ -461,9 +461,9 @@ Because `Nat` and `Int` are built on this fixed-size, wrap-around (modulo) arith
 they are subject to overflow (going past the max) and underflow (going below the min).
 
 Just like `11.succ` became `0` on our small clock, adding `1` to the maximum `Nat`
-would silently produce `0`. Adding two large positive `Int`s
+silently produces `0`. Adding two large positive `Int`s
 might silently result in a negative `Int`.
-Without a safeguard, there would be no warning bell, no error message. It would just happen.
+There is no warning bell, no error message. It just happens.
 
 Murphy's Law ("Anything that can go wrong, will go wrong") practically guarantees that
 if your program runs long enough or handles large enough inputs,
