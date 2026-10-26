@@ -95,9 +95,6 @@ All of those tricks are safe as long as nobody can tell the difference.
 Reading a file or downloading a web page would break the promise: the same question can get a different answer every time.
 That is why **an object capability is the permission to observe**: without one, our code can only compute with what it has been given.
 
-Acting on the world is different.
-A call that never ends needs no permission: nobody can observe that it does not end, since the code that would notice is the code that never runs.
-
 Logs follow the same rule: anybody can write to a log, but reading it back is observing.
 In the following example `Squares.of` leaves a note in an in-memory log, and only the `Test`, holding `sys`, can read the notes:
 -------------------------*/@Test void logsCanBeWrittenAnywhere(){ run("""
