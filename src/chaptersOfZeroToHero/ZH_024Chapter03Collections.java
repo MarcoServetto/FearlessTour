@@ -132,8 +132,6 @@ All the numeric types implement `SumNumber[_]`, so we can use any numeric value 
 This pattern allows us to limit what parameter types we can pass to a generic entity.
 The parameter type and the receiver generic type can cooperate to accept each other.
 Method `.join` works in the same conceptual way.
-`Nat` also implements `InfoKey`: a `Nat` can select an element inside an `Info` list.
-We will see `Info` in Chapter 4.
 
 ## Lists
 We have seen that we can call `.list` to produce a list out of our flows.
@@ -685,7 +683,7 @@ In the same way there is an `EList[E]` type that is an editable variant of `List
 ### List, Opt and ordering.
 
 Finally, `List[E]` and `Opt[E]` do not implement `Order[List[E]]`/`Order[Opt[E]]` or `OrderHash[List[E]]`/`OrderHash[Opt[E]]`.
-They cannot, since their elements may not be ordered.
+They do not need to and they may not contain ordered elements.
 If we want to sort a list of ordered elements we can do
 ````
 myList.flow
