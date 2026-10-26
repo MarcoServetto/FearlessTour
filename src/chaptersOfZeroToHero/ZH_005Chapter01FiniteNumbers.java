@@ -487,6 +487,30 @@ The solution was to add a layer of checks on top of the behaviour of `Int`, `Nat
 In this way, with the default behaviour of the standard library, overflows, underflows and other
 dangerous numeric operations with odd unpredictable results are going to stop the
 whole execution instead of performing probably nonsensical operations.
+```
+3 - 1
+//2
+0 - 1
+//stops the execution: Nat-: underflow, 0 - 1 is less than 0
+18446744073709551615 + 1
+//stops the execution: Nat+: overflow, 18446744073709551615 + 1 is greater than Math.maxNat (18446744073709551615)
+```
+OMIT_START
+-------------------------*/@Test void natUnderflowAndOverflowStop(){ run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+Test: Main{sys-> Block#
+  .do{Debug#(3 - 1)}
+  .do{Debug#(sys.try#{0 - 1}.info!.getMap.get("msg").getMsg)}
+  .do{Debug#(sys.try#{18446744073709551615 + 1}.info!.getMap.get("msg").getMsg)}
+  .return{Void}}
+//PRINT|2
+//PRINT|Nat-: underflow, 0 - 1 is less than 0
+//PRINT|Nat+: overflow, 18446744073709551615 + 1 is greater than Math.maxNat (18446744073709551615)
+"""); }/*--------------------------------------------
+OMIT_END
 We will discuss the details on how those checks can be tuned later in the guide.
 For now, it is important that you realise that those problems do exist.
 Ignoring them is building on shaky ground.
