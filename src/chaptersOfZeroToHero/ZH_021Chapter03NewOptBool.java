@@ -239,8 +239,7 @@ The two methods `Opt[E].orValue` and `Opt[E].orLazy` both return the value store
 - `Opt[E].orValue` takes the default value directly.
 - `Opt[E].orLazy` takes a lazy default: an `MF[E]` only called if the optional is empty.
 
-Modern computers can run many computations at the same time: this is called parallel programming.
-Method `.seqFlow` returns a `Flow[E]` working sequentially, that is, running one computation after the other. Flows are a very important data type in the Fearless standard library and we will discuss them later, including how they support parallel programming.
+Method `.seqFlow` returns a `Flow[E]`. Flows are a very important data type in the Fearless standard library and we will discuss them later.
 
 The method `.mapSome` is used to change the type of the optional, taking a function to map the content to a new type.
 
