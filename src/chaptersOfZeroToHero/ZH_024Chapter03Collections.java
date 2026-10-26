@@ -683,7 +683,7 @@ In the same way there is an `EList[E]` type that is an editable variant of `List
 ### List, Opt and ordering.
 
 Finally, `List[E]` and `Opt[E]` do not implement `Order[List[E]]`/`Order[Opt[E]]` or `OrderHash[List[E]]`/`OrderHash[Opt[E]]`.
-They do not need to and they may not contain ordered elements.
+They cannot, since their elements may not be ordered.
 If we want to sort a list of ordered elements we can do
 ````
 myList.flow
