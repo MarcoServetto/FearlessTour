@@ -510,9 +510,6 @@ instead of `t0.x <=> (t1.x) && {t0.y <=> (t1.y)}`.
 Every component is mentioned only once, and comparing by one more component is just one more `.then`.
 Note that the parameters of `.cmp` are `read`: here `{::.x}` works because `.x` is a `read` method.
 
-The `OrderBy` is an argument of `<=>`, so the inference knows that `{::.x}.then{::.y}` must be an `OrderBy[Point,K]`.
-If instead we use the same code as a receiver, as in `{::.x}.then{::.y}.cmp(t0, t1)`, the code may fail to compile: there the inference may not know that `{::.x}` is meant to be an `OrderBy`.
-
 ### Comparators and Flows: `.max`, `.min`, `.sort` and `.distinct`
 
 `Flow[E]` offers methods `.max` and `.min` to find the biggest and smallest element `E`.
