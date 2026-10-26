@@ -19,6 +19,34 @@ A `get` method promises a precise, correct answer, but only for the cases where 
 Instead of making up an arbitrary answer, `get` methods stop the whole execution.
 A `soft` method takes the opposite approach: it never stops the execution, and instead gives back the closest reasonable answer it
 can, even when an exact one is not possible.
+```
+3.0 .getNat
+//3
+3.5 .getNat
+//stops the execution: Float.getNat: cannot convert non-integral Float 3.5 to Nat
+3.5 .softNat
+//3
+(-1.0) .softNat
+//0
+```
+OMIT_START
+-------------------------*/@Test void getAndSoftLines(){ run("""
+use base.Void as Void;
+use base.Main as Main;
+use base.Block as Block;
+use base.Debug as Debug;
+Test: Main{sys-> Block#
+  .do{Debug#(3.0 .getNat)}
+  .do{Debug#(sys.try#{3.5 .getNat}.info!.getMap.get("msg").getMsg)}
+  .do{Debug#(3.5 .softNat)}
+  .do{Debug#((-1.0) .softNat)}
+  .return{Void}}
+//PRINT|3
+//PRINT|Float.getNat: cannot convert non-integral Float 3.5 to Nat
+//PRINT|3
+//PRINT|0
+"""); }/*--------------------------------------------
+OMIT_END
 
 Going back to repetitive code, we show below a difficult to read method computing the distance between two points;
 using the square root function (`.softSqrt`) present on `Nat`. Most numbers (like `2`)
