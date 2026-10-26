@@ -222,6 +222,7 @@ the capability of the list and the capability of the elements. This gives us a r
 
 - `mut List[mut Animal]` is a list of mutable animals.
 Since reference capabilities impact the whole reachable object graph, an object storing mutable objects needs to be mutable too.
+That is, the mutable animals are in the MROG of the list.
 Thus, we need to use `mut` twice.
 Using `.get` we can obtain `mut` references to the contained animals and mutate them.
 If we have a parameter `animals` containing `[bunny,bunny]`; that is, the same bunny twice, we can call `animals.get(0).run(5)` and the bunny will mutate; it will now be in a new position. Since the same bunny is contained in the list twice, `animals.get(1).location` will also result in the same updated location.
@@ -243,6 +244,7 @@ There `{::}` will be desugared as `BaseId[Num,Num]{a->a}`. That is, a simple ide
 As we have seen, `.as` does not create a new list: it reuses the old one. Basically by calling this method we are guiding the type system to recognise that a `mut List[Num]` is really just an `imm List[Num]`.
 
 - `List[mut Animal]`, also written as `imm List[mut Animal]`, behaves exactly like a `List[Animal]`, that is, an immutable list of immutable elements, but the type system does not know about this: `mut Animal` and `imm Animal` are different types.
+  The list is immutable, and immutability is deep: the MROG of the list is empty, so the animals in it are immutable too.
 This is `.greetAll` from above: `pets.as{::}` is how we tell the type system that a `List[mut Dog]` is fine to also use as a `List[Dog]`.
 This case often emerges from promotion: we may start with a `mut List[mut Animal]` and then turn it into immutable.
 
@@ -653,6 +655,7 @@ myMap.opt(Persons#(38,"Neil Armstrong")).orValue "Moon" // alternative default v
 ```
 
 Maps can have `mut`, `imm` or `read` elements; but only immutable keys. This is because the implementation of `Map[K,E]` needs to assume that the result of `.hash` and `==` is consistent over time.
+An immutable key has an empty MROG: nothing reachable from it can change, so its `.hash` and `==` can never change.
 
 We can flow on a map, but since both keys and elements are present, the flow method takes a function mapping keys and elements into some value.
 For example

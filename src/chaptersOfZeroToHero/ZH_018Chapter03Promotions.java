@@ -69,6 +69,9 @@ PromotionExample: {
 The code above compiles and produces an immutable `Animal`.
 The method `Animals#` is declared to return a `mut Animal`.
 However, this call can be promoted to `imm`: `Animals` (the receiver) is an `imm` object literal, and `Points#(10,20)` (the argument) is an `imm` value.
+In terms of MROG: the receiver and the argument are immutable, so their MROG is empty.
+The MROG of the new `Animal` holds only objects created during the call: the `Animal` itself and the `Var` storing its location.
+No other object can reach them, so nobody can ever mutate this `Animal`: it is immutable.
 
 Code `PromotionExample#.run(10)` would not compile because method `PromotionExample#` returns an immutable `Animal` and
 `Animal.run` is a `mut` method.
