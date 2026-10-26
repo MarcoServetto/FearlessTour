@@ -124,10 +124,6 @@ The note changed nothing for `Squares.of`: it still returns `25`, always.
 Whoever reads the notes, instead, can tell how many times and in which order `Squares.of` was called, so for that code the tricks above are no longer invisible.
 Observing has a price, and `sys` is where we pay it.
 
-Mutation inside the program is a different story.
-After `set` the program can read the new value of a `Var` with `get`, so the change can be observed.
-That is why reference capabilities restrict both who can change an object and who can look at an object that changes, while object capabilities restrict who can look outside of the program.
-
 
 OMIT_START
 -------------------------*/@Test void outputCapability(){ run("""
