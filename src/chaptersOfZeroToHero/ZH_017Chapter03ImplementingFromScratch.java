@@ -19,7 +19,7 @@ However, this was possible since all of those concepts could be expressed with j
 We will keep showing you the full code of concepts that can be expressed concisely, but as we discussed before, many useful programs and libraries are composed of millions of lines.
 For those, we will only show you how to use them.
 
-Moreover, certain operations simply can not be done in the language directly.
+Moreover, certain operations simply cannot be done in the language directly.
 All that we discussed lives in the world of the language itself. If we want our code to have any contact at all with the world outside of the program itself, we need something more.
 
 For example, no matter how many generics, types and methods we write from scratch, we will not be able to draw an image on the screen, or to save a file, or to read information from the internet.
@@ -51,7 +51,7 @@ Vars: {
 """); }/*--------------------------------------------
 
 First: `_Magic` is not something we can use in our code to make any of our wishes come true.
-It is a marker used internally by the compiler to annotate certain method bodies whose behaviour can not be encoded in plain Fearless code.
+It is a marker used internally by the compiler to annotate certain method bodies whose behaviour cannot be encoded in plain Fearless code.
 All such methods are already part of the standard library, so no user program would ever write `_Magic!`.
 
 The description below explains how the code above works, but will only mention `mut`, `imm`, `read` and `read/imm` without explaining how they work in detail yet.

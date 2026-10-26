@@ -370,7 +370,7 @@ In Fearless both issues are solved at the same time by tunable assertion levels.
 There are many different layers of assertions:
  - assert:  observed bug: the code of this package has a bug.
  - assertPre: precondition violation: the code of this package has been called with arguments that violate its requirements.
- - assertSys: The program is fine but the system running this program does not support the needed requirements. For example, a file must be present for the application to work; memory or stack are insufficient; OS resources can not be obtained.
+ - assertSys: The program is fine but the system running this program does not support the needed requirements. For example, a file must be present for the application to work; memory or stack are insufficient; OS resources cannot be obtained.
  - assertNetwork: The program and the system are fine, but some needed remote service is unavailable.
  - given that there are already 4 levels, we also have `.assert5`... `.assert16` to cover other user defined situations. `assert1`..`assert4` are aliases for those shown named assertion kinds.
 
@@ -432,7 +432,7 @@ Under this, disabled is kind of ambiguous and we may want more names.
 The idea is that we want to have a software product line:
 Many different kinds of software are produced depending on the assertion profile, and some of those are better for testing instead of deployment.
 
->TODO: API: we need a matcher form of the int to float etc methods, where if the number can not be represented cleanly in the other format we get some info (delta?) to a dedicated method to provide alternative behaviour
+>TODO: API: we need a matcher form of the int to float etc methods, where if the number cannot be represented cleanly in the other format we get some info (delta?) to a dedicated method to provide alternative behaviour
 
 
 > Discuss the various forms of match: match with datatype, match without data type (.cmp), match over data that exists (stack etc), match over computations (action); note how composing those two kinds of match is different; Finally matchers can carry extra parameters and pass / wire them around; consider CapTry with iso.

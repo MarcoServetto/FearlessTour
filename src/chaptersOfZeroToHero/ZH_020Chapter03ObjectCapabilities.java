@@ -97,7 +97,7 @@ That is why **an object capability is the permission to observe**: without one, 
 
 Acting on the world is different.
 Once a line is printed, nothing in our program can read it back: no code can tell if the line was printed once, twice or never.
-Printing can not make a result unpredictable, so it needs no permission: `base.Debug#(x)` prints `x` from any method, with no `sys` in sight.
+Printing cannot make a result unpredictable, so it needs no permission: `base.Debug#(x)` prints `x` from any method, with no `sys` in sight.
 Even a call that never ends needs no permission: nobody can observe that it does not end, since the code that would notice is the code that never runs.
 
 Logs follow the same rule: anybody can write to a log, but reading it back is observing.
@@ -129,7 +129,7 @@ The note changed nothing for `Squares.of`: it still returns `25`, always.
 Whoever reads the notes, instead, can tell how many times and in which order `Squares.of` was called, so for that code the tricks above are no longer invisible.
 Observing has a price, and `sys` is where we pay it.
 
-So why does `sys.out.println("Hello, World!")` ask for a capability, if printing can not be observed?
+So why does `sys.out.println("Hello, World!")` ask for a capability, if printing cannot be observed?
 Because in an object oriented language, to do something we ask an object able to do it; and a method receiving an `Output` announces that it prints.
 An `Output` gives our code no new way to observe anything, so it is transparent: the results of a method do not depend on whether the text is printed, ignored or sent somewhere else.
 

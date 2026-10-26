@@ -291,7 +291,7 @@ the first step correctly jumps from `North.reverse` into `North.turn.turn`:
 Note: `North`, `East`, `South`, and `West` can be used directly as
 objects because they have no abstract methods.
 Since `Direction` has at least one abstract method (`.turn`),
-it can not be used directly as a valid object literal.
+it cannot be used directly as a valid object literal.
 We will call types with abstract methods **abstract types**.
 
 

@@ -62,7 +62,7 @@ is not valid.
 Type names can start with the `_` character, but a full name of form `somePackageName._SomeTypeName` is not valid anywhere in Fearless.
 For example, if a package `foo` declares a type `_Foo`:
 - Any code inside package `foo` can use `_Foo` to refer to such type.
-- Code outside of package `foo` can not write 
+- Code outside of package `foo` cannot write 
 `foo._Foo`; not as a type, not as an alias declaration.
 
 This allows for a form of package private types, where we can declare types whose name starts with `_` to indicate that the users of our code should not refer to those types, they are only intended as a way to internally encode the behaviour of the library.

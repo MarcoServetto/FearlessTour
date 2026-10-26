@@ -73,14 +73,14 @@ The discussion has to compare this with `Bool`, where the cases have names.
 
 ### Match and `Block`: return the outcome instead of taking the matcher
 
-A method that takes a matcher and returns the `R:**` produced by the matcher can not compute its result with `Block`:
+A method that takes a matcher and returns the `R:**` produced by the matcher cannot compute its result with `Block`:
 ````
 .cmp[R:**](t0: read T, t1: read T, m: mut OrderMatch[R]): R -> Block#
   .if {t0.x < (t1.x)}.return {m.lt}
   ...
 ````
 does not compile, since `Block#` requires its `R` to be `R:*`.
-`Block` needs `R:*` because an early return (`.if{..}.return{..}`) stores the result in an object for the rest of the chain, and an object can not store a hygienic reference.
+`Block` needs `R:*` because an early return (`.if{..}.return{..}`) stores the result in an object for the rest of the chain, and an object cannot store a hygienic reference.
 The solution is for the method to return a function from the matcher to the result, as `Order` does, instead of taking the matcher.
 The block then computes an ordinary value, and applying it to the matcher produces the `R:**`:
 ````
@@ -93,7 +93,7 @@ This works for any matcher, not only for comparisons.
 
 ### Match carrying `iso` and hygienic references on the side
 
-A matcher is an object literal, and object literals can not capture hygienic references (`mutH`, `readH`), while an `iso` reference is captured as `imm`.
+A matcher is an object literal, and object literals cannot capture hygienic references (`mutH`, `readH`), while an `iso` reference is captured as `imm`.
 Thus code matching on a value while holding a `mutH` or an `iso` reference may not compile.
 For example, in a parser consuming a `mutH Lexer` and building an `iso Exp`:
 ````
@@ -133,7 +133,7 @@ This variant needs the hygienic reference capabilities, discussed below.
 
 `**` stands for all the reference capabilities, including `iso`, `mutH` and `readH`, that the guide has not discussed yet.
 The discussion has to cover:
-- what `mutH` and `readH` are, and why object literals can not capture them;
+- what `mutH` and `readH` are, and why object literals cannot capture them;
 - what `iso` is, how promotion produces it, and why capturing an `iso` reference gives an `imm` one;
 - `R:*` versus `R:**` in generic types, and why `Block` takes `R:*`;
 - `Block.openIso`.
