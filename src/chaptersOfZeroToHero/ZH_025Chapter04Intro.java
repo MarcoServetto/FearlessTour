@@ -145,6 +145,26 @@ This structured approach to serialisation using `Info` not only simplifies data 
 Similarly, we can use the type `Infos` to programmatically create `Info` objects using methods `Infos.msg(Str)`, `Infos.list(/*..elements..*|/)` and `Infos.map(/*..keys and values..*|/)`.
 In the standard library `Infos.list` takes one or two elements; a longer list `myList` can be turned into an `Info` with `myList.info{::}`.
 The empty `Info` object can be obtained by writing `Info` or just `{}`.
+-------------------------*/@Test void infoAsJson(){ run("""
+//OMIT_START
+use base.Main as Main;
+use base.Block as Block;
+use base.Infos as Infos;
+use base.Info as Info;
+//OMIT_END
+Test: Main{sys -> Block#
+  .do {sys.out.println(Infos.map("heading","North",  "aiming","East",  "position",Infos.map("x","10",  "y","5")).str)}
+  .do {sys.out.println(Infos.list("North",Infos.list("10","5")).str)}
+  .do {sys.out.println(Infos.msg("hi").str)}
+  .return {sys.out.println(Info.str)}
+  }
+//PRINT|{"heading":"North","aiming":"East","position":{"x":"10","y":"5"}}
+//PRINT|["North",["10","5"]]
+//PRINT|"hi"
+//PRINT|null
+"""); }/*--------------------------------------------
+The first line is the JSON text of a tank: a map holding its heading, its aiming and its position, where the position is itself a map.
+The last line is the empty `Info`.
 
 >Note: tests that the 4 kinds of info work, and that empty list and empty map and empty string return the empty info, and that the other kind is returned otherwise.
 >Add examples showing this behaviour
