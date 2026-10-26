@@ -344,7 +344,7 @@ A few kinds of numbers are part of the Fearless standard library:
 `Nat` (Natural Numbers): These represent non-negative whole numbers (`0`, `1`, `2`, `3`, and so on). You write them just like you'd expect: `1`, `0`, `34`, `45235`.
 They have familiar methods like `+`, `-`, `*`, `.succ`, `.pred`, similar to our `Number` example. For example: `5 + 3` results in `8`.
 
-`Int` (Integers): These represent positive and negative whole numbers (..., `-2`, `-1`, `+0`, `+1`, `+2`, ...). To distinguish them, you must include the sign before the number. Note that zero as an `Int` is written `+0` (`-0` is also accepted, and denotes the same number).
+`Int` (Integers): These represent positive and negative whole numbers (..., `-2`, `-1`, `+0`, `+1`, `+2`, ...). To distinguish them, you must include the sign before the number. Note that zero as an `Int` is written `+0`.
 Some `Int`s: `+10`, `-25`, `+0`, `+12345`, `-987`.
 
 Crucially, `+10` or `-25` are treated as single tokens by the Fearless compiler. `Int` also provides methods like `+`, `-`, `*`, etc. For example: `+10 + -3` results in `+7`.
