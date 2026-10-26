@@ -43,7 +43,7 @@ We can read the above code as follows:
 `Left` is a kind of `Fork` where the `.choose` method returns the first parameter.
 `Right` is a kind of `Fork` where the `.choose` method returns the second parameter.
 
-Generic type parameters like `Val` are also uppercase starting identifiers exactly like type names.
+Generic type arguments like `Val` are also uppercase starting identifiers exactly like type names.
 
 With the code above, `Left.choose("Hello","Hi")` reduces to `"Hello"` and
 `Right.choose("Hello","Hi")` reduces to `"Hi"`.
