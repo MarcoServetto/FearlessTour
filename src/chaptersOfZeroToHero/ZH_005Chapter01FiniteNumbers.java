@@ -469,10 +469,6 @@ if your program runs long enough or handles large enough inputs,
 something, somewhere, will eventually trigger an unexpected overflow if you're solely
 relying on `Nat` or `Int` without careful checks.
 
-Overflows and underflows are a fundamental trade-off for the speed
-gained by optimised integers in most programming languages.
-This isn't a Fearless-specific issue; it's a real issue in most languages and the
-cause of a large number of bugs.
 The big issue is that overflows and underflows do not make the code fail, they make
 it misbehave in dangerous ways: consider using a `Nat` to represent the dose of medicine
 to inject in a patient every second, where the doctor can press a `+1` and `-1` button

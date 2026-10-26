@@ -192,8 +192,6 @@ Let's see again this code, comparing line by line to see what changes thanks to 
 In the code above, we call `diffX`, `diffY` and `res` local parameters, or **locals** for short.
 Local parameters are a staple of most programming languages, but in Fearless they are represented
 via syntactic sugar instead of being a core language feature.
-In other languages they are often known by one (or more) of the following names:
-local bindings, bindings, let-bindings, lets, constants, local variables, (final) variables.
 
 //OMIT_START
 -------------------------*/@Test void distancesAgree(){ run("""

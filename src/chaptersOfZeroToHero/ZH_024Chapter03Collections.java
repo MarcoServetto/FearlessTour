@@ -191,8 +191,6 @@ Note: since `index` is a `Nat`, the division is rounded down (**integer division
 For example `13 .getTruncDiv 5 = 2`; and the remainder/`.getRem` operation returns the remainder of the
 integer division: `13 .getRem 5 = 3`
 
-This kind of encoding was crucial in the past for extracting performance benefits from primitive machines with severe memory constraints. Today, while less common, it remains critical in some contexts.
-
 ### The `.as` method
 `List[E].as` is **not** a general-purpose transformation method: for that, use `.flow.map{...}.list`, as we have already seen.
 Instead, `List[E].as` is a zero-cost retyping: the compiler checks that the function passed to it is `{::}` (or something reducible to it), and if so, reinterprets the list at a different, compatible element type, without touching a single element.
