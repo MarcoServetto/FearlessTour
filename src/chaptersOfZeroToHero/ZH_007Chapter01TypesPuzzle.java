@@ -38,6 +38,30 @@ Attempting to call it with integers would result in a type error:
 Several mechanisms can block our program even before the code starts reducing.
 The first line of defence is syntax.
 A syntax error, like unbalanced parentheses, signals that Fearless does not understand our instructions.
+```
+  Tanks#(North,East } //syntax error: Wrong closer for "(" group. Found instead: "}". Otherwise expected: ")".
+```
+OMIT_START
+-------------------------*/@Test void unbalancedParentheses(){ run("""
+Direction: { .turn: Direction }
+North: Direction{ East }
+East: Direction{ North }
+Tank: { .heading: Direction; .aiming: Direction }
+Tanks: { #(heading: Direction, aiming: Direction): Tank -> { .heading -> heading; .aiming -> aiming } }
+A: { #: Tank -> Tanks#(North,East }
+//ERROR|In file: [###]_test/_rank_app111.fear
+//ERROR|
+//ERROR|006| A: { #: Tank -> Tanks#(North,East }
+//ERROR|   |                       ^^^^^^^^^^^^^
+//ERROR|
+//ERROR|While inspecting groups of parenthesis
+//ERROR|Wrong closer for "(" group.
+//ERROR|Found instead: "}".
+//ERROR|This "(" may be unintended.
+//ERROR|Otherwise expected: ")".
+//ERROR|Error 2 UnexpectedToken
+"""); }/*--------------------------------------------
+OMIT_END
 
 A type error, however, indicates that our instructions, though understood, do not make logical sense within the defined system.
 We need two directions to create a `Tank`, and the code is trying to smuggle two `Int` values as `Direction`s.
