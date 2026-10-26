@@ -71,7 +71,7 @@ That is, object capabilities and reference capabilities are two different concep
 
 ### What are object capabilities for?
 
-You may think that capabilities are there to stop our code from **doing** things: no `CapOutput`, no printing.
+You may think that capabilities are there to stop our code from **doing** things.
 I find the real story much more interesting: capabilities decide what our code can **observe**.
 
 Look at this method:
@@ -94,11 +94,6 @@ This predictability is a superpower:
 All of those tricks are safe as long as nobody can tell the difference.
 Reading a file or downloading a web page would break the promise: the same question can get a different answer every time.
 That is why **an object capability is the permission to observe**: without one, our code can only compute with what it has been given.
-
-Acting on the world is different.
-Once a line is printed, nothing in our program can read it back: no code can tell if the line was printed once, twice or never.
-Printing cannot make a result unpredictable, so it needs no permission: `base.Debug#(x)` prints `x` from any method, with no `sys` in sight.
-Even a call that never ends needs no permission: nobody can observe that it does not end, since the code that would notice is the code that never runs.
 
 Logs follow the same rule: anybody can write to a log, but reading it back is observing.
 In the following example `Squares.of` leaves a note in an in-memory log, and only the `Test`, holding `sys`, can read the notes:
@@ -128,10 +123,6 @@ Test: Main {sys -> Block#
 The note changed nothing for `Squares.of`: it still returns `25`, always.
 Whoever reads the notes, instead, can tell how many times and in which order `Squares.of` was called, so for that code the tricks above are no longer invisible.
 Observing has a price, and `sys` is where we pay it.
-
-So why does `sys.out.println("Hello, World!")` ask for a capability, if printing cannot be observed?
-Because in an object oriented language, to do something we ask an object able to do it; and a method receiving a `CapOutput` announces that it prints.
-A `CapOutput` gives our code no new way to observe anything, so it is transparent: the results of a method do not depend on whether the text is printed, ignored or sent somewhere else.
 
 Mutation inside the program is a different story.
 After `set` the program can read the new value of a `Var` with `get`, so the change can be observed.
