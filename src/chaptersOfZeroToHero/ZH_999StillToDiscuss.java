@@ -15,7 +15,7 @@ When a topic is written up in its proper chapter, its entry leaves this list.
 
 ## Variants of match
 
-Fearless has no special syntax for pattern matching: a type offers a `.match`-like method taking a matcher object, and the matcher has one method for each case.
+Fearless has no special syntax to match over the cases of a type: a type offers a `.match`-like method taking a matcher object, and the matcher has one method for each case.
 The guide uses this encoding everywhere, but it comes in several variants, and each variant has its own strengths.
 This section has to present them side by side.
 
