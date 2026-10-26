@@ -63,7 +63,6 @@ An instance of `Var` will store an object of type `E`. The crucial bit is that s
 Method `.set` takes a new value, and magically changes the current object to store that new value instead of the old one.
 Note how this method starts with the `mut` keyword.
 In Fearless, types and methods can have a keyword in front to track how they interact with magic.
-Crucially, the type system tracks those keywords and provides extensive guarantees on how the flow of magic interacts with the program at large.
 Then we define two variants of the method `.get`, one for `mut` and one for `read` receivers. You can think of those two variants as two different methods that just so happen to have the same name.
 They will both return the current value, but with different types:
 - If we have a `mut` receiver we produce the value with type `E`.
