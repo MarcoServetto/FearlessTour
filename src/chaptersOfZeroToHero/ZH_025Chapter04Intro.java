@@ -132,14 +132,14 @@ An `Info` can be one of the following:
 
 The operations `Info.str` and `Infos.fromStr` are provided to convert `Info` objects to JSON strings and to parse JSON strings as `Info` objects, respectively.
 
-With an `Info` object named `myInfo`, the real `.msg`/`.list`/`.map` accessors each return an `Opt`, since only one variant is actually present at a time:
+With an `Info` object named `myInfo`, the `.msg`/`.list`/`.map` accessors each return an `Opt`, since only one variant is actually present at a time:
 - `myInfo.msg: Opt[Str]` holds a string message if `myInfo` is that variant.
 - `myInfo.list: Opt[List[Info]]` holds a list of `Info` objects if `myInfo` is that variant.
 - `myInfo.map: Opt[Map[Str,Info]]` holds a map of keys to `Info` values if `myInfo` is that variant.
 
 Notably, strings, lists and maps are three kinds of objects that can conceptually be empty.
 Since `Info` can represent either a string, a list, or a map, only one of these properties can be non-empty and hold data at any given time, reflecting the contained type.
-There's also an empty `Info`. For the common cases where the variant is assumed to be there, or a default is acceptable instead of an `Opt`, `Info` also offers `.getMsg`/`.getList`/`.getMap` (throwing if `myInfo` is not that variant) and `.softMsg`/`.softList`/`.softMap` (returning the empty string/list/map instead of throwing).
+There's also an empty `Info`. For the common cases where the variant is assumed to be there, `Info` also offers `.getMsg`/`.getList`/`.getMap`, throwing if `myInfo` is not that variant.
 This structured approach to serialisation using `Info` not only simplifies data handling but also enhances the clarity and flexibility of your codebase, making it easier to manage and extend.
 
 Similarly, we can use the type `Infos` to programmatically create `Info` objects using methods `Infos.msg(Str)`, `Infos.list(/*..elements..*|/)` and `Infos.map(/*..keys and values..*|/)`.
