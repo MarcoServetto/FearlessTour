@@ -232,8 +232,6 @@ As you can see, instead of creating a large expression this version accumulates 
 This represents more closely what a person could do if they had to merge two stacks of chairs and if they were weak enough that they could only lift a single chair at any time.
 Note how this version produces a different ordering in the result.
 
-This is known in computer science as a **tail recursive** algorithm.
-
 Note how if we explicitly pass the empty stack as the second argument, we can use it as an empty initial accumulator, and we get a reverse:
 `[1,2,3] ++ []` reduces to `[3,2,1]`
 

@@ -154,6 +154,15 @@ The discussion has to cover:
 - Deterministic and non-deterministic errors in detail (Chapter 4, action).
 - The techniques supporting offensive programming when working with mutable data (Chapter 4, action).
 
+## Deep recursion
+
+A recursive method calling itself many times can run out of stack and fail with a stack overflow.
+`RunRecursion#{..}` runs its lambda on a fresh thread with a large stack, so deeply recursive code can go much deeper.
+The discussion has to cover:
+- an example of a recursive method that overflows the stack, and the same method calling itself through `RunRecursion#`;
+- how a type implementing `RunRecursion` is a family, tuning `.depth` and `.stackSize`;
+- why this removes the need to rewrite recursive algorithms as tail recursive ones, as some other languages require.
+
 ## Helping the inference
 
 The inference is going to improve over time, so the guide talks about it in terms of what may or may not compile.
