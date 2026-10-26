@@ -131,7 +131,7 @@ The key is that `Try#{..}` and `.map{..}` are lazy: their bodies run only when s
 - (3) With `.map`, the function runs when the action runs, after `Try#` has already succeeded, and nothing captures its errors: a missing key or an unknown direction leaks out of `!` as a real error.
   With `.andThen`, the function returns a `Try#` action, so the error becomes the `Info` of that action, and `.andThen` passes it on as the `Info` of the result.
 
-In short: an error becomes an `Info` only if it is thrown inside the body of a `Try#`.
+In short: an error becomes an `Info` when it is thrown inside the body of a `Try#`.
 
 > An interesting corner of design would be to offer some way to go from `Flow[Action[T]]` into `Action[List[T]]` ? or `Action[R]` with a transformation function on the flow?
 
