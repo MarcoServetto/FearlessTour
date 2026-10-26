@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Locale;
 
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
@@ -90,7 +91,7 @@ record SectionInfo(
     assert chapterNumber <= 99;
     assert sectionNumber <= 99;
   }
-  public String fileName(){ return String.format("%02d_%02d.html", chapterNumber, sectionNumber); }
+  public String fileName(){ return String.format(Locale.ROOT, "%02d_%02d.html", chapterNumber, sectionNumber); }
   public String pageTitle(){ return chapterTitle + " :: " + sectionTitle; }
   public String sideBarEntry(){
     String displayName= pageTitle();
