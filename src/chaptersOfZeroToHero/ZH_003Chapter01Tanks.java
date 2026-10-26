@@ -267,7 +267,6 @@ Up to now we have worked with just a finite set of objects:
 the four directions.
 Using capturing, we can create more objects, and we can compose objects
 to obtain new objects.
-For example, we could define a `Platoon` object containing many individual `Tank` objects.
 
 In the code above we defined `Tank` directly in the `Tanks.of` method.
 In this way, the only way to create `Tank` objects is to call `Tanks.of`.
