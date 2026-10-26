@@ -392,7 +392,6 @@ More than 18 followed by 18 zeros!
 >six hundred fifteen.
 
 Wow, what a number!
-We will discuss shortly why this oddly specific number.
 
 How does the standard library provide all eighteen quintillion `Nat` types?
 Did someone actually type them all out?
