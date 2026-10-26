@@ -595,6 +595,13 @@ OrderHash[T]:Order[T],ToStr{
 ````
 By adding `ToStr` we are able to automatically derive 12 assert methods helping to check expectations over `T`; the conversion to string is needed for decent error messages.
 Moreover this allows maps to be much more consistent with lists when it comes to printing: both need to just take a way to print the element; all the functionalities about map keys are provided once and for all at map initialisation time.
+```
+Lists#(1, 2, 3).str{::}
+//[1, 2, 3]
+Maps#({::}, "one", 1, "two", 2).str{::}
+//{one: 1, two: 2}
+```
+OMIT_START
 -------------------------*/@Test void printingListsAndMaps(){ run("""
 //OMIT_START
 use base.Main as Main;
@@ -609,6 +616,7 @@ Test: Main{sys -> Block#
 //PRINT|[1, 2, 3]
 //PRINT|{one: 1, two: 2}
 """); }/*--------------------------------------------
+OMIT_END
 Both `.str{::}` take only the way to print the elements: the map prints its keys `one` and `two` using the `{::}` given to `Maps#` when the map was created.
 
 Note how we also add `.close` in the other direction: earlier we saw
