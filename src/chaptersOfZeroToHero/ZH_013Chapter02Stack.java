@@ -233,7 +233,6 @@ This represents more closely what a person could do if they had to merge two sta
 Note how this version produces a different ordering in the result.
 
 This is known in computer science as a **tail recursive** algorithm.
-Some older languages require tail recursive algorithms for optimisation reasons. This is usually not a concern in Fearless. It is still early to discuss **why and how** this is not a problem. Now we just clarify that we can avoid worrying about those ideas in a modern language like Fearless.
 
 Note how if we explicitly pass the empty stack as the second argument, we can use it as an empty initial accumulator, and we get a reverse:
 `[1,2,3] ++ []` reduces to `[3,2,1]`
