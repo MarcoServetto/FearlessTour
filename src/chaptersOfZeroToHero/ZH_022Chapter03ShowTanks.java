@@ -114,15 +114,18 @@ Basically, `WidenTo[Direction]` makes it so that the inference would never infer
 
 Here, if we were to omit `WidenTo[Direction]`, the code
 ````
-  .turn: Direction -> this.match{
-    .north -> East;
-    .east  -> South;
-    .south -> West;
-    .west  -> North;
-    };
+  .turn2: Direction -> Block#
+    .let d= {this.match{
+      .north -> East;
+      .east  -> South;
+      .south -> West;
+      .west  -> North;
+      }}
+    .return{d};
+//type error: Method ".east" inside the object literal instance of "iso DirectionMatch[East]" is implemented with an expression returning "iso South".
 ````
-may fail to compile:
-the inference would see `.north -> East;` and may conclude that the method `.north` is returning `East` of type `East`, thus this match should return an `East` instead of a direction.
+would fail to compile:
+the inference would see `.north -> East;` and would conclude that the method `.north` is returning `East` of type `East`, thus this match should return an `East` instead of a direction.
 
 We define `DirectionMatch[R]` to be mutable. This is because we want to allow the execution of `.match` to mutate the state of objects captured by the running operation. In some cases we will want our matchers to be more restrictive and to only support operations that do not perform mutations, but in most cases we will use the shown signature.
 Note how, assuming the intention of defining an enumeration, the three lines
