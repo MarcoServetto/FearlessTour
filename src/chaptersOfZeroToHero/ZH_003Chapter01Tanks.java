@@ -577,9 +577,8 @@ Tanks:{ .of(heading: Direction, aiming: Direction): Tank -> Tank:{ .heading: Dir
 X:{ .t: Tank -> Tank }
 //ERROR|In file: [###]_test/_rank_app111.fear
 //ERROR|[###]
-//ERROR|The type "Tank" is declared inside a method body.
-//ERROR|A type declared inside a method can capture any parameter name in scope,
-//ERROR|so it cannot be extended or instantiated.
+//ERROR|The type "Tank" is not standalone: it is declared inside a method body.
+//ERROR|Only a standalone type can be extended or mentioned by name.
 //ERROR|[###]
 """); }/*--------------------------------------------
 //OMIT_END
