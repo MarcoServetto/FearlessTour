@@ -168,6 +168,17 @@ The discussion has to cover:
 The inference is going to improve over time, so the guide talks about it in terms of what may or may not compile.
 The discussion has to cover the ways to help it:
 explicit type arguments (`Foo#[Bar](bar)`), literals with an explicit type (`OrderBy[Tank,Direction]{::.imm.heading}`), and the difference between arguments, where an expected type is known, and receivers, where it may not be.
+
+## Standalone types
+
+A type is **standalone** when its objects do not depend on the place where the type is written.
+Every top level type is standalone.
+A type declared inside a method body is standalone if it implements `CaptureFree`, directly or indirectly:
+the type system then checks that its methods use no parameter of the enclosing method bodies.
+The code can mention a standalone type by name and extend it, as it does for a top level type.
+The discussion has to show the two uses that make this convenient:
+naming a lambda so that the code can name it back, as the standard library does for caching with `CacheF`,
+and declaring the cases of an enumeration directly inside `.enumList`.
 OMIT_START
 -------------------------*/@Test void blockRejectsResultWithHygienicReferences(){ run("""
 use base.Nat as Nat;
