@@ -286,7 +286,7 @@ Parser:{
 //ERROR|017|     }
 //ERROR|
 //ERROR|While inspecting parameter "l" > ".plus" line 14 > ".parsePlus(_,_)" line 13
-//ERROR|parameter "l" has type "mutH Lexer".
+//ERROR|Parameter "l" has type "mutH Lexer".
 //ERROR|The type of parameter "l" is hygienic (readH or mutH)
 //ERROR|and thus it cannot be captured in the object literal instance of "mut TokenMatch[iso Exp]" (line 13).
 //ERROR|
