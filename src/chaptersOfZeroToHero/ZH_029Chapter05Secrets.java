@@ -416,7 +416,7 @@ Honest: Reporter{ es -> Report{
 Beds: { #: List[Patient] -> Lists#(Patients#("Bed A", 40), Patients#("Bed B", 50), Patients#("Bed C", 70)) }
 //OMIT_END
 Starrer: Reporter{ es -> Report{
-  .board -> es.flow.map{e -> Try#{ e.dose.map{d -> (d > 50).if{ .then -> Error.msg "high"; .else -> s } } }
+  .board -> es.flow.map{e -> Try#{ e.dose.map{d -> (d > 50).if{ .then -> Error.msg "high"; .else -> d } } }
     .run{ .ok _ -> e.bed; .info _ -> e.bed + "*" }}.join ", ";
   .order -> Secrets#0;
   }}
