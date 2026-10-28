@@ -179,6 +179,13 @@ The code can mention a standalone type by name and extend it, as it does for a t
 The discussion has to show the two uses that make this convenient:
 naming a lambda so that the code can name it back, as the standard library does for caching with `CacheF`,
 and declaring the cases of an enumeration directly inside `.enumList`.
+
+## Attenuators
+
+An attenuator wraps a capability object: each call first checks a condition, like a `Revocation`, and then calls the wrapped capability.
+The discussion has to cover:
+- how a `RevokableSystem` wraps every capability it gives, so that one `Revocation.revoke` stops them all;
+- a capability method that returns an object acting later must return a wrapped object too, so that the check runs when that object acts, not only when it is made: `RevokableTry` wraps the `Action` that `#` returns, and `RevokableProcess` wraps the running main that `.start` returns in `RevokableRunningMain`.
 OMIT_START
 -------------------------*/@Test void blockRejectsResultWithHygienicReferences(){ run("""
 use base.Nat as Nat;
