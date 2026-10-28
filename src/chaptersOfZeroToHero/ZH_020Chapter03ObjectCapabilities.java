@@ -105,7 +105,7 @@ use base.InMemoryLog as InMemoryLog;
 use base.Nat as Nat;
 use base.Str as Str;
 //OMIT_END
-Events: InMemoryLog[Str]{"Events"}
+Events: InMemoryLog[Str]{}
 Squares: {
   .of(n: Nat): Nat -> Block#
     .do {Events.log("squaring " + n)}
