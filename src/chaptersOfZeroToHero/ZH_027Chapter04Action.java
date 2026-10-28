@@ -318,12 +318,34 @@ Only `System.try` can observe stack traces.
 
 Moreover, `System.try` allows us to capture some sneaky errors, known as **non-deterministic errors**.
 Non-deterministic errors are errors that may change depending on the specific system limitations and set up.
+```
+Try#{0 - 1}.info.isSome
+//stops the execution: Nat-: underflow, 0 - 1 is less than 0
+sys.try#{0 - 1}.info.isSome
+//True
+```
+OMIT_START
+-------------------------*/@Test void onlySysTryCapturesNonDeterministicErrors(){ run("""
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Try as Try;
+use base.Nat as Nat;
+Loop: { .deep(n: Nat): Nat -> this.deep(n + 1) + 1; }
+Test: base.Main{sys-> Block#
+  .do{Debug#(sys.try#{Try#{0 - 1}.info.isSome}.info!.getMap.get("msg").getMsg)}
+  .do{Debug#(sys.try#{0 - 1}.info.isSome)}
+  .do{Debug#(sys.try#{Loop.deep(0)}.info.isSome)}
+  .return{base.Void}}
+//PRINT|Nat-: underflow, 0 - 1 is less than 0
+//PRINT|True
+//PRINT|True
+"""); }/*--------------------------------------------
+OMIT_END
 They include:
-- Memory overflow: discuss
-- Stack overflow: discuss
-- Assertion errors (since they can be disabled? Discuss)
-- Arithmetic errors (since they can be disabled? Discuss)
-- Other? Discuss
+- Arithmetic overflow and underflow, like `0 - 1` above.
+- Assertion failures, like `5 .assertInRange(1=~~=4)`.
+- Stack overflow.
+- Memory overflow.
 
 
 As you can imagine, it is quite rare to have to capture non-deterministic errors; but there are many reasonable examples:
