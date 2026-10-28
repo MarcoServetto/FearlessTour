@@ -252,14 +252,11 @@ In `.cmp`, the parameters `{.imm.x,.imm.y}1` and `{.imm.x,.imm.y}2` are patterns
 `{.imm.x,.imm.y}1` declares the names `x1` and `y1`, standing for the `.imm.x` and `.imm.y` of the first point, and `{.imm.x,.imm.y}2` declares `x2` and `y2` for the second point.
 The parameters of `.cmp` are `read`, so we use `.imm`, offered by any `DataType`, to call the `imm` methods `.x` and `.y`.
 
-> TODO: we need to decide if those are deterministic or non deterministic errors.
-> Same for most errors in the std library right now.
-
 This means that if we try to create a `Point` object, either manually or from an `Info`, we either get a valid `Point` or an error.
 The idea is that most of the code can create points assuming that the creation would succeed.
 From the perspective of that code, a failure to create a `Point` object is an observed bug.
 
-Then, if the program as a whole does not want to consider failing to create points an observed bug, it can wrap a function making a lot of computations about points into a `Try#{..}`, thus producing an action that can be safely handled.
+Then, if the program as a whole does not want to consider failing to read points from an `Info` an observed bug, it can wrap a function reading a lot of points into a `Try#{..}`, thus producing an action that can be safely handled.
 In a complex program we can have a few layers of responsibility like this, where some code works as a supervisor of some other code that is allowed to fail.
 
 ### Try, CapTry and exact shape of error messages.
@@ -343,7 +340,7 @@ Test: base.Main{sys-> Block#
 OMIT_END
 They include:
 - Arithmetic overflow and underflow, like `0 - 1` above.
-- Assertion failures, like `5 .assertInRange(1=~~=4)`.
+- Assertion failures, like the range checks of `Points#`.
 - Stack overflow.
 - Memory overflow.
 
