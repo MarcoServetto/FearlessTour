@@ -270,6 +270,32 @@ Lists#(2,3,4) <+ 1
 ```
 where `<+` appends to the left and `+>` appends to the right.
 
+Both `List[East]` and `List[Direction]` are correct types for `Lists#(East)`: nothing in `Lists#(East)` says that we mean a list of directions.
+The type inference has to pick one of the two types, and it may pick the most precise one, `List[East]`.
+Then `Lists#(East) +> South` may fail to compile, since `South` is not an `East`.
+This is what `WidenTo[Direction]` is for: since `Direction` implements `WidenTo[Direction]`, the type inference picks `List[Direction]`, and `Lists#(East) +> South` is a list of two directions.
+OMIT_START
+-------------------------*/@Test void widenToPicksTheListType(){ run("""
+use base.Main as Main;
+use base.Lists as Lists;
+use base.Str as Str;
+use base.ToStr as ToStr;
+use base.Sealed as Sealed;
+use base.WidenTo as WidenTo;
+North: Direction {::.north}
+East : Direction {::.east}
+South: Direction {::.south}
+West : Direction {::.west}
+DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
+Direction: ToStr, Sealed, WidenTo[Direction] {
+  read .match[R: **](mut DirectionMatch[R]): R;
+  .str -> this.match{ .north -> "North"; .east -> "East"; .south -> "South"; .west -> "West"; };
+  }
+Test: Main{sys -> sys.out.println((Lists#(East) +> South).str{::})}
+//PRINT|[East, South]
+"""); }/*--------------------------------------------
+OMIT_END
+
 Finally, we can use `.subList(start,end)` to get a sub part of a list. Method `.subList` does not clone the list, but creates a minimal wrapper object referring to the transformed indexes; thus using `.subList` on a very, very long list is still a cheap operation.
 
 ### List and withers: `.with`, `.without`, `.withAlso`
