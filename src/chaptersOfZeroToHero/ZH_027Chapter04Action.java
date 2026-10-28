@@ -221,7 +221,12 @@ We could use errors to enforce that whenever a `Point` is observed, the `.x` and
 ```
 Points: F[Nat,Nat,Point], FromInfo[Point] {
 
-  .fromInfo(i) -> Points#(i.getMap.get("x").getMsg.getNat, i.getMap.get("y").getMsg.getNat);
+  .fromInfo(i) -> Block#
+    .let[Nat] x= {i.getMap.get("x").getMsg.getNat}
+    .let[Nat] y= {i.getMap.get("y").getMsg.getNat}
+    .if {x.inRange(0=~~10).not} .return {Error.msg("Points.fromInfo: x is "+x+", but coordinates go from 0 to 9")}
+    .if {y.inRange(0=~~10).not} .return {Error.msg("Points.fromInfo: y is "+y+", but coordinates go from 0 to 9")}
+    .return {Points#(x, y)};
 
   # x, y ->Block#
     .do { x.assertInRange(0=~~10) }
@@ -252,14 +257,66 @@ In `.cmp`, the parameters `{.imm.x,.imm.y}1` and `{.imm.x,.imm.y}2` are patterns
 `{.imm.x,.imm.y}1` declares the names `x1` and `y1`, standing for the `.imm.x` and `.imm.y` of the first point, and `{.imm.x,.imm.y}2` declares `x2` and `y2` for the second point.
 The parameters of `.cmp` are `read`, so we use `.imm`, offered by any `DataType`, to call the `imm` methods `.x` and `.y`.
 
-> TODO: we need to decide if those are deterministic or non deterministic errors.
-> Same for most errors in the std library right now.
-
 This means that if we try to create a `Point` object, either manually or from an `Info`, we either get a valid `Point` or an error.
 The idea is that most of the code can create points assuming that the creation would succeed.
 From the perspective of that code, a failure to create a `Point` object is an observed bug.
 
-Then, if the program as a whole does not want to consider failing to create points an observed bug, it can wrap a function making a lot of computations about points into a `Try#{..}`, thus producing an action that can be safely handled.
+An `Info` is different: it may come from a file or from another program, and it may hold any data.
+Method `.fromInfo` checks the range itself, and fails with `Error.msg` before calling `Points#`.
+Then, the code reading points from an `Info` can wrap `Points.fromInfo(i)` into a `Try#{..}`, thus producing an action that can be safely handled.
+A failure of `Points#` instead stays an observed bug: `Try#` does not capture assertion failures.
+```
+Try#{Points.fromInfo(Infos.map("x","42",  "y","3"))}.info!.getMsg
+//Points.fromInfo: x is 42, but coordinates go from 0 to 9
+Try#{Points#(42, 3)}.info.isSome
+//stops the execution: Assertion failure. Expected in range: [0, 10)
+```
+OMIT_START
+-------------------------*/@Test void fromInfoFailsDeterministically(){ run("""
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Try as Try;
+use base.Nat as Nat;
+use base.DataType as DataType;
+use base.FromInfo as FromInfo;
+use base.Infos as Infos;
+use base.Error as Error;
+use base.F as F;
+Points: F[Nat,Nat,Point], FromInfo[Point] {
+  .fromInfo(i) -> Block#
+    .let[Nat] x= {i.getMap.get("x").getMsg.getNat}
+    .let[Nat] y= {i.getMap.get("y").getMsg.getNat}
+    .if {x.inRange(0=~~10).not} .return {Error.msg("Points.fromInfo: x is "+x+", but coordinates go from 0 to 9")}
+    .if {y.inRange(0=~~10).not} .return {Error.msg("Points.fromInfo: y is "+y+", but coordinates go from 0 to 9")}
+    .return {Points#(x, y)};
+  # x, y ->Block#
+    .do { x.assertInRange(0=~~10) }
+    .do { y.assertInRange(0=~~10) }
+    .return{ Point: DataType[Point,Point]{'self
+      .x: Nat -> x;
+      .y: Nat -> y;
+      .cmp {.imm.x,.imm.y}1, {.imm.x,.imm.y}2 -> x1 <=> x2 && {y1 <=> y2};
+      .hash -> x.hash.hashWith(y.hash);
+      .info -> Infos.map("x",x,  "y",y);
+      .str -> "[" + x + ", " + y + "]";
+      .close->self; .close->::; .imm->self;
+      }}}
+Test: base.Main{sys-> Block#
+  .do{Debug#(Points.fromInfo(Infos.map("x","4",  "y","3")))}
+  .do{Debug#(Try#{Points.fromInfo(Infos.map("x","42",  "y","3"))}.info!.getMsg)}
+  .do{Debug#(Try#{Points.fromInfo(Infos.map("x","4",  "y","abc"))}.info.isSome)}
+  .do{Debug#(sys.try#{Try#{Points#(42, 3)}.info.isSome}.info!.getMap.get("msg").getMsg)}
+  .return{base.Void}}
+//PRINT|[4, 3]
+//PRINT|Points.fromInfo: x is 42, but coordinates go from 0 to 9
+//PRINT|True
+//PRINT|Assertion failure.
+//PRINT|Expected in range: [0, 10)
+//PRINT|lo: 0
+//PRINT|hi: 9
+//PRINT|actual: 42
+"""); }/*--------------------------------------------
+OMIT_END
 In a complex program we can have a few layers of responsibility like this, where some code works as a supervisor of some other code that is allowed to fail.
 
 ### Try, CapTry and exact shape of error messages.
