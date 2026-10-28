@@ -36,26 +36,22 @@ We call that code a **reporter**: an object implementing `Reporter`.
 ```
 Reporter: { #(es: List[Employee]): Report }
 ```
-
-We could hide the salaries from code that does not need them.
-We give that code a type without `.salary`, and since Fearless has no casts, that code has no way to get the salaries back.
-But a reporter does need the salaries: the reporter computes the payroll.
-With subtyping we can only give the salaries or hide the salaries.
-Here we want something more subtle: the reporter computes with the salaries, but the page does not depend on any salary.
-
-The plan is to mark the salaries as **secret**.
-Then we make sure that a reporter can compute with a secret but cannot look inside it.
+A reporter needs the salaries to compute the payroll.
+But nothing about the salaries must end up on the page.
 
 ### Secrets
 
-Here is our first attempt.
-Our project has two packages: package `hr` holds the secrets and the employees, and package `company` holds the reporters and the `Main`.
--------------------------*/@Test void naiveSecret(){ runFiles("""
+Our project has two packages.
+Package `hr` holds the employees and a type `Secret`, and package `company` holds the reporters and the `Main`.
+-------------------------*/@Test void report(){ runFiles("""
 //in file _hr/_rank_app001.fear
 use base.Nat as Nat;
 use base.Str as Str;
 use base.List as List;
 use base.F as F;
+use base.Try as Try;
+use base.Info as Info;
+use base.Error as Error;
 
 Secret[E]: {
   .map[R](f: F[E, R]): Secret[R];
@@ -63,11 +59,15 @@ Secret[E]: {
   .open(key: _Key): E;
   }
 _Key: {}
-Secrets: { #[E](e: E): Secret[E] -> {
-  .map f -> Secrets#(f#e);
-  .zip(o, f) -> Secrets#(f#(e, o.open(_Key)));
-  .open _ -> e;
-  }}
+Secrets: {
+  #[E](e: E): Secret[E] -> {
+    .map f -> this.try{f#e};
+    .zip(o, f) -> this.try{f#(e, o.open(_Key))};
+    .open _ -> e;
+    };
+  .try[E](f: F[E]): Secret[E] -> Try#{f#}.run{ .ok e -> this#e; .info i -> this.failed i };
+  .failed[E](i: Info): Secret[E] -> { .map _ -> this.failed i; .zip(_, _) -> this.failed i; .open _ -> Error!i };
+  }
 
 Employee: { .role: Str; .salary: Secret[Nat]; }
 Employees: { #(role: Str, salary: Nat): Employee -> { .role -> role; .salary -> Secrets#salary } }
@@ -107,18 +107,24 @@ Test: Main{ sys -> Block#
 Package `company` uses package `hr`.
 A package can only use packages with a lower rank, and `_rank_app001` is a lower rank than `_rank_app`.
 
-A `Secret[E]` holds an element of type `E`.
+A **secret** is an object of type `Secret[E]`, holding an element of type `E`.
 Method `.open` gives back the element, but `.open` takes an argument of type `_Key`.
 As we have seen in Chapter 3, `_Key` is a package private type: only code in package `hr` can refer to `_Key`.
 Thus, only the code of package `hr` can open a secret.
 
-Methods `.map` and `.zip` allow any code to compute with secrets, but their results are secrets again.
+Any code can compute with secrets using `.map` and `.zip`.
 Method `.map` computes with the element of one secret, and method `.zip` computes with the elements of two secrets.
+The result of `.map` and `.zip` is again a secret.
+
 The method `Secrets#` creates a secret holding the given element.
+In that secret, `.map` and `.zip` run the given function inside `Try#`.
+If the function throws a deterministic error, the result is a **failed secret**, holding the `Info` of the error.
+Calling `.map` or `.zip` on a failed secret gives a failed secret, and calling `.open` on a failed secret throws the error again.
+`.zip` opens the other secret inside `Try#` too, so a failed other secret also gives a failed secret.
 
 An `Employee` has a public `.role` and a secret `.salary`.
-`Hr.payroll` is the only code opening a secret: it opens the payroll of a report.
-That is, the human resources office learns the total of the salaries, and nothing else.
+`Hr.payroll` opens the payroll of a report: it is the only code opening a secret.
+Thus, the human resources office learns the total of the salaries, and nothing else.
 
 The reporter `Honest` lists the roles on the page, and adds up the salaries with `.zip`, starting from a secret `0`.
 
@@ -133,6 +139,9 @@ use base.Nat as Nat;
 use base.Str as Str;
 use base.List as List;
 use base.F as F;
+use base.Try as Try;
+use base.Info as Info;
+use base.Error as Error;
 
 Secret[E]: {
   .map[R](f: F[E, R]): Secret[R];
@@ -140,11 +149,15 @@ Secret[E]: {
   .open(key: _Key): E;
   }
 _Key: {}
-Secrets: { #[E](e: E): Secret[E] -> {
-  .map f -> Secrets#(f#e);
-  .zip(o, f) -> Secrets#(f#(e, o.open(_Key)));
-  .open _ -> e;
-  }}
+Secrets: {
+  #[E](e: E): Secret[E] -> {
+    .map f -> this.try{f#e};
+    .zip(o, f) -> this.try{f#(e, o.open(_Key))};
+    .open _ -> e;
+    };
+  .try[E](f: F[E]): Secret[E] -> Try#{f#}.run{ .ok e -> this#e; .info i -> this.failed i };
+  .failed[E](i: Info): Secret[E] -> { .map _ -> this.failed i; .zip(_, _) -> this.failed i; .open _ -> Error!i };
+  }
 
 Employee: { .role: Str; .salary: Secret[Nat]; }
 Employees: { #(role: Str, salary: Nat): Employee -> { .role -> role; .salary -> Secrets#salary } }
@@ -196,6 +209,9 @@ use base.Nat as Nat;
 use base.Str as Str;
 use base.List as List;
 use base.F as F;
+use base.Try as Try;
+use base.Info as Info;
+use base.Error as Error;
 
 Secret[E]: {
   .map[R](f: F[E, R]): Secret[R];
@@ -203,11 +219,15 @@ Secret[E]: {
   .open(key: _Key): E;
   }
 _Key: {}
-Secrets: { #[E](e: E): Secret[E] -> {
-  .map f -> Secrets#(f#e);
-  .zip(o, f) -> Secrets#(f#(e, o.open(_Key)));
-  .open _ -> e;
-  }}
+Secrets: {
+  #[E](e: E): Secret[E] -> {
+    .map f -> this.try{f#e};
+    .zip(o, f) -> this.try{f#(e, o.open(_Key))};
+    .open _ -> e;
+    };
+  .try[E](f: F[E]): Secret[E] -> Try#{f#}.run{ .ok e -> this#e; .info i -> this.failed i };
+  .failed[E](i: Info): Secret[E] -> { .map _ -> this.failed i; .zip(_, _) -> this.failed i; .open _ -> Error!i };
+  }
 
 Employee: { .role: Str; .salary: Secret[Nat]; }
 Employees: { #(role: Str, salary: Nat): Employee -> { .role -> role; .salary -> Secrets#salary } }
@@ -255,8 +275,8 @@ Stars: Reporter{ es -> Report{
 //ERROR|Error 8 TypeError
 """); }/*--------------------------------------------
 
-The `.if` runs inside `.map`, so the result is a `Secret[Str]`, and a `Str` can not be extended with a `Secret[Str]`.
-In Fearless every choice is a method call, and a method call on a secret element can only happen inside `.map` or `.zip`.
+The `.if` runs inside `.map`, so the result is a `Secret[Str]`, and a `Secret[Str]` can not be added to a `Str`.
+In Fearless every choice is a method call, and a method call on the element of a secret can only happen inside `.map` or `.zip`.
 
 The third reporter tries to copy each salary out of the secret, into a `Var`:
 -------------------------*/@Test void smuggler(){ runFiles("""
@@ -266,6 +286,9 @@ use base.Nat as Nat;
 use base.Str as Str;
 use base.List as List;
 use base.F as F;
+use base.Try as Try;
+use base.Info as Info;
+use base.Error as Error;
 
 Secret[E]: {
   .map[R](f: F[E, R]): Secret[R];
@@ -273,11 +296,15 @@ Secret[E]: {
   .open(key: _Key): E;
   }
 _Key: {}
-Secrets: { #[E](e: E): Secret[E] -> {
-  .map f -> Secrets#(f#e);
-  .zip(o, f) -> Secrets#(f#(e, o.open(_Key)));
-  .open _ -> e;
-  }}
+Secrets: {
+  #[E](e: E): Secret[E] -> {
+    .map f -> this.try{f#e};
+    .zip(o, f) -> this.try{f#(e, o.open(_Key))};
+    .open _ -> e;
+    };
+  .try[E](f: F[E]): Secret[E] -> Try#{f#}.run{ .ok e -> this#e; .info i -> this.failed i };
+  .failed[E](i: Info): Secret[E] -> { .map _ -> this.failed i; .zip(_, _) -> this.failed i; .open _ -> Error!i };
+  }
 
 Employee: { .role: Str; .salary: Secret[Nat]; }
 Employees: { #(role: Str, salary: Nat): Employee -> { .role -> role; .salary -> Secrets#salary } }
@@ -331,83 +358,10 @@ Smuggler: Reporter{ es -> Report{
 The parameter `f` of `.map` has type `F[E, R]`, and thus it is `imm`.
 An `imm` object literal cannot capture `seen`, since `seen` is a `mut Var[Nat]`.
 That is, the function we give to `.map` cannot store anything anywhere.
-The only way for that function to tell something is its result, and `.map` turns that result into a new secret.
 
-The fourth reporter is sneakier.
+The fourth reporter throws an error when the salary is more than `5000`.
 Remember from Chapter 4: `Try#` needs no capability, and catches deterministic errors.
-This reporter throws an error when the salary is more than `5000`:
--------------------------*/@Test void starrerWins(){ runFiles("""
-//OMIT_START
-//in file _hr/_rank_app001.fear
-use base.Nat as Nat;
-use base.Str as Str;
-use base.List as List;
-use base.F as F;
-
-Secret[E]: {
-  .map[R](f: F[E, R]): Secret[R];
-  .zip[U, R](other: Secret[U], f: F[E, U, R]): Secret[R];
-  .open(key: _Key): E;
-  }
-_Key: {}
-Secrets: { #[E](e: E): Secret[E] -> {
-  .map f -> Secrets#(f#e);
-  .zip(o, f) -> Secrets#(f#(e, o.open(_Key)));
-  .open _ -> e;
-  }}
-
-Employee: { .role: Str; .salary: Secret[Nat]; }
-Employees: { #(role: Str, salary: Nat): Employee -> { .role -> role; .salary -> Secrets#salary } }
-Report: { .page: Str; .payroll: Secret[Nat]; }
-Reporter: { #(es: List[Employee]): Report }
-Hr: { .payroll(r: Report): Nat -> r.payroll.open(_Key) }
-
-//in file _company/_rank_app.fear
-use base.Main as Main;
-use base.Block as Block;
-use base.Lists as Lists;
-use base.List as List;
-use base.Nat as Nat;
-use base.Try as Try;
-use base.Error as Error;
-use base.Debug as Debug;
-use hr.Employee as Employee;
-use hr.Employees as Employees;
-use hr.Report as Report;
-use hr.Reporter as Reporter;
-use hr.Secrets as Secrets;
-use hr.Hr as Hr;
-Honest: Reporter{ es -> Report{
-  .page -> es.flow.map{::.role}.join ", ";
-  .payroll -> es.flow.map{::.salary}.fold({Secrets#0}, {acc, s -> acc.zip(s, {a, b -> a + b})});
-  }}
-Staff: { #: List[Employee] -> Lists#(Employees#("Cook", 4000), Employees#("Driver", 5000), Employees#("Clerk", 7000)) }
-//OMIT_END
-Starrer: Reporter{ es -> Report{
-  .page -> es.flow.map{e -> Try#{ e.salary.map{s -> (s > 5000).if{ .then -> Error.msg "rich"; .else -> s } } }
-    .run{ .ok _ -> e.role; .info _ -> e.role + "*" }}.join ", ";
-  .payroll -> Secrets#0;
-  }}
-//OMIT_START
-Test: Main{ sys -> Block#
-  .do {sys.out.println("Starrer: " + (Starrer#(Staff#).page))}
-  .return {sys.out.println("Payroll: " + (Hr.payroll(Honest#(Staff#))))}
-  }
-//OMIT_END
-//PRINT|Starrer: Cook, Driver, Clerk*
-//PRINT|Payroll: 16000
-"""); }/*--------------------------------------------
-
-There is a star next to `Clerk`!
-The error escapes from `.map`, and `Try#` turns the error into an `Action` that `Starrer` can inspect.
-Our secrets leak!
-
-### Secrets that keep errors secret
-
-The fix is in `Secrets`: `.map` and `.zip` run the function inside a `Try#`.
-If the function fails, the result is a **failed secret**, holding the `Info` of the error.
-Calling `.map` or `.zip` on a failed secret gives a failed secret, and calling `.open` on a failed secret throws the error again.
--------------------------*/@Test void starrerLoses(){ runFiles("""
+-------------------------*/@Test void starrer(){ runFiles("""
 //OMIT_START
 //in file _hr/_rank_app001.fear
 use base.Nat as Nat;
@@ -424,7 +378,6 @@ Secret[E]: {
   .open(key: _Key): E;
   }
 _Key: {}
-//OMIT_END
 Secrets: {
   #[E](e: E): Secret[E] -> {
     .map f -> this.try{f#e};
@@ -434,7 +387,6 @@ Secrets: {
   .try[E](f: F[E]): Secret[E] -> Try#{f#}.run{ .ok e -> this#e; .info i -> this.failed i };
   .failed[E](i: Info): Secret[E] -> { .map _ -> this.failed i; .zip(_, _) -> this.failed i; .open _ -> Error!i };
   }
-//OMIT_START
 
 Employee: { .role: Str; .salary: Secret[Nat]; }
 Employees: { #(role: Str, salary: Nat): Employee -> { .role -> role; .salary -> Secrets#salary } }
@@ -461,33 +413,27 @@ Honest: Reporter{ es -> Report{
   .page -> es.flow.map{::.role}.join ", ";
   .payroll -> es.flow.map{::.salary}.fold({Secrets#0}, {acc, s -> acc.zip(s, {a, b -> a + b})});
   }}
+Staff: { #: List[Employee] -> Lists#(Employees#("Cook", 4000), Employees#("Driver", 5000), Employees#("Clerk", 7000)) }
+//OMIT_END
 Starrer: Reporter{ es -> Report{
   .page -> es.flow.map{e -> Try#{ e.salary.map{s -> (s > 5000).if{ .then -> Error.msg "rich"; .else -> s } } }
     .run{ .ok _ -> e.role; .info _ -> e.role + "*" }}.join ", ";
   .payroll -> Secrets#0;
   }}
-Staff: { #: List[Employee] -> Lists#(Employees#("Cook", 4000), Employees#("Driver", 5000), Employees#("Clerk", 7000)) }
+//OMIT_START
 Test: Main{ sys -> Block#
-  .do {sys.out.println("Honest: " + (Honest#(Staff#).page))}
   .do {sys.out.println("Starrer: " + (Starrer#(Staff#).page))}
   .return {sys.out.println("Payroll: " + (Hr.payroll(Honest#(Staff#))))}
   }
 //OMIT_END
-//PRINT|Honest: Cook, Driver, Clerk
 //PRINT|Starrer: Cook, Driver, Clerk
 //PRINT|Payroll: 16000
 """); }/*--------------------------------------------
 
-Now `Try#{...}` in `Starrer` always succeeds, so there are no stars on the page.
+There are no stars on the page: the error never leaves `.map`.
+`.map` catches the error and returns a failed secret, so the `Try#` of `Starrer` always succeeds.
 
-Note that `.zip` opens the other secret inside the `Try#`.
-If the other secret is a failed secret, `o.open(_Key)` throws the error again, and `.zip` returns a failed secret.
-If `.zip` opened the other secret outside of the `Try#`, the error would escape from `.zip`, and `Starrer` could inspect the error one call later.
-
-### What a reporter can still do
-
-Can a reporter still do something with a secret?
-A reporter can print the salaries with `Debug#`:
+The fifth reporter prints the salaries with `Debug#`:
 -------------------------*/@Test void shouter(){ runFiles("""
 //OMIT_START
 //in file _hr/_rank_app001.fear
@@ -571,24 +517,13 @@ In both cases, the reporter ruins the report, but nothing about the salaries rea
 
 ### The property
 
-Let's look again at what a chunk of code without `mut` capabilities can do with a secret.
-That code has three ways to tell something about the secret: the result of a method, an error, and a change to a `mut` object.
-`.map` and `.zip` close all three ways:
-- the result of the function is a new secret;
-- `.map` and `.zip` catch the deterministic errors with `Try#`;
-- the function is `imm`, so the function cannot change `mut` objects.
-
-What is left are non-deterministic errors and computations that do not end, and only code with capabilities can observe those.
-Thus, we get the following property:
-
 **A chunk of code that receives secrets and no `mut` capability can compute with those secrets, but whatever that chunk of code computes from those secrets stays secret.**
 
 For our reporters, the type of `.page` is `Str`: the page does not depend on any salary, whatever the reporter does.
 
 The words "no `mut` capability" are crucial.
-If a reporter received `sys`, the reporter could call `sys.try` around a `.map` that overflows the stack only when the salary is more than `5000`.
+A reporter receiving `sys` could call `sys.try` around a `.map` that overflows the stack only when the salary is more than `5000`.
 `sys.try` would catch the error, and the reporter would know which employees earn more than `5000`.
-That is, we must never give `mut` capabilities to code that receives secrets.
 
 The only code that sees the salaries is the code of package `hr`, holding the key.
 That code decides what to reveal: the human resources office sees the total of the salaries, and nothing else.
