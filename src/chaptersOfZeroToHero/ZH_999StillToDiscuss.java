@@ -179,6 +179,77 @@ The code can mention a standalone type by name and extend it, as it does for a t
 The discussion has to show the two uses that make this convenient:
 naming a lambda so that the code can name it back, as the standard library does for caching with `CacheF`,
 and declaring the cases of an enumeration directly inside `.enumList`.
+
+## Tunable assertion levels
+
+When programmers learn about offensive programming, they are usually scared about two issues:
+Performance and false positives.
+In Fearless both issues are solved at the same time by tunable assertion levels.
+
+There are many different layers of assertions:
+ - assert:  observed bug: the code of this package has a bug.
+ - assertPre: precondition violation: the code of this package has been called with arguments that violate its requirements.
+ - assertSys: The program is fine but the system running this program does not support the needed requirements. For example, a file must be present for the application to work; memory or stack are insufficient; OS resources cannot be obtained.
+ - assertNetwork: The program and the system are fine, but some needed remote service is unavailable.
+ - given that there are already 4 levels, we also have `.assert5`... `.assert16` to cover other user defined situations. `assert1`..`assert4` are aliases for those shown named assertion kinds.
+
+Each package can disable/enable each of those levels.
+That is,
+````
+//in file _foo/bar.fear
+Block#
+  .assertPre{ x.checkInRange(0,10) }
+  .do{...}
+  ..
+````
+would simply discard the literal `{ x.checkInRange(0,10) }` if the code is compiled with 
+```
+disable foo.assertPre;
+```
+> exact syntax to discuss
+
+Another form of assertions is useful when we want to provide alternative behaviour upon disabling:
+
+````
+//in file _foo/bar.fear
+Block# //many options for the actual API
+  .let content= {AssertSys.or({..readFile "foo.txt" ..},{..ask user for existing file with file chooser..})}
+  .let foo= {AssertPre#(foo.bar(),{::.inRange(3,25)},{_->10})}
+  .do{...}
+  ..
+````
+Here if the file `foo.txt` is not present, we would give an error, or ask the user for another location if
+```
+disable foo.assertSys;
+```
+is present.
+
+This also works for numeric checks:
+```
+disable base.intOverflowChecks;
+```
+would make `+` behave exactly as the faster `.aluxxx` variant.
+```
+disable base.intOverflowChecks and caps;
+```
+this instead would suppress the overflow/underflow behaviour and cap the result to max/min `Int`.
+
+> I'm just throwing ideas to the wall here.
+
+So if the condition is false/throws an assert can
+- fail
+- be ignored
+- use a recovery expression (only available if recovery provided)
+- write the failure on a log and continue
+- use a recovery expression and write the failure on a log.(only available if recovery provided)
+
+This encompasses the ignore/evaluate the check and ignore/evaluate the recovery.
+An assert without a recovery is equivalent to an assert where the recovery is the identity function, so we pass the same value, and an assert with no value is equivalent to having/returning `Void`.
+
+Under this, disabled is kind of ambiguous and we may want more names.
+
+The idea is that we want to have a software product line:
+Many different kinds of software are produced depending on the assertion profile, and some of those are better for testing instead of deployment.
 OMIT_START
 -------------------------*/@Test void blockRejectsResultWithHygienicReferences(){ run("""
 use base.Nat as Nat;
