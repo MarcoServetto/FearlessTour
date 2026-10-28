@@ -15,7 +15,7 @@ Up to now, we've shown Fearless code as individual text examples. However, a rea
 The project can contain any kind of files, but they must have portable lowercase file names that would be accepted by Windows, Linux and macOS.
 These files can be freely organised into subfolders within the project.
 
-Additionally, a Fearless project may contain pre-compiled libraries. Such libraries are simply zipped folders containing Fearless source files.
+Additionally, a Fearless project may contain libraries. Such libraries are simply zipped folders containing Fearless source files: a file `_geometry.zip` holding `point.fear` works like a folder `_geometry` holding `point.fear`.
 
 Fearless source files are divided into **packages**.
 A package is a folder whose name starts with `_`.
