@@ -2,7 +2,10 @@ package testHelpers;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -39,13 +42,23 @@ public final class TourHelper{
   static public final Path out= ResolveResource.stLibPath.getParent().getParent().resolve("FearlessTour", "tmpOut");
 
   public static void run(String code){
-    String expectedPrint= printRequirement(code);
-    String expectedErr= errRequirement(code);
     if (noMain(code)){ code += "\nSomeAnonMain:base.Main{sys->base.Void}\n"; }
+    run(Map.of("_test/_rank_app111.fear", code), code);
+  }
+  public static void runFiles(String code){
+    var starts= Pattern.compile("(?m)^//in file (\\S+)$").matcher(code).results().toList();
+    var files= new LinkedHashMap<String,String>();
+    for (int i= 0; i < starts.size(); i++){
+      var from= i == 0 ? 0 : starts.get(i).start();
+      var to= i + 1 < starts.size() ? starts.get(i + 1).start() : code.length();
+      files.put(starts.get(i).group(1), code.substring(from, to));
+    }
+    run(files, code);
+  }
+  private static void run(Map<String,String> files, String code){
     var m= new mainCoordinator.ProgrammaticMain(
       new StringBuilder(), new StringBuilder(),
-      "_test/_rank_app111.fear", code,
-      stdBase, stdRt, out
+      files, stdBase, stdRt, out
       );
     m.runFearless();
     System.err.println("Err was: "+m.err());
@@ -53,9 +66,9 @@ public final class TourHelper{
     //var a=strView(expectedPrint+"\n");
     //var b=strView(m.out().toString());
     //assertEquals(a,b);
-    strCmp(expectedErr, m.err().toString().replace('\\', '/'));
+    strCmp(errRequirement(code), m.err().toString().replace('\\', '/'));
     //assertEquals(expectedPrint.length(), m.out().length());//+1 for new line
-    strCmp("||"+expectedPrint+"||", "||"+m.out().toString()+"||");
+    strCmp("||"+printRequirement(code)+"||", "||"+m.out().toString()+"||");
   }
   static List<Byte> strView(String str){
     byte[] bytes= str.getBytes(StandardCharsets.UTF_8);
@@ -78,7 +91,7 @@ public final class TourHelper{
   public static void run(String pkgName, String rank, String code){
     var m= new mainCoordinator.ProgrammaticMain(
       new StringBuilder(), new StringBuilder(),
-      "_"+pkgName+"/"+rank+".fear", code,
+      Map.of("_"+pkgName+"/"+rank+".fear", code),
       stdBase, stdRt, out
       );
     m.runFearless();
