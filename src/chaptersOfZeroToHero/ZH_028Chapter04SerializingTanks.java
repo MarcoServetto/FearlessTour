@@ -180,6 +180,7 @@ use base.Infos as Infos;
 use base.Info as Info;
 use base.Enums as Enums;
 use base.Enum as Enum;
+use base.Cache as Cache;
 use base.OrderHash as OrderHash;
 use base.CapInputCursorNode as CapInputCursorNode;
 use base.BadStrUnitRecover as BadStrUnitRecover;
@@ -195,7 +196,7 @@ Directions: Enums[Direction]{
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  read .close->this; .close->::;
+  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
   }
 North: Direction{::.north}
 East:  Direction{::.east}
@@ -278,6 +279,7 @@ use base.Infos as Infos;
 use base.Lists as Lists;
 use base.Enums as Enums;
 use base.Enum as Enum;
+use base.Cache as Cache;
 use base.Void as Void;
 use base.Debug as Debug;
 DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R; }
@@ -287,7 +289,7 @@ Directions: Enums[Direction]{
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  read .close->this; .close->::;
+  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
   }
 North: Direction{::.north}
 East:  Direction{::.east}
@@ -366,6 +368,7 @@ use base.Infos as Infos;
 use base.Info as Info;
 use base.Enums as Enums;
 use base.Enum as Enum;
+use base.Cache as Cache;
 use base.OrderHash as OrderHash;
 use base.CapInputCursorNode as CapInputCursorNode;
 use base.BadStrUnitRecover as BadStrUnitRecover;
@@ -381,7 +384,7 @@ Directions: Enums[Direction]{
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  read .close->this; .close->::;
+  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
   }
 North: Direction{::.north}
 East:  Direction{::.east}
