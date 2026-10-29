@@ -378,7 +378,7 @@ Test: base.Main{sys-> base.Block#
   .do{base.Debug#(Game.sumX(NS4#(Game.start)))}
   .do{base.Debug#(Game.count(NS4#(Game.start)))}
   .do{base.Debug#(Game.count(NS4#(Stack[Tank] + (Tanks#(South, East, Points#(+0,+0))) + (Tanks#(South, East, Points#(+0,+1))))))}
-  .return{base.Void}}
+  .return{Void}}
 //PRINT|+5
 //PRINT|+5
 //PRINT|+7

@@ -571,7 +571,7 @@ Test: Main{sys-> Block#
   .do{Debug#((N6 * N6).n)}
   .return{Void}}
 Number:{
-  .pred:Number; .succ:Number; .n: base.Nat -> this.pred.n + 1;
+  .pred:Number; .succ:Number; .n: Nat -> this.pred.n + 1;
   +(other: Number): Number -> this.pred + (other.succ);
   *(other: Number): Number -> (this.pred * other) + other;
   -(other: Number): Number -> other._rightSub(this);
