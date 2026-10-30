@@ -142,9 +142,9 @@ FromInfo[T]: { .fromInfo(i: Info): T }
 
 Enums[E]: FromInfo[E]{
   .enumList: List[Enum[E]];
-  .list: List[E] -> Cache#(Cache.normCaptureFree[Enums[E]](this,{::}), {es -> es.get.enumList.flow.map{::.imm}.list});
-  .map: Map[Str,E] -> Cache#(Cache.normCaptureFree[Enums[E]](this,{::}), {es -> es.get.enumList.flow.mapping({::},{.key e->e.str; .elem e->e.imm;})});
-  .indexMap: Map[Str,Nat] -> Cache#(Cache.normCaptureFree[Enums[E]](this,{::}), {es -> es.get.enumList.flow.fold(
+  .list: List[E] -> Cache#(Cache.normCaptureFree(this,{::}), {es -> es.get.enumList.flow.map{::.imm}.list});
+  .map: Map[Str,E] -> Cache#(Cache.normCaptureFree(this,{::}), {es -> es.get.enumList.flow.mapping({::},{.key e->e.str; .elem e->e.imm;})});
+  .indexMap: Map[Str,Nat] -> Cache#(Cache.normCaptureFree(this,{::}), {es -> es.get.enumList.flow.fold(
     {Maps#[Str,Str,Nat]{::}},
     {acc,e->acc.with(e.str,acc.size)}
     )});
