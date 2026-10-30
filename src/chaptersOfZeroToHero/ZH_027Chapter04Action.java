@@ -466,6 +466,7 @@ use base.Lists as Lists;
 use base.Debug as Debug;
 use base.Enums as Enums;
 use base.Enum as Enum;
+use base.Cache as Cache;
 use base.Maps as Maps;
 use base.Map as Map;
 use base.Opts as Opts;
@@ -504,7 +505,7 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  read .close->this; .close->::;
+  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
   }
 North: Direction{}
 East:  Direction{}

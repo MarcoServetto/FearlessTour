@@ -21,7 +21,7 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  read .close->this; .close->::;
+  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
   }
 North: Direction{}
 East:  Direction{}
@@ -42,6 +42,7 @@ use base.Lists as Lists;
 use base.Debug as Debug;
 use base.Enums as Enums;
 use base.Enum as Enum;
+use base.Cache as Cache;
 Test: Main{sys-> Block#(
   Block#(
     Debug#(Directions.list.size),
@@ -59,7 +60,7 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  read .close->this; .close->::;
+  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
   }
 North: Direction{}
 East:  Direction{}
@@ -81,7 +82,7 @@ DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  read .close->this; .close->::;
+  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
   }
 North: Direction{::.north}
 East:  Direction{::.east}
@@ -103,6 +104,7 @@ use base.Str as Str;
 use base.Debug as Debug;
 use base.Enums as Enums;
 use base.Enum as Enum;
+use base.Cache as Cache;
 Test: Main{sys-> Block#(
   Debug#(North.match(DirectionMatch[Str]{ .north->"n"; .east->"e"; .south->"s"; .west->"w"; })),
   Void
@@ -115,7 +117,7 @@ Directions: Enums[Direction]{
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  read .close->this; .close->::;
+  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
   }
 North: Direction{::.north}
 East:  Direction{::.east}
@@ -140,12 +142,12 @@ FromInfo[T]: { .fromInfo(i: Info): T }
 
 Enums[E]: FromInfo[E]{
   .enumList: List[Enum[E]];
-  .list: List[E] -> this.enumList.flow.map{::.imm}.list;
-  .map: Map[Str,E] -> this.enumList.flow.mapping({::},{.key e->e.str; .elem e->e.imm;});
-  .indexMap: Map[Str,Nat] -> this.enumList.flow.fold(
+  .list: List[E] -> Cache#(Cache.normCaptureFree[Enums[E]](this,{::}), {es -> es.get.enumList.flow.map{::.imm}.list});
+  .map: Map[Str,E] -> Cache#(Cache.normCaptureFree[Enums[E]](this,{::}), {es -> es.get.enumList.flow.mapping({::},{.key e->e.str; .elem e->e.imm;})});
+  .indexMap: Map[Str,Nat] -> Cache#(Cache.normCaptureFree[Enums[E]](this,{::}), {es -> es.get.enumList.flow.fold(
     {Maps#[Str,Str,Nat]{::}},
     {acc,e->acc.with(e.str,acc.size)}
-    );
+    )});
   .fromInfo i -> this.map.get(i.getMsg);
   }
 Enum[E]: DataType[E,E], Named, CaptureFree{
@@ -155,6 +157,7 @@ Enum[E]: DataType[E,E], Named, CaptureFree{
   .info -> Infos.msg(this.str);
   read .index: Nat -> this.enums.indexMap.get(this.str);
   read .close(t: read E): read Enum[E];
+  .norm: Norm[E];
   .cmp t0,t1 -> this.close(t0).index <=> (this.close(t1).index);
   .hash -> this.index;
   }
@@ -163,6 +166,8 @@ A type implementing `Named` gets `.name`: the qualified name of the type of the 
 `Enum[E]` takes `.str` from `.name`, keeping the part after the dot: `"North"`.
 `Enum[E]` is `CaptureFree`, so inside `Enum[E]` the receiver `this` is `imm`, and `.imm -> this.close` returns the value itself.
 For the same reason, the `.close` of `Direction` is `read .close->this`: an `imm` `this` cannot be the result of `mut .close: mut Direction`, offered by `Pipe[Direction]`, so that method stays abstract, and a `Direction` value is never `mut`.
+`Enum[E]` also requires `.norm`: the value as a `Norm[E]`, the form of a value that caches use as a key.
+`Direction` is `CaptureFree`, so `.norm->Cache.normCaptureFree(this,{::})` returns the `Norm[Direction]` of `this`: the `{::}` compiles only because `Direction` is `CaptureFree`.
 
 Thanks to `Enums[Direction]` we get a `.map` method mapping names to directions.
 - Method `.map` returns a `Map[Str,Direction]` linking the string names of directions
@@ -175,7 +180,7 @@ That is, the result of `.map` will be equivalent to the result of `Maps#({::},"N
 
 Many enumeration types will have similar utility methods.
 Note how methods `.list` and `.map` are fully deterministic. They take no arguments: the receiver contains no information (since it is a singleton) and there are no other parameters. This means that every time that code is executed, it produces the same result.
-Fearless will cache the result of such methods, so that the computation runs only one time.
+`.list`, `.map` and `.indexMap` use `Cache#` to cache their result, so that the computation runs only one time for each enumeration.
 This means that user code can call `Directions.map` many times without worrying about the performance cost of creating the map over and over again. The map is created only one time and then the system remembers it.
 
 Finally, the `.fromInfo` method uses this map to convert an `Info` string back into a `Direction` object. It should find the direction's name in the map and return the associated `Direction`.
@@ -211,6 +216,7 @@ use base.Lists as Lists;
 use base.Debug as Debug;
 use base.Enums as Enums;
 use base.Enum as Enum;
+use base.Cache as Cache;
 use base.Maps as Maps;
 use base.Infos as Infos;
 use base.Str as Str;
@@ -234,7 +240,7 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  read .close->this; .close->::;
+  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
   }
 North: Direction{}
 East:  Direction{}
@@ -261,6 +267,7 @@ use base.Lists as Lists;
 use base.Debug as Debug;
 use base.Enums as Enums;
 use base.Enum as Enum;
+use base.Cache as Cache;
 use base.Maps as Maps;
 use base.Try as Try;
 Test: Main{sys-> Block#
@@ -272,7 +279,7 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  read .close->this; .close->::;
+  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
   }
 North: Direction{}
 East:  Direction{}
