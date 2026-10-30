@@ -37,7 +37,7 @@ use base.Block as Block;
 use base.Debug as Debug;
 Test: Main{sys-> Block#
   .do{Debug#(3.0 .getNat)}
-  .do{Debug#(sys.try#{3.5 .getNat}.info!.getMap.get("msg").getMsg)}
+  .do{Debug#(sys.try#{3.5 .getNat}.info!.getMap.get("info").getMsg)}
   .do{Debug#(3.5 .softNat)}
   .do{Debug#((-1.0) .softNat)}
   .return{Void}}
