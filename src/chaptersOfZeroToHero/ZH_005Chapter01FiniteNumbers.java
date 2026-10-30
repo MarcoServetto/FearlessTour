@@ -503,8 +503,8 @@ use base.Block as Block;
 use base.Debug as Debug;
 Test: Main{sys-> Block#
   .do{Debug#(3 - 1)}
-  .do{Debug#(sys.try#{0 - 1}.info!.getMap.get("msg").getMsg)}
-  .do{Debug#(sys.try#{18446744073709551615 + 1}.info!.getMap.get("msg").getMsg)}
+  .do{Debug#(sys.try#{0 - 1}.info!.getMap.get("info").getMsg)}
+  .do{Debug#(sys.try#{18446744073709551615 + 1}.info!.getMap.get("info").getMsg)}
   .return{Void}}
 //PRINT|2
 //PRINT|Nat-: underflow, 0 - 1 is less than 0

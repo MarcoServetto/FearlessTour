@@ -278,8 +278,7 @@ What is that about?
 It is about the set of active calls when the error leaked.
 
 We can capture this information programmatically with the capability `System.try`.
-Code `sys.try#{...}` creates an `Action[R]` whose `Info` is going to be the sum of the
-normal `Info` and the info containing the stack trace: a map where `"msg"` holds the message and `"list"` holds the stack trace, with one element for each active call.
+Code `sys.try#{...}` creates an `Action[R]` whose `Info` is a map where `"info"` holds the `Info` of the error and `"stack"` holds the stack trace, with one element for each active call.
 
 For example
 ````
@@ -329,7 +328,7 @@ use base.Try as Try;
 use base.Nat as Nat;
 Loop: { .deep(n: Nat): Nat -> this.deep(n + 1) + 1; }
 Test: base.Main{sys-> Block#
-  .do{Debug#(sys.try#{Try#{0 - 1}.info.isSome}.info!.getMap.get("msg").getMsg)}
+  .do{Debug#(sys.try#{Try#{0 - 1}.info.isSome}.info!.getMap.get("info").getMsg)}
   .do{Debug#(sys.try#{0 - 1}.info.isSome)}
   .do{Debug#(sys.try#{Loop.deep(0)}.info.isSome)}
   .return{base.Void}}
@@ -614,8 +613,8 @@ use base.Debug as Debug;
 use base.Error as Error;
 use base.Nat as Nat;
 Test: base.Main{sys-> Block#
-  .do{Debug#(sys.try#{ Error.msg[Nat] "boom" }.info!.getMap.get("msg").getMsg)}
-  .do{Debug#(sys.try#{ Error.msg[Nat] "boom" }.info!.getMap.get("list").getList.isEmpty.not)}
+  .do{Debug#(sys.try#{ Error.msg[Nat] "boom" }.info!.getMap.get("info").getMsg)}
+  .do{Debug#(sys.try#{ Error.msg[Nat] "boom" }.info!.getMap.get("stack").getList.isEmpty.not)}
   .return{base.Void}}
 //PRINT|boom
 //PRINT|True
@@ -636,10 +635,10 @@ Stuff:{
   }
 Test: base.Main{sys-> Block#
   .do{Debug#(Stuff.bar.info!.str)}
-  .do{Debug#(sys.try#{Stuff.beer0}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
-  .do{Debug#(sys.try#{Stuff.beer1}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
-  .do{Debug#(sys.try#{Stuff.beer2}.info!.getMap.get("list").getList.get(0).getMap.get("methodName").getMsg)}
-  .do{Debug#(sys.try#{Stuff.beer2}.info!.getMap.get("msg").getMsg)}
+  .do{Debug#(sys.try#{Stuff.beer0}.info!.getMap.get("stack").getList.get(0).getMap.get("methodName").getMsg)}
+  .do{Debug#(sys.try#{Stuff.beer1}.info!.getMap.get("stack").getList.get(0).getMap.get("methodName").getMsg)}
+  .do{Debug#(sys.try#{Stuff.beer2}.info!.getMap.get("stack").getList.get(0).getMap.get("methodName").getMsg)}
+  .do{Debug#(sys.try#{Stuff.beer2}.info!.getMap.get("info").getMsg)}
   .return{base.Void}}
 //PRINT|"List.get: List index 5 out of range for List of length 3"
 //PRINT|imm .foo
