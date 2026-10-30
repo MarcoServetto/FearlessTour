@@ -423,23 +423,23 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     );
   }
 FakeNode: CapInputCursorNode{
-  .readUStrUtf8 _ -> base.Error.msg "unused";
-  .readStrUtf16Le _ -> base.Error.msg "unused";
-  .readUStrUtf16Le _ -> base.Error.msg "unused";
-  .readStrUtf32Le _ -> base.Error.msg "unused";
-  .readUStrUtf32Le _ -> base.Error.msg "unused";
-  .readStrUtf16Be _ -> base.Error.msg "unused";
-  .readUStrUtf16Be _ -> base.Error.msg "unused";
-  .readStrUtf32Be _ -> base.Error.msg "unused";
-  .readUStrUtf32Be _ -> base.Error.msg "unused";
-  .readStrAscii _ -> base.Error.msg "unused";
-  .readUStrAscii _ -> base.Error.msg "unused";
-  .readStrLatin1 _ -> base.Error.msg "unused";
-  .readUStrLatin1 _ -> base.Error.msg "unused";
-  .readImage _ -> base.Error.msg "unused";
-  .readBytes -> base.Error.msg "unused";
+  .readUStrUtf8 _ -> Error.msg "unused";
+  .readStrUtf16Le _ -> Error.msg "unused";
+  .readUStrUtf16Le _ -> Error.msg "unused";
+  .readStrUtf32Le _ -> Error.msg "unused";
+  .readUStrUtf32Le _ -> Error.msg "unused";
+  .readStrUtf16Be _ -> Error.msg "unused";
+  .readUStrUtf16Be _ -> Error.msg "unused";
+  .readStrUtf32Be _ -> Error.msg "unused";
+  .readUStrUtf32Be _ -> Error.msg "unused";
+  .readStrAscii _ -> Error.msg "unused";
+  .readUStrAscii _ -> Error.msg "unused";
+  .readStrLatin1 _ -> Error.msg "unused";
+  .readUStrLatin1 _ -> Error.msg "unused";
+  .readImage _ -> Error.msg "unused";
+  .readBytes -> Error.msg "unused";
   .close -> this;
-  .iso -> base.Error.msg "unused";
+  .iso -> Error.msg "unused";
   }
 Nodes:{ #(t: Str): mut CapInputCursorNode -> mut FakeNode{
   .label -> "fake";
@@ -447,7 +447,7 @@ Nodes:{ #(t: Str): mut CapInputCursorNode -> mut FakeNode{
   } }
 BadNode:{ #: mut CapInputCursorNode -> mut FakeNode{
   .label -> "bad";
-  .readStrUtf8 _ -> base.Error.msg "cannot read the file";
+  .readStrUtf8 _ -> Error.msg "cannot read the file";
   } }
 ReadMap: {
   mut .in: mut CapInputCursorNode;

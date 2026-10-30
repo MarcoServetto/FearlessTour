@@ -42,8 +42,12 @@ public final class TourHelper{
   static public final Path out= ResolveResource.stLibPath.getParent().getParent().resolve("FearlessTour", "tmpOut");
 
   public static void run(String code){
-    if (noMain(code)){ code += "\nSomeAnonMain:base.Main{sys->base.Void}\n"; }
+    if (noMain(code)){ code += "\nSomeAnonMain:"+name(code, "base.Main")+"{sys->"+name(code, "base.Void")+"}\n"; }
     run(Map.of("_test/_rank_app111.fear", code), code);
+  }
+  static String name(String code, String full){
+    var m= Pattern.compile("(?m)^use "+Pattern.quote(full)+" as (\\w+);").matcher(code);
+    return m.find() ? m.group(1) : full;
   }
   public static void runFiles(String code){
     var starts= Pattern.compile("(?m)^//in file (\\S+)$").matcher(code).results().toList();
