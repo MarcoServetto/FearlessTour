@@ -167,7 +167,7 @@ A type implementing `Named` gets `.name`: the qualified name of the type of the 
 `Enum[E]` is `CaptureFree`, so inside `Enum[E]` the receiver `this` is `imm`, and `.imm -> this.close` returns the value itself.
 For the same reason, the `.close` of `Direction` is `read .close->this`: an `imm` `this` cannot be the result of `mut .close: mut Direction`, offered by `Pipe[Direction]`, so that method stays abstract, and a `Direction` value is never `mut`.
 `Enum[E]` also requires `.norm`: the value as a `Norm[E]`, the form of a value that caches use as a key.
-`Direction` is `CaptureFree`, so `.norm->Cache.normCaptureFree(this,{::})` returns `this` itself as a `Norm[Direction]`: the `{::}` compiles only because `Direction` is `CaptureFree`.
+`Direction` is `CaptureFree`, so `.norm->Cache.normCaptureFree(this,{::})` returns the `Norm[Direction]` of `this`: the `{::}` compiles only because `Direction` is `CaptureFree`.
 
 Thanks to `Enums[Direction]` we get a `.map` method mapping names to directions.
 - Method `.map` returns a `Map[Str,Direction]` linking the string names of directions
