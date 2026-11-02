@@ -57,7 +57,7 @@ ReadGame: {
     .let[Info] info= {Infos.fromStr(text)}
     .return {info.getList.flow.map{i->Tanks.fromInfo(i)}.list};
   }
-NotText: StrFixer{_, _, _, _ -> Error.msg "The file is not text"}
+NotText: StrFixer{_, _, _, _ -> Error.msg "The file has bytes that are not a character of a Str"}
 ```
 
 As you can see, the no-args `.read` method takes the text of the file, parses it as an `Info` and then parses that `Info` as a list of `Tank`s.
@@ -243,7 +243,7 @@ ReadGame: {
     .let[Info] info= {Infos.fromStr(text)}
     .return {info.getList.flow.map{i->Tanks.fromInfo(i)}.list};
   }
-NotText: StrFixer{_, _, _, _ -> Error.msg "The file is not text"}
+NotText: StrFixer{_, _, _, _ -> Error.msg "The file has bytes that are not a character of a Str"}
 
 Test: Main{sys-> Block#
   .do{Debug#(Tanks#(North,East,Points#(1,2)).info.str)}
@@ -463,7 +463,7 @@ ReadContext: {
       .andThen{info -> Try#[List[Tank]]{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}
         .context{"While deserialising tanks from Info"}}};
   }
-NotText: StrFixer{_, _, _, _ -> Error.msg "The file is not text"}
+NotText: StrFixer{_, _, _, _ -> Error.msg "The file has bytes that are not a character of a Str"}
 Good:{ .t: Str -> `[{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}}]`; }
 BadInfo:{ .t: Str -> "["; }
 BadTank:{ .t: Str -> `[{"heading":"North"}]`; }
