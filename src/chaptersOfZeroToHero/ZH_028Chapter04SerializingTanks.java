@@ -106,7 +106,7 @@ We can use `Try#` to forge an action. Using `.map` we get
 ```
 ReadGame: {..
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.readStr(StrCleaners.utf8OrElse{NotText})}                       //(1)
+    .let[Str] text= {this.in.readStr(StrCleaners.utf8OrElse{NotText})}  //(1)
     .return {Try#{Infos.fromStr(text)}                                  //(2) mut Action[Info]
       .map{info -> info.getList.flow.map{i->Tanks.fromInfo(i)}.list}};  //(3) mut Action[List[Tank]]
   }
@@ -118,7 +118,7 @@ Instead of `.map` we can use `.andThen` + `Try#`:
 ```
 ReadGame: {..
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.readStr(StrCleaners.utf8OrElse{NotText})}                                 //(1)
+    .let[Str] text= {this.in.readStr(StrCleaners.utf8OrElse{NotText})}            //(1)
     .return {Try#{Infos.fromStr(text)}                                            //(2) mut Action[Info]
       .andThen{info -> Try#{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}}};  //(3) mut Action[List[Tank]]
   }
