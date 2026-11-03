@@ -87,7 +87,7 @@ CapInputCursorNode: ToIso[CapInputCursorNode], WidenTo[CapInputCursorNode]{
 - `this.in.readStr(StrCleaners.utf8OrElse{NotText})` reads the file and turns its bytes into a `Str` with the UTF-8 encoding.
 - When some bytes are not a valid character of a `Str`, the cleaner asks the `StrFixer` what to put in their place. `NotText` never answers: it throws an error.
 - The read adds the entries `line` and `col` to the info of that error, so the error says where the bad bytes are.
-- `this.in.readStr(StrCleaners.text)` would instead accept any bytes: bytes that are not UTF-8 become `?`, an accented letter becomes its letter, a tab becomes a space, a character with no `Str` form is dropped, and the line endings of every OS become newlines.
+- `this.in.readStr(StrCleaners.softText)` would instead accept any bytes: bytes that are not UTF-8 become `?`, an accented letter becomes its letter, a tab becomes a space, a character with no `Str` form is dropped, and the line endings of every OS become newlines.
 
 Note how this code simply leaks any error, wherever it is raised.
 There are three main kinds of error here:
