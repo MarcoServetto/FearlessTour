@@ -53,11 +53,11 @@ Now we can show such code!
 ReadGame: {
   mut .in: mut CapInputCursorNode;
   mut .read : List[Tank] -> Block#
-    .let[Str] text= {this.in.readStrUtf8 NotText}
+    .let[Str] text= {this.in.readStr(StrCleaners.utf8OrElse{NotText})}
     .let[Info] info= {Infos.fromStr(text)}
     .return {info.getList.flow.map{i->Tanks.fromInfo(i)}.list};
   }
-NotText: BadStrUnitRecover{_, byteOffset, _, _ -> Error.msg("The file is not text: look at byte "+byteOffset)}
+NotText: StrFixer{_, _, _, _ -> Error.msg "The file has bytes that are not a character of a Str"}
 ```
 
 As you can see, the no-args `.read` method takes the text of the file, parses it as an `Info` and then parses that `Info` as a list of `Tank`s.
@@ -75,9 +75,8 @@ CapInputCursor: ToIso[CapInputCursor], WidenTo[CapInputCursor]{
   }
 CapInputCursorNode: ToIso[CapInputCursorNode], WidenTo[CapInputCursorNode]{
   mut .label: Str; /// best effort portable name to help debugging
-  mut .readStrUtf8(recover: mut BadStrUnitRecover): Str;
-  mut .readUStrUtf8(recover: mut BadUStrUnitRecover): UStr;
-  ...//the same for Utf16Le, Utf32Le, Utf16Be, Utf32Be, Ascii and Latin1
+  mut .readStr(cleaner: F[Str, mut StrCleaner]): Str;
+  mut .readUStr(cleaner: F[UStr, mut UStrCleaner]): UStr;
   mut .readBytes: List[Byte];
   mut .readImage(maxPixels: Nat): Image;
   }
@@ -85,8 +84,10 @@ CapInputCursorNode: ToIso[CapInputCursorNode], WidenTo[CapInputCursorNode]{
 - `sys.inputCursor` is the capability to observe the files intended as input.
 - `sys.inputCursor#` gets the first input node.
 - `sys.inputCursor# !` extracts the actual `CapInputCursorNode`, throwing an error if no input has been provided yet.
-- `this.in.readStrUtf8 NotText` reads the file and turns its bytes into a `Str` with the UTF-8 encoding.
-- When some bytes are not a valid character of a `Str`, `.readStrUtf8` asks the `BadStrUnitRecover` what to put in their place. `NotText` never answers: it throws an error saying where the bad bytes are.
+- `this.in.readStr(StrCleaners.utf8OrElse{NotText})` reads the file and turns its bytes into a `Str` with the UTF-8 encoding.
+- When some bytes are not a valid character of a `Str`, the cleaner asks the `StrFixer` what to put in their place. `NotText` never answers: it throws an error.
+- The read adds the entries `line` and `col` to the info of that error, so the error says where the bad bytes are.
+- `this.in.readStr(StrCleaners.text)` would instead accept any bytes: bytes that are not UTF-8 become `?`, an accented letter becomes its letter, a tab becomes a space, a character with no `Str` form is dropped, and the line endings of every OS become newlines.
 
 Note how this code simply leaks any error, wherever it is raised.
 There are three main kinds of error here:
@@ -105,7 +106,7 @@ We can use `Try#` to forge an action. Using `.map` we get
 ```
 ReadGame: {..
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.readStrUtf8 NotText}                       //(1)
+    .let[Str] text= {this.in.readStr(StrCleaners.utf8OrElse{NotText})}  //(1)
     .return {Try#{Infos.fromStr(text)}                                  //(2) mut Action[Info]
       .map{info -> info.getList.flow.map{i->Tanks.fromInfo(i)}.list}};  //(3) mut Action[List[Tank]]
   }
@@ -117,7 +118,7 @@ Instead of `.map` we can use `.andThen` + `Try#`:
 ```
 ReadGame: {..
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.readStrUtf8 NotText}                                 //(1)
+    .let[Str] text= {this.in.readStr(StrCleaners.utf8OrElse{NotText})}            //(1)
     .return {Try#{Infos.fromStr(text)}                                            //(2) mut Action[Info]
       .andThen{info -> Try#{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}}};  //(3) mut Action[List[Tank]]
   }
@@ -126,7 +127,7 @@ The type is the same, but the error management is now very different.
 What errors are captured inside the `Info` of the `Action[List[Tank]]` returned by `.read`?
 What errors just leak out?
 The key is that `Try#{..}` and `.map{..}` are lazy: their bodies run only when someone runs the action, for example with `!`.
-- (1) The `Block` runs `this.in.readStrUtf8 NotText` right away, inside `.read` and outside any `Try#`. If the file cannot be read, or is not text, the error is thrown immediately: `.read` never even returns an action.
+- (1) The `Block` runs `this.in.readStr(StrCleaners.utf8OrElse{NotText})` right away, inside `.read` and outside any `Try#`. If the file cannot be read, or is not text, the error is thrown immediately: `.read` never even returns an action.
 - (2) `Infos.fromStr` runs inside a `Try#`. When the action runs and the text is not a valid `Info`, `Try#` turns the error into the `Info` of the action.
 - (3) With `.map`, the function runs when the action runs, after `Try#` has already succeeded, and nothing captures its errors: a missing key or an unknown direction leaks out of `!` as a real error.
   With `.andThen`, the function returns a `Try#` action, so the error becomes the `Info` of that action, and `.andThen` passes it on as the `Info` of the result.
@@ -183,7 +184,8 @@ use base.Enum as Enum;
 use base.Cache as Cache;
 use base.OrderHash as OrderHash;
 use base.CapInputCursorNode as CapInputCursorNode;
-use base.BadStrUnitRecover as BadStrUnitRecover;
+use base.StrFixer as StrFixer;
+use base.StrCleaners as StrCleaners;
 use base.Error as Error;
 use base.Void as Void;
 use base.Debug as Debug;
@@ -237,11 +239,11 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
 ReadGame: {
   mut .in: mut CapInputCursorNode;
   mut .read : List[Tank] -> Block#
-    .let[Str] text= {this.in.readStrUtf8 NotText}
+    .let[Str] text= {this.in.readStr(StrCleaners.utf8OrElse{NotText})}
     .let[Info] info= {Infos.fromStr(text)}
     .return {info.getList.flow.map{i->Tanks.fromInfo(i)}.list};
   }
-NotText: BadStrUnitRecover{_, byteOffset, _, _ -> Error.msg("The file is not text: look at byte "+byteOffset)}
+NotText: StrFixer{_, _, _, _ -> Error.msg "The file has bytes that are not a character of a Str"}
 
 Test: Main{sys-> Block#
   .do{Debug#(Tanks#(North,East,Points#(1,2)).info.str)}
@@ -371,7 +373,8 @@ use base.Enum as Enum;
 use base.Cache as Cache;
 use base.OrderHash as OrderHash;
 use base.CapInputCursorNode as CapInputCursorNode;
-use base.BadStrUnitRecover as BadStrUnitRecover;
+use base.StrFixer as StrFixer;
+use base.StrCleaners as StrCleaners;
 use base.Error as Error;
 use base.Void as Void;
 use base.Debug as Debug;
@@ -423,19 +426,7 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     );
   }
 FakeNode: CapInputCursorNode{
-  .readUStrUtf8 _ -> Error.msg "unused";
-  .readStrUtf16Le _ -> Error.msg "unused";
-  .readUStrUtf16Le _ -> Error.msg "unused";
-  .readStrUtf32Le _ -> Error.msg "unused";
-  .readUStrUtf32Le _ -> Error.msg "unused";
-  .readStrUtf16Be _ -> Error.msg "unused";
-  .readUStrUtf16Be _ -> Error.msg "unused";
-  .readStrUtf32Be _ -> Error.msg "unused";
-  .readUStrUtf32Be _ -> Error.msg "unused";
-  .readStrAscii _ -> Error.msg "unused";
-  .readUStrAscii _ -> Error.msg "unused";
-  .readStrLatin1 _ -> Error.msg "unused";
-  .readUStrLatin1 _ -> Error.msg "unused";
+  .readUStr _ -> Error.msg "unused";
   .readImage _ -> Error.msg "unused";
   .readBytes -> Error.msg "unused";
   .close -> this;
@@ -443,36 +434,36 @@ FakeNode: CapInputCursorNode{
   }
 Nodes:{ #(t: Str): mut CapInputCursorNode -> mut FakeNode{
   .label -> "fake";
-  .readStrUtf8 _ -> t;
+  .readStr _ -> t;
   } }
 BadNode:{ #: mut CapInputCursorNode -> mut FakeNode{
   .label -> "bad";
-  .readStrUtf8 _ -> Error.msg "cannot read the file";
+  .readStr _ -> Error.msg "cannot read the file";
   } }
 ReadMap: {
   mut .in: mut CapInputCursorNode;
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.readStrUtf8 NotText}
+    .let[Str] text= {this.in.readStr(StrCleaners.utf8OrElse{NotText})}
     .return {Try#{Infos.fromStr(text)}
       .map{info -> info.getList.flow.map{i->Tanks.fromInfo(i)}.list}};
   }
 ReadThen: {
   mut .in: mut CapInputCursorNode;
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.readStrUtf8 NotText}
+    .let[Str] text= {this.in.readStr(StrCleaners.utf8OrElse{NotText})}
     .return {Try#{Infos.fromStr(text)}
       .andThen{info -> Try#{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}}};
   }
 ReadContext: {
   mut .in: mut CapInputCursorNode;
   mut .read: mut Action[List[Tank]] -> Block#
-    .let[Str] text= {this.in.readStrUtf8 NotText}
+    .let[Str] text= {this.in.readStr(StrCleaners.utf8OrElse{NotText})}
     .return {Try#{Infos.fromStr(text)}
         .context{"While deserialising Info from string"}
       .andThen{info -> Try#[List[Tank]]{info.getList.flow.map{i->Tanks.fromInfo(i)}.list}
         .context{"While deserialising tanks from Info"}}};
   }
-NotText: BadStrUnitRecover{_, byteOffset, _, _ -> Error.msg("The file is not text: look at byte "+byteOffset)}
+NotText: StrFixer{_, _, _, _ -> Error.msg "The file has bytes that are not a character of a Str"}
 Good:{ .t: Str -> `[{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}}]`; }
 BadInfo:{ .t: Str -> "["; }
 BadTank:{ .t: Str -> `[{"heading":"North"}]`; }
