@@ -180,6 +180,14 @@ The discussion has to show the two uses that make this convenient:
 naming a lambda so that the code can name it back, as the standard library does for caching with `CacheF`,
 and declaring the cases of an enumeration directly inside `.enumList`.
 
+## Caching with `CacheMemo`
+
+`Cache.ofMemo` returns the `Norm` of the result of a `CacheMemo`, computed once for each `CacheMemo` and each list of equal arguments.
+The discussion has to cover:
+- a `CacheMemo` caches on its own identity: two different `CacheMemo` returning equal values give two different `Norm`, and both differ from the `.norm` of that value;
+- thus each `CacheMemo` adds a new caching point, and the same value can have several `Norm`;
+- when several `Norm` for the same value are bad style, and when they are useful.
+
 ## Attenuators
 
 An attenuator wraps a capability object: each call first checks a condition, like a `Revocation`, and then calls the wrapped capability.
