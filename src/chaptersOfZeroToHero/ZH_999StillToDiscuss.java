@@ -188,6 +188,15 @@ The discussion has to cover:
 - thus each `CacheMemo` adds a new caching point, and the same value can have several `Norm`;
 - when several `Norm` for the same value are bad style, and when they are useful.
 
+## Unit tests generated from doc comments
+
+Compiling a package also builds a `UnitTests` suite from the `//>` and `//-` examples in its doc comments:
+one `_<Type>_Examples` for each documented type, and one `AllAutoTests_<pkg>` for the package, running all of them.
+The discussion has to cover:
+- how to write the examples, and how to run the generated suite;
+- declaring a type named like a `_<Type>_Examples` is an error;
+- declaring a type named `AllAutoTests_<pkg>` turns off the generated suite of that package.
+
 ## Attenuators
 
 An attenuator wraps a capability object: each call first checks a condition, like a `Revocation`, and then calls the wrapped capability.
