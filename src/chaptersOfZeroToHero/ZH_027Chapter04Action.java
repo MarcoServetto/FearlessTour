@@ -213,15 +213,12 @@ The actions made by `Try#` and `sys.try#` are a more sophisiticated: they call t
 Every later `.run` gives back the same result, or the same `Info`.
 ```
 Block#
-  .var[Nat] v= {1}
-  .let a= {Try#{v.get}}
-  .do{Debug#(a!)}   //1
-  .do{v.set 2}
-  .do{Debug#(a!)}   //1 again: v.get is not called a second time
-  .let b= {a.map{x -> x + (v.get)}}
-  .do{Debug#(b!)}   //3
-  .do{v.set 3}
-  .do{Debug#(b!)}   //4: the function of .map is called at every .run
+  .let a= {Try#{Block#(Debug#("Try runs"), 1)}}         //prints nothing: a is not run yet
+  .do{Debug#(a!)}                                      //prints "Try runs", then 1
+  .do{Debug#(a!)}                                      //prints 1: the function of Try# is not called again
+  .let b= {a.map{x -> Block#(Debug#("map runs"), x + 1)}} //prints nothing: b is not run yet
+  .do{Debug#(b!)}                                      //prints "map runs", then 2
+  .do{Debug#(b!)}                                      //prints "map runs", then 2: the function of .map is called at every .run
 ```
 Why are `Try#` and `sys.try#` different?
 Code like `a.info.isSome` followed by `a!` is very common: this way the code inside the `Try#` runs only once.
@@ -238,20 +235,20 @@ use base.Try as Try;
 use base.Nat as Nat;
 use base.Action as Action;
 Test: base.Main{sys-> Block#
-  .var[Nat] v= {1}
-  .let[mut Action[Nat]] a= {Try#{v.get}}
+  .let[mut Action[Nat]] a= {Try#{Block#(Debug#("Try runs"), 1)}}
   .do{Debug#(a!)}
-  .do{v.set 2}
   .do{Debug#(a!)}
-  .let[mut Action[Nat]] b= {a.map{x -> x + (v.get)}}
+  .let[mut Action[Nat]] b= {a.map{x -> Block#(Debug#("map runs"), x + 1)}}
   .do{Debug#(b!)}
-  .do{v.set 3}
   .do{Debug#(b!)}
   .return{base.Void}}
+//PRINT|Try runs
 //PRINT|1
 //PRINT|1
-//PRINT|3
-//PRINT|4
+//PRINT|map runs
+//PRINT|2
+//PRINT|map runs
+//PRINT|2
 """); }/*--------------------------------------------
 OMIT_END
 
