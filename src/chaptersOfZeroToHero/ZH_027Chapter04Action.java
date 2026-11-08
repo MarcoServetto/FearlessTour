@@ -207,10 +207,9 @@ In this way our code will correctly fail as soon as an error is detected.
 
 #### Running an action twice
 
-I have to confess a little lie.
-I said that an `Action[R]` stores a computation, and that `.run` executes it.
+An `Action[R]` stores a computation, and `.run` executes it.
 This is exactly what `.map`, `.andThen` and `.context` do: the action they return calls their function at every `.run`.
-The actions made by `Try#` and `sys.try#` are different: they call their function at their first `.run` only.
+The actions made by `Try#` and `sys.try#` are a more sophisiticated: they call their function at their first `.run` only and store the result.
 Every later `.run` gives back the same result, or the same `Info`.
 ```
 Block#
