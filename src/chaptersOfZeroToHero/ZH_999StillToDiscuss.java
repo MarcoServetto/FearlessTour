@@ -56,7 +56,7 @@ ActionMatch[R:*,RR:*]: { mut .ok(x: R): RR; mut .info(info: Info): RR; }
 ````
 An `Action` is not a value that already is in one of its cases: it is a computation, and the case is decided only when `.run` executes it.
 Methods like `.map` and `.andThen` return new actions without running anything.
-The discussion has to cover what lazy matching means: when the computation runs, what happens when an action is run twice, and how this differs from composing matches over data that already exists.
+The discussion has to cover what lazy matching means: when the computation runs, and how this differs from composing matches over data that already exists.
 
 ### Match as in `Order`: an interface, but no cases
 
