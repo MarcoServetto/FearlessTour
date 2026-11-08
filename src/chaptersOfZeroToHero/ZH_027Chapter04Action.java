@@ -205,6 +205,57 @@ Note: if we expect the person and the job to be there, and it should be an obser
 ```
 In this way our code will correctly fail as soon as an error is detected.
 
+#### Running an action twice
+
+I have to confess a little lie.
+I said that an `Action[R]` stores a computation, and that `.run` executes it.
+This is exactly what `.map`, `.andThen` and `.context` do: the action they return calls their function at every `.run`.
+The actions made by `Try#` and `sys.try#` are different: they call their function at their first `.run` only.
+Every later `.run` gives back the same result, or the same `Info`.
+```
+Block#
+  .var[Nat] v= {1}
+  .let a= {Try#{v.get}}
+  .do{Debug#(a!)}   //1
+  .do{v.set 2}
+  .do{Debug#(a!)}   //1 again: v.get is not called a second time
+  .let b= {a.map{x -> x + (v.get)}}
+  .do{Debug#(b!)}   //3
+  .do{v.set 3}
+  .do{Debug#(b!)}   //4: the function of .map is called at every .run
+```
+Why are `Try#` and `sys.try#` different?
+Code like `a.info.isSome` followed by `a!` is very common: this way the code inside the `Try#` runs only once.
+Moreover, `Try#` and `sys.try#` can also hand some `iso` data to their function: `sys.try#(sys.iso.close, {s -> ...})` hands an `iso System` to the function.
+An `iso` object can be used only once, so that function can be called only once.
+
+Earlier we used `myAction.run{ .ok v->Actions.ok(v); .info i-> Actions.info(i); }` to force the execution of an action and still get the action back.
+An action made by `Try#` already behaves like that after its first `.run`, and so ``Try#{ myAction! }`` runs `myAction` at its first `.run` only.
+OMIT_START
+-------------------------*/@Test void tryRunsItsFunctionOnceAndMapAtEveryRun(){ run("""
+use base.Block as Block;
+use base.Debug as Debug;
+use base.Try as Try;
+use base.Nat as Nat;
+use base.Action as Action;
+Test: base.Main{sys-> Block#
+  .var[Nat] v= {1}
+  .let[mut Action[Nat]] a= {Try#{v.get}}
+  .do{Debug#(a!)}
+  .do{v.set 2}
+  .do{Debug#(a!)}
+  .let[mut Action[Nat]] b= {a.map{x -> x + (v.get)}}
+  .do{Debug#(b!)}
+  .do{v.set 3}
+  .do{Debug#(b!)}
+  .return{base.Void}}
+//PRINT|1
+//PRINT|1
+//PRINT|3
+//PRINT|4
+"""); }/*--------------------------------------------
+OMIT_END
+
 ### Errors or Actions?
 In Fearless, actions and errors can be used together to handle computation that can potentially fail.
 The idea is that the code will have layers of responsibility:
