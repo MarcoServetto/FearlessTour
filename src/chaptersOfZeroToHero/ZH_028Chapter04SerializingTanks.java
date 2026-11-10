@@ -198,7 +198,7 @@ Directions: Enums[Direction]{
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
+  read .close->this; .id->{::};
   }
 North: Direction{::.north}
 East:  Direction{::.east}
@@ -291,7 +291,7 @@ Directions: Enums[Direction]{
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
+  read .close->this; .id->{::};
   }
 North: Direction{::.north}
 East:  Direction{::.east}
@@ -387,7 +387,7 @@ Directions: Enums[Direction]{
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
+  read .close->this; .id->{::};
   }
 North: Direction{::.north}
 East:  Direction{::.east}
