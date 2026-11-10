@@ -148,7 +148,7 @@ The empty `Info` object can be obtained by writing `Info` or just `{}`.
 Each line below creates an `Info`, and the comment under it is the JSON text that `.str` gives for that `Info`:
 ```
 Infos.map("heading","North",  "aiming","East",  "position",Infos.map("x","10",  "y","5"))
-//{"heading":"North","aiming":"East","position":{"x":"10","y":"5"}}
+//{"aiming":"East","heading":"North","position":{"x":"10","y":"5"}}
 Infos.list("North",Infos.list("10","5"))
 //["North",["10","5"]]
 Infos.msg("hi")
@@ -191,7 +191,7 @@ Test: Main{sys-> Block#
   .do{Debug#(Lists#("a","b","c").info{::}.str)}
   .do{Debug#(5.info.str)}
   .return{Void}}
-//PRINT|{"heading":"North","aiming":"East","position":{"x":"10","y":"5"}}
+//PRINT|{"aiming":"East","heading":"North","position":{"x":"10","y":"5"}}
 //PRINT|["North",["10","5"]]
 //PRINT|"hi"
 //PRINT|null
