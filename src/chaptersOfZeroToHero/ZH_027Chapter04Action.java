@@ -551,7 +551,7 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
+  read .close->this; .id->{::};
   }
 North: Direction{}
 East:  Direction{}

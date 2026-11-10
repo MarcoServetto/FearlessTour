@@ -21,7 +21,7 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
+  read .close->this; .id->{::};
   }
 North: Direction{}
 East:  Direction{}
@@ -60,7 +60,7 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
+  read .close->this; .id->{::};
   }
 North: Direction{}
 East:  Direction{}
@@ -82,7 +82,7 @@ DirectionMatch[R:**]: { mut .north: R; mut .east: R; mut .south: R; mut .west: R
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
+  read .close->this; .id->{::};
   }
 North: Direction{::.north}
 East:  Direction{::.east}
@@ -117,7 +117,7 @@ Directions: Enums[Direction]{
 Direction: Enum[Direction]{
   .enums->Directions;
   read .match[R:**](m: mut DirectionMatch[R]): R;
-  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
+  read .close->this; .id->{::};
   }
 North: Direction{::.north}
 East:  Direction{::.east}
@@ -156,9 +156,9 @@ Enum[E]: DataType[E,E], Named, CaptureFree{
   .imm -> this.close;
   .info -> Infos.msg(this.str);
   read .index: Nat -> this.enums.indexMap.get(this.str);
-  read .close(t: read E): read Enum[E];
-  .norm: Norm[E];
-  .cmp t0,t1 -> this.close(t0).index <=> (this.close(t1).index);
+  read .id: BaseId[read E,read Enum[E]];
+  .norm: Norm[E] -> Cache.normCaptureFree(this.close, this.id, {::});
+  .cmp t0,t1 -> this.id#(t0).index <=> (this.id#(t1).index);
   .hash -> this.index;
   }
 ```
@@ -166,10 +166,10 @@ A type implementing `Named` gets `.name`: the qualified name of the type of the 
 `Enum[E]` takes `.str` from `.name`, keeping the part after the dot: `"North"`.
 `Enum[E]` is `CaptureFree`, so inside `Enum[E]` the receiver `this` is `imm`, and `.imm -> this.close` returns the value itself.
 For the same reason, the `.close` of `Direction` is `read .close->this`: an `imm` `this` cannot be the result of `mut .close: mut Direction`, offered by `Pipe[Direction]`, so that method stays abstract, and a `Direction` value is never `mut`.
-`Enum[E]` also requires a second `.close`, turning an `E` into an `Enum[E]`: `.cmp` needs it to call `.index` on `t0` and `t1`.
-`Direction` is an `Enum[Direction]`, so `.close->::` just returns its argument.
-`Enum[E]` also requires `.norm`: the value as a `Norm[E]`, the form of a value that caches use as a key.
-`Direction` is `CaptureFree`, so `.norm->Cache.normCaptureFree(this,{::})` returns the `Norm[Direction]` of `this`: the `{::}` compiles only because `Direction` is `CaptureFree`.
+`Enum[E]` also requires `.id`, an identity function turning an `E` into an `Enum[E]`: `.cmp` needs it to call `.index` on `t0` and `t1`.
+`Direction` is an `Enum[Direction]`, so `.id->{::}` compiles: the `{::}` just returns its argument.
+`Enum[E]` also offers `.norm`: the value as a `Norm[E]`, the form of a value that caches use as a key.
+`.id` shows that every `E` is an `Enum[E]`, and `{::}` shows that every `Enum[E]` is `CaptureFree`: with those two proofs, `Cache.normCaptureFree` returns the `Norm[E]` of `this.close`.
 
 Thanks to `Enums[Direction]` we get a `.map` method mapping names to directions.
 - Method `.map` returns a `Map[Str,Direction]` linking the string names of directions
@@ -242,7 +242,7 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
+  read .close->this; .id->{::};
   }
 North: Direction{}
 East:  Direction{}
@@ -281,7 +281,7 @@ Directions: Enums[Direction]{
   }
 Direction: Enum[Direction]{
   .enums->Directions;
-  read .close->this; .close->::; .norm->Cache.normCaptureFree(this,{::});
+  read .close->this; .id->{::};
   }
 North: Direction{}
 East:  Direction{}
