@@ -131,7 +131,7 @@ persons.tryGet(5).context{"The list persons was too small when"}
 This code would add the information that we were looking into the list of persons, and the error would look like
   
 >  The list persons was too small when  
->  List.get: List index 5 out of range for List of length 3
+>  List.get: index 5 is out of range for a List of size 3.
 
 Note that the computation required to format this extra information will only be executed if the `Action[R]` actually fails. This is often a big win in terms of performance, since nicely formatted error messages may be quite slow to compute.
 
@@ -314,7 +314,7 @@ But... what happens next?
 Another `Try#{...}` can turn the leaked error into another `Action[R]`, or the whole program could fail. How does this failure look?
 It will look something like this:
 ````
-List.get: List index 5 out of range for List of length 3
+List.get: index 5 is out of range for a List of size 3.
 imm Foo.bar(_) error line: 4 in file //.../_rank_app.fear
 imm Test.main(_) error line: 7 in file //.../_rank_app.fear
 ````
@@ -339,7 +339,7 @@ Stuff:{
 ````
 
 `sys.try#{Stuff.beer0}` would have
-`List.get: List index 5 out of range for List of length 3`
+`List.get: index 5 is out of range for a List of size 3.`
 stack trace `Stuff.foo, Stuff.beer0`.
 
 `sys.try#{Stuff.beer1}` would have the same message, but
@@ -348,7 +348,7 @@ stack trace `Stuff.beer1`.
 `sys.try#{Stuff.beer2}` would have
 ```
 InBeer2
-List.get: List index 5 out of range for List of length 3
+List.get: index 5 is out of range for a List of size 3.
 ```
 stack trace `Stuff.beer2`.
 
@@ -533,14 +533,14 @@ Test: Main{sys-> Block#
   .do{Debug#(Try#{Directions.map.get("East")}.map{d->d.index}!)}
   .do{Debug#(Directions.map.opt("Nope").str{::})}
   .do{Debug#(Lists#(Persons#("a"),Persons#("b")).tryGet(5).context{"The list persons was too small when"}.info!.getMsg.startsWith("The list persons was too small when"))}
-  .do{Debug#(Lists#(Persons#("a"),Persons#("b")).tryGet(5).context{"The list persons was too small when"}.info!.getMsg.contains("List index 5 out of range for List of length 2"))}
+  .do{Debug#(Lists#(Persons#("a"),Persons#("b")).tryGet(5).context{"The list persons was too small when"}.info!.getMsg.contains("index 5 is out of range for a List of size 2."))}
   .do{Debug#(Lists#(Persons#("a"),Persons#("b")).tryGet(1).map{::.name}!)}
   .do{Debug#(Try#{Stuff.beer1}.info!.getMsg.startsWith("List.get:"))}
   .do{Debug#(Try#{Stuff.beer2}.info!.getMsg.startsWith("InBeer2"))}
-  .do{Debug#(Try#{Stuff.beer2}.info!.getMsg.contains("List index 5 out of range"))}
+  .do{Debug#(Try#{Stuff.beer2}.info!.getMsg.contains("index 5 is out of range"))}
   .do{Debug#(Lists#(Persons#("a"),Persons#("b")).tryGet(1).andThen{p->Jobs.map.tryGet(p.name).map{j->"Person "+(p.name)+" works as a "+j}}!)}
   .do{Debug#(Lists#(Persons#("a"),Persons#("z")).tryGet(1).andThen{p->Jobs.map.tryGet(p.name).map{j->"Person "+(p.name)+" works as a "+j}}.info!.getMsg.startsWith("Map.get: Tried to get key z"))}
-  .do{Debug#(Lists#(Persons#("a"),Persons#("z")).tryGet(5).andThen{p->Jobs.map.tryGet(p.name).map{j->"Person "+(p.name)+" works as a "+j}}.info!.getMsg.startsWith("List.get: List index 5"))}
+  .do{Debug#(Lists#(Persons#("a"),Persons#("z")).tryGet(5).andThen{p->Jobs.map.tryGet(p.name).map{j->"Person "+(p.name)+" works as a "+j}}.info!.getMsg.startsWith("List.get: index 5"))}
   .do{Debug#(Block#.let p= {Lists#(Persons#("a"),Persons#("b")).get(1)}.return { "Person " + (p.name) + " works as a "+ (Jobs.map.get(p.name)) })}
   .do{Debug#(Pts#(3,4))}
   .do{Debug#(Actions.ok(7).run{ .ok v->Actions.ok(v); .info i-> Actions.info(i); }!)}
@@ -687,12 +687,12 @@ Test: base.Main{sys-> Block#
   .do{Debug#(sys.try#{Stuff.beer2}.info!.getMap.get("stack").getList.get(0).getMap.get("methodName").getMsg)}
   .do{Debug#(sys.try#{Stuff.beer2}.info!.getMap.get("info").getMsg)}
   .return{base.Void}}
-//PRINT|"List.get: List index 5 out of range for List of length 3"
+//PRINT|"List.get: index 5 is out of range for a List of size 3."
 //PRINT|imm .foo
 //PRINT|imm .beer1
 //PRINT|imm .beer2
 //PRINT|InBeer2
-//PRINT|List.get: List index 5 out of range for List of length 3
+//PRINT|List.get: index 5 is out of range for a List of size 3.
 """); }/*--------------------------------------------
 OMIT_END
 END*/
