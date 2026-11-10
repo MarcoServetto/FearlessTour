@@ -112,7 +112,7 @@ Next we are going to see some new methods. They all either come from `DataType` 
   .assertFalse: Void -> this.assertEq False;
 
   .info -> Infos.msg(this.str); //methods from DataType here and below
-  .close -> this; .close -> ::;
+  .close -> this;
   .hash -> this.imm?{ .then->1; .else->0 };
   .cmp a, b -> a.imm?{
     .then->b.imm?{ .then->{::.eq}; .else->{::.gt} };
@@ -303,7 +303,7 @@ Here below you can see the other `Opt[E]` methods. Note how `.info`, `.imm` and 
       .some eb -> by#ea <=> (by#eb);
       }
     };
-  .close->this; .close->::;
+  .close->this;
   }
 ````
 
@@ -413,7 +413,7 @@ Bool:Sealed,DataType[Bool,Bool]{
   .assertFalse: Void -> this.assertEq False;
 
   .info -> Infos.msg(this.str); //other methods from DataType here and below
-  .close -> this; .close -> ::; //methods from DataType
+  .close -> this; //methods from DataType
   .hash -> this.imm?{ .then->1; .else->0 };
   .cmp a, b -> a.imm?{
     .then->b.imm?{ .then->{::.eq}; .else->{::.gt} };
@@ -480,7 +480,7 @@ Opt[E:*]: _Opt[E]{
       .some eb -> by#ea <=> (by#eb);
       }
     };
-  .close->this; .close->::;
+  .close->this;
   }
 _Opt[E:*]:DataType[Opt[E],Opt[imm E],E,imm E]{
   mut  .match[R:**](mut OptMatch[E, R]): R;
@@ -612,8 +612,8 @@ Order[T,E:*]:{ /*explained later; like Order but for generics *|/ }
 OrderHash[T]:Order[T],ToStr{ /*explained later; Order plus hashing and ToStr*|/ }
 OrderHash[T,E:*]:Order[T,E],ToStr[E]{ /*explained later; like OrderHash but for generics *|/ }
 
-DataType[T,T0]:ToInfo,ToImm[T0],WidenTo[T],OrderHash[T],Pipe[T]{ read .close(t: read T): read DataType[T,T0]; }
-DataType[T,T0,E:*,E0]:ToInfo[E],ToImm[E,E0,T0],WidenTo[T],OrderHash[T,E],Pipe[T]{ read .close(t: read T): read DataType[T,T0,E,E0]; /*...*|/ }
+DataType[T,T0]:ToInfo,ToImm[T0],WidenTo[T],OrderHash[T],Pipe[T]{}
+DataType[T,T0,E:*,E0]:ToInfo[E],ToImm[E,E0,T0],WidenTo[T],OrderHash[T,E],Pipe[T]{ /*...*|/ }
 DataTypeBy[E,K,K0]:ToInfoBy[E],ToImmBy[E,K0],OrderHashBy[E,K]{ #(e: read E): read DataType[K,K0]; /*...*|/ }
 ````
 

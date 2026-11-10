@@ -21,7 +21,7 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     .str  -> ...;//includes repr1...repr3
     .cmp t1,t2 -> t1 <=> (t2, {::.imm.heading}.then{::.imm.aiming}.then{::.imm.position});
     .hash -> heading.hash.hashWith(aiming.hash).hashWith(position.hash);
-    .close->self; .close->::; .imm->self;
+    .close->self; .imm->self;
     };
   .fromInfo(i) -> Tanks#(
     Directions.fromInfo(i.getMap.get("heading")),
@@ -216,7 +216,7 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
       .hash -> x.hash.hashWith(y.hash);
       .info -> Infos.map("x",x,  "y",y);
       .str -> "[" + x + ", " + y + "]";
-      .close->self; .close->::; .imm->self;
+      .close->self; .imm->self;
       }}}
 Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
   heading, aiming, position -> Tank:ToInfo, ToStr,OrderHash[Tank]{'self
@@ -225,7 +225,7 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     read .position: Point -> position;
     .info -> Infos.map("heading", heading, "aiming", aiming,   "position", position);
     .str  -> "tank";
-    .close->self; .close->::;
+    .close->self;
     .cmp t1,t2 -> t1.heading <=> (t2.heading)
       && {t1.aiming <=> (t2.aiming)} && {t1.position <=> (t2.position)};
     .hash -> heading.hash.hashWith(aiming.hash).hashWith(position.hash);
@@ -318,7 +318,7 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
       .hash -> x.hash.hashWith(y.hash);
       .info -> Infos.map("x",x,  "y",y);
       .str -> "[" + x + ", " + y + "]";
-      .close->self; .close->::; .imm->self;
+      .close->self; .imm->self;
       }}}
 Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
   heading, aiming, position -> Tank:DataType[Tank,Tank]{'self
@@ -329,7 +329,7 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     .str  -> "tank";
     .cmp t1,t2 -> t1 <=> (t2, {::.imm.heading}.then{::.imm.aiming}.then{::.imm.position});
     .hash -> heading.hash.hashWith(aiming.hash).hashWith(position.hash);
-    .close->self; .close->::; .imm->self;
+    .close->self; .imm->self;
     };
   .fromInfo(i) -> Tanks#(
     Directions.fromInfo(i.getMap.get("heading")),
@@ -405,7 +405,7 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
       .hash -> x.hash.hashWith(y.hash);
       .info -> Infos.map("x",x,  "y",y);
       .str -> "[" + x + ", " + y + "]";
-      .close->self; .close->::; .imm->self;
+      .close->self; .imm->self;
       }}}
 Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
   heading, aiming, position -> Tank:ToInfo, ToStr,OrderHash[Tank]{'self
@@ -414,7 +414,7 @@ Tanks: F[Direction,Direction,Point,Tank], FromInfo[Tank] {
     read .position: Point -> position;
     .info -> Infos.map("heading", heading, "aiming", aiming,   "position", position);
     .str  -> "tank";
-    .close->self; .close->::;
+    .close->self;
     .cmp t1,t2 -> t1.heading <=> (t2.heading)
       && {t1.aiming <=> (t2.aiming)} && {t1.position <=> (t2.position)};
     .hash -> heading.hash.hashWith(aiming.hash).hashWith(position.hash);
