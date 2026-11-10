@@ -287,7 +287,7 @@ Points: F[Nat,Nat,Point], FromInfo[Point] {
       .hash -> x.hash.hashWith(y.hash);
       .info -> Infos.map("x",x,  "y",y);
       .str -> "[" + x + ", " + y + "]";
-      .close->self; .close->::; .imm->self;
+      .close->self; .imm->self;
       }}}
 ```
 

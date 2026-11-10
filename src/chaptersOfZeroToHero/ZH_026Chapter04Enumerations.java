@@ -166,6 +166,8 @@ A type implementing `Named` gets `.name`: the qualified name of the type of the 
 `Enum[E]` takes `.str` from `.name`, keeping the part after the dot: `"North"`.
 `Enum[E]` is `CaptureFree`, so inside `Enum[E]` the receiver `this` is `imm`, and `.imm -> this.close` returns the value itself.
 For the same reason, the `.close` of `Direction` is `read .close->this`: an `imm` `this` cannot be the result of `mut .close: mut Direction`, offered by `Pipe[Direction]`, so that method stays abstract, and a `Direction` value is never `mut`.
+`Enum[E]` also requires a second `.close`, turning an `E` into an `Enum[E]`: `.cmp` needs it to call `.index` on `t0` and `t1`.
+`Direction` is an `Enum[Direction]`, so `.close->::` just returns its argument.
 `Enum[E]` also requires `.norm`: the value as a `Norm[E]`, the form of a value that caches use as a key.
 `Direction` is `CaptureFree`, so `.norm->Cache.normCaptureFree(this,{::})` returns the `Norm[Direction]` of `this`: the `{::}` compiles only because `Direction` is `CaptureFree`.
 

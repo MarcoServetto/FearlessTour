@@ -612,10 +612,9 @@ But, it turns out that by adding just a little more we can get a much better pay
 ````
 OrderHash[T]:Order[T],ToStr{
   read .hash: Nat;
-  read .close(t: read T): read OrderHash[T];
-  read .assertEq(expected: read T):Void -> ...;
-  read .assertEq(expected: read T, msg: read LazyInfo):Void -> ...;
-  read .assertNotEq(expected: read T):Void -> ...;
+  read .assertEq(expected: read OrderHash[T]):Void -> ...;
+  read .assertEq(expected: read OrderHash[T], msg: read LazyInfo):Void -> ...;
+  read .assertNotEq(expected: read OrderHash[T]):Void -> ...;
   ...
 }
 ````
@@ -645,9 +644,9 @@ Test: Main{sys -> Block#
 OMIT_END
 Both `.str{::}` take only the way to print the elements: the map prints its keys `one` and `two` using the `{::}` given to `Maps#` when the map was created.
 
-Note how we also add `.close` in the other direction: earlier we saw
-`.close:T` allowing us to turn `Order[T]` into `T`. This one allows us to turn a `T` parameter into an `OrderHash[T]`. With this we can convert in both directions.
-This is again needed in the error messages, to turn a `T` into an `OrderHash[T]` that possesses a `.str` method.
+Note how the assert methods take an `OrderHash[T]` and not a `T`: earlier we saw
+`.close:T` allowing us to turn `Order[T]` into `T`. The assert methods use `.close` to turn `expected` into a `T` and compare it with `this`.
+Taking an `OrderHash[T]` is again needed in the error messages: an `OrderHash[T]` possesses a `.str` method.
 
 ````
 //usage
@@ -657,7 +656,7 @@ Persons: { #(age: Nat, name: Str): Person -> Person: OrderHash[Person]{'self
   .cmp p1,p2 -> p1.age <=> (p2.age) && {p1.name <=> (p2.name)};
   .hash        -> age.hash.hashWith(name.hash);
   .str         -> "Person[age="+age+", name="+name+"]";
-  .close->self; .close->::;
+  .close->self;
   }
 }
 ````
@@ -786,11 +785,8 @@ Type `OrderHash[T,E]` serves exactly the same role as `Order[T,E]` but at the `O
 OrderHash[T,E:*]:Order[T,E],ToStr[E]{
   read .hash[K](by: OrderHashBy[imm E,K]): Nat;
 
-  read .close(t: read T): read OrderHash[T,E];
-
   read .orderHash[K](by: OrderHashBy[imm E,K]): read OrderHash[T] -> {
     .close -> this.close;
-    .close t -> this.close(t).orderHash(by);
     .cmp t0,t1 -> this.cmp(by,t0,t1);
     .hash -> this.hash by;
     .str  -> this.str by;
@@ -812,7 +808,7 @@ Opt[E:*]: _Opt[E]{
     .empty  -> 0;
     .some e -> 31.aluAddWrap(by#e.hash);
     };
-  .close->this; .close->::;
+  .close->this;
 ````
 - We cannot conceptually define `.str` on an optional without arguments.
 `OrderHash[T,E:*]` implements `ToStr[E]`, guiding us to implement `.str by`
@@ -821,9 +817,9 @@ using the `by` argument to turn the optional content into a `ToStr`.
 `OrderHash[T,E:*]`
 guides us to implement `read .hash[K](by: OrderHashBy[imm E,K]): Nat`
 using the `by` argument to turn the optional content into an `OrderHash`, so that we can call `.hash` on it.
-- Finally, to enable all of this support we need to allow the needed type conversions.
-The line of code `.close->this; .close->::;`
-is a standard way to do this in Fearless; implementing the two versions of `.close` in a single line.
+- Finally, to enable all of this support we need to allow the needed type conversion.
+The line of code `.close->this;`
+is the standard way to do this in Fearless.
 
 `List[E]`, `Map[K,E]` and `Opt[E]` implement `OrderHash[List[E],E]`, `OrderHash[Map[K,E],E]`, and `OrderHash[Opt[E],E]`.
 Thus, we can use the method `List[E].order`, taking a function from `E` to `Order[E]`. That is, if `myList` is a `List[List[E]]` and `E` implements `Order[E]` or `OrderHash[E]`, we can simply write:
@@ -923,7 +919,6 @@ Persons:{
       .str: Str -> "Person[age="+age+", name="+name+", cats="+(cats.size)+"]";
 
       .close -> self;
-      .close -> ::;
       }
   }
 
@@ -1420,7 +1415,6 @@ Persons:{
       .hash: Nat -> age.hash.hashWith(name.hash);
       .str: Str -> "P"+name;
       .close -> self;
-      .close -> ::;
       }
   }
 Older:OrderBy[Person]{ p1,p2 -> p1.age <=> (p2.age) }
