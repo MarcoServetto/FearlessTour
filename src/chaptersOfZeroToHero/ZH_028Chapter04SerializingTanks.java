@@ -258,7 +258,7 @@ Test: Main{sys-> Block#
   .do{Debug#(Try#{Infos.fromStr("[")}.map{i->i.str}.info.isEmpty)}
   .return{Void}}
 
-//PRINT|{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}}
+//PRINT|{"aiming":"East","heading":"North","position":{"x":"1","y":"2"}}
 //PRINT|True
 //PRINT|False
 //PRINT|2
@@ -344,7 +344,7 @@ Test: Main{sys-> Block#
   .do{Debug#(Points#(3,4) < (Points#(3,5)))}
   .do{Debug#(Points#(3,4).move(West).str)}
   .return{Void}}
-//PRINT|{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}}
+//PRINT|{"aiming":"East","heading":"North","position":{"x":"1","y":"2"}}
 //PRINT|True
 //PRINT|False
 //PRINT|True

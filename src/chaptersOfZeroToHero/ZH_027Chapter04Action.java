@@ -612,10 +612,10 @@ Test: base.Main{sys-> Block#
   .do{Debug#((Infos.list("x") + (Infos.list("y"))).str)}
   .do{Debug#((Infos.map("k","v") + (Infos.map("k","w","j","z"))).str)}
   .return{base.Void}}
-//PRINT|{"msg":"a","list":["x"]}
+//PRINT|{"list":["x"],"msg":"a"}
 //PRINT|"a\\nb"
 //PRINT|["x","y"]
-//PRINT|{"k":"v\\nw","j":"z"}
+//PRINT|{"j":"z","k":"v\\nw"}
 """); }/*--------------------------------------------
 -------------------------*/@Test void optionalFlowVersionOfAndThen(){ run("""
 use base.Block as Block;
