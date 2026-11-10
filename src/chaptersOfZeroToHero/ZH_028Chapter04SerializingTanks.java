@@ -253,7 +253,7 @@ Test: Main{sys-> Block#
   .do{Debug#(Infos.fromStr(`[{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}},{"heading":"West","aiming":"South","position":{"x":"7","y":"3"}}]`).getList.flow.map{i->Tanks.fromInfo(i)}.list.get(1).position.x)}
   .do{Debug#(Infos.fromStr(`[{"heading":"North","aiming":"East","position":{"x":"1","y":"2"}},{"heading":"West","aiming":"South","position":{"x":"7","y":"3"}}]`).getList.flow.map{i->Tanks.fromInfo(i)}.list.get(1).heading)}
   .do{Debug#(Try#{Infos.fromStr("[")}.context{"While deserialising Info from string"}.info!.getMsg.startsWith("While deserialising Info from string"))}
-  .do{Debug#(Try#{Infos.fromStr("[")}.context{"While deserialising Info from string"}.info!.getMsg.contains("unterminated list"))}
+  .do{Debug#(Try#{Infos.fromStr("[")}.context{"While deserialising Info from string"}.info!.getMsg.contains("Unterminated list."))}
   .do{Debug#(Try#{Tanks.fromInfo(Infos.fromStr(`{"heading":"North"}`))}.context{"While deserialising tanks from Info"}.info!.getMsg.startsWith("While deserialising tanks from Info"))}
   .do{Debug#(Try#{Infos.fromStr("[")}.map{i->i.str}.info.isEmpty)}
   .return{Void}}
