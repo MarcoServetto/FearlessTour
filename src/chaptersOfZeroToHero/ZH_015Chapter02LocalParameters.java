@@ -316,13 +316,12 @@ use base.Void as Void;
 use base.Main as Main;
 use base.Block as Block;
 use base.Debug as Debug;
-use base.Try as Try;
 Test: Main{sys-> Block#
-  .do{Debug#(Try#{3.5 .getNat}.info.isSome)}
+  .do{Debug#(sys.try#{3.5 .getNat}.info.isSome)}
   .do{Debug#(3.5 .softNat)}
   .do{Debug#((-1.0) .softNat)}
   .do{Debug#(2 .softSqrt .softNat)}
-  .do{Debug#(Try#{3.0 .getNat}.info.isSome)}
+  .do{Debug#(sys.try#{3.0 .getNat}.info.isSome)}
   .return{Void}}
 //PRINT|True
 //PRINT|3
