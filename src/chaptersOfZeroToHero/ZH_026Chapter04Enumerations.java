@@ -288,7 +288,6 @@ East:  Direction{}
 South: Direction{}
 West:  Direction{}
 //PRINT|Map.get: Tried to get key Nope that is not contained in this map.
-//PRINT| Consider using `Map.opt` to properly handle the failure case.
 """); }/*--------------------------------------------
 OMIT_END
 END*/
