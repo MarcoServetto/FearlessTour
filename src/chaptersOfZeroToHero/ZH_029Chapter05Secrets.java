@@ -275,7 +275,7 @@ Stars: Reporter{ es -> Report{
 //ERROR|Error 8 TypeError
 """); }/*--------------------------------------------
 
-The `.if` runs inside `.map`, so the result is a `Secret[Str]`, and a `Secret[Str]` can not be added to a `Str`.
+The `.if` runs inside `.map`, so the result is a `Secret[Str]`, and a `Secret[Str]` cannot be added to a `Str`.
 In Fearless every choice is a method call, and a method call on the element of a secret can only happen inside `.map` or `.zip`.
 
 The third reporter tries to copy each dose out of the secret, into a `Var`:
