@@ -330,7 +330,7 @@ Use: { .any[X](x: X): base.Void -> base.Void }
 Test: base.Main{sys-> Use.any(Left.choose("Hello",TankNN))}
 //ERROR|In file: [###]_test/_rank_app111.fear
 //ERROR|[###]
-//ERROR|The type argument "Val" of ".choose" is inferred from the arguments, but they disagree: some need "base.Str", some need "TankNN".
+//ERROR|The generic type argument "Val" of ".choose" is inferred from the arguments, but they disagree: some need "base.Str", some need "TankNN".
 //ERROR|No type is a supertype of all of them.
 //ERROR|[###]
 """); }/*--------------------------------------------
