@@ -223,10 +223,10 @@ Point:{ .x: Nat; .y: Nat;
 //ERROR|
 //ERROR|While inspecting method call "#" > ".cmp(_,_,_)" line 5
 //ERROR|The call to "#" is invalid.
-//ERROR|Type argument 1 ("R") does not satisfy the bounds
-//ERROR|for type parameter "R" in "Block#".
+//ERROR|Generic type argument 1 ("R") does not satisfy the bounds
+//ERROR|for generic type parameter "R" in "Block#".
 //ERROR|Here "R" can only use capabilities "imm" or "mut" or "read".
-//ERROR|But type argument "R" can use capabilities "imm" or "iso" or "mut" or "mutH" or "read" or "readH".
+//ERROR|But generic type argument "R" can use capabilities "imm" or "iso" or "mut" or "mutH" or "read" or "readH".
 //ERROR|
 //ERROR|Compressed relevant code with inferred types: (compression indicated by `-`)
 //ERROR|Block#[imm,R]
