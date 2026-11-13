@@ -399,7 +399,29 @@ As you can imagine, it is quite rare to have to capture non-deterministic errors
 - Aeroplane or nuclear plant supervision system: you probably do not want it to terminate, no matter the error.
 - Video game where users can somehow forge code either directly or by combining magic objects with standard effects.
 
-> need a Cap that gives you current line number and file name!
+`System.try` can also observe the current stack trace, and with it the current file name and line number.
+`sys.try.currentStackTrace` returns a `List[StackFrame]`; its first frame is the method calling it.
+```
+sys.try.currentStackTrace.get(0).fileName
+//the name of the file holding this call
+sys.try.currentStackTrace.get(0).lineNumber
+//the line number of this call
+```
+OMIT_START
+-------------------------*/@Test void currentStackTraceGivesFileAndLine(){ run("""
+use base.Block as Block;
+use base.Debug as Debug;
+Test: base.Main{sys-> Block#
+  .let frame= {sys.try.currentStackTrace.get(0)}
+  .do{Debug#(frame.fileName)}
+  .do{Debug#(frame.lineNumber)}
+  .do{Debug#(frame)}
+  .return{base.Void}}
+//PRINT|_test/_rank_app111.fear
+//PRINT|4
+//PRINT|StackFrame[_test/_rank_app111.fear, Test, imm .main(_), 4]
+"""); }/*--------------------------------------------
+OMIT_END
 
 # Offensive programming
 > should be a section of the guide 
