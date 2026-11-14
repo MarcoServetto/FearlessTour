@@ -578,7 +578,7 @@ X:{ .t: Tank -> Tank }
 //ERROR|In file: [###]_test/_rank_app111.fear
 //ERROR|[###]
 //ERROR|The type "Tank" is not standalone: it is declared inside a method body.
-//ERROR|Only a standalone type can be extended or mentioned by name.
+//ERROR|Only a standalone type can be implemented or mentioned by name.
 //ERROR|[###]
 """); }/*--------------------------------------------
 //OMIT_END
