@@ -78,8 +78,8 @@ MyTrue: base.True {}
 //ERROR|While inspecting type declaration "MyTrue"
 //ERROR|Type declaration "MyTrue" implements sealed type "base.True".
 //ERROR|Sealed types can only be implemented in their own package.
-//ERROR|Type declaration "MyTrue" is defined in package "test".
-//ERROR|Type "True" is defined in package "base".
+//ERROR|Type declaration "MyTrue" is in package "test".
+//ERROR|Type "base.True" is in package "base".
 //ERROR|Error 7 WellFormedness
 """); }/*--------------------------------------------
 OMIT_END
