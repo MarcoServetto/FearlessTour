@@ -194,8 +194,8 @@ Peek: Reporter{ es -> Report{
 //ERROR|While inspecting object literal instance of "clinic._Key"
 //ERROR|Object literal instance of "clinic._Key" implements private type "clinic._Key".
 //ERROR|Private types can only be implemented in their own package.
-//ERROR|Object literal instance of "clinic._Key" is defined in package "ward".
-//ERROR|Type "_Key" is defined in package "clinic".
+//ERROR|Object literal instance of "clinic._Key" is in package "ward".
+//ERROR|Type "clinic._Key" is in package "clinic".
 //ERROR|Error 7 WellFormedness
 """); }/*--------------------------------------------
 
