@@ -226,7 +226,7 @@ Point:{ .x: Nat; .y: Nat;
 //ERROR|Generic type argument 1 ("R") does not satisfy the bounds
 //ERROR|for generic type parameter "R" in "Block#".
 //ERROR|Here "R" can only use capabilities "imm" or "mut" or "read".
-//ERROR|But generic type argument "R" can use capabilities "imm" or "iso" or "mut" or "mutH" or "read" or "readH".
+//ERROR|But generic type argument "R" can only use capabilities "imm" or "iso" or "mut" or "mutH" or "read" or "readH".
 //ERROR|
 //ERROR|Compressed relevant code with inferred types: (compression indicated by `-`)
 //ERROR|Block#[imm,R]
