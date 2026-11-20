@@ -221,14 +221,14 @@ Point:{ .x: Nat; .y: Nat;
 //ERROR|   | ... 2 lines ...
 //ERROR|008|     .return {m.eq};
 //ERROR|
-//ERROR|While inspecting method call "#" > ".cmp(_,_,_)" line 5
+//ERROR|While inspecting method call "#" > method "Point.cmp(_,_,_)" (line 5)
 //ERROR|The call to "#" is invalid.
 //ERROR|Generic type argument 1 ("R") does not satisfy the bounds
 //ERROR|for generic type parameter "R" in "Block#".
 //ERROR|Here "R" can only use capabilities "imm" or "mut" or "read".
 //ERROR|But generic type argument "R" can only use capabilities "imm" or "iso" or "mut" or "mutH" or "read" or "readH".
 //ERROR|
-//ERROR|Compressed relevant code with inferred types: (compression indicated by `-`)
+//ERROR|See inferred typing context below for how type "R" was introduced:
 //ERROR|Block#[imm,R]
 //ERROR|Error 8 TypeError
 """); }/*--------------------------------------------
@@ -305,17 +305,14 @@ Parser:{
 //ERROR|
 //ERROR|013|   .parsePlus(l: mutH Lexer, left: iso Exp): iso Exp -> l.nextToken.match{
 //ERROR|014|     .plus   -> Exps.sum(left, this.parseNum(l));
-//ERROR|   |     ----------------------------------------^^-
+//ERROR|   |     ----------------------------------------^--
 //ERROR|   | ... 2 lines ...
 //ERROR|017|     }
 //ERROR|
-//ERROR|While inspecting parameter "l" > ".plus" line 14 > ".parsePlus(_,_)" line 13
+//ERROR|While inspecting parameter "l" > method "TokenMatch[iso Exp].plus" (line 14) > method "Parser.parsePlus(_,_)" (line 13)
 //ERROR|Parameter "l" has type "mutH Lexer".
 //ERROR|The type of parameter "l" is hygienic (readH or mutH)
 //ERROR|and thus it cannot be captured in the object literal instance of "mut TokenMatch[iso Exp]" (line 13).
-//ERROR|
-//ERROR|Compressed relevant code with inferred types: (compression indicated by `-`)
-//ERROR|l
 //ERROR|Error 8 TypeError
 """); }/*--------------------------------------------
 -------------------------*/@Test void matcherCarriesHygienicReferencesAsParameters(){ run("""

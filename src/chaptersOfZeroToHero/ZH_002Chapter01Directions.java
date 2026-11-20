@@ -46,7 +46,7 @@ West : {.turn-> North;}
 //ERROR|
 //ERROR|While inspecting type declaration "North"
 //ERROR|Missing return type for method ".turn".
-//ERROR|Add an explicit return type before '->'.
+//ERROR|Add an explicit return type before "->".
 //ERROR|Alternatively (less common), if you intended to override and omit the signature,
 //ERROR|the signature must be inherited from a supertype.
 //ERROR|Cannot infer signature of method ".turn".
@@ -119,7 +119,7 @@ West : {.turn-> North;}
 //ERROR|
 //ERROR|While inspecting type declaration "North"
 //ERROR|Missing return type for method ".turn".
-//ERROR|Add an explicit return type before '->'.
+//ERROR|Add an explicit return type before "->".
 //ERROR|Alternatively (less common), if you intended to override and omit the signature,
 //ERROR|the signature must be inherited from a supertype.
 //ERROR|Cannot infer signature of method ".turn".

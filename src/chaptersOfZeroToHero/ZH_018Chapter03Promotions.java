@@ -121,9 +121,9 @@ Bad: { #: Void -> PromotionExample#.run(10) }
 //ERROR|In file: [###]_test/_rank_app111.fear
 //ERROR|
 //ERROR|016| Bad: { #: Void -> PromotionExample#.run(10) }
-//ERROR|   |        -----------~~~~~~~~~~~~~~~~~^^^^^~~~
+//ERROR|   |        -----------^^^^^^^^^^^^^^^^^~~~~~~~~
 //ERROR|
-//ERROR|While inspecting "#" line 16
+//ERROR|While inspecting method "Bad#" (line 16)
 //ERROR|This call to method "mut Animal.run(_)" cannot typecheck.
 //ERROR|The receiver (the expression before the method name) has capability "imm".
 //ERROR|This call requires a receiver with capability "mut" or "iso".
@@ -131,9 +131,6 @@ Bad: { #: Void -> PromotionExample#.run(10) }
 //ERROR|Receiver required by each promotion:
 //ERROR|- "mut" (As declared)
 //ERROR|- "iso" (Strengthen result)
-//ERROR|
-//ERROR|Compressed relevant code with inferred types: (compression indicated by `-`)
-//ERROR|Pro-ple#.run[mut](10)
 //ERROR|Error 8 TypeError
 """); }/*--------------------------------------------
 //OMIT_END

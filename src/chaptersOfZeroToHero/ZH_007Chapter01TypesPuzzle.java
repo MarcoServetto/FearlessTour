@@ -444,15 +444,12 @@ Bad: { #: Tank -> Tanks#(+3,-6) }
 //ERROR|In file: [###]_test/_rank_app111.fear
 //ERROR|
 //ERROR|009| Bad: { #: Tank -> Tanks#(+3,-6) }
-//ERROR|   |        -----------~~~~~^^~~~~~~
+//ERROR|   |        -----------~~~~~~~^^~~~~
 //ERROR|
-//ERROR|While inspecting "#" line 9
+//ERROR|While inspecting method "Bad#" (line 9)
 //ERROR|This call to method "Tanks#(_,_)" cannot typecheck.
 //ERROR|Argument 1 has type "iso Int".
 //ERROR|That is not a subtype of "Direction" (the type required by the method signature).
-//ERROR|
-//ERROR|Compressed relevant code with inferred types: (compression indicated by `-`)
-//ERROR|-#(+3,-)
 //ERROR|Error 8 TypeError
 
 """); }/*--------------------------------------------
