@@ -268,7 +268,7 @@ Stars: Reporter{ es -> Report{
 //ERROR|This call to method "base.Str+(_)" cannot typecheck.
 //ERROR|Argument 1 has type "clinic.Secret[base.Str]".
 //ERROR|That is not a subtype of "read base.ToStr" (the type required by the method signature).
-//ERROR|Hint: Fearless has no operator precedence, so an expression like "a.get + b.get" parses as "(a.get + b).get", not "a.get + (b.get)". If this argument needed a method applied to it first, wrap it in parentheses.
+//ERROR|Hint: all method names have the same precedence, so an expression like "a.get + b.get" parses as "(a.get + b).get", not "a.get + (b.get)". If this argument needed a method applied to it first, wrap it in parentheses.
 //ERROR|
 //ERROR|Compressed relevant code with inferred types: (compression indicated by `-`)
 //ERROR|-+(e.dose.map[imm,-.Str](-.F[Nat,-.Str]{(-)->d>[read](50).if[imm,-.Str](mut -.ThenElse[-.Str]{"*";""})}))
