@@ -312,7 +312,7 @@ Parser:{
 //ERROR|While inspecting parameter "l" > method "TokenMatch[iso Exp].plus" (line 14) > method "Parser.parsePlus(_,_)" (line 13)
 //ERROR|Parameter "l" has type "mutH Lexer".
 //ERROR|The type of parameter "l" is hygienic (readH or mutH)
-//ERROR|and thus it cannot be captured in the object literal instance of "mut TokenMatch[iso Exp]" (line 13).
+//ERROR|and thus it cannot be captured in the object literal instance of "TokenMatch[iso Exp]" (line 13).
 //ERROR|Error 8 TypeError
 """); }/*--------------------------------------------
 -------------------------*/@Test void matcherCarriesHygienicReferencesAsParameters(){ run("""
