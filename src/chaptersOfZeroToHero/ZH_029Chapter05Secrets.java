@@ -260,18 +260,18 @@ Stars: Reporter{ es -> Report{
 //ERROR|
 //ERROR|018| Stars: Reporter{ es -> Report{
 //ERROR|019|   .board -> es.flow.map{e -> e.bed + (e.dose.map{d -> (d > 50).if{ .then -> "*"; .else -> "" }})}.join ", ";
-//ERROR|   |                         -----~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
+//ERROR|   |                         -----~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^~
 //ERROR|020|   .order -> Secrets#0;
 //ERROR|021|   }}
 //ERROR|
-//ERROR|While inspecting "#(_)" line 19 > ".board" line 19 > "#(_)" line 18
+//ERROR|While inspecting method "base.F[Patient,base.Str]#(_)" (line 19) > method "Report.board" (line 19) > method "Stars#(_)" (line 18)
 //ERROR|This call to method "base.Str+(_)" cannot typecheck.
 //ERROR|Argument 1 has type "clinic.Secret[base.Str]".
 //ERROR|That is not a subtype of "read base.ToStr" (the type required by the method signature).
 //ERROR|Hint: all method names have the same precedence, so an expression like "a.get + b.get" parses as "(a.get + b).get", not "a.get + (b.get)". If this argument needed a method applied to it first, wrap it in parentheses.
 //ERROR|
-//ERROR|Compressed relevant code with inferred types: (compression indicated by `-`)
-//ERROR|-+(e.dose.map[imm,-.Str](-.F[Nat,-.Str]{(-)->d>[read](50).if[imm,-.Str](mut -.ThenElse[-.Str]{"*";""})}))
+//ERROR|See inferred typing context below for how type "base.Str" was introduced ("..." marks omitted code):
+//ERROR|e.bed + (e.dose.map[imm,base.Str](base.F[Nat,base.Str]{read #(d:Nat):base.Str->...}))
 //ERROR|Error 8 TypeError
 """); }/*--------------------------------------------
 
@@ -342,16 +342,13 @@ Smuggler: Reporter{ es -> Report{
 //ERROR|019|   .board -> es.flow.map{e -> Block#
 //ERROR|020|     .var[Nat] seen= {0}
 //ERROR|021|     .do { e.dose.map{d -> seen.set(d)} }
-//ERROR|   |           -----------~~~~~^^^^^~~~~~~-
+//ERROR|   |           -----------~~~~~^^^^~~~~~~~-
 //ERROR|022|     .return { e.bed + " " + (seen.get) }
 //ERROR|
-//ERROR|While inspecting parameter "seen" > "#(_)" line 21 > "#" line 21 > "#(_,_)" line 19 > "#(_)" line 19 > ".board" line 19 > "#(_)" line 18
+//ERROR|While inspecting parameter "seen" > method "base.F[Nat,base.Void]#(_)" (line 21) > method "base.MF[base.Void]#" (line 21) > method "base.Continuation[mut base.Var[Nat],base.Str]#(_,_)" (line 19) > method "base.F[Patient,base.Str]#(_)" (line 19) > method "Report.board" (line 19) > method "Smuggler#(_)" (line 18)
 //ERROR|Parameter "seen" has type "mut base.Var[Nat]".
 //ERROR|Parameter "seen" can observe mutation; thus it cannot be captured in the "imm" object literal instance of "base.F[Nat,base.Void]" (line 21).
 //ERROR|Hint: capture an immutable copy instead, or move this use outside the object literal.
-//ERROR|
-//ERROR|Compressed relevant code with inferred types: (compression indicated by `-`)
-//ERROR|seen
 //ERROR|Error 8 TypeError
 """); }/*--------------------------------------------
 
