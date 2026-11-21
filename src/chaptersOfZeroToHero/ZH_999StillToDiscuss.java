@@ -222,7 +222,7 @@ Point:{ .x: Nat; .y: Nat;
 //ERROR|008|     .return {m.eq};
 //ERROR|
 //ERROR|While inspecting method call "#" > method "Point.cmp(_,_,_)" (line 5)
-//ERROR|The call to "#" is invalid.
+//ERROR|This call to method "Block#" cannot typecheck.
 //ERROR|Generic type argument 1 ("R") does not satisfy the bounds
 //ERROR|for generic type parameter "R" in "Block#".
 //ERROR|Here "R" can only use capabilities "imm" or "mut" or "read".
