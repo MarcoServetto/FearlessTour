@@ -228,7 +228,7 @@ Point:{ .x: Nat; .y: Nat;
 //ERROR|Here "R" can only use capabilities "imm" or "mut" or "read".
 //ERROR|But generic type argument "R" can only use capabilities "imm" or "iso" or "mut" or "mutH" or "read" or "readH".
 //ERROR|
-//ERROR|See inferred typing context below for how type "R" was introduced:
+//ERROR|See inferred typing context below for how "R" was introduced:
 //ERROR|Block#[imm,R]
 //ERROR|Error 8 TypeError
 """); }/*--------------------------------------------

@@ -269,7 +269,7 @@ Stars: Reporter{ es -> Report{
 //ERROR|Argument 1 has type "clinic.Secret[base.Str]".
 //ERROR|That is not a subtype of "read base.ToStr" (the type required by the method signature).
 //ERROR|
-//ERROR|See inferred typing context below for how type "base.Str" was introduced ("..." marks omitted code):
+//ERROR|See inferred typing context below for how "base.Str" was introduced ("..." marks omitted code):
 //ERROR|e.bed + (e.dose.map[imm,base.Str](base.F[Nat,base.Str]{read #(d:Nat):base.Str->...}))
 //ERROR|Error 8 TypeError
 """); }/*--------------------------------------------
