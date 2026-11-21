@@ -268,7 +268,6 @@ Stars: Reporter{ es -> Report{
 //ERROR|This call to method "base.Str+(_)" cannot typecheck.
 //ERROR|Argument 1 has type "clinic.Secret[base.Str]".
 //ERROR|That is not a subtype of "read base.ToStr" (the type required by the method signature).
-//ERROR|Hint: all method names have the same precedence, so an expression like "a.get + b.get" parses as "(a.get + b).get", not "a.get + (b.get)". If this argument needed a method applied to it first, wrap it in parentheses.
 //ERROR|
 //ERROR|See inferred typing context below for how type "base.Str" was introduced ("..." marks omitted code):
 //ERROR|e.bed + (e.dose.map[imm,base.Str](base.F[Nat,base.Str]{read #(d:Nat):base.Str->...}))
