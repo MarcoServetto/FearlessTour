@@ -347,7 +347,7 @@ Smuggler: Reporter{ es -> Report{
 //ERROR|While inspecting parameter "seen" > method "base.F[Nat,base.Void]#(_)" (line 21) > method "base.MF[base.Void]#" (line 21) > method "base.Continuation[mut base.Var[Nat],base.Str]#(_,_)" (line 19) > method "base.F[Patient,base.Str]#(_)" (line 19) > method "Report.board" (line 19) > method "Smuggler#(_)" (line 18)
 //ERROR|Parameter "seen" has type "mut base.Var[Nat]".
 //ERROR|Parameter "seen" can observe mutation; thus it cannot be captured in the "imm" object literal instance of "base.F[Nat,base.Void]" (line 21).
-//ERROR|Hint: capture an immutable copy instead, or move this use outside the object literal.
+//ERROR|Capture an immutable copy instead, or move this use outside the object literal.
 //ERROR|Error 8 TypeError
 """); }/*--------------------------------------------
 
