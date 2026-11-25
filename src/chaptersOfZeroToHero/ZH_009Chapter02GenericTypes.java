@@ -330,7 +330,7 @@ Use: { .any[X](x: X): base.Void -> base.Void }
 Test: base.Main{sys-> Use.any(Left.choose("Hello",TankNN))}
 //ERROR|In file: [###]_test/_rank_app111.fear
 //ERROR|[###]
-//ERROR|The generic type argument "Val" of ".choose" can not be inferred:
+//ERROR|The generic type argument "Val" of ".choose" cannot be inferred:
 //ERROR|it is needed as "base.Str", as "TankNN".
 //ERROR|[###]
 """); }/*--------------------------------------------
