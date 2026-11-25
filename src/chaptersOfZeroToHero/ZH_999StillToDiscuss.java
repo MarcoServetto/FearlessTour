@@ -225,8 +225,8 @@ Point:{ .x: Nat; .y: Nat;
 //ERROR|This call to method "Block#" cannot typecheck.
 //ERROR|Generic type argument 1 ("R") does not satisfy the bounds
 //ERROR|for generic type parameter "R" in "Block#".
-//ERROR|Here "R" can only use capabilities "imm" or "mut" or "read".
-//ERROR|But generic type argument "R" can only use capabilities "imm" or "iso" or "mut" or "mutH" or "read" or "readH".
+//ERROR|Here "R" can only use capabilities "imm", "mut" or "read".
+//ERROR|But generic type argument "R" can only use capabilities "imm", "iso", "mut", "mutH", "read" or "readH".
 //ERROR|
 //ERROR|See inferred typing context below for how "R" was introduced:
 //ERROR|Block#[imm,R]
