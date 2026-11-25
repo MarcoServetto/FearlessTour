@@ -50,7 +50,7 @@ West : {.turn-> North;}
 //ERROR|Alternatively (less common), if you intended to override and omit the signature,
 //ERROR|the signature must be inherited from a supertype.
 //ERROR|Cannot infer signature of method ".turn".
-//ERROR|No supertype has a method named ".turn" with 0 parameters.
+//ERROR|No supertype has a method ".turn".
 //ERROR|Error 7 WellFormedness
 //OMIT_END
 """); }/*--------------------------------------------
@@ -123,7 +123,7 @@ West : {.turn-> North;}
 //ERROR|Alternatively (less common), if you intended to override and omit the signature,
 //ERROR|the signature must be inherited from a supertype.
 //ERROR|Cannot infer signature of method ".turn".
-//ERROR|No supertype has a method named ".turn" with 0 parameters.
+//ERROR|No supertype has a method ".turn".
 //ERROR|Error 7 WellFormedness
 """); }/*--------------------------------------------
 

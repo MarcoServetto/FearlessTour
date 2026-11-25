@@ -124,7 +124,7 @@ Bad: { #: Void -> PromotionExample#.run(10) }
 //ERROR|   |        -----------^^^^^^^^^^^^^^^^^~~~~~~~~
 //ERROR|
 //ERROR|While inspecting method "Bad#" (line 16)
-//ERROR|This call to method "mut Animal.run(_)" cannot typecheck.
+//ERROR|This call to the "mut" method "Animal.run(_)" cannot typecheck.
 //ERROR|The receiver (the expression before the method name) has capability "imm".
 //ERROR|This call requires a receiver with capability "mut" or "iso".
 //ERROR|
